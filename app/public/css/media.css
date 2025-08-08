@@ -1,0 +1,228 @@
+@media (max-width: 1024px) {
+    
+body{
+font-family: 'Poppins', sans-serif;
+ max-width: 100%;
+
+}
+
+header{
+   
+    text-align: left;      
+}
+
+main{
+    flex-direction: column;
+    justify-content: center;}
+
+    aside h2 {
+        font-size: 2.2rem;
+        line-height: 1.3;
+    }
+    .material, .areas {
+        font-size: 2rem;
+        line-height: 1.3;
+    }
+
+form{
+
+    margin: 0 auto;
+}
+
+
+#hamburger-toggle {
+    display: none;
+}
+
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.hamburger span {
+    display: block;
+    height: 3px;
+    background: #000;
+    border-radius: 3px;
+}
+
+#hamburger-toggle:checked + .hamburger span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+#hamburger-toggle:checked + .hamburger span:nth-child(2) {
+    opacity: 0;
+}
+#hamburger-toggle:checked + .hamburger span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+
+#hamburger-toggle:checked ~ ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+
+    main {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    main aside {
+        max-width: 90%;
+    }
+
+    img {
+        max-width: 90%;
+        height: auto;
+    }
+
+    .acesso-container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .acesso-card1,
+    .acesso-card2,
+    .acesso-card3 {
+        width: 100%;
+        max-width: 350px;
+    }
+}
+
+
+@media (max-width: 768px) {
+    
+    .hamburger {
+        display: flex;
+    }
+
+    #menuToggle ul {
+        display: none;
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 10px;
+        gap: 15px;
+    }
+
+    #menuToggle ul a {
+        display: block;
+        color: #000;
+        font-size: 18px;
+    }
+
+    
+    header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #title {
+        text-align: left;
+    }
+
+   
+    main {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    main aside {
+        max-width: 100%;
+    }
+
+    form {
+        justify-content: center;
+    }
+
+    input[type="submit"] {
+        width: auto;
+        padding: 12px 20px;
+    }
+
+   
+    .carrossel {
+        flex-direction: column;
+    }
+
+    .conteudo {
+        width: 100%;
+    }
+
+    .acesso-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .acesso-card1,
+    .acesso-card2,
+    .acesso-card3 {
+        width: 90%;
+        height: auto;
+    }
+
+     aside h2 {
+        font-size: 1.8rem;
+        line-height: 1.1;
+        text-align: left;
+        padding-left: 10px;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .material, .areas {
+        font-size: 1.5rem;
+        line-height: 1.4;
+        text-align: center;
+        margin-top: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    
+    main article img {
+        display: none;
+    }
+
+      aside h2 {
+        font-size: 2.9rem;
+        line-height: 1.4;
+        word-break: break-word;
+        white-space: normal;
+    }
+    .material, .areas {
+        font-size: 1.2rem;
+        line-height: 1.4;
+        word-break: break-word;
+        white-space: normal;
+    }
+
+    p {
+        max-width: 100%;
+        text-align: left;
+    }
+
+
+    .slide {
+        font-size: 18px;
+        padding: 8px 12px;
+    }
+
+    .pass {
+        font-size: 16px;
+        padding: 6px 10px;
+    }
+
+    footer {
+        font-size: 12px;
+    }
+}

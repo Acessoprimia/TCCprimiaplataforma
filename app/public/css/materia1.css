@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
+*{
+font-family: 'Poppins', sans-serif;
+}
+
+body{
+ margin: 0;
+ padding: 0; 
+ 
+}
+
+.imgh svg{
+
+    transform: translateY(35%);
+   
+}
+
+header h1{
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    margin-top: 10px;
+
+}
+a{
+    text-decoration: none;
+    color: #fff;
+    
+}
+
+
+
+header{
+    margin-bottom: 20px;
+    position: relative;
+    height: 100px;
+    background-color: #C5B4E3;
+    width: 100%;
+    box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.20);
+
+}
+
+
+.logo {
+  font-size: 1.5em;
+}
+
+.menu {
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.curso-info {
+  text-align: center;
+  margin: 40px 0;
+  color: #693b88;
+}
+
+.icone-curso {
+  font-size: 3em;
+  margin-bottom: 10px;
+}
+
+.curso-info h1 {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.conteudo {
+  max-width: 700px;
+  margin: 0 auto 40px auto;
+}
+
+.conteudo h2 {
+  color: #693b88;
+  margin-bottom: 20px;
+}
+
+.conteudo ul {
+  list-style: disc;
+  padding-left: 20px;
+  line-height: 1.6;
+}
+
+.tutores {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.tutor-card {
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 15px;
+  width: 250px;
+  margin-top: 15px;
+}
+
+.foto-tutor {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.rodape {
+  background-color: #c6b1dc;
+  padding: 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 8px;
+}
+
+.rodape .links a {
+  color: white;
+  margin-left: 15px;
+  text-decoration: none;
+}
+

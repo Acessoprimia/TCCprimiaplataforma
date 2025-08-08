@@ -1,0 +1,266 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
+
+body {
+    background-color: white;
+    color: rgb(0, 0, 0);
+    font-family: 'Poppins', sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#title{
+flex-direction: column;
+line-height: 10px;
+}
+
+li{
+display: inline-block;
+margin: 20px;
+}
+
+.barm{
+    color: black;
+}
+
+.barm:hover{
+    color: #A398D1;
+    transition: 0.3s all;
+}
+
+#iu{  
+border: 2px solid #A398D1;
+padding: 10px;
+border-radius: 15px;
+}
+
+#iu:hover{
+background-color: #A398D1;
+color: white;
+}
+
+h1{
+font-weight: 200;
+}
+
+main{
+display: flex;
+flex-direction: row;
+margin-top: 50px;
+}
+
+h2{
+font-size: 56px;
+line-height: 10px;
+font-family: 'Poppins', sans-serif;
+}
+
+span{
+color: #A398D1;
+}
+
+p{
+    line-height: 20px;
+    max-width: 500px;
+    font-family: 'Poppins';
+}
+
+img{
+    width: 580px;
+}
+
+form{
+display: flex;
+width: 70%;
+}
+
+.cada{
+  padding: 10px;
+text-decoration: none;
+background-color: #A398D1;
+color: white;
+font-weight: bold;
+border: none;
+border-radius: 10px;
+width: 30%px;
+}
+
+input:hover{
+    cursor: pointer;
+}
+
+#inicio{
+text-decoration: underline #A398D1;
+text-decoration-thickness: 1px;
+}
+
+#hamburger-toggle{
+display: none;
+}
+
+.carrossel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px outset #A398D1;
+  border-radius: 20px;
+  background-color: #fffef6;
+  padding: 20px;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.conteudo {
+  overflow: hidden;
+  width: 80%;
+}
+
+.lista {
+  display: flex;
+  gap: 60px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  transition: all 0.5s ease-in-out;
+}
+
+.slide {
+  flex: 0 0 auto;
+  font-size: 24px;
+  background-color: #eceafd;
+  color: #4a4574;
+  padding: 10px 20px;
+  border-radius: 10px;
+  white-space: nowrap;
+  border: 1px solid #d1cde1;
+  scroll-snap-align: center;
+}
+
+.pass {
+  font-size: 20px;
+  padding: 8px 12px;
+  border: 2px solid #8b83ac;
+  color: #8b83ac;
+  background-color: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pass:hover {
+  background-color: #8b83ac;
+  color: white;
+}
+
+.material{
+text-align: center;
+font-size: 45px;
+}
+
+.areas{
+font-size: 45px;
+text-align: center;
+gap: 5px;
+}
+
+.acesso-container{
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+gap: 20px;
+}
+
+.acesso-card1{
+border-style: solid;
+padding: 25px;
+width: 450px; 
+height: 300px; 
+display: flex;
+flex-direction: column;
+align-items: center; 
+justify-content: center; 
+text-align: center;
+border: 3px solid #A398D1;
+box-sizing: border-box; 
+}
+
+.acesso-card2{
+border-style: solid;
+padding: 25px;
+width: 450px; 
+height: 300px; 
+display: flex;
+flex-direction: column;
+align-items: center; 
+justify-content: center; 
+text-align: center;
+border: 3px solid #A398D1;
+box-sizing: border-box; 
+}
+
+.acesso-card3{
+border-style: solid;
+padding: 25px;
+width: 450px; 
+height: 300px; 
+display: flex;
+flex-direction: column;
+align-items: center; 
+justify-content: center; 
+text-align: center;
+border: 3px solid #A398D1;
+box-sizing: border-box; 
+}
+
+h3{
+font-size: 35px;
+}
+
+footer { background-color: #A398D1; 
+  color: white; 
+  padding: 25px 20px; 
+  text-align: center;
+font-family: 'Poppins',sans-serif; } 
+
+.logo-footer { 
+  font-size: 22px; 
+  font-weight: bold; 
+  margin-bottom: 10px; }
+
+  footer nav { display: flex;
+  flex-wrap: wrap;
+      justify-content: center; 
+      gap: 15px; } 
+      
+ footer nav a { 
+  color: white; 
+  text-decoration: none; 
+  font-size: 14px; }
+      
+ @media (max-width: 1024px) { 
+  ul.grid { grid-template-columns: repeat(3, 1fr); } }
+  
+  @media (max-width: 768px) { 
+    
+ul.grid {
+grid-template-columns: repeat(2, 1fr); 
+ gap: 30px 20px; 
+
+  }
+
+
+   section.perfil nav button { 
+    width: 100%; 
+    max-width: 200px;
+   margin: 10px auto; } 
+   
+   footer nav {
+    flex-direction: column; } }

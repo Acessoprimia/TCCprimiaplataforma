@@ -228,7 +228,7 @@ footer { background-color: #A398D1;
   color: white; 
   padding: 25px 20px; 
   text-align: center;
-font-family: 'Poppins',sans-serif; } 
+  font-family: 'Poppins',sans-serif; } 
 
 .logo-footer { 
   font-size: 22px; 
@@ -238,7 +238,9 @@ font-family: 'Poppins',sans-serif; }
   footer nav { display: flex;
   flex-wrap: wrap;
       justify-content: center; 
-      gap: 15px; } 
+      
+      gap: 15px; 
+    } 
       
  footer nav a { 
   color: white; 
@@ -246,11 +248,11 @@ font-family: 'Poppins',sans-serif; }
   font-size: 14px; }
       
  @media (max-width: 1024px) { 
-  ul.grid { grid-template-columns: repeat(3, 1fr); } }
+  .ul1.grid { grid-template-columns: repeat(3, 1fr); } }
   
   @media (max-width: 768px) { 
     
-ul.grid {
+.ul1.grid {
 grid-template-columns: repeat(2, 1fr); 
  gap: 30px 20px; 
 
@@ -263,4 +265,5 @@ grid-template-columns: repeat(2, 1fr);
    margin: 10px auto; } 
    
    footer nav {
-    flex-direction: column; } }
+    flex-direction: column; 
+  } }

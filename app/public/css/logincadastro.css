@@ -1,196 +1,76 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+body{
   font-family: 'Poppins', sans-serif;
 }
-
-
-
-body {
-  background: #decdf1;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  padding-top: 40px; 
-}
-
 main {
-  width: 100%;
-  max-width: 400px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* agora alinha pelo topo */
+    padding-top: 80px; /* espaço do topo */
+    background-color: white;
+    min-height: calc(100vh - 100px);
 }
 
-/* TOPO */
-* {
-  font-family: "Lexend", sans-serif;
-}
- 
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #c5b4e3;
-}
- 
-.imgh svg {
-  transform: translateY(35%);
-}
- 
-header h1 {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #fff;
-  margin-top: 10px;
-}
-a {
-  text-decoration: none;
-  color: #fff;
-}
- 
-header {
-  margin-bottom: 20px;
-  position: relative;
-  height: 100px;
-  background-color: #c5b4e3;
-  width: 100%;
-  box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.2);
+.login-container {
+    background-color: #C9BCE3;
+    padding: 30px;
+    border-radius: 15px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
 }
 
-/* CAIXA CENTRAL */
-.cartao {
-  background: #a398d1;
-  margin: 40px auto;
-  padding: 30px 20px;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.tab-menu {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    gap: 5px;
 }
 
-/* ICONE DO TOPO */
-.icone-forma {
-  background: white;
-  width: 50px;
-  height: 50px;
-  margin-bottom: 20px;
-  mask: url('https://upload.wikimedia.org/wikipedia/commons/e/e5/Academic_cap.svg') no-repeat center;
-  mask-size: contain;
-  -webkit-mask: url('https://upload.wikimedia.org/wikipedia/commons/e/e5/Academic_cap.svg') no-repeat center;
-  -webkit-mask-size: contain;
+.tab {
+    padding: 8px 15px;
+    font-size: 16px;
+    color: white;
+    background: transparent;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+    display: inline-block;
 }
 
-/* ABAS (LOGIN / CADASTRO) */
-.abas {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 30px;
-  gap: 10px;
+.tab.active {
+    background: #fff;
+    color: #000000;
 }
 
-.aba {
-  background: transparent;
-  border: none;
+.option {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.option-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #A398D1;
+    padding: 12px;
+    border-radius: 10px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s, color 0.3s;
+}
+
+.option-box:hover {
+    background: #B8B8FF;
+    color: #C9BCE3;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+}
+span{
   color: white;
-  font-weight: 600;
-  padding: 6px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
 }
-
-.aba.ativa {
-  background: #c2a6dd;
-}
-
-/* PERFIS (ALUNO / PROFESSOR / RESPONSÁVEL) */
-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-  align-items: center;
-}
-
-.perfil {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 300px;
-  justify-content: flex-start;
-  transition: background 0.3s ease;
-}
-
-.perfil:hover {
-  background: rgba(162, 69, 255, 0.25);
-}
-
-.icone {
-  width: 36px;
-  height: 36px;
-  background: white;
-  border-radius: 50%;
-}
-
-/* ÍCONES DE PERFIL */
-.aluno {
-  mask: url('https://img.icons8.com/ios-filled/50/student-male.png') no-repeat center;
-  -webkit-mask: url('https://img.icons8.com/ios-filled/50/student-male.png') no-repeat center;
-  mask-size: 60%;
-  -webkit-mask-size: 60%;
-}
-
-.professor {
-  mask: url('https://img.icons8.com/ios-filled/50/teacher.png') no-repeat center;
-  -webkit-mask: url('https://img.icons8.com/ios-filled/50/teacher.png') no-repeat center;
-  mask-size: 60%;
-  -webkit-mask-size: 60%;
-}
-
-.responsavel {
-  mask: url('https://img.icons8.com/ios-filled/50/family--v1.png') no-repeat center;
-  -webkit-mask: url('https://img.icons8.com/ios-filled/50/family--v1.png') no-repeat center;
-  mask-size: 60%;
-  -webkit-mask-size: 60%;
-}
-
-/* RODAPÉ */
-footer {
-  margin-top: 40px;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  font-size: 12px;
-  flex-wrap: wrap;
-  text-align: center;
-}
-
-footer a {
-  color: rgba(255, 255, 255, 0.4);
-  text-decoration: none;
-}
-
-
-
-    .fadeout {
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
- 

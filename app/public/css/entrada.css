@@ -1,200 +1,183 @@
-html, body {
-  height: 100%;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
+
+* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
+  font-family: 'Poppins', sans-serif;
 }
 
+/* Corpo da página */
 body {
-  background-color: #c5b4e3;
-  font-family: "Lexend", sans-serif;
-}
-
-/* O conteúdo principal cresce para empurrar o footer */
-main {
-  flex: 1;
-}
-
-
-
-.imgh svg {
-  transform: translateY(35%);
-  
-}
-
-header h1 {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #fff;
-  margin-top: 10px;
-}
-
-a {
-  text-decoration: none;
-  color: #fff;
-}
-
-header {
-  position: relative;
-  height: 100px;
-  background-color: #c5b4e3;
-  width: 100%;
-  box-shadow: 0px 4px 10px 4px rgba(0, 0, 0, 0.2);
-}
-
-section.perfil {
-  background-color: #ede3fa;
-  text-align: center;
-  padding: 30px 10px;
-}
-
-section.perfil figure img {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 15px;
-  filter: brightness(0) saturate(100%) invert(42%) sepia(12%) saturate(1083%) hue-rotate(212deg) brightness(104%) contrast(93%);
-} 
-
-section.perfil nav {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-section.perfil nav .button {
-  width: 140px;
-  padding: 10px 0;
-  border: none;
-  border-radius: 20px;
-  background-color: #ffffff;
-  color: #b59edc;
-  font-weight: bold;
-  cursor: pointer;
-  border: 2px solid #b59edc;
-  transition: 0.3s;
-  font-size: 16px;
-}
-
-section.perfil nav button:hover {
-  background-color: #b59edc;
-  color: white;
-}
-
-section.materias {
-  padding: 50px 20px;
-  text-align: center;
-}
-
-section.materias h2 {
-  color: #ffffff;
-  font-size: 24px;
-  margin-bottom: 35px;
-}
-
-ul.grid {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 colunas fixas */
-  gap: 40px 60px;
-  justify-content: center;
-  padding: 0;
-  max-width: 1000px;
+  background: white;
+  min-height: 100vh;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 10px;
+  color: #000;
 }
 
-i{
-  font-size: 4em;
-  color: #ffffff;
-  padding: 7px;
-  background-color: #b59edc;
-  border-radius: 17px;
+#title {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
 }
 
-ul.grid li a {
-  text-decoration: none;
-  color: #ffffff;
+#title h1 {
+  margin: 0;
+  font-weight: 200;
+  color: black;
+  font-family: 'Poppins', sans-serif;
+}
+header {
+  margin-top: 20px; /* ajusta esse valor conforme necessário */
+}
+
+/* Header - não alterar links aqui, deixa estilos isolados no header.css */
+
+/* Conteúdo principal */
+main {
+  margin-top: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: transform 0.2s, color 0.2s;
+}
+
+/* Perfil */
+.perfil {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.icone-perfil {
+  font-size: 5rem;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+/* Botões */
+.botao-tipo {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.button {
+  background: #a788dd;
+  color: #fff;
+  padding: 10px 30px;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s;
+
+  width: 120px; /* largura fixa para igualar os botões */
+  text-align: center;
+  display: inline-block;
+}
+
+.button:hover {
+  background: #c5b4e3;
+}
+
+/* Seção de matérias */
+.materias {
+  max-width: 900px;
   width: 100%;
 }
 
-ul.grid li a:hover {
-  transform: scale(1.1);
-  color: #f0e6ff;
-}
-
-ul.grid li {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #ffffff;
-  font-size: 15px;
-  transition: transform 0.2s;
-}
-
-ul.grid li:hover {
-  transform: scale(1.1);
-}
-
-ul.grid li img {
-  width: 48px;
-  margin-bottom: 10px;
-  filter: brightness(0) saturate(100%) invert(42%) sepia(12%) saturate(1083%) hue-rotate(212deg) brightness(104%) contrast(93%);
-}
-
-footer {
-  background-color: #d5c3ec;
-  color: white;
-  padding: 25px 20px;
+.materias h2 {
   text-align: center;
+  color: #000;
+  margin-bottom: 32px;
+  font-size: 2rem;
+  font-weight: 700;
 }
 
-footer .logo-footer {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-footer nav {
+/* Grid para as matérias */
+.grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 15px;
+  gap: 24px;
+  list-style: none;
+  padding: 0;
 }
 
-footer nav a {
-  color: white;
+/* Cada matéria */
+.materia {
+  margin: 0;
+}
+
+/* Links só dentro das matérias */
+.materias a.materia-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
+  border-radius: 8px;
+  padding: 16px 8px;
+  text-align: center;
+  color: #000;
+  transition: background 0.2s, color 0.2s;
+  width: 140px;
+  cursor: pointer;
   text-decoration: none;
-  font-size: 14px;
+}
+
+.materias a.materia-link img {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 10px;
+}
+
+.materias a.materia-link p {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.materias a.materia-link:hover {
+  background: #a788dd;
+  color: #fff;
 }
 
 /* Responsividade */
-@media (max-width: 1024px) {
-  ul.grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 @media (max-width: 768px) {
-  ul.grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 100px 20px;
+  .hamburger {
+    display: flex;
   }
 
-  section.perfil nav button {
-    width: 100%;
-    max-width: 200px;
-    margin: 10px auto;
+  ul.ul1 {
+    display: none;
   }
 
-  footer nav {
-    flex-direction: column;
+  header {
+    position: relative;
   }
 }
 
+@media (max-width: 700px) {
+  .materias h2 {
+    font-size: 1.3rem;
+  }
+
+  .grid {
+    gap: 12px;
+  }
+
+  .materias a.materia-link {
+    width: 100px;
+    padding: 10px 2px;
+    font-size: 0.95rem;
+  }
+
+  .botao-tipo {
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+}

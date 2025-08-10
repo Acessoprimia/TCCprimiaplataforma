@@ -1,71 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SOBRE</title>
-    <link rel="stylesheet" href="../css/sobre.css">
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sobre - Plataforma Prima</title>
 
+  <!-- Inclui o header e o CSS do header -->
+  <%- include('../partials/header.ejs') %>
+  <link rel="stylesheet" href="../css/sobre.css" />
+</head>
+<body>
+  <main class="sobre-container">
+    <section class="texto-sobre">
+      <h2>Sobre a Plataforma Prima</h2>
+      <p>
+        A Plataforma Prima foi criada para facilitar o aprendizado de estudantes, 
+        oferecendo conteúdos de qualidade e uma interface intuitiva. 
+        Nosso objetivo é transformar a educação em uma experiência acessível e motivadora para todos.
+      </p>
+      <p>
+        Desde nosso lançamento, temos investido em tecnologia e didática para garantir que cada aluno encontre na Prima a melhor forma de estudar e crescer academicamente.
+      </p>
+    </section>
+
+    <section class="imagem-sobre">
+      <img src="../image/roxoestudo.jpg" alt="Imagem sobre educação" />
+    </section>
+  </main>
 
   
-  <body>
-   
-    <%- include('../partials/header.ejs') %>
-
-
-       <h1 class="primia"> Conectando estudantes ao conhecimento de forma simples e rápida</h1>   
-
-      <main> 
-      <section class="sobre">
-        <h2> QUEM SOMOS</h2>
-        <p>  A <strong>PRIMIA</strong> nasceu para transformar o jeito de estudar. Nossa missão é oferecer
-          um espaço onde <br>
-           todo estudante encontra respostas rápidas,
-           claras e confiáveis
-          para suas dúvidas escolares. <br> Aqui, aprender é simples e acessível a todos.</p>
-      </section>
-
-      <section class="sobre">
-        <h2 >Nossa Missão</h2>
-        <p >
-          Acreditamos que ninguém deve ficar preso em uma dúvida. Por isso, criamos
-          uma plataforma que facilita o <br> aprendizado e ajuda estudantes a se prepararem
-          melhor para provas, trabalhos e desafios do dia a dia escolar.
-        </p>
-      </section>
-   
-      <section class="sobre">
-        <h2>Como Funciona</h2>
-        <p >Aprender na PRIMIA é simples, veja só:</p>
-        <ol>
-          <li>Digite sua dúvida escolar.</li>
-          <li>Receba uma resposta rápida e confiável.</li>
-          <li>Aprenda de forma prática e continue avançando.</li>
-        </ol>
-      </section>
-   
-      <section class="sobre">
-        <h2>Nossa Visão e Valores</h2>
-        <p><strong>Visão:</strong> Ser a principal plataforma de apoio escolar do país.</p>
-        <p><strong>Valores:</strong></p>
-        <ul>
-          <li class="il">Educação</li>
-          <li>Acessibilidade</li>
-          <li>Confiabilidade</li>
-          <li>Inovação</li>
-        </ul>
-      </section>
-   
-      <section>
-        <footer> 
-        <p><strong>Com a PRIMIA, sua dúvida nunca fica sem resposta!</strong></p>
-        <p>© 2025 PRIMIA. Todos os direitos reservados.</p>
-        </footer>
-      </section>
-
-  </body>
+</body>
 </html>
-
-
-

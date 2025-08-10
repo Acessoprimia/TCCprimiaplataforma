@@ -41,6 +41,10 @@ router.get("/duvida", function (req, res) {
   res.render("pages/duvida");
 });
 
+router.get("/chat", function (req, res) {
+  res.render("pages/chat");
+});
+
 
 
 router.get("/sobre", function (req, res) {

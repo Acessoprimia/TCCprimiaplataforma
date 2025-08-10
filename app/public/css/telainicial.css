@@ -4,10 +4,12 @@ body {
     background-color: white;
     color: rgb(0, 0, 0);
     font-family: 'Poppins', sans-serif;
-    max-width: 1200px;
     margin: 0 auto;
     padding: 10px;
+    max-width: 1200px;
 }
+
+
 
 header{
     display: flex;
@@ -224,28 +226,7 @@ h3{
 font-size: 35px;
 }
 
-footer { background-color: #A398D1; 
-  color: white; 
-  padding: 25px 20px; 
-  text-align: center;
-  font-family: 'Poppins',sans-serif; } 
 
-.logo-footer { 
-  font-size: 22px; 
-  font-weight: bold; 
-  margin-bottom: 10px; }
-
-  footer nav { display: flex;
-  flex-wrap: wrap;
-      justify-content: center; 
-      
-      gap: 15px; 
-    } 
-      
- footer nav a { 
-  color: white; 
-  text-decoration: none; 
-  font-size: 14px; }
       
  @media (max-width: 1024px) { 
   .ul1.grid { grid-template-columns: repeat(3, 1fr); } }
@@ -264,6 +245,5 @@ grid-template-columns: repeat(2, 1fr);
     max-width: 200px;
    margin: 10px auto; } 
    
-   footer nav {
-    flex-direction: column; 
-  } }
+ 
+   }

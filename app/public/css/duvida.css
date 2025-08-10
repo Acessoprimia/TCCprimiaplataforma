@@ -1,164 +1,251 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
-
-body{
+ 
+body {
   margin: 0;
   padding: 0;
-  background-color: #C5B4E3;
-  color: #ececec;
+  background-color: #ffffff;
+  color: #000000;
   font-family: 'Poppins', sans-serif;
 }
-h1{
-font-size: 35px;
-text-align: center;
+ 
+/* HEADER MOBILE */
+header {
+ display: flex;
+ flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px;
+}
+#title{
+flex-direction: column;
+line-height: 10px;
+}
+
+li{
+display: inline-block;
+margin: 20px;
 }
 
 a{
-    text-decoration: none;
-    color: #000; 
-    transition: color 0.3s ease;
+    color: black;
 }
 
 a:hover{
-    color: tomato;
+    color: #A398D1;
+    transition: 0.3s all;
 }
 
-#menuToggle{
-    display: block;
-    position: relative;
-    top: 50px;
-    left: 50px;
-    z-index: 1;
-    user-select: none;
-
+#iu{  
+border: 2px solid #A398D1;
+padding: 10px;
+border-radius: 15px;
 }
 
-#menuToggle input{
-    display: block;
-    width: 40px;
-    height: 32px;
-    position: absolute;
-    top: -7px;
-    left: -5px;
+#iu:hover{
+background-color: #A398D1;
+color: white;
+}
+
+h1{
+font-weight: 200;
+}
+ 
+/* MENU HAMBÚRGUER */
+#hamburger-toggle{
+display: none;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 20px;
     cursor: pointer;
-    opacity: 0;
-    z-index: 2;
 }
 
-#menuToggle span{
+.hamburger span {
     display: block;
-    width: 33px;
-    height: 4px;
-    margin-bottom: 5px;
-    position: relative;
-    background: #ececec;
+    height: 3px;
+    background: #000;
     border-radius: 3px;
-    z-index: 1;
-    transform-origin: 4px 0px;
-    transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
-    background 0.5 cubic-bezier(0.77,0.2,0.05,1.0),
-    opacity 0.55s ease;
 }
 
-#menuToggle span:first-child{
-    transform-origin: 0% 0%;
+#hamburger-toggle:checked + .hamburger span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
 }
-
-#menuToggle span:nth-last-child(2){
-    transform-origin: 0% 100%;
-}
-
-#menuToggle input:checked ~ span{
-    opacity: 1;
-    transform: rotate(45deg) translate(-2px, -1px);
-    background: #C5B4E3;
-
-}
-
-#menuToggle input:checked ~ span:nth-last-child(3){
+#hamburger-toggle:checked + .hamburger span:nth-child(2) {
     opacity: 0;
-    transform: rotate(0deg) scale(0.2,0.2);
+}
+#hamburger-toggle:checked + .hamburger span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
 }
 
-#menuToggle input:checked ~ span:nth-last-child(2){
-    transform: rotate(-45deg) translate(0, -1px);
-}
+ .hamburger {
+        display: flex;
+    }
 
-#menu{
-    position: absolute;
-    width: 300px;
-    margin: -100px 0 0 -50px;
-    padding: 50px;
-    padding-top: 125px;
-    background: #ededed;
-    list-style-type: none;
-    transform-origin: 0% 0%;
-    transform: translate(-100%, 0);
-    transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
-}
+    #menuToggle ul {
+        display: none;
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 10px;
+        gap: 15px;
+    }
 
-#menu li{
-    padding: 10px 0;
-    font-size: 22px;
-}
-#menuToggle input:checked ~ ul{
-    transform: none;
-}
-main {
-  padding: 1.5rem;
-}
+    #menuToggle ul a {
+        display: block;
+        color: #000;
+        font-size: 18px;
+    }
 
-h2 {
-  font-size: 2rem;
-  color: #8559c5;
-  text-align: center;
-}
-
-article {
-  background-color:#e7dbf6;
-  margin: 1rem 0;
-  padding: 1rem;
-  border-radius: 8px;
-  color: #000;
-}
-
-form label {
+nav ul {
+  list-style: none;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: #fff;
+  padding: 20px;
+  margin: 0;
   display: none;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
-
-form footer {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-input[type="text"] {
-  flex: 1;
-  padding: 0.5rem;
-  border-radius: 20px;
-  border: 1px solid #ccc;
-}
-
-form button {
-  background-color:#8559c5;
-  border: none;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  font-size: 1.2rem;
+ 
+nav ul li a {
+  text-decoration: none;
   color: black;
 }
-
-footer nav ul {
-  list-style: none;
-  padding: 1rem;
-  background-color: #f1e6fc;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 0.5rem;
-  font-size: 0.85rem;
+ 
+#hamburger-toggle:checked ~ ul {
+  display: flex;
+}
+ 
+/* CONTEÚDO */
+main {
+  padding: 15px;
+}
+ 
+h2 {
+  font-size: 28px;
+  color: #A398D1;
+  text-align: center;
+  margin: 20px 0;
+}
+ 
+#duvida {
+  background-color: #f8fad4;
+  padding: 20px;
+}
+ 
+details {
+  background-color: #d7c7f1;
+  padding: 3%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+ 
+details[open] {
+  background-color: #e2d9f0;
+}
+ 
+summary {
+  text-align: left;
+  font-weight: 600;
+  color: #1b1a1a;
+}
+ 
+.responder-btn{
+cursor: pointer;
+background-color: #7948c7;
+border-radius: 10px;
+padding: 5px;
+color: #ffffff;
+font-size: 13px;
+margin-left: 20px;
 }
 
-footer nav a {
-  color: #6d4c99;
-  text-decoration: none;
+.resposta-box{
+margin-top: 10px;
+margin-bottom: 20px;
 }
+
+textarea{
+padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #A398D1;
+  font-size: 16px;
+  width: 100%;
+  max-width: 200px;
+  font-family: 'Poppins', sans-serif;
+  margin-top: 5px;
+}
+
+button[type="submit"] {
+ background: #A398D1;
+ border: none;
+ border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* FORMULÁRIO */
+form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 20px auto;
+  flex-wrap: wrap;
+}
+ 
+form input[type="text"] {
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #A398D1;
+  font-size: 16px;
+  width: 100%;
+  max-width: 200px;
+}
+ 
+form button {
+  background: #A398D1;
+  border: none;
+  border-radius: 50%;
+  padding: 8px;
+  cursor: pointer;
+}
+
+ 
+/* -------- DESKTOP -------- */
+@media (min-width: 768px) {
+  header {
+    margin: 0 70px;
+  }
+ 
+  .hamburger {
+    display: none;
+  }
+ 
+  nav ul {
+    position: static;
+    display: flex !important;
+    flex-direction: row;
+    gap: 20px;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+  }
+ 
+  main {
+    padding: 3%;
+    margin: 0 150px;
+  }
+}
+ 

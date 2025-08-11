@@ -1,61 +1,79 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
-* {
+.login-container {
+  max-width: 280px;
+  margin: 60px auto 40px;
+  padding: 25px 30px;
+  background-color: #fafafa;
+  border: 1.5px solid #A398D1;
+  border-radius: 16px;
+  box-shadow: 0 0 15px rgba(163,152,209,0.25);
   font-family: 'Poppins', sans-serif;
 }
 
+.login-container {
+  padding: 15px 30px 25px 30px; /* menos padding-top */
+}
 
-header {
-  margin-bottom: 20px;
-  height: 100px;
+.login-container h2 {
+  margin-top: 0; /* tira margem padrão de cima */
+  margin-bottom: 30px;
+}
+
+.login-container label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #222;
+  font-size: 14px;
+  
+}
+
+.login-container input[type="text"],
+.login-container input[type="email"],
+.login-container input[type="password"] {
   width: 100%;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  border: 1.7px solid #A398D1;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+  
+ 
   
 }
 
-.container {
-  background-color: #f5f5f5;
-  padding-bottom: 20px;
-  border-radius: 30px;
-  width: 300px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.input-container {
-  margin: 30px 30px 10px 30px;
-}
-
-label {
-  color: #a398d1;
-  margin: 0 0 5px 15px;
-}
-
-.inputfield {
-  display: flex;
-  flex-direction: column;
-  margin: 15px 0 15px 0;
-}
-input {
+.login-container input[type="text"]:focus,
+.login-container input[type="email"]:focus,
+.login-container input[type="password"]:focus {
   outline: none;
-  padding: 0 20px 0 20px;
-  height: 38px;
+  border-color: #7a6dc9;
 }
-.bot {
-padding: 7px;
-text-decoration: none;
-background-color: #A398D1;
-color: white;
-font-weight: bold;
-border: none;
-border-radius: 10px;
-text-align: center;
-font-size: 15px;
 
-  
+.btn-link {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  background-color: #A398D1;
+  color: white;
+  padding: 3px 0;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 300;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  user-select: none;
 }
-.bot:hover {
-  background-color: #c5b4e3;
-  
+
+.btn-link:hover {
+  background-color: #7a6dc9;
+}
+
+@media (max-width: 500px) {
+  .login-container {
+    margin: 40px 20px;
+    padding: 20px;
+  }
 }
 

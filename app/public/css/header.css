@@ -51,11 +51,7 @@ li {
     font-weight: 200;
 }
 
-main {
-    display: flex;
-    flex-direction: row;
-    margin-top: 50px;
-}
+
 
 span {
     color: #A398D1;
@@ -67,10 +63,7 @@ p {
     font-family: 'Poppins';
 }
 
-form {
-    display: flex;
-    width: 70%;
-}
+
 
 #hamburger-toggle {
     margin-top: 20px;

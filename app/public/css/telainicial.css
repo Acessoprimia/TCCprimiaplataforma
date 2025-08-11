@@ -4,12 +4,10 @@ body {
     background-color: white;
     color: rgb(0, 0, 0);
     font-family: 'Poppins', sans-serif;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 10px;
-    max-width: 1200px;
 }
-
-
 
 header{
     display: flex;
@@ -28,11 +26,11 @@ display: inline-block;
 margin: 20px;
 }
 
-.barm{
+a{
     color: black;
 }
 
-.barm:hover{
+a:hover{
     color: #A398D1;
     transition: 0.3s all;
 }
@@ -62,6 +60,7 @@ h2{
 font-size: 56px;
 line-height: 10px;
 font-family: 'Poppins', sans-serif;
+color: black;
 }
 
 span{
@@ -83,15 +82,17 @@ display: flex;
 width: 70%;
 }
 
-.cada{
-  padding: 10px;
-text-decoration: none;
+input{
+margin-top: 20px;
+height: 50px;
+padding: 15px;
+border-radius: 20px;
+border: none;
+font-size: 15px;
+width: 50%;
 background-color: #A398D1;
 color: white;
 font-weight: bold;
-border: none;
-border-radius: 10px;
-width: 30%px;
 }
 
 input:hover{
@@ -172,78 +173,43 @@ text-align: center;
 gap: 5px;
 }
 
-.acesso-container{
-display: flex;
-flex-direction: row;
-justify-content: space-between;
-align-items: center;
-gap: 20px;
+.acesso-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 40px;
+  margin: 40px 0;
+  flex-wrap: nowrap;
 }
 
-.acesso-card1{
-border-style: solid;
-padding: 25px;
-width: 450px; 
-height: 300px; 
-display: flex;
-flex-direction: column;
-align-items: center; 
-justify-content: center; 
-text-align: center;
-border: 3px solid #A398D1;
-box-sizing: border-box; 
+.acesso-card1,
+.acesso-card3 {
+  width: 450px;
+  height: 300px;
+  border: 3px solid #A398D1;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
 }
 
-.acesso-card2{
-border-style: solid;
-padding: 25px;
-width: 450px; 
-height: 300px; 
-display: flex;
-flex-direction: column;
-align-items: center; 
-justify-content: center; 
-text-align: center;
-border: 3px solid #A398D1;
-box-sizing: border-box; 
-}
-
-.acesso-card3{
-border-style: solid;
-padding: 25px;
-width: 450px; 
-height: 300px; 
-display: flex;
-flex-direction: column;
-align-items: center; 
-justify-content: center; 
-text-align: center;
-border: 3px solid #A398D1;
-box-sizing: border-box; 
-}
 
 h3{
 font-size: 35px;
 }
 
+.cadastrese{
+  padding: 9px;
+  background-color: #A398D1;
+  border-radius: 12px;
+  text-decoration: none;
+  color: white;
+}
+.cadastrese:hover{
+  background-color: #d1cde1;
+  color: rgb(0, 0, 0);
+}
 
-      
- @media (max-width: 1024px) { 
-  .ul1.grid { grid-template-columns: repeat(3, 1fr); } }
-  
-  @media (max-width: 768px) { 
-    
-.ul1.grid {
-grid-template-columns: repeat(2, 1fr); 
- gap: 30px 20px; 
-
-  }
-
-
-   section.perfil nav button { 
-    width: 100%; 
-    max-width: 200px;
-   margin: 10px auto; } 
-   
- 
-   }

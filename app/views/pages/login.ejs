@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Professor</title>
+  <link rel="stylesheet" href="../css/professor.css" />
+</head>
+<body>
+
+  <%- include('../partials/header.ejs') %>
+
+  <main class="login-container">
+    <h2>Cadastro</h2>
+    <form action="/login" method="post" autocomplete="off" novalidate>
+
+      <label class="confirmar" for="nome">Nome completo</label>
+      <input class="<%= erroValidacao.nome %>"  value="<%= valores.nome %>" type="text" id="nome" name="nome" placeholder="Seu nome completo" /> <span class="msgErro"><%= msgErro.nome %></span>
+
+      <label class="confirmar" for="email">Digite seu email</label>
+      <input  class="<%= erroValidacao.email %>" value="<%= valores.email %>" type="email" id="email" name="email" placeholder="exemplo@dominio.com" /> <span class="msgErro"><%= msgErro.email %></span>
+
+      <label class="confirmar" for="senha">Digite sua senha</label>
+      <input class="<%= erroValidacao.senha %>"  value="<%= valores.senha %>" type="password" id="senha" name="senha" placeholder="Sua Senha" /> <span class="msgErro"><%= msgErro.senha %></span>
+
+                 <label>
+                  Sua senha deve conter: <br />
+                  Uma letra maiúscula. <br />
+                  Um número. <br />
+                  Um caractere especial.
+                </label> 
+
+      <label class="confirmar" for="confirmarSenha">Sua senha novamente</label>
+      <input  class="<%= erroValidacao.confirmarSenha %>" value="<%= valores.confirmarSenha %>" type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Confirme sua senha" /> <span class="msgErro"><%= msgErro.confirmarSenha %></span>
+
+      <button type="submit" id="btnClique" class="juntar">
+                Cadastre-se
+              </button>
+
+    </form>
+  </main>
+
+</body>
+</html>

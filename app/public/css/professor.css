@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
 .login-container {
   max-width: 280px;
   margin: 60px auto 40px;
@@ -18,7 +19,7 @@
   margin-bottom: 30px;
 }
 
-.login-container label {
+.login-container .confirmar {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
@@ -26,6 +27,14 @@
   font-size: 14px;
   
 }
+
+label{
+  color: #7a6dc9;
+  margin-bottom: 8px;
+  display: block;
+
+}
+
 
 .login-container input[type="text"],
 .login-container input[type="email"],
@@ -77,3 +86,26 @@
   }
 }
 
+.erro {
+  border: 2px solid red;
+}
+span.msgErro {
+  color: red;
+  font-size: 0.9em;
+  margin-left: 10px;
+}
+
+button{
+  color: white;
+  text-decoration: none;
+  background-color: #A398D1;
+  border-radius: 8px;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover{
+  background-color: #7a6dc9;
+}

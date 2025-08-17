@@ -5,31 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login / Cadastro</title>
 
-    <!-- Estilos do header -->
+  
     <%- include('../partials/header.ejs') %>
 
 
-    <!-- Estilo da página de login -->
     <link rel="stylesheet" href="../css/logincadastro.css">
-
-    <!-- Fonte Poppins -->
-    
 </head>
 <body>
 
-    <!-- HEADER -->
+   
     
-    <!-- CONTEÚDO LOGIN -->
     <main>
         <section class="login-container">
             <nav class="tab-menu">
-                <span class="tab active">Login</span>
-                <a href="/login" class="tab">Cadastro</a>
+                <span class="tab active">Cadastro</span>
+                
             </nav>
 
             <section class="option">
                 <a href="/login" class="option-box">
-                    <!-- Ícone Aluno -->
+              
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
                         <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
                         <path d="M11 12.5L3 9v2l8 4 8-4V9l-8 3.5z"/>
@@ -37,13 +32,15 @@
                     <span>Aluno</span>
                 </a>
 
-                <a href="/professor" class="option-box">
-                    <!-- Ícone Professor -->
+                <a href="/login" class="option-box">
+              
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
                         <path d="M20 2H4v2h16V2zM4 6v14h16V6H4zm8 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
                     </svg>
                     <span>Professor</span>
                 </a>
+                <a href="/professor" class="tab">Voce ja tem uma conta?   </a>
+                
 
             </section>
         </section>

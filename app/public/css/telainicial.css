@@ -9,16 +9,33 @@ body {
     padding: 10px;
 }
 
-header{
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1; /* ocupa o espaço e empurra o footer para o fundo */
+}
+
+
+
+header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
 }
 
-#title{
-flex-direction: column;
-line-height: 10px;
+
+#title {
+    flex-direction: column;
+    line-height: 10px;
+    margin-left: 1%;
 }
 
 li{
@@ -213,3 +230,7 @@ font-size: 35px;
   color: rgb(0, 0, 0);
 }
 
+
+.textoP{
+  text-align: justify;
+}

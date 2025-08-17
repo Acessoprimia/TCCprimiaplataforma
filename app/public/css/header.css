@@ -1,13 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
 
-body {
-    background-color: white;
-    font-family: 'Poppins', sans-serif;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 10px;
-    
-}
+
 
 header {
     display: flex;
@@ -139,7 +132,5 @@ p {
         align-items: center;
     }
 
-    #title {
-        text-align: left;
-    }
+    
 }

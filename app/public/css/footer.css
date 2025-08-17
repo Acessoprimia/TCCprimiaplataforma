@@ -2,11 +2,11 @@
   background-color: #A398D1;
   color: white;
   padding: 15px 20px;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
+  width: 100vw;   /* ocupa 100% da largura da tela */
+  margin-left: calc(-50vw + 50%); /* "escapa" do max-width */
+  position: static;
 }
+
 
 .site-footer-content {
   display: flex;
@@ -37,6 +37,9 @@
   text-decoration: underline;
 }
 
+
+
+
 /* Ajuste para mobile */
 @media (max-width: 600px) {
   .site-footer-content {
@@ -45,3 +48,4 @@
     gap: 8px;
   }
 }
+

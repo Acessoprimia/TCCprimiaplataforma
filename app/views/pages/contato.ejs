@@ -1,35 +1,37 @@
 
-
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contato</title>
-    <link rel="stylesheet" href="../css/contato.css">
-    <%- include('../partials/header.ejs') %>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contato - Plataforma Primia</title>
+  
+
+    
+  <%- include('../partials/header.ejs') %>
+  <link rel="stylesheet" href="../css/contato.css" />
 </head>
 <body>
-     
 
-        <main class="contato-container">
-        <h1>Fale Conosco</h1>
-        <form action="/enviar-contato" method="POST">
-            <label for="nome">Nome</label>
-            <input type="text" id="nome" name="nome" placeholder="Seu nome" required>
+  <main class="contato-container">
+    <h1 class="contato-titulo">Plataforma Primia</h1>
 
-            <label for="email">E-mail</label>
-            <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
+    <section class="form-container">
+      <h2>Fale Conosco</h2>
+      <form>
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" placeholder="Seu nome">
 
-            <label for="mensagem">Mensagem</label>
-            <textarea id="mensagem" name="mensagem" placeholder="Digite sua mensagem..." rows="5" required></textarea>
+        <label for="email">E-mail</label>
+        <input type="email" id="email" placeholder="seuemail@exemplo.com">
 
-            <button type="submit">Enviar</button>
+        <label for="mensagem">Mensagem</label>
+        <textarea id="mensagem" placeholder="Digite sua mensagem..."></textarea>
 
-        </form>
-    </main>
-
-
+        <button type="submit">Enviar</button>
+      </form>
+    </section>
+  </main>
 
 
 </body>

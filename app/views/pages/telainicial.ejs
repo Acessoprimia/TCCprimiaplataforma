@@ -1,114 +1,93 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="../css/media.css" rel="stylesheet">
     <link href="../css/telainicial.css" rel="stylesheet">
+    <link href="../css/media.css" rel="stylesheet">
     <title>Primia - Plataforma para Perguntas e Respostas</title>
 </head>
-
 <body>
+    <!-- HEADER -->
     <header>
+    <!-- Título desktop -->
     <article id="title">
-        <h1>Plataforma</h1>
-        <h1>Primia</h1>
+        <h1 class="desktop-title">Plataforma</h1>
+        <h1 class="desktop-title">Primia</h1>
+
+        <!-- Logo mobile -->
+       <img src="../image/logo.png.png" alt="Primia Logo" class="mobile-logo" width="90" height="90">
     </article>
 
+    <!-- MENU -->
     <nav role="navigation" id="menuToggle">
-      
         <input type="checkbox" id="hamburger-toggle" />
-     
         <label for="hamburger-toggle" class="hamburger">
             <span></span>
             <span></span>
             <span></span>
         </label>
-
         <ul>
             <a href="/telainicial"><li id="inicio">Início</li></a>
             <a href="/sobre"><li>Sobre</li></a>
             <a href="/contato"><li>Contato</li></a>
-            <a href="/professor" id="iu"><li>Já tem uma conta?</li></a>
+            <a href="/professor" id="iu"><li class="login-highlight">Já tem uma conta?</li></a>
         </ul>
     </nav>
 </header>
 
+    <!-- MAIN: INSCRIÇÃO + IMAGEM -->
     <main>
         <aside>
             <h2><span>Inscreva-se agora</span></h2>
-            <h2 class="primia"> na Primia</h2>
-
-            <p class="textoP">
-                    A Primia é um espaço colaborativo feito para alunos e professores que querem aprender, ensinar e crescer juntos. 
-                Aqui, você pode tirar dúvidas, compartilhar conhecimento e acompanhar o desempenho de forma simples e prática.
+            <h2 class="primia">na Primia</h2>
+            <p>
+                A Primia é um espaço colaborativo feito para alunos e professores que querem aprender, ensinar e crescer juntos. 
+                Aqui, você pode tirar dúvidas, compartilhar conhecimento e acompanhar o desempenho de forma simples e prática. 
                 Junte-se à nossa comunidade e transforme a forma de aprender!
             </p>
             <form>
-                <a href="/logincadastro" class="cadastrese">Cadastre-se</a>
+                <a href="/logincadastro">Inscreva-se</a>
             </form>
         </aside>
 
         <article>
             <img src="../image/roxoestudo.jpg" alt="homem em dúvida">
         </article>
+    </main>
 
-</main>
-
- <br>
-    <br>
-     <br>
-    <br>
-
-        <section id="materias">
+    <!-- MATERIAS - CARROSSEL -->
+    <section id="materias">
         <h2 class="material">Explore as matérias:</h2>
+        <nav class="carrossel">
+            <button class="pass" id="prev">&lt;&lt;</button>
+            <section class="conteudo" id="carrossel">
+                <ul class="lista" id="lista">
+                    <li class="slide">Matemática</li>
+                    <li class="slide">Português</li>
+                    <li class="slide">História</li>
+                    <li class="slide">Inglês</li>
+                    <li class="slide">Filosofia</li>
+                    <li class="slide">Física</li>
+                    <li class="slide">Biologia</li>
+                    <li class="slide">Geografia</li>
+                    <li class="slide">Química</li>
+                </ul>
+            </section>
+            <button class="pass" id="next">&gt;&gt;</button>
+        </nav>
+    </section>
 
-    
-    <br>
-    <br>
-
-       
-  <nav class="carrossel">
-  <button class="pass" id="prev">&lt;&lt;</button>
-
-  <section class="conteudo" id="carrossel">
-    <ul class="lista" id="lista">
-      <a href="/materia1"><li class="slide">Matemática</li></a>
-      <a href="/materia1"><li class="slide">Português</li></a>
-      <a href="/materia1"><li class="slide">História</li></a>
-      <a href="/materia1"><li class="slide">Inglês</li></a>
-      <a href="/materia1"><li class="slide">Filosofia</li></a>
-      <a href="/materia1"><li class="slide">Física</li></a>
-      <a href="/materia1"><li class="slide">Biologia</li></a>
-      <a href="/materia1"><li class="slide">Geografia</li></a>
-      <a href="/materia1"><li class="slide">Química</li></a>
-    </ul>
-  </section>
-
-  <button class="pass" id="next">&gt;&gt;</button>
-</nav>
-
-  <script src="../js/carrossel.js"></script>
-
-        <br>
-        <br>
-        <br>
-        <br>
-  
+    <!-- ACESSO -->
     <section id="acesso">
         <h2 class="areas">Áreas de Acesso</h2>
-        <br>
-                   <br>
         <section class="acesso-container">
             <section class="acesso-card1">
                 <h3>Alunos</h3>
                 <p>Esclareça suas dúvidas e participe das discussões.</p>
-               <a href="/login"><p>Cadastre-se >></p></a>
+                <a href="#"><p>Cadastre-se >></p></a>
             </section>
-           
-
             
             <section class="acesso-card3">
                 <h3>Professor</h3>
@@ -118,14 +97,8 @@
         </section>
     </section>
 
-    <br>
-    <br>
-    <br>
-    <br>
+    <footer></footer>
 
-  <footer> 
-    
+    <script src="../js/carrossel.js"></script>
 </body>
-<%- include('../partials/footer.ejs') %>
-
 </html>

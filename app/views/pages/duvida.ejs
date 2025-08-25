@@ -5,43 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal de Dúvidas</title>
   <link rel="stylesheet" href="../css/duvida.css" />
+  <%- include('../partials/header.ejs') %>
 </head>
 <body>
-  <header>
-    <article id="title">
-      <h1>Plataforma</h1>
-      <h1>Primia</h1>
-    </article>
- 
-    <nav id="menuToggle">
-      <input type="checkbox" id="hamburger-toggle" />
-      <label for="hamburger-toggle" class="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-      </label>
-      <ul>
-        <li><a href="/telainicial">Início</a></li>
-        <li><a href="/sobre">Sobre</a></li>
-        <li><a href="/contato">Contato</a></li>
-      </ul>
-    </nav>
-  </header>
- 
+
+
+
   <main>
     <h2 id="titulo-duvidas">Portal de Dúvidas</h2>
- 
+
     <section id="duvida">
       <details open>
         <summary><span>Qual é a diferença entre “mau” e “mal”?</span></summary>
         <p>"Mau" é adjetivo (oposto de bom). "Mal" pode ser advérbio (oposto de bem) ou substantivo.</p>
       </details>
- 
+
       <details open>
         <summary><span>Normalmente, quantos litros de sangue uma pessoa tem?</span></summary>
         <p>O corpo humano adulto possui entre 4,5 e 6 litros de sangue, em média.</p>
       </details>
- 
+
       <details>
         <summary>
           <span>Qual a maior província brasileira?</span>
@@ -55,7 +38,7 @@
         </section>
       </details>
     </section>
- 
+
     <form>
       <input type="text" id="duvida-input" name="duvida" placeholder="Digite sua dúvida" />
       <button type="button"><img src="../image/envio.png.png" alt="Enviar" width="20" height="20" /></button>
@@ -64,5 +47,4 @@
     </form>
   </main>
 </body>
-<%- include('../partials/footer.ejs') %>
 </html>

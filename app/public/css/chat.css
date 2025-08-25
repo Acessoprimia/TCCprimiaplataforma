@@ -1,20 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   margin: 0;
   padding: 0;
-  background-color: #ffffff;
+  background-color: #f3f0fc;
   color: #000000;
   font-family: 'Poppins', sans-serif;
 }
 
-/* HEADER MOBILE */
+/* HEADER */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px;
   flex-wrap: wrap;
+  background: #fff;
 }
 
 #title {
@@ -38,22 +45,10 @@ a:hover {
   transition: 0.3s all;
 }
 
-#iu {
-  border: 2px solid #A398D1;
-  padding: 8px 12px;
-  border-radius: 15px;
-}
-
-#iu:hover {
-  background-color: #A398D1;
-  color: white;
-}
-
 h1 {
   font-weight: 200;
 }
 
-/* MENU HAMBÚRGUER */
 #hamburger-toggle {
   display: none;
 }
@@ -72,6 +67,7 @@ h1 {
   height: 3px;
   background: #000;
   border-radius: 3px;
+  transition: all 0.3s ease;
 }
 
 #hamburger-toggle:checked + .hamburger span:nth-child(1) {
@@ -93,60 +89,27 @@ h1 {
   gap: 15px;
 }
 
+#hamburger-toggle:checked ~ ul {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  background: #fff;
+  z-index: 10000; /* ✅ garante que o menu fique por cima */
+}
+
 #menuToggle ul a {
   display: block;
   color: #000;
   font-size: 18px;
 }
 
-nav ul {
-  list-style: none;
-  position: absolute;
-  top: 60px;
-  right: 0;
-  background: #fff;
-  padding: 20px;
-  margin: 0;
-  display: none;
-  flex-direction: column;
-  gap: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-nav ul li a {
-  text-decoration: none;
-  color: black;
-}
-
-#hamburger-toggle:checked ~ ul {
-  display: flex;
-}
-
-h2 {
-  font-size: 22px;
-  color: #A398D1;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.mais{
-margin-left: 25px;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #f3f0fc;
-}
-
+/* CHAT LAYOUT */
 .chat-wrapper {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 80px);
   max-width: 1200px;
   margin: auto;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
@@ -164,6 +127,8 @@ body {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  position: relative; /* ou fixed, se já usa */
+  z-index: 9999; /* bem alto para sobrepor */
 }
 
 .sidebar h2 {
@@ -215,13 +180,25 @@ body {
   flex-direction: column;
   background-color: #f9f9ff;
   position: relative;
+  z-index: 1; /* menor que o do menu */
 }
 
 .chat-header {
-  padding: 20px;
+  display: flex;
+  align-items: center;
+  padding: 15px;
   font-weight: bold;
   border-bottom: 1px solid #e0e0e0;
   background-color: #fff;
+}
+
+.back-btn {
+  display: none; /* desktop */
+  background: none;
+  border: none;
+  font-size: 18px;
+  margin-right: 10px;
+  cursor: pointer;
 }
 
 .messages {
@@ -281,21 +258,44 @@ body {
 
 /* RESPONSIVO */
 @media (max-width: 768px) {
+
+   .desktop-title {
+    display: none;
+}
+
+.mobile-logo {
+    display: block;
+    max-height: 50px; /* Ajuste conforme necessário */
+}
+
   .chat-wrapper {
-    flex-direction: column;
+    flex-direction: row;
   }
 
   .sidebar {
     width: 100%;
-    border-right: none;
-    border-bottom: 1px solid #e0e0e0;
   }
 
   .chat-area {
     width: 100%;
+    display: none; /* escondido no mobile */
+  }
+
+  .chat-area.active {
+    display: flex; /* aparece quando ativo */
+  }
+
+  .back-btn {
+    display: inline; /* aparece só no mobile */
   }
 
   .message {
     max-width: 80%;
   }
+}
+
+i{
+  font-size: 2rem;
+  color: #000;
+  margin-bottom: 10px;
 }

@@ -12,10 +12,12 @@ main {
     display: flex;
     justify-content: center;
     align-items: flex-start; /* agora alinha pelo topo */
-    padding-top: 80px; /* espaço do topo */
+    /* espaço do topo */ padding-top: 160px;
     background-color: white;
     min-height: calc(100vh - 100px);
 }
+
+
 
 .login-container {
     background-color: #C9BCE3;
@@ -84,3 +86,6 @@ main {
 span{
   color: white;
 }
+
+
+

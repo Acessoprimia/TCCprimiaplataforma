@@ -16,10 +16,21 @@ header {
   align-items: center;
   margin: 20px;
 }
+
 #title{
 flex-direction: column;
 line-height: 10px;
 }
+
+ .desktop-title {
+    display: none;
+}
+
+.mobile-logo {
+    display: block;
+    max-height: 50px; /* Ajuste conforme necessário */
+}
+ 
 
 li{
 display: inline-block;
@@ -49,78 +60,61 @@ color: white;
 h1{
 font-weight: 200;
 }
- 
-/* MENU HAMBÚRGUER */
-#hamburger-toggle{
-display: none;
+#hamburger-toggle {
+  display: none;
 }
 
 .hamburger {
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 28px;
-    height: 20px;
-    cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 20px;
+  cursor: pointer;
 }
 
 .hamburger span {
-    display: block;
-    height: 3px;
-    background: #000;
-    border-radius: 3px;
+  display: block;
+  height: 3px;
+  background: #000;
+  border-radius: 3px;
+  transition: all 0.3s ease;
 }
 
 #hamburger-toggle:checked + .hamburger span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+  transform: rotate(45deg) translate(5px, 5px);
 }
 #hamburger-toggle:checked + .hamburger span:nth-child(2) {
-    opacity: 0;
+  opacity: 0;
 }
 #hamburger-toggle:checked + .hamburger span:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
+  transform: rotate(-45deg) translate(6px, -6px);
 }
 
- .hamburger {
-        display: flex;
-    }
+#menuToggle ul {
+  display: none;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 10px;
+  gap: 15px;
+}
 
-    #menuToggle ul {
-        display: none;
-        background: #fff;
-        border-radius: 10px;
-        padding: 20px;
-        margin-top: 10px;
-        gap: 15px;
-    }
-
-    #menuToggle ul a {
-        display: block;
-        color: #000;
-        font-size: 18px;
-    }
-
-nav ul {
-  list-style: none;
+#hamburger-toggle:checked ~ ul {
+  display: flex;
+  flex-direction: column;
   position: absolute;
   top: 60px;
   right: 0;
-  background: #fff;
-  padding: 20px;
-  margin: 0;
-  display: none;
-  flex-direction: column;
-  gap: 10px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  background: #fff;
+  z-index: 10000; /* ✅ garante que o menu fique por cima */
 }
- 
-nav ul li a {
-  text-decoration: none;
-  color: black;
-}
- 
-#hamburger-toggle:checked ~ ul {
-  display: flex;
+
+#menuToggle ul a {
+  display: block;
+  color: #000;
+  font-size: 18px;
 }
  
 /* CONTEÚDO */
@@ -228,9 +222,29 @@ form button {
   header {
     margin: 0 70px;
   }
+
+  .desktop-title {
+    display: block;
+}
+
+.mobile-logo {
+    display: none;
+    max-height: 50px; /* Ajuste conforme necessário */
+}
  
   .hamburger {
     display: none;
+  }
+
+  #menuToggle ul {
+    position: static;
+    display: flex !important;
+    flex-direction: row;
+    gap: 20px;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
   }
  
   nav ul {

@@ -1,126 +1,148 @@
 @media (max-width: 1024px) {
-    
-body{
-font-family: 'Poppins', sans-serif;
- max-width: 100%;
+    body {
+        max-width: 100%;
+    }
 
-}
+    header {
+        text-align: left;
+    }
 
-header{
-   
-    text-align: left;      
-}
-
-main{
-    flex-direction: column;
-    justify-content: center;}
+    main {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: justify; /* texto justificado */
+    }
 
     aside h2 {
         font-size: 2.2rem;
         line-height: 1.3;
+        margin-bottom: 8px; /* espaçamento pequeno entre título e texto */
     }
-    .material, .areas {
+
+    aside p {
+        text-align: justify; /* garante justificado no parágrafo */
+    }
+
+    .material,
+    .areas {
         font-size: 2rem;
         line-height: 1.3;
     }
 
-form{
+    form {
+        margin: 0 auto;
+    }
 
-    margin: 0 auto;
+   #hamburger-toggle {
+  display: none;
 }
 
-
-#hamburger-toggle {
-    display: none;
-}
-
-
+/* Ícone hambúrguer */
 .hamburger {
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 28px;
-    height: 20px;
-    cursor: pointer;
+  display: none; /* só aparece em mobile */
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 20px;
+  cursor: pointer;
 }
 
 .hamburger span {
-    display: block;
-    height: 3px;
-    background: #000;
-    border-radius: 3px;
+  display: block;
+  height: 3px;
+  background: #000;
+  border-radius: 3px;
+  transition: all 0.3s ease;
 }
 
+/* Animação X quando aberto */
 #hamburger-toggle:checked + .hamburger span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
+  transform: rotate(45deg) translate(5px, 5px);
 }
+
 #hamburger-toggle:checked + .hamburger span:nth-child(2) {
-    opacity: 0;
+  opacity: 0;
 }
+
 #hamburger-toggle:checked + .hamburger span:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
+  transform: rotate(-45deg) translate(6px, -6px);
 }
 
+/* Menu dropdown mobile */
+#menuToggle ul {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 10px;
+  gap: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  z-index: 10000; /* fica acima de tudo */
+}
 
+#menuToggle ul a {
+  display: block;
+  color: #000;
+  font-size: 18px;
+  text-decoration: none;
+}
+
+#menuToggle ul a:hover {
+  color: #A398D1;
+  transition: 0.3s all;
+}
+
+/* Mostra menu quando checkbox marcado */
 #hamburger-toggle:checked ~ ul {
+  display: flex;
+}
+
+/* Remove destaque de "Já tem uma conta?" no mobile */
+#menuToggle ul .login-highlight {
+  background: none !important;
+  padding: 0 !important;
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .hamburger {
+    display: none;
+  }
+
+  #menuToggle ul {
+    position: static;
+    display: flex !important;
+    flex-direction: row;
+    gap: 20px;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    z-index: auto;
+  }
+
+  /* Restaurar destaque da área login no desktop */
+  #menuToggle ul .login-highlight {
+    background: #f0f0f0; /* ou cor desejada */
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .hamburger {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+  }
 
-
-
-    main {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
     }
 
-    main aside {
-        max-width: 90%;
-    }
-
-    img {
-        max-width: 90%;
-        height: auto;
-    }
-
-    .acesso-container {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .acesso-card1,
-    .acesso-card2,
-    .acesso-card3 {
-        width: 100%;
-        max-width: 350px;
-    }
-}
-
-
-@media (max-width: 768px) {
-    
-    .hamburger {
-        display: flex;
-    }
-
-    #menuToggle ul {
-        display: none;
-        background: #fff;
-        border-radius: 10px;
-        padding: 20px;
-        margin-top: 10px;
-        gap: 15px;
-    }
-
-    #menuToggle ul a {
-        display: block;
-        color: #000;
-        font-size: 18px;
-    }
-
-    
     header {
         flex-direction: row;
         justify-content: space-between;
@@ -131,10 +153,20 @@ form{
         text-align: left;
     }
 
-   
+    .desktop-title {
+    display: none;
+  }
+
+  .mobile-logo {
+    display: block;
+    width: 150px; /* ajuste o tamanho desejado */
+    height: auto;
+    margin: 0 auto; /* centraliza a logo */
+  }
+
     main {
         flex-direction: column;
-        text-align: center;
+        text-align: justify; /* mantém justificado */
     }
 
     main aside {
@@ -150,7 +182,6 @@ form{
         padding: 12px 20px;
     }
 
-   
     .carrossel {
         flex-direction: column;
     }
@@ -160,69 +191,109 @@ form{
     }
 
     .acesso-container {
-        flex-direction: column;
+        flex-wrap: wrap;
+        align-items: center;
         gap: 20px;
     }
 
     .acesso-card1,
-    .acesso-card2,
     .acesso-card3 {
         width: 90%;
         height: auto;
     }
 
-     aside h2 {
+    aside h2 {
         font-size: 1.8rem;
         line-height: 1.1;
         text-align: left;
         padding-left: 10px;
         margin-top: 0;
-        margin-bottom: 0;
+        margin-bottom: 8px; /* mantém espaçamento pequeno */
     }
-    .material, .areas {
+
+    .material,
+    .areas {
         font-size: 1.5rem;
         line-height: 1.4;
         text-align: center;
         margin-top: 15px;
     }
+
+    main article {
+        margin-top: 15px; /* imagem logo abaixo do texto */
+    }
+
+    img {
+        max-width: 95%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
 }
 
 @media (max-width: 480px) {
-    
-    main article img {
-        display: none;
-    }
 
-      aside h2 {
+    title {
+    font-size: 60px;
+    }
+    
+    aside h2 {
         font-size: 2.9rem;
         line-height: 1.4;
         word-break: break-word;
         white-space: normal;
+        margin-bottom: 8px;
     }
-    .material, .areas {
-        font-size: 1.2rem;
+
+    .material,
+    .areas {
+        font-size: 50px;
         line-height: 1.4;
         word-break: break-word;
         white-space: normal;
     }
 
+    .acesso-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .acesso-card1,
+    .acesso-card3 {
+        width: 90%;
+        max-width: 350px;
+        height: auto;
+        padding: 20px;
+    }
+
     p {
         max-width: 100%;
-        text-align: left;
+        text-align: justify;
     }
 
-
-    .slide {
-        font-size: 18px;
-        padding: 8px 12px;
+    main article {
+        margin-top: 0px; /* mantém a imagem abaixo do texto */
     }
 
-    .pass {
-        font-size: 16px;
-        padding: 6px 10px;
+    img {
+        max-width: 95%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
     }
+}
 
-    footer {
-        font-size: 12px;
-    }
+.slide {
+    font-size: 18px;
+    padding: 8px 12px;
+}
+
+.pass {
+    font-size: 16px;
+    padding: 6px 10px;
+}
+
+footer {
+    font-size: 12px;
 }

@@ -7,7 +7,7 @@ body {
   color: #000000;
   font-family: 'Poppins', sans-serif;
 }
- 
+
 /* HEADER MOBILE */
 header {
  display: flex;
@@ -15,6 +15,7 @@ header {
   justify-content: space-between;
   align-items: center;
   margin: 20px;
+  
 }
 
 #title{
@@ -114,7 +115,7 @@ font-weight: 200;
 #menuToggle ul a {
   display: block;
   color: #000;
-  font-size: 18px;
+  font-size: 16px;
 }
  
 /* CONTEÚDO */

@@ -48,7 +48,7 @@
                 Junte-se à nossa comunidade e transforme a forma de aprender!
             </p>
             <form>
-                <a href="/logincadastro">Inscreva-se</a>
+                <a class="inscreva" href="/logincadastro">Inscreva-se</a>
             </form>
         </aside>
 
@@ -64,15 +64,15 @@
             <button class="pass" id="prev">&lt;&lt;</button>
             <section class="conteudo" id="carrossel">
                 <ul class="lista" id="lista">
-                    <li class="slide">Matemática</li>
-                    <li class="slide">Português</li>
-                    <li class="slide">História</li>
-                    <li class="slide">Inglês</li>
-                    <li class="slide">Filosofia</li>
-                    <li class="slide">Física</li>
-                    <li class="slide">Biologia</li>
-                    <li class="slide">Geografia</li>
-                    <li class="slide">Química</li>
+                 <a href="/materia1"> <li class="slide">Matemática</li></a>  
+                  <a href="/materia1"><li class="slide">Historia</li></a>  
+                   <a href="/materia1"><li class="slide">Sociologia</li></a> 
+                  <a href="/materia1"><li class="slide">Inglês</li></a>  
+                    <a href="/materia1"><li class="slide">Biologia</li></a>  
+                  <a href="/materia1"><li class="slide">Física</li></a>  
+                    <a href="/materia1"><li class="slide">Geografia</li></a>  
+                  <a href="/materia1"><li class="slide">Química</li></a>  
+                 <a href="/materia1"><li class="slide">Português</li></a>   
                 </ul>
             </section>
             <button class="pass" id="next">&gt;&gt;</button>
@@ -86,7 +86,7 @@
             <section class="acesso-card1">
                 <h3>Alunos</h3>
                 <p>Esclareça suas dúvidas e participe das discussões.</p>
-                <a href="#"><p>Cadastre-se >></p></a>
+                <a href="/login"><p>Cadastre-se >></p></a>
             </section>
             
             <section class="acesso-card3">
@@ -101,4 +101,5 @@
 
     <script src="../js/carrossel.js"></script>
 </body>
+<%- include('../partials/footer.ejs') %>
 </html>

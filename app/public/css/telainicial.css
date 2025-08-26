@@ -40,6 +40,19 @@ a {
     color: black;
 }
 
+.inscreva{
+    color: #ffffff;
+    text-decoration: none;
+    padding: 10px;
+    background-color: #A398D1;
+    border-radius: 7px;
+     box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, 0.3);
+}
+.inscreva:hover{
+    color: rgb(255, 255, 255);
+    background-color: #8b83ac;
+}
+
 a:hover {
     color: #A398D1;
     transition: 0.3s all;
@@ -152,7 +165,7 @@ aside p {
     justify-content: center;
     border: 3px outset #A398D1;
     border-radius: 20px;
-    background-color: #fffef6;
+    background-color: #fcf9f9;
     padding: 30px;
     gap: 10px;
     overflow: hidden;

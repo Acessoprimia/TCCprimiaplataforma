@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
+body {
+    background-color: white;
+    color: rgb(0, 0, 0);
+    font-family: 'Poppins', sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+
+
+
+.login-container {
+  max-width: 280px;
+  margin: 60px auto 40px;
+  padding: 25px 30px;
+  background-color: #fafafa;
+  border: 1.5px solid #A398D1;
+  border-radius: 16px;
+  box-shadow: 0 0 15px rgba(163,152,209,0.25);
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 90px;
+}
+
+.login-container {
+  padding: 15px 30px 25px 30px; /* menos padding-top */
+}
+
+.login-container h2 {
+  margin-top: 0; /* tira margem padrão de cima */
+  margin-bottom: 30px;
+}
+
+.login-container .confirmar {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #222;
+  font-size: 14px;
+  
+}
+
+label{
+  color: #7a6dc9;
+  margin-bottom: 8px;
+  display: block;
+
+}
+
+
+.login-container input[type="text"],
+.login-container input[type="email"],
+.login-container input[type="password"] {
+  width: 100%;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  border: 1.7px solid #A398D1;
+  border-radius: 12px;
+  font-size: 15px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+  
+ 
+  
+}
+
+.login-container input[type="text"]:focus,
+.login-container input[type="email"]:focus,
+.login-container input[type="password"]:focus {
+  outline: none;
+  border-color: #7a6dc9;
+}
+
+.btn-link {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  background-color: #A398D1;
+  color: white;
+  padding: 3px 0;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 300;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+.btn-link:hover {
+  background-color: #7a6dc9;
+}
+
+@media (max-width: 500px) {
+  .login-container {
+    margin: 40px 20px;
+    padding: 20px;
+  }
+}
+
+.erro {
+  border: 2px solid red;
+}
+span.msgErro {
+  color: red;
+  font-size: 0.9em;
+  margin-left: 10px;
+}
+
+button{
+  color: white;
+  text-decoration: none;
+  background-color: #A398D1;
+  border-radius: 8px;
+  border: none;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+button:hover{
+  background-color: #7a6dc9;
+}

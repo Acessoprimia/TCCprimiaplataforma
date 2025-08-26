@@ -22,10 +22,6 @@ a{
 
 
 
-.menu {
-  font-size: 1.5em;
-  cursor: pointer;
-}
 
 .curso-info {
   text-align: center;
@@ -77,4 +73,5 @@ a{
   font-size: 2em;
   margin-bottom: 10px;
 }
+
 

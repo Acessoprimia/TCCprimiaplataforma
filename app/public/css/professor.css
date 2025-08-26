@@ -20,6 +20,8 @@ body {
   border-radius: 16px;
   box-shadow: 0 0 15px rgba(163,152,209,0.25);
   font-family: 'Poppins', sans-serif;
+  margin-top: 160px;
+  
 }
 
 .login-container {
@@ -93,7 +95,7 @@ label{
 
 @media (max-width: 500px) {
   .login-container {
-    margin: 40px 20px;
+    margin: 150px 50px;
     padding: 20px;
   }
 }

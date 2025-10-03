@@ -1,30 +1,60 @@
 <link rel="stylesheet" href="../css/hdeslogado.css">
-
-<header>
-  <article id="title">
-
     
-   <a class="h11" href="/telainicial">Plataforma </a>
-    <a class="h11" href="/telainicial">Primia</a>
 
+  <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Header Primia</title>
+  <link rel="stylesheet" href="header-semantico.css">
+</head>
+<body>
 
-  </article>
+  <!-- Overlay escuro -->
+  <aside class="overlay" id="overlay" aria-hidden="true"></aside>
 
+  <!-- Header -->
+  <header class="site-header">
+    <section class="header-inner">
+      <!-- Logo -->
+      <a href="/" class="logo">
+        <img src="../image/logo.png.png" alt="Logo Primia" />
+      </a>
 
-  <nav role="navigation" id="menuToggle">
-    <input type="checkbox" id="hamburger-toggle" />
-    <label for="hamburger-toggle" class="hamburger">
-      <span></span>
-      <span></span>
-      <span></span>
-    </label>
+      <!-- Menu Desktop -->
+      <nav class="nav-desktop" aria-label="Menu principal desktop">
+        <ul>
+          <li><a href="/telainicial">Início</a></li>
+          <li><a href="/sobre">Sobre</a></li>
+          <li><a href="/contato">Contato</a></li>
+        </ul>
+      </nav>
 
-    <ul class="ul1">
-      <a class="a1" href="/telainicial"><li id="inicio">Início</li></a>
-      <a class="a1" href="/sobre"><li>Sobre</li></a>
-      <a class="a1" href="/contato"><li>Contato</li></a>
-      
+      <!-- Botão login desktop -->
+      <a href="/professor" class="btn-login">Já tem uma conta?</a>
 
+      <!-- Botão hamburguer -->
+      <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </section>
+  </header>
+
+  <!-- Menu Mobile -->
+  <nav class="nav-mobile" id="navMobile" aria-label="Menu principal mobile">
+    <ul>
+      <li><a href="/telainicial">Início</a></li>
+      <li><a href="/sobre">Sobre</a></li>
+      <li><a href="/contato">Contato</a></li>
+      <li><a href="/professor" class="mobile-login-btn">Já tem uma conta?</a></li>
     </ul>
   </nav>
-</header>
+
+  <!-- JavaScript -->
+  <script src="../js/hamburguer.js"></script>
+
+</body>
+</html>

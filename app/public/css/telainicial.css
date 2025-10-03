@@ -1,4 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
     background-color: white;
@@ -6,167 +12,234 @@ body {
     font-family: 'Poppins', sans-serif;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 10px;
+    padding: 20px;
 }
 
-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+/* AJUSTES DO MENU HAMBURGER */
+.hamburger span {
+    background-color: #A398D1 !important;
 }
 
-#title {
-    flex-direction: column;
-    line-height: 10px;
+nav, #menuToggle {
+    margin-right: 20px;
 }
 
-.desktop-title {
-    display: block;
-}
-
-.mobile-logo {
-    display: none;
-    max-height: 50px; /* Ajuste conforme necessário */
-}
-
-
-li {
-    display: inline-block;
-    margin: 20px;
-}
-
-a {
-    color: black;
-}
-
-.inscreva{
-    color: #ffffff;
-    text-decoration: none;
-    padding: 10px;
-    background-color: #A398D1;
-    border-radius: 7px;
-     box-shadow: 5px 5px 10px 1px rgba(0, 0, 0, 0.3);
-}
-.inscreva:hover{
-    color: rgb(255, 255, 255);
-    background-color: #8b83ac;
-}
-
-a:hover {
-    color: #A398D1;
-    transition: 0.3s all;
-}
-
-#iu {
-    border: 2px solid #A398D1;
-    padding: 10px;
-    border-radius: 15px;
-}
-
-#iu:hover {
-    background-color: #A398D1;
-    color: white;
-}
-
-h1 {
-    font-weight: 200;
-}
-
+/* MAIN SECTION */
 main {
     display: flex;
     flex-direction: row;
-    margin-top: 50px;
+    align-items: center;
+    gap: 40px;
+    margin: 80px 0 60px 0;
+    padding: 20px;
+}
+
+main aside {
+    flex: 1;
+}
+
+main article {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+}
+
+main article img {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(163, 152, 209, 0.3);
 }
 
 h2 {
-    font-size: 56px;
-    line-height: 10px;
-    font-family: 'Poppins', sans-serif;
-    color: black;
+    font-size: 48px;
+    line-height: 1.2;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.primia {
+    color: #A398D1;
+    margin-bottom: 30px;
+}
+
+main p {
+    line-height: 1.8;
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 30px;
+    text-align: justify;
 }
 
 span {
     color: #A398D1;
 }
 
-p {
-    line-height: 20px;
-    max-width: 500px;
-    font-family: 'Poppins';
-}
-
-img {
-    width: 580px;
-}
-
-form {
-    display: flex;
-    width: 70%;
-}
-
-input {
-    margin-top: 20px;
-    height: 50px;
-    padding: 15px;
-    border-radius: 20px;
-    border: none;
-    font-size: 15px;
-    width: 50%;
+.inscreva {
+    display: inline-block;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 15px 40px;
     background-color: #A398D1;
-    color: white;
-    font-weight: bold;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(163, 152, 209, 0.4);
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-input:hover {
+.inscreva:hover {
+    background-color: #8b83ac;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(163, 152, 209, 0.5);
+}
+
+/* JORNADA COLABORATIVA */
+#jornada {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.jornada-card {
+    background: linear-gradient(135deg, #A398D1 0%, #9B8BC9 100%);
+    border-radius: 30px;
+    padding: 50px 40px;
+    color: white;
+    max-width: 600px;
+    margin: 0 auto 30px;
+    box-shadow: 0 10px 40px rgba(163, 152, 209, 0.3);
+}
+
+.jornada-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    line-height: 1.4;
+}
+
+.jornada-text {
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 35px;
+    color: rgba(255, 255, 255, 0.95);
+    text-align: justify;
+}
+
+.jornada-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.jornada-btn {
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.jornada-btn:hover {
+    background-color: white;
+    color: #A398D1;
+    transform: translateY(-2px);
+}
+
+.carrossel-pontos {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.ponto {
+    width: 50px;
+    height: 8px;
+    background-color: #D1C9E8;
+    border-radius: 10px;
+    transition: all 0.3s ease;
     cursor: pointer;
 }
 
-#inicio {
-    text-decoration: underline #A398D1;
-    text-decoration-thickness: 1px;
+.ponto.active {
+    background-color: #A398D1;
+    width: 70px;
 }
 
-#hamburger-toggle {
-    display: none;
+.ponto:hover {
+    background-color: #B5A9D8;
 }
 
-
-main aside {
-    padding: 1% 20px;
-    margin-bottom: 80px;
-}
-
-aside h2 {
-margin-bottom: 8px;
-}
-
-aside p {
-    margin-top: 60px;
-    margin-bottom: 30px;
-    flex-direction: column;
-    justify-content: center;
+/* RECURSOS PARA ESCOLA */
+#recursos {
+    padding: 80px 20px;
+    display: flex;
     align-items: center;
-    text-align: justify; /* texto justificado */
+    gap: 50px;
 }
 
+.recursos-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.recursos-image img {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.recursos-content {
+    flex: 1;
+}
+
+.recursos-title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    line-height: 1.3;
+    color: #A398D1;
+}
+
+.recursos-title .destaque {
+    color: #333;
+}
+
+.recursos-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #555;
+    text-align: justify;
+}
+
+/* MATÉRIAS SECTION */
 #materias {
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding: 80px 20px;
+    text-align: center;
 }
 
-#materias h2 {
-    margin-bottom: 80px;
+.material {
+    font-size: 40px;
+    margin-bottom: 50px;
+    color: #333;
 }
 
 .carrossel {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 3px outset #A398D1;
+    border: 3px solid #A398D1;
     border-radius: 20px;
     background-color: #fcf9f9;
-    padding: 30px;
+    padding: 40px 20px;
     gap: 10px;
     overflow: hidden;
     position: relative;
@@ -174,11 +247,11 @@ aside p {
 }
 
 .pass {
-    font-size: 20px;
-    padding: 8px 12px;
+    font-size: 24px;
+    padding: 10px 15px;
     border: 2px solid #8b83ac;
     color: #8b83ac;
-    background-color: transparent;
+    background-color: white;
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -188,12 +261,12 @@ aside p {
     z-index: 10;
 }
 
-#prev {
-    left: 10px;
+#prev { 
+    left: 10px; 
 }
 
-#next {
-    right: 10px;
+#next { 
+    right: 10px; 
 }
 
 .pass:hover {
@@ -208,67 +281,193 @@ aside p {
 
 .lista {
     display: flex;
-    gap: 60px;
+    gap: 30px;
     list-style: none;
     padding: 0;
     margin: 0;
-    transition: all 0.3s ease-in-out; /* mais rápido */
+    transition: transform 0.4s ease-in-out;
 }
 
 .slide {
     flex: 0 0 auto;
-    font-size: 24px;
+    font-size: 20px;
     background-color: #eceafd;
     color: #4a4574;
-    padding: 15px 25px;
+    padding: 15px 30px;
     border-radius: 15px;
     white-space: nowrap;
     border: 1px solid #d1cde1;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
+.slide:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(163, 152, 209, 0.3);
+}
+
+.slide a {
+    color: #4a4574;
+    text-decoration: none;
+}
+
+/* ÁREAS DE ACESSO */
 #acesso {
-    padding-top: 60px;
-    padding-bottom: 80px;
-}
-
-#acesso h2 {
-    margin-bottom: 80px;
-}
-
-.material, .areas {
+    padding: 80px 20px;
     text-align: center;
-    font-size: 45px;
+}
+
+.areas {
+    font-size: 40px;
+    margin-bottom: 60px;
+    color: #333;
 }
 
 .acesso-container {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 40px;
-    margin: 40px 0;
+    flex-wrap: wrap;
 }
 
 .acesso-card1, .acesso-card3 {
-    width: 450px;
-    height: 300px;
+    flex: 1;
+    min-width: 300px;
+    max-width: 450px;
     border: 3px solid #A398D1;
-    padding: 25px;
+    padding: 40px 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     text-align: center;
     border-radius: 20px;
-    box-shadow: 2px 2px 15px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    background-color: white;
 }
 
 .acesso-card1:hover, .acesso-card3:hover {
-    transform: translateY(-5px);
-    box-shadow: 3px 5px 20px rgba(0,0,0,0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(163, 152, 209, 0.3);
 }
 
 h3 {
-    font-size: 35px;
+    font-size: 32px;
+    color: #A398D1;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.acesso-card1 p, .acesso-card3 p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.acesso-card1 a p, .acesso-card3 a p {
+    color: #A398D1;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.acesso-card1 a:hover p, .acesso-card3 a:hover p {
+    color: #8b83ac;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+    main {
+        flex-direction: column-reverse;
+        margin: 30px 0;
+    }
+
+    main article img {
+        max-width: 100%;
+    }
+
+    h2 {
+        font-size: 36px;
+    }
+
+    .jornada-card {
+        padding: 40px 25px;
+    }
+
+    .jornada-title {
+        font-size: 24px;
+    }
+
+    .jornada-text {
+        font-size: 14px;
+    }
+
+    #recursos {
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    .recursos-title {
+        font-size: 28px;
+    }
+
+    .material, .areas {
+        font-size: 32px;
+    }
+
+    .carrossel {
+        padding: 30px 10px;
+    }
+
+    .conteudo {
+        width: 70%;
+    }
+
+    .acesso-container {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .acesso-card1, .acesso-card3 {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 28px;
+    }
+
+    .jornada-title {
+        font-size: 20px;
+    }
+
+    .jornada-btn {
+        font-size: 14px;
+        padding: 12px 25px;
+    }
+
+    .recursos-title {
+        font-size: 22px;
+    }
+
+    .material, .areas {
+        font-size: 24px;
+    }
+
+    .slide {
+        font-size: 16px;
+        padding: 12px 20px;
+    }
+
+    h3 {
+        font-size: 26px;
+    }
 }

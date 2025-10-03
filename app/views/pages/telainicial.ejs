@@ -5,38 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../css/telainicial.css" rel="stylesheet">
+    <%- include('../partials/hdeslogado.ejs') %>
     <link href="../css/media.css" rel="stylesheet">
     <title>Primia - Plataforma para Perguntas e Respostas</title>
 </head>
 <body>
-    <!-- HEADER -->
-    <header>
-    <!-- Título desktop -->
-    <article id="title">
-        <h1 class="desktop-title">Plataforma</h1>
-        <h1 class="desktop-title">Primia</h1>
-
-        <!-- Logo mobile -->
-       <img src="../image/logo.png.png" alt="Primia Logo" class="mobile-logo" width="90" height="90">
-    </article>
-
-    <!-- MENU -->
-    <nav role="navigation" id="menuToggle">
-        <input type="checkbox" id="hamburger-toggle" />
-        <label for="hamburger-toggle" class="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </label>
-        <ul>
-            <a href="/telainicial"><li id="inicio">Início</li></a>
-            <a href="/sobre"><li>Sobre</li></a>
-            <a href="/contato"><li>Contato</li></a>
-            <a href="/professor" id="iu"><li class="login-highlight">Já tem uma conta?</li></a>
-        </ul>
-    </nav>
-</header>
-
     <!-- MAIN: INSCRIÇÃO + IMAGEM -->
     <main>
         <aside>
@@ -57,6 +30,47 @@
         </article>
     </main>
 
+    <!-- JORNADA COLABORATIVA -->
+    <section id="jornada">
+        <div class="jornada-card">
+            <h2 class="jornada-title">Uma jornada de aprendizagem colaborativa...</h2>
+            <p class="jornada-text">
+                Valorizar cada estudante como único(a) foi o que nos permitiu desenvolver uma 
+                solução completa e que promove a personalização do processo de aprendizado 
+                em cada segmento de ensino.
+            </p>
+            <div class="jornada-buttons">
+                <button class="jornada-btn">Dúvidas</button>
+                <button class="jornada-btn">Interação</button>
+                <button class="jornada-btn">Perfis</button>
+            </div>
+        </div>
+        
+        <div class="carrossel-pontos">
+            <span class="ponto active"></span>
+            <span class="ponto"></span>
+            <span class="ponto"></span>
+            <span class="ponto"></span>
+            <span class="ponto"></span>
+        </div>
+    </section>
+
+    <!-- RECURSOS PARA ESCOLA -->
+    <section id="recursos">
+        <div class="recursos-image">
+            <img src="../image/escolab.png" alt="Estudantes em sala de aula">
+        </div>
+        <div class="recursos-content">
+            <h2 class="recursos-title">E ainda os melhores <span class="destaque">recursos para sua escola brilhar!</span></h2>
+            <p class="recursos-text">
+                O Brilhando Junto é um programa de ações e conteúdos que tem como 
+                finalidade apoiar, de forma estratégica, pedagógica e afetiva, todas as 
+                escolas parceiras em suas jornadas de excelência. Trabalhamos a formação, 
+                a retenção e captação de novos alunos de forma muito mais!
+            </p>
+        </div>
+    </section>
+
     <!-- MATERIAS - CARROSSEL -->
     <section id="materias">
         <h2 class="material">Explore as matérias:</h2>
@@ -64,15 +78,15 @@
             <button class="pass" id="prev">&lt;&lt;</button>
             <section class="conteudo" id="carrossel">
                 <ul class="lista" id="lista">
-                 <a href="/materia1"> <li class="slide">Matemática</li></a>  
-                  <a href="/materia1"><li class="slide">Historia</li></a>  
-                   <a href="/materia1"><li class="slide">Sociologia</li></a> 
-                  <a href="/materia1"><li class="slide">Inglês</li></a>  
-                    <a href="/materia1"><li class="slide">Biologia</li></a>  
-                  <a href="/materia1"><li class="slide">Física</li></a>  
-                    <a href="/materia1"><li class="slide">Geografia</li></a>  
-                  <a href="/materia1"><li class="slide">Química</li></a>  
-                 <a href="/materia1"><li class="slide">Português</li></a>   
+                    <li class="slide"><a href="/materia1">Matemática</a></li>
+                    <li class="slide"><a href="/materia1">História</a></li>
+                    <li class="slide"><a href="/materia1">Sociologia</a></li>
+                    <li class="slide"><a href="/materia1">Inglês</a></li>
+                    <li class="slide"><a href="/materia1">Biologia</a></li>
+                    <li class="slide"><a href="/materia1">Física</a></li>
+                    <li class="slide"><a href="/materia1">Geografia</a></li>
+                    <li class="slide"><a href="/materia1">Química</a></li>
+                    <li class="slide"><a href="/materia1">Português</a></li>
                 </ul>
             </section>
             <button class="pass" id="next">&gt;&gt;</button>

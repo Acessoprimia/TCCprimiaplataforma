@@ -5,115 +5,117 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../css/telainicial.css" rel="stylesheet">
-    <%- include('../partials/hdeslogado.ejs') %>
+    <%- include("../partials/hdeslogado.ejs") %>
     <link href="../css/media.css" rel="stylesheet">
-    <title>Primia - Plataforma para Perguntas e Respostas</title>
+    <title>PrimiaHome</title>
 </head>
 <body>
-    <!-- MAIN: INSCRIÇÃO + IMAGEM -->
-    <main>
-        <aside>
-            <h2><span>Inscreva-se agora</span></h2>
-            <h2 class="primia">na Primia</h2>
-            <p>
-                A Primia é um espaço colaborativo feito para alunos e professores que querem aprender, ensinar e crescer juntos. 
-                Aqui, você pode tirar dúvidas, compartilhar conhecimento e acompanhar o desempenho de forma simples e prática. 
-                Junte-se à nossa comunidade e transforme a forma de aprender!
-            </p>
-            <form>
-                <a class="inscreva" href="/logincadastro">Inscreva-se</a>
-            </form>
-        </aside>
-
-        <article>
-            <img src="../image/roxoestudo.jpg" alt="homem em dúvida">
-        </article>
-    </main>
-
-    <!-- JORNADA COLABORATIVA -->
-    <section id="jornada">
-        <div class="jornada-card">
-            <h2 class="jornada-title">Uma jornada de aprendizagem colaborativa...</h2>
-            <p class="jornada-text">
-                Valorizar cada estudante como único(a) foi o que nos permitiu desenvolver uma 
-                solução completa e que promove a personalização do processo de aprendizado 
-                em cada segmento de ensino.
-            </p>
-            <div class="jornada-buttons">
-                <button class="jornada-btn">Dúvidas</button>
-                <button class="jornada-btn">Interação</button>
-                <button class="jornada-btn">Perfis</button>
-            </div>
-        </div>
-        
-        <div class="carrossel-pontos">
-            <span class="ponto active"></span>
-            <span class="ponto"></span>
-            <span class="ponto"></span>
-            <span class="ponto"></span>
-            <span class="ponto"></span>
-        </div>
-    </section>
-
-    <!-- RECURSOS PARA ESCOLA -->
-    <section id="recursos">
-        <div class="recursos-image">
-            <img src="../image/escolab.png" alt="Estudantes em sala de aula">
-        </div>
-        <div class="recursos-content">
-            <h2 class="recursos-title">E ainda os melhores <span class="destaque">recursos para sua escola brilhar!</span></h2>
-            <p class="recursos-text">
-                O Brilhando Junto é um programa de ações e conteúdos que tem como 
-                finalidade apoiar, de forma estratégica, pedagógica e afetiva, todas as 
-                escolas parceiras em suas jornadas de excelência. Trabalhamos a formação, 
-                a retenção e captação de novos alunos de forma muito mais!
-            </p>
-        </div>
-    </section>
-
-    <!-- MATERIAS - CARROSSEL -->
-    <section id="materias">
-        <h2 class="material">Explore as matérias:</h2>
-        <nav class="carrossel">
-            <button class="pass" id="prev">&lt;&lt;</button>
-            <section class="conteudo" id="carrossel">
-                <ul class="lista" id="lista">
-                    <li class="slide"><a href="/materia1">Matemática</a></li>
-                    <li class="slide"><a href="/materia1">História</a></li>
-                    <li class="slide"><a href="/materia1">Sociologia</a></li>
-                    <li class="slide"><a href="/materia1">Inglês</a></li>
-                    <li class="slide"><a href="/materia1">Biologia</a></li>
-                    <li class="slide"><a href="/materia1">Física</a></li>
-                    <li class="slide"><a href="/materia1">Geografia</a></li>
-                    <li class="slide"><a href="/materia1">Química</a></li>
-                    <li class="slide"><a href="/materia1">Português</a></li>
-                </ul>
-            </section>
-            <button class="pass" id="next">&gt;&gt;</button>
-        </nav>
-    </section>
-
-    <!-- ACESSO -->
-    <section id="acesso">
-        <h2 class="areas">Áreas de Acesso</h2>
-        <section class="acesso-container">
-            <section class="acesso-card1">
-                <h3>Alunos</h3>
-                <p>Esclareça suas dúvidas e participe das discussões.</p>
-                <a href="/login"><p>Cadastre-se >></p></a>
-            </section>
+    <div class="page-content-wrapper">
+        <!-- MAIN: INSCRIÇÃO + IMAGEM -->
+        <main>
+            <aside>
+                <h2><span>Inscreva-se agora</span></h2>
+                <h2 class="primia">na Primia</h2>
+                <p>
+                    A Primia é um espaço colaborativo feito para alunos e professores que querem aprender, ensinar e crescer juntos. 
+                    Aqui, você pode tirar dúvidas, compartilhar conhecimento e acompanhar o desempenho de forma simples e prática. 
+                    Junte-se à nossa comunidade e transforme a forma de aprender!
+                </p>
+                <form>
+                    <a class="inscreva" href="/biblioteca">Inscreva-se</a>
+                </form>
+            </aside>
             
-            <section class="acesso-card3">
-                <h3>Professor</h3>
-                <p>Tire dúvidas, dê suporte aos alunos e acompanhe atividades.</p>
-                <a href="/login"><p>Cadastre-se >></p></a>
+            <article>
+                <img src="../image/roxoestudo.jpg" alt="homem em dúvida">
+            </article>
+        </main>
+    
+        <!-- JORNADA COLABORATIVA -->
+        <section id="jornada">
+            <div class="jornada-card">
+                <h2 class="jornada-title">Uma jornada de aprendizagem colaborativa...</h2>
+                <p class="jornada-text">
+                    Valorizar cada estudante como único(a) foi o que nos permitiu desenvolver uma 
+                    solução completa e que promove a personalização do processo de aprendizado 
+                    em cada segmento de ensino.
+                </p>
+                <div class="jornada-buttons">
+                    <button class="jornada-btn">Dúvidas</button>
+                    <button class="jornada-btn">Interação</button>
+                    <button class="jornada-btn">Perfis</button>
+                </div>
+            </div>
+            
+            <div class="carrossel-pontos">
+                <span class="ponto active"></span>
+                <span class="ponto"></span>
+                <span class="ponto"></span>
+                <span class="ponto"></span>
+                <span class="ponto"></span>
+            </div>
+        </section>
+    
+        <!-- RECURSOS PARA ESCOLA -->
+        <section id="recursos">
+            <div class="recursos-image">
+                <img src="../image/escolab.png" alt="Estudantes em sala de aula">
+            </div>
+            <div class="recursos-content">
+                <h2 class="recursos-title">E ainda os melhores <span class="destaque">recursos para sua escola brilhar!</span></h2>
+                <p class="recursos-text">
+                    O Brilhando Junto é um programa de ações e conteúdos que tem como 
+                    finalidade apoiar, de forma estratégica, pedagógica e afetiva, todas as 
+                    escolas parceiras em suas jornadas de excelência. Trabalhamos a formação, 
+                    a retenção e captação de novos alunos de forma muito mais!
+                </p>
+            </div>
+        </section>
+    
+        <!-- MATERIAS - CARROSSEL -->
+        <section id="materias">
+            <h2 class="material">Explore as matérias:</h2>
+            <nav class="carrossel">
+                <button class="pass" id="prev">&lt;&lt;</button>
+                <section class="conteudo" id="carrossel">
+                    <ul class="lista" id="lista">
+                        <li class="slide"><a href="/materia1">Matemática</a></li>
+                        <li class="slide"><a href="/materia1">História</a></li>
+                        <li class="slide"><a href="/materia1">Sociologia</a></li>
+                        <li class="slide"><a href="/materia1">Inglês</a></li>
+                        <li class="slide"><a href="/materia1">Biologia</a></li>
+                        <li class="slide"><a href="/materia1">Física</a></li>
+                        <li class="slide"><a href="/materia1">Geografia</a></li>
+                        <li class="slide"><a href="/materia1">Química</a></li>
+                        <li class="slide"><a href="/materia1">Português</a></li>
+                    </ul>
+                </section>
+                <button class="pass" id="next">&gt;&gt;</button>
+            </nav>
+        </section>
+    
+        <!-- ACESSO -->
+        <section id="acesso">
+            <h2 class="areas">Áreas de Acesso</h2>
+            <section class="acesso-container">
+                <section class="acesso-card1">
+                    <h3>Alunos</h3>
+                    <p>Esclareça suas dúvidas e participe das discussões.</p>
+                    <a href="/login"><p>Cadastre-se >></p></a>
+                </section>
+                
+                <section class="acesso-card3">
+                    <h3>Professor</h3>
+                    <p>Tire dúvidas, dê suporte aos alunos e acompanhe atividades.</p>
+                    <a href="/login"><p>Cadastre-se >></p></a>
+                </section>
             </section>
         </section>
-    </section>
-
-    <footer></footer>
+    </div>
+    
+    <!-- O footer deve ficar fora do .page-content-wrapper para preencher 100% da largura -->
+    <%- include("../partials/footer.ejs") %>
 
     <script src="../js/carrossel.js"></script>
 </body>
-<%- include('../partials/footer.ejs') %>
 </html>

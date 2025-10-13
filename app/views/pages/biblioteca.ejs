@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/biblioteca.css" rel="stylesheet">
+    <%- include('../partials/hdeslogado.ejs') %>
+    <title>Biblioteca - Primia</title>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="biblioteca-header">
+        <h1>Biblioteca</h1>
+    </header>
+
+    <!-- FILTRO -->
+    <nav class="filtro-container">
+        <button class="filtro-btn" id="openFilter">
+            <span class="filtro-icon"></span>
+            Filtro
+        </button>
+    </nav>
+
+    <!-- MODAL DE FILTRO -->
+    <aside class="modal-overlay" id="modalOverlay">
+        <section class="modal-content">
+            <button class="close-modal" id="closeModal">&times;</button>
+            <header class="modal-header">
+                <h2>Selecione A Disciplina:</h2>
+            </header>
+            <form class="disciplinas-list">
+                <label class="disciplina-item">
+                    <input type="checkbox" id="portugues" value="portugues">
+                    <span>Língua Portuguesa</span>
+                </label>
+                <label class="disciplina-item">
+                    <input type="checkbox" id="literatura" value="literatura">
+                    <span>Literatura</span>
+                </label>
+                <label class="disciplina-item">
+                    <input type="checkbox" id="ingles" value="ingles">
+                    <span>Língua Estrangeira (Inglês)</span>
+                </label>
+                <label class="disciplina-item">
+                    <input type="checkbox" id="matematica" value="matematica">
+                    <span>Matemática</span>
+                </label>
+                <label class="disciplina-item">
+                    <input type="checkbox" id="historia" value="historia">
+                    <span>História</span>
+                </label>
+                <label class="disciplina-item">
+                    <input type="checkbox" id="geografia" value="geografia">
+                    <span>Geografia</span>
+                </label>
+                <label class="disciplina-item">
+                    <input type="checkbox" id="fisica" value="fisica">
+                    <span>Física</span>
+                </label>
+                <label class="disciplina-item">
+                    <input type="checkbox" id="quimica" value="quimica">
+                    <span>Química</span>
+                </label>
+                <label class="disciplina-item">
+                    <input type="checkbox" id="biologia" value="biologia">
+                    <span>Biologia</span>
+                </label>
+                <label class="disciplina-item">
+                    <input type="checkbox" id="arte" value="arte">
+                    <span>Arte</span>
+                </label>
+            </form>
+            <button class="buscar-btn" id="buscarBtn">Buscar</button>
+        </section>
+    </aside>
+
+    <!-- GRADE DE LIVROS -->
+    <main class="livros-grid" id="livrosGrid">
+        <!-- Livro 1 -->
+        <a href="/livro/matematica-fundamental" class="livro-link">
+            <article class="livro-card" data-disciplina="matematica">
+                <img class="livro-cover" src="../image/escolab.png" alt="Matemática Fundamental">
+                <section class="livro-info">
+                    <p class="livro-titulo">Matemática Fundamental</p>
+                </section>
+            </article>
+        </a>
+
+        <!-- Livro 2 -->
+        <a href="/livro/biologia-moderna" class="livro-link">
+            <article class="livro-card" data-disciplina="biologia">
+                <img class="livro-cover" src="../image/escolab.png" alt="Biologia Moderna">
+                <section class="livro-info">
+                    <p class="livro-titulo">Biologia Moderna: Amabis & Martho</p>
+                </section>
+            </article>
+        </a>
+
+        <!-- Livro 3 -->
+        <a href="/livro/sociologia-movimento" class="livro-link">
+            <article class="livro-card" data-disciplina="historia">
+                <img class="livro-cover" src="../image/escolab.png" alt="Sociologia em Movimento">
+                <section class="livro-info">
+                    <p class="livro-titulo">Sociologia: Movimento</p>
+                </section>
+            </article>
+        </a>
+
+        <!-- Livro 4 -->
+        <a href="/livro/dialogo-portugues" class="livro-link">
+            <article class="livro-card" data-disciplina="portugues">
+                <img class="livro-cover" src="../image/escolab.png" alt="Diálogo: Língua Portuguesa">
+                <section class="livro-info">
+                    <p class="livro-titulo">Diálogo: Língua Portuguesa</p>
+                </section>
+            </article>
+        </a>
+
+        <!-- Livro 5 -->
+        <a href="/livro/matematica-volume-unico" class="livro-link">
+            <article class="livro-card" data-disciplina="matematica">
+                <img class="livro-cover" src="../image/escolab.png" alt="Matemática: Volume Único">
+                <section class="livro-info">
+                    <p class="livro-titulo">Matemática: Volume Único</p>
+                </section>
+            </article>
+        </a>
+
+        <!-- Livro 6 -->
+        <a href="/livro/quimica-geral" class="livro-link">
+            <article class="livro-card" data-disciplina="quimica">
+                <img class="livro-cover" src="../image/escolab.png" alt="Química Geral">
+                <section class="livro-info">
+                    <p class="livro-titulo">Química Geral</p>
+                </section>
+            </article>
+        </a>
+
+        <!-- Livro 7 -->
+        <a href="/livro/gramatica-portuguesa" class="livro-link">
+            <article class="livro-card" data-disciplina="portugues">
+                <img class="livro-cover" src="../image/escolab.png" alt="Gramática da Língua Portuguesa">
+                <section class="livro-info">
+                    <p class="livro-titulo">Gramática da Língua Portuguesa</p>
+                </section>
+            </article>
+        </a>
+
+        <!-- Livro 8 -->
+        <a href="/livro/dicionario-ingles" class="livro-link">
+            <article class="livro-card" data-disciplina="ingles">
+                <img class="livro-cover" src="../image/escolab.png" alt="Dicionário de Inglês">
+                <section class="livro-info">
+                    <p class="livro-titulo">Dicionário de Inglês</p>
+                </section>
+            </article>
+        </a>
+
+        <!-- Livro 9 -->
+        <a href="/livro/caderno-geografia" class="livro-link">
+            <article class="livro-card" data-disciplina="geografia">
+                <img class="livro-cover" src="../image/escolab.png" alt="Caderno Futuro: Geografia">
+                <section class="livro-info">
+                    <p class="livro-titulo">Caderno Futuro: Geografia</p>
+                </section>
+            </article>
+        </a>
+    </main>
+
+    <script src="../js/filtro.js"></script>
+</body>
+<%- include('../partials/footer.ejs') %>
+</html>

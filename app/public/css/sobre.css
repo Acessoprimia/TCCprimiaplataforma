@@ -1,24 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+}
 
 body {
+    min-height: 100vh; /* Garante que o body ocupe no mínimo 100% da altura da viewport */
+    margin: 0; /* Remove margens padrão */
+    display: flex;
+    flex-direction: column;
     background-color: white;
     color: rgb(0, 0, 0);
     font-family: 'Poppins', sans-serif;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 10px;
 }
-
-html, body {
-  height: 100%;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-}
-
 
 
 
@@ -29,7 +30,7 @@ body {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: 250px;
+  margin-top: 210px;
 }
 
 .texto-sobre {

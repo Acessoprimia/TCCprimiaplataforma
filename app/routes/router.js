@@ -40,6 +40,11 @@ router.get("/contato", function (req, res) {
   res.render("pages/contato");
 });
 
+router.get("/biblioteca", function (req, res) {
+  res.render("pages/biblioteca");
+});
+
+
 router.get("/logincadastro", function (req, res) {
   res.render("pages/logincadastro");
 });

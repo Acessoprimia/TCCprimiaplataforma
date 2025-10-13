@@ -6,22 +6,36 @@
     box-sizing: border-box;
 }
 
+html {
+  height: 100%;
+  overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+}
+
 body {
+    min-height: 100vh; /* Garante que o body ocupe no mínimo 100% da altura da viewport */
+    margin: 0; /* Remove margens padrão */
+    display: flex;
+    flex-direction: column;
     background-color: white;
     color: rgb(0, 0, 0);
     font-family: 'Poppins', sans-serif;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
 }
 
 /* AJUSTES DO MENU HAMBURGER */
 .hamburger span {
     background-color: #A398D1 !important;
+    margin-left: 20px;
 }
 
-nav, #menuToggle {
-    margin-right: 20px;
+/* CONTAINER PRINCIPAL DA PÁGINA */
+.page-content-wrapper {
+    flex-grow: 1; /* Permite que o container principal ocupe o espaço restante */
+    width: 100%;
+    max-width: 1200px; /* Aplica o max-width aqui */
+    margin: 0 auto; /* Centraliza o conteúdo principal */
+    padding: 20px; /* Adiciona padding horizontal para telas menores */
+    display: flex; /* Para manter o layout interno do main */
+    flex-direction: column; /* Para que as sections dentro do main se organizem em coluna */
 }
 
 /* MAIN SECTION */
@@ -31,7 +45,7 @@ main {
     align-items: center;
     gap: 40px;
     margin: 80px 0 60px 0;
-    padding: 20px;
+    /* Removido padding aqui, pois já está no .page-content-wrapper */
 }
 
 main aside {
@@ -61,7 +75,7 @@ h2 {
 }
 
 .primia {
-    color: #A398D1;
+    color: #000000;
     margin-bottom: 30px;
 }
 
@@ -97,7 +111,7 @@ span {
 
 /* JORNADA COLABORATIVA */
 #jornada {
-    padding: 60px 20px;
+    padding: 60px 0px; /* Ajustado padding para 0px horizontalmente */
     text-align: center;
 }
 
@@ -178,7 +192,7 @@ span {
 
 /* RECURSOS PARA ESCOLA */
 #recursos {
-    padding: 80px 20px;
+    padding: 80px 0px; /* Ajustado padding para 0px horizontalmente */
     display: flex;
     align-items: center;
     gap: 50px;
@@ -222,7 +236,7 @@ span {
 
 /* MATÉRIAS SECTION */
 #materias {
-    padding: 80px 20px;
+    padding: 80px 0px; /* Ajustado padding para 0px horizontalmente */
     text-align: center;
 }
 
@@ -238,7 +252,7 @@ span {
     justify-content: center;
     border: 3px solid #A398D1;
     border-radius: 20px;
-    background-color: #fcf9f9;
+    background-color: #ECEAFD;
     padding: 40px 20px;
     gap: 10px;
     overflow: hidden;
@@ -291,7 +305,7 @@ span {
 .slide {
     flex: 0 0 auto;
     font-size: 20px;
-    background-color: #eceafd;
+    background-color: #FAF8FF;
     color: #4a4574;
     padding: 15px 30px;
     border-radius: 15px;
@@ -313,7 +327,7 @@ span {
 
 /* ÁREAS DE ACESSO */
 #acesso {
-    padding: 80px 20px;
+    padding: 80px 0px; /* Ajustado padding para 0px horizontalmente */
     text-align: center;
 }
 
@@ -363,7 +377,7 @@ h3 {
 .acesso-card1 p, .acesso-card3 p {
     font-size: 16px;
     line-height: 1.6;
-    color: #666;
+    color: #000000;
     margin-bottom: 25px;
 }
 
@@ -382,7 +396,8 @@ h3 {
 @media (max-width: 768px) {
     main {
         flex-direction: column-reverse;
-        margin: 30px 0;
+        margin: 70px 0;
+        
     }
 
     main article img {
@@ -437,8 +452,8 @@ h3 {
 }
 
 @media (max-width: 480px) {
-    body {
-        padding: 10px;
+    .page-content-wrapper {
+        padding: 10px; /* Ajusta o padding para telas muito pequenas */
     }
 
     h2 {

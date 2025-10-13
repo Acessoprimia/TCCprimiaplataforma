@@ -11,9 +11,10 @@ main {
     display: flex;
     justify-content: center;
     align-items: flex-start; /* agora alinha pelo topo */
-    /* espaço do topo */ padding-top: 160px;
+    /* espaço do topo */ padding-top: 270px;
     background-color: white;
     min-height: calc(100vh - 100px);
+
 }
 
 
@@ -74,7 +75,7 @@ main {
 }
 
 .option-box:hover {
-    background: #8b83ac;
+    
     color: #C9BCE3;
 }
 

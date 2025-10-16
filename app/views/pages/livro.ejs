@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>360° Matemática - Detalhes do Livro</title>
+    <%- include('../partials/hdeslogado.ejs') %>
+    <link rel="stylesheet" href="../css/livro.css">
+
+</head>
+<body>
+    <main>
+        <!-- Seção do cabeçalho com imagem do livro -->
+        <section class="book-header">
+            <button class="back-button" onclick="goBack()" aria-label="Voltar"></button>
+            <button class="menu-button" onclick="toggleMenu()" aria-label="Menu de opções"></button>
+            
+            <figure class="book-cover">
+                <img src="../image/360mate.png" alt="Capa do livro 360° Matemática">
+            </figure>
+        </section>
+
+        <!-- Informações do livro -->
+        <section class="book-info">
+            <h1>360° Matemática</h1>
+            <p class="subtitle">Fundamental, Uma Nova Abordagem</p>
+            <p class="authors">Giovanni, Bonjorno e Paulo</p>
+            
+            <button class="read-button" onclick="readBook()">Leia o livro</button>
+        </section>
+
+        <!-- Sinopse -->
+        <section class="synopsis">
+            <h2>Sinopse:</h2>
+            <p>
+                A obra 360° Matemática foi desenvolvida considerando as mudanças sociais, tecnológicas e culturais recentes, com o objetivo de formar cidadãos preparados para viver em sociedade, que compreendam e exerçam seus direitos e deveres. Composta de três volumes, oferece recursos diversificados, tais como: comentários, referências externas (sites, vídeos, aplicativos) e orientações completas para o professor, abordando gestão de sala de aula e avaliação. A obra busca ainda promover o ensino e a aprendizagem da Matemática de maneira significativa e contextualizada, focando metodologias ativas e práticas contemporâneas em educação matemática, incentivando o uso de recursos tecnológicos e interdisciplinares e atendendo às demandas pedagógicas e aos objetivos educacionais do Ensino Médio.
+            </p>
+        </section>
+    </main>
+
+    <!-- Overlay do modal -->
+    <aside class="modal-overlay" id="modalOverlay" onclick="toggleMenu()"></aside>
+
+    <!-- Modal de opções -->
+    <aside class="options-modal" id="optionsModal">
+        <header>
+            <h3>Opções</h3>
+            <button class="close-modal" onclick="toggleMenu()" aria-label="Fechar">✕</button>
+        </header>
+        
+        <ul class="options-list">
+            <li>
+                <button class="share" onclick="shareBook()">Compartilhar</button>
+            </li>
+            <li>
+                <button class="report" onclick="reportBook()">Denunciar</button>
+            </li>
+        </ul>
+    </aside>
+
+    <script src="../js/points.js"></script>
+</body>
+<%- include('../partials/footer.ejs') %>
+</html>

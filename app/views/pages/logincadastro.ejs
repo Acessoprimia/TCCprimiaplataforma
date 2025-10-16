@@ -3,49 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login / Cadastro</title>
-
-  
-    <%- include('../partials/hdeslogado.ejs') %>
-
-
-    <link rel="stylesheet" href="../css/logincadastro.css">
+    <%- include("../partials/hdeslogado.ejs") %>
+    <link href="../css/login3.css" rel="stylesheet">
+    <title>Selecione o Tipo de Conta - Primia</title>
 </head>
 <body>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="selecao-container">
+        <!-- LOGO GRANDE -->
+        <figure class="logo-container">
+            <img src="../image/logofooter.png" alt="Primia Logo" class="logo-grande">
+        </figure>
 
-   
-    
-    <main>
-        <section class="login-container">
-            <nav class="tab-menu">
-                <span class="tab active">Cadastro</span>
+        <!-- CARD DE SELEÇÃO -->
+        <section class="selecao-card">
+            <nav class="botoes-selecao">
+                <a href="/cadastro-aluno" class="btn-selecao btn-aluno">
+                    Aluno
+                </a>
                 
+                <a href="/cadastro-professor" class="btn-selecao btn-professor">
+                    Professor
+                </a>
             </nav>
 
-            <section class="option">
-                <a href="/login" class="option-box">
-              
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
-                        <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/>
-                        <path d="M11 12.5L3 9v2l8 4 8-4V9l-8 3.5z"/>
-                    </svg>
-                    <span>Aluno</span>
-                </a>
-
-                <a href="/login" class="option-box">
-              
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24">
-                        <path d="M20 2H4v2h16V2zM4 6v14h16V6H4zm8 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
-                    </svg>
-                    <span>Professor</span>
-                </a>
-                <a href="/professor" class="tab">Você já tem uma conta?</a>
-                
-
-            </section>
+            <footer class="card-footer">
+                <a href="/login" class="link-conta">Já tem uma conta?</a>
+            </footer>
         </section>
     </main>
 
+    
+
+    <script src="../js/usuario.js"></script>
 </body>
+
+
 
 </html>

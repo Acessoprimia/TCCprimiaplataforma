@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(180deg, #B5A9D8 0%, #A398D1 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* CONTAINER PRINCIPAL */
+.selecao-container {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 35px;
+}
+
+/* LOGO GRANDE */
+.logo-container {
+    background-color: white;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.logo-grande {
+    width: 65px;
+    height: 65px;
+    object-fit: contain;
+}
+
+/* CARD DE SELEÇÃO */
+.selecao-card {
+    background-color: white;
+    border-radius: 20px;
+    padding: 35px 25px;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* BOTÕES DE SELEÇÃO */
+.botoes-selecao {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.btn-selecao {
+    padding: 16px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+    display: block;
+}
+
+.btn-aluno {
+    background-color: #A398D1;
+    color: white;
+    box-shadow: 0 4px 12px rgba(163, 152, 209, 0.3);
+}
+
+.btn-aluno:hover {
+    background-color: #8b83ac;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(163, 152, 209, 0.4);
+}
+
+.btn-professor {
+    background-color: white;
+    color: #A398D1;
+    border: 2px solid #A398D1;
+}
+
+.btn-professor:hover {
+    background-color: #f9f8fc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(163, 152, 209, 0.2);
+}
+
+/* FOOTER DO CARD */
+.card-footer {
+    text-align: center;
+    padding-top: 18px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.link-conta {
+    font-size: 13px;
+    color: #999;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.link-conta:hover {
+    color: #A398D1;
+    text-decoration: underline;
+}
+
+/* RESPONSIVO MOBILE PEQUENO */
+@media (max-width: 480px) {
+    .selecao-wrapper {
+        padding: 30px 15px;
+        min-height: calc(100vh - 56px);
+    }
+
+    .selecao-container {
+        gap: 35px;
+    }
+
+    .logo-container {
+        width: 90px;
+        height: 90px;
+    }
+
+    .logo-grande {
+        width: 60px;
+        height: 60px;
+    }
+
+    .selecao-card {
+        padding: 30px 20px;
+    }
+
+    .btn-selecao {
+        font-size: 16px;
+        padding: 14px;
+    }
+}
+
+/* RESPONSIVO TABLET E DESKTOP */
+@media (min-width: 768px) {
+    .selecao-wrapper {
+        padding: 60px 40px;
+    }
+
+    .selecao-container {
+        gap: 50px;
+    }
+
+    .logo-container {
+        width: 110px;
+        height: 110px;
+    }
+
+    .logo-grande {
+        width: 75px;
+        height: 75px;
+    }
+
+    .selecao-card {
+        padding: 40px 35px;
+        border-radius: 25px;
+        max-width: 420px;
+    }
+
+    .botoes-selecao {
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .btn-selecao {
+        font-size: 18px;
+        padding: 18px;
+        border-radius: 15px;
+    }
+
+    .card-footer {
+        padding-top: 22px;
+    }
+
+    .link-conta {
+        font-size: 14px;
+    }
+}

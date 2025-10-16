@@ -1,0 +1,347 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+}
+
+body {
+    min-height: 100vh; /* Garante que o body ocupe no mínimo 100% da altura da viewport */
+    margin: 0; /* Remove margens padrão */
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    color: rgb(0, 0, 0);
+    font-family: 'Poppins', sans-serif;
+}
+
+
+        main {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Seção do cabeçalho da página com imagem do livro */
+        section.book-header {
+            position: relative;
+            padding: 60px 20px 30px;
+            text-align: center;
+        }
+
+        section.book-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(135deg, #5fa8a0 0%, #4a8f88 100%);
+            z-index: 0;
+        }
+
+        /* Botão de voltar */
+        button.back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: background-color 0.3s;
+        }
+
+        button.back-button:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        button.back-button::before {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m15 18-6-6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+
+        /* Botão de menu (3 pontos) */
+        button.menu-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: background-color 0.3s;
+        }
+
+        button.menu-button:hover {
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        button.menu-button::before {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='1'/%3E%3Ccircle cx='19' cy='12' r='1'/%3E%3Ccircle cx='5' cy='12' r='1'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+
+        /* Imagem do livro */
+        figure.book-cover {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 20px;
+        }
+
+        figure.book-cover img {
+            width: 200px;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Informações do livro */
+        section.book-info {
+            padding: 0 20px 30px;
+            text-align: center;
+        }
+
+        section.book-info h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+        }
+
+        section.book-info p.subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        section.book-header {
+    padding-top: 80px; /* Ajuste este valor conforme a altura do seu header + um pouco de espaço */
+}
+
+
+button.back-button {
+    top: 100px; /* Ajuste este valor para a altura do seu header + um pouco de espaço */
+    z-index: 100; /* Um valor alto para garantir que fique acima do header */
+}
+
+button.menu-button {
+    top: 100px; /* Ajuste este valor para a altura do seu header + um pouco de espaço */
+    z-index: 100; /* Um valor alto para garantir que fique acima do header */
+}
+
+        section.book-info p.authors {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        /* Botão de leitura */
+        button.read-button {
+            background-color: #a89dd1;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 16px 60px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button.read-button:hover {
+            background-color: #9688c4;
+            transform: translateY(-2px);
+        }
+
+        button.read-button::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+
+        /* Seção da sinopse */
+        section.synopsis {
+            padding: 30px 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        section.synopsis h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1a1a1a;
+        }
+
+        section.synopsis p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #333;
+            text-align: justify;
+        }
+
+        /* Modal de opções */
+        aside.options-modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        aside.options-modal.active {
+            transform: translateY(0);
+        }
+
+        aside.options-modal header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        aside.options-modal h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        button.close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button.close-modal:hover {
+            color: #333;
+        }
+
+        /* Lista de opções */
+        ul.options-list {
+            list-style: none;
+        }
+
+        ul.options-list li {
+            margin-bottom: 10px;
+        }
+
+        ul.options-list button {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 16px;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 16px;
+            color: #333;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        ul.options-list button:hover {
+            background-color: #f5f5f5;
+        }
+
+        ul.options-list button::before {
+            font-size: 24px;
+        }
+
+        ul.options-list button.share::before {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'/%3E%3Cpolyline points='16 6 12 2 8 6'/%3E%3Cline x1='12' x2='12' y1='2' y2='15'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+
+        ul.options-list button.report::before {
+            content: '';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 3v10h7c.7 0 1.4.3 2 .9l4 4V3H10Z'/%3E%3Cpath d='M4 21V3'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+
+        /* Overlay do modal */
+        aside.modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        aside.modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }

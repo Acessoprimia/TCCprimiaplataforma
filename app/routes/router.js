@@ -44,6 +44,10 @@ router.get("/biblioteca", function (req, res) {
   res.render("pages/biblioteca");
 });
 
+router.get("/livro", function (req, res) {
+  res.render("pages/livro");
+});
+
 
 router.get("/logincadastro", function (req, res) {
   res.render("pages/logincadastro");

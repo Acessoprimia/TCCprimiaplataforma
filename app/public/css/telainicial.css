@@ -64,7 +64,6 @@ main article img {
     width: 100%;
     max-width: 500px;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(163, 152, 209, 0.3);
 }
 
 h2 {
@@ -96,7 +95,7 @@ span {
     color: #ffffff;
     text-decoration: none;
     padding: 15px 40px;
-    background-color: #A398D1;
+    background-color: #FF9466;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(163, 152, 209, 0.4);
     font-weight: 600;
@@ -169,7 +168,7 @@ span {
     display: flex;
     justify-content: center;
     gap: 12px;
-    margin-top: 25px;
+    margin-top: 90px;
 }
 
 .ponto {

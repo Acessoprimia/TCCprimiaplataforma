@@ -1,49 +1,37 @@
-// Elementos do DOM
-const btnAluno = document.querySelector('.btn-aluno');
-const btnProfessor = document.querySelector('.btn-professor');
+// Selecionar todos os links de seleção de role
+const roleLinks = document.querySelectorAll('[data-role]');
 
-// Opcional: Adicionar efeito de ripple ao clicar
-function createRipple(event) {
-    const button = event.currentTarget;
-    const circle = document.createElement('span');
-    const diameter = Math.max(button.clientWidth, button.clientHeight);
-    const radius = diameter / 2;
+// Adicionar event listeners aos links
+roleLinks.forEach(link => {
+  link.addEventListener('click', handleRoleSelection);
+});
 
-    circle.style.width = circle.style.height = `${diameter}px`;
-    circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
-    circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
-    circle.classList.add('ripple');
+/**
+ * Função para lidar com a seleção de tipo de usuário
+ * @param {Event} event - O evento de clique
+ */
+function handleRoleSelection(event) {
+  const selectedLink = event.currentTarget;
+  const role = selectedLink.getAttribute('data-role');
 
-    const ripple = button.getElementsByClassName('ripple')[0];
-    if (ripple) {
-        ripple.remove();
-    }
+  // Log da seleção
+  console.log(`Tipo de usuário selecionado: ${role}`);
 
-    button.appendChild(circle);
+  // Remover classe 'selected' de todos os links
+  roleLinks.forEach(link => {
+    link.classList.remove('selected');
+  });
+
+  // Adicionar classe 'selected' ao link clicado
+  selectedLink.classList.add('selected');
+
+  // O link vai navegar naturalmente para a URL definida em href
+  // Se você quiser fazer algo antes de navegar, pode fazer aqui
 }
 
-// Adicionar evento de ripple (opcional)
-btnAluno.addEventListener('click', createRipple);
-btnProfessor.addEventListener('click', createRipple);
-
-// Salvar tipo de usuário no sessionStorage (opcional)
-btnAluno.addEventListener('click', () => {
-    sessionStorage.setItem('tipoUsuario', 'aluno');
-});
-
-btnProfessor.addEventListener('click', () => {
-    sessionStorage.setItem('tipoUsuario', 'professor');
-});
-
-// Animação de entrada
-document.addEventListener('DOMContentLoaded', () => {
-    const container = document.querySelector('.selecao-container');
-    container.style.opacity = '0';
-    container.style.transform = 'translateY(20px)';
-    
-    setTimeout(() => {
-        container.style.transition = 'all 0.5s ease';
-        container.style.opacity = '1';
-        container.style.transform = 'translateY(0)';
-    }, 100);
+// Suporte a navegação por teclado (Enter)
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' && document.activeElement.classList.contains('link')) {
+    document.activeElement.click();
+  }
 });

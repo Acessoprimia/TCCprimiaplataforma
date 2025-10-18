@@ -1,43 +1,39 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <%- include("../partials/hdeslogado.ejs") %>
-    <link href="../css/login3.css" rel="stylesheet">
-    <title>Selecione o Tipo de Conta - Primia</title>
+     <%- include("../partials/hdeslogado.ejs") %>
+  <title>Provia - Seleção de Usuário</title>
+  <link href="../css/login3.css" rel="stylesheet">
 </head>
 <body>
-    <!-- CONTEÚDO PRINCIPAL -->
-    <main class="selecao-container">
-        <!-- LOGO GRANDE -->
-        <figure class="logo-container">
-            <img src="../image/logofooter.png" alt="Primia Logo" class="logo-grande">
+    <!-- SEÇÃO ROXA DE FUNDO -->
+    <section class="secao-roxa">
+        <!-- LOGO CENTRALIZADA -->
+        <figure class="logo-wrapper">
+            <img src="../image/logofooter.png" alt="Primia Logo" class="logo-principal">
         </figure>
 
         <!-- CARD DE SELEÇÃO -->
-        <section class="selecao-card">
-            <nav class="botoes-selecao">
-                <a href="/cadastro-aluno" class="btn-selecao btn-aluno">
+        <article class="card-selecao">
+            <nav class="navegacao-selecao">
+                <a href="/cadastro-aluno" class="botao-selecao botao-aluno">
                     Aluno
                 </a>
                 
-                <a href="/cadastro-professor" class="btn-selecao btn-professor">
+                <a href="/cadastro-professor" class="botao-selecao botao-professor">
                     Professor
                 </a>
             </nav>
 
-            <footer class="card-footer">
-                <a href="/login" class="link-conta">Já tem uma conta?</a>
+            <footer class="rodape-card">
+                <a href="/professor" class="link-login">Já tem uma conta?</a>
             </footer>
-        </section>
-    </main>
+        </article>
+    </section>
 
-    
-
-    <script src="../js/usuario.js"></script>
 </body>
-
-
 
 </html>

@@ -153,6 +153,13 @@ router.post(
   }
 );
 
+router.post("/entrada", function(req, res) {
+    const { nome, email, senha, confirmar_senha, data_nascimento, ra, serie } = req.body;
+
+    // Aqui você pode validar de novo no backend se quiser
+    // ou simplesmente redirecionar para a página de entrada
+    res.render("pages/entrada", { nome }); // se quiser passar algum dado para a página
+});
 
 
 module.exports = router;

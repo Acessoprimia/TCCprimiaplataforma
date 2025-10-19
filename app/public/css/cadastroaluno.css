@@ -239,3 +239,17 @@ body {
 .erro-msg.correto {
     color: #28a745;
 }
+
+
+
+
+.erro-msg {
+    font-size: 12px;
+    margin-top: 4px;
+    font-weight: 500;
+    color: #d9534f; /* vermelho = erro */
+}
+
+.erro-msg.correto {
+    color: #28a745; /* verde = correto */
+}

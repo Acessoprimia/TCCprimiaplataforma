@@ -10,110 +10,88 @@
 <body>
 <section class="secao-roxa">
     <article class="card-cadastro">
-        <form class="form-cadastro" action="/cadastro" method="POST">
+        <form class="form-cadastro" action="/entrada" method="POST">
 
-            <!-- USUÁRIO -->
+            <!-- NOME -->
             <label class="campo-wrapper">
                 <figure class="icone-campo">
                     <img src="../image/usuario.png" alt="Usuário" class="icone">
                 </figure>
-                <input type="text" name="usuario" placeholder="Usuário do Aluno" class="input-campo" value="<%= valores.usuario %>">
+                <input type="text" id="nome" name="nome" placeholder="Nome completo" class="input-campo">
             </label>
-            <% if (msgErro && msgErro.usuario) { %>
-                <p class="erro-msg"><%= msgErro.usuario %></p>
-            <% } %>
+            <p id="erro-nome" class="erro-msg"></p>
 
             <!-- EMAIL -->
             <label class="campo-wrapper">
                 <figure class="icone-campo">
                     <img src="../image/usuario.png" alt="Email" class="icone">
                 </figure>
-                <input type="email" name="email" placeholder="Email" class="input-campo" value="<%= valores.email %>">
+                <input type="email" id="email" name="email" placeholder="Email" class="input-campo">
             </label>
-            <% if (msgErro && msgErro.email) { %>
-                <p class="erro-msg"><%= msgErro.email %></p>
-            <% } %>
-<!-- SENHA -->
-<label class="campo-wrapper">
-    <figure class="icone-campo">
-        <img src="../image/cadeado.png" alt="Senha" class="icone">
-    </figure>
-    <input type="password" id="senha" name="senha" placeholder="Senha" class="input-campo">
-    <span class="mostrar-senha" onclick="toggleSenha('senha')">&#128065;</span>
-</label>
+            <p id="erro-email" class="erro-msg"></p>
 
-<!-- Lista de requisitos da senha -->
-<ul id="regras-senha" class="regras-senha-modern">
-    <li id="tamanho">8 a 15 caracteres</li>
-    <li id="maiuscula">Uma letra maiúscula</li>
-    <li id="minuscula">Uma letra minúscula</li>
-    <li id="numero">Um número</li>
-    <li id="especial">Um caractere especial (@, !, #, $, %, &)</li>
-</ul>
+            <!-- SENHA -->
+            <label class="campo-wrapper">
+                <figure class="icone-campo">
+                    <img src="../image/cadeado.png" alt="Senha" class="icone">
+                </figure>
+                <input type="password" id="senha" name="senha" placeholder="Senha" class="input-campo">
+                <span class="mostrar-senha" onclick="toggleSenha('senha')">&#128065;</span>
+            </label>
+            <ul id="regras-senha" class="regras-senha-modern">
+                <li id="tamanho">8 a 15 caracteres</li>
+                <li id="maiuscula">Uma letra maiúscula</li>
+                <li id="minuscula">Uma letra minúscula</li>
+                <li id="numero">Um número</li>
+                <li id="especial">Um caractere especial (@, !, #, $, %, &)</li>
+            </ul>
 
-<!-- CONFIRMAR SENHA -->
-<label class="campo-wrapper">
-    <figure class="icone-campo">
-        <img src="../image/cadeado.png" alt="Repetir Senha" class="icone">
-    </figure>
-    <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Repetir a senha" class="input-campo">
-    <span class="mostrar-senha" onclick="toggleSenha('confirmar_senha')">&#128065;</span>
-</label>
-
-<!-- Mensagem de erro de senha -->
-<p id="erro-confirmar" class="erro-msg"></p>
+            <!-- CONFIRMAR SENHA -->
+            <label class="campo-wrapper">
+                <figure class="icone-campo">
+                    <img src="../image/cadeado.png" alt="Repetir Senha" class="icone">
+                </figure>
+                <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Repetir a senha" class="input-campo">
+                <span class="mostrar-senha" onclick="toggleSenha('confirmar_senha')">&#128065;</span>
+            </label>
+            <p id="erro-confirmar" class="erro-msg"></p>
 
             <!-- DATA DE NASCIMENTO -->
             <label class="campo-wrapper">
                 <figure class="icone-campo">
                     <img src="../image/data.png" alt="Data de Nascimento" class="icone">
                 </figure>
-                <input type="date" name="data_nascimento" class="input-campo" value="<%= valores.data_nascimento %>">
+                <input type="date" id="data_nascimento" name="data_nascimento" class="input-campo">
             </label>
-            <% if (msgErro && msgErro.data_nascimento) { %>
-                <p class="erro-msg"><%= msgErro.data_nascimento %></p>
-            <% } %>
+            <p id="erro-data" class="erro-msg"></p>
 
             <!-- RA -->
             <label class="campo-wrapper">
                 <figure class="icone-campo">
                     <img src="../image/ra.png" alt="RA" class="icone">
                 </figure>
-                <input type="text" name="ra" placeholder="Escreva seu RA" class="input-campo" value="<%= valores.ra %>">
+                <input type="text" id="ra" name="ra" placeholder="RA do aluno" class="input-campo">
             </label>
-            <% if (msgErro && msgErro.ra) { %>
-                <p class="erro-msg"><%= msgErro.ra %></p>
-            <% } %>
+            <p id="erro-ra" class="erro-msg"></p>
 
             <!-- SÉRIE ESCOLAR -->
             <label class="campo-wrapper">
                 <figure class="icone-campo">
                     <img src="../image/ra.png" alt="Série" class="icone">
                 </figure>
-                <select name="serie" class="input-campo select-campo">
-                    <option value="" disabled <%= !valores.serie ? "selected" : "" %>>Série escolar</option>
-                    <option value="1ano" <%= valores.serie === "1ano" ? "selected" : "" %>>1º Ano</option>
-                    <option value="2ano" <%= valores.serie === "2ano" ? "selected" : "" %>>2º Ano</option>
-                    <option value="3ano" <%= valores.serie === "3ano" ? "selected" : "" %>>3º Ano</option>
+                <select id="serie" name="serie" class="input-campo select-campo">
+                    <option value="" disabled selected>Série escolar</option>
+                    <option value="1ano">1º Ano</option>
+                    <option value="2ano">2º Ano</option>
+                    <option value="3ano">3º Ano</option>
                 </select>
             </label>
-            <% if (msgErro && msgErro.serie) { %>
-                <p class="erro-msg"><%= msgErro.serie %></p>
-            <% } %>
+            <p id="erro-serie" class="erro-msg"></p>
 
             <button type="submit" class="botao-submit">Cadastre-se</button>
         </form>
     </article>
 </section>
-
-<style>
-.erro-msg {
-    color: #d9534f;
-    font-size: 12px;
-    margin-top: 4px;
-}
-</style>
-
 
 <script src="../js/cadastroaluno.js"></script>
 </body>

@@ -36,6 +36,10 @@ router.get("/cadastroprofessor", function (req, res) {
   res.render("pages/cadastroprofessor");
 });
 
+router.get("/partepremium", function (req, res) {
+  res.render("pages/partepremium");
+});
+
 
 router.get("/biblioteca", function (req, res) {
   res.render("pages/biblioteca");

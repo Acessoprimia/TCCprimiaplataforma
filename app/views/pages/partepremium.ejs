@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/entrada.css" rel="stylesheet">
+    <%- include('../partials/hdeslogado.ejs') %>
+    <title>Perfil - Primia</title>
+</head>
+<body>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="perfil-container">
+        <!-- CARD DE PERFIL -->
+        <article class="perfil-card">
+            <!-- INFORMAÇÕES DO USUÁRIO -->
+            <section class="usuario-info">
+                <figure class="avatar-container">
+                    <img src="../image/usuario.png" alt="Avatar do usuário" class="avatar">
+                </figure>
+                <article class="info-texto">
+                    <h1 class="nome-usuario">Usuário do Aluno</h1>
+                    <p class="email-usuario">usuarioaluno@gmail.com</p>
+                    <span class="matricula-usuario">RA: 0000</span>
+                </article>
+                <a href="#" class="btn-editar">Editar perfil</a>
+            </section>
+
+            <!-- MENU DE NAVEGAÇÃO -->
+            <nav class="menu-navegacao">
+                <a href="/forum-duvidas" class="menu-item">
+                    <figure class="icone-menu">
+                        <img src="../image/avaliacao.png" alt="Fórum" class="icone">
+                    </figure>
+                    <span class="texto-menu">Area dos simulados</span>
+                    <span class="seta-menu">›</span>
+                </a>
+
+            
+                <a href="/biblioteca" class="menu-item">
+                    <figure class="icone-menu">
+                        <img src="../image/video.png" alt="Biblioteca" class="icone">
+                    </figure>
+                    <span class="texto-menu">Video-Aulas</span>
+                    <span class="seta-menu">›</span>
+                </a>
+
+                <a href="/areapremium" class="menu-item">
+                    <figure class="icone-menu">
+                        <img src="../image/calendariologo.png" alt="Premium" class="icone">
+                    </figure>
+                    <span class="texto-menu">Cronogramas</span>
+                    <span class="seta-menu">›</span>
+                </a>
+
+            
+            </nav>
+        </article>
+    </main>
+
+</body>
+<%- include('../partials/footer.ejs') %>
+</html>

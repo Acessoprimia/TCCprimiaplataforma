@@ -19,6 +19,11 @@ router.get("/login", function (req, res) {
   res.render("pages/login");
 });
 
+router.get("/areapremium", function (req, res) {
+  res.render("pages/areapremium");
+});
+
+
 router.get("/telainicial", function (req, res) {
   res.render("pages/telainicial");
 });

@@ -1,102 +1,74 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Matérias Plataforma Prima</title>
-
-  <!-- Seu CSS do header -->
-  <%- include('../partials/header.ejs') %>
-
-  <!-- CSS das matérias -->
-  <link rel="stylesheet" href="../css/entrada.css" />
-
-  <!-- Ícones Bootstrap (para o ícone do perfil) -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/entrada.css" rel="stylesheet">
+    <%- include('../partials/hdeslogado.ejs') %>
+    <title>Perfil - Primia</title>
 </head>
 <body>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="perfil-container">
+        <!-- CARD DE PERFIL -->
+        <article class="perfil-card">
+            <!-- INFORMAÇÕES DO USUÁRIO -->
+            <section class="usuario-info">
+                <figure class="avatar-container">
+                    <img src="../image/usuario.png" alt="Avatar do usuário" class="avatar">
+                </figure>
+                <article class="info-texto">
+                    <h1 class="nome-usuario">Usuário do Aluno</h1>
+                    <p class="email-usuario">usuarioaluno@gmail.com</p>
+                    <span class="matricula-usuario">RA: 0000</span>
+                </article>
+                <a href="#" class="btn-editar">Editar perfil</a>
+            </section>
 
-  <!-- Header -->
-  
-  <!-- Conteúdo principal -->
-  <main>
-    <section class="perfil">
-      <figure class="icone-perfil">
-        <i class="bi bi-person-circle"></i>
-      </figure>
-    </section>
+            <!-- MENU DE NAVEGAÇÃO -->
+            <nav class="menu-navegacao">
+                <a href="/forum-duvidas" class="menu-item">
+                    <figure class="icone-menu">
+                        <img src="../image/interrogacaou.png" alt="Fórum" class="icone">
+                    </figure>
+                    <span class="texto-menu">Fórum de Dúvidas</span>
+                    <span class="seta-menu">›</span>
+                </a>
 
-    <nav class="botao-tipo">
-      <a class="button" href="/duvida">Dúvida</a>
-      <a class="button" href="/chat">Chat</a>
-    </nav>
+                <a href="/planos-aula" class="menu-item">
+                    <figure class="icone-menu">
+                        <img src="../image/aulau.png" alt="Planos" class="icone">
+                    </figure>
+                    <span class="texto-menu">Planos de Aula</span>
+                    <span class="seta-menu">›</span>
+                </a>
 
-    <section class="materias">
-      <h2>Nossas Matérias</h2>
-      <ul class="grid">
-        <li class="materia">
-          <a href="/materia1" class="materia-link">
-            <img src="https://img.icons8.com/ios/50/000000/book.png" alt="Língua Portuguesa" />
-            <p>Língua Portuguesa</p>
-          </a>
-        </li>
-        <li class="materia">
-          <a href="/materia1" class="materia-link">
-            <img src="https://img.icons8.com/ios/50/000000/calculator.png" alt="Matemática" />
-            <p>Matemática</p>
-          </a>
-        </li>
-        <li class="materia">
-          <a href="/materia1" class="materia-link">
-            <img src="https://img.icons8.com/ios/50/000000/hourglass.png" alt="História" />
-            <p>História</p>
-          </a>
-        </li>
-        <li class="materia">
-          <a href="/materia1" class="materia-link">
-            <img src="https://img.icons8.com/ios/50/000000/worldwide-location.png" alt="Geografia" />
-            <p>Geografia</p>
-          </a>
-        </li>
-        <li class="materia">
-          <a href="/materia1" class="materia-link">
-            <img src="https://img.icons8.com/ios/50/000000/bacteria.png" alt="Biologia" />
-            <p>Biologia</p>
-          </a>
-        </li>
-        <li class="materia">
-          <a href="/materia" class="materia-link">
-            <img src="https://img.icons8.com/ios/50/000000/physics.png" alt="Física" />
-            <p>Física</p>
-          </a>
-        </li>
-        <li class="materia">
-          <a href="/materia1" class="materia-link">
-            <img src="https://img.icons8.com/ios/50/000000/test-tube.png" alt="Química" />
-            <p>Química</p>
-          </a>
-        </li>
-        <li class="materia">
-          <a href="/materia1" class="materia-link">
-            <img src="https://img.icons8.com/ios/50/000000/greek-pillar.png" alt="Filosofia" />
-            <p>Filosofia</p>
-          </a>
-        </li>
-        <li class="materia">
-          <a href="/materia1" class="materia-link">
-            <img src="https://img.icons8.com/ios/50/000000/conference.png" alt="Sociologia" />
-            <p>Sociologia</p>
-          </a>
-        </li>
-        <li class="materia">
-          <a href="/materia1" class="materia-link">
-            <img src="https://img.icons8.com/ios/50/000000/great-britain.png" alt="Inglês" />
-            <p>Inglês</p>
-          </a>
-        </li>
-      </ul>
-    </section>
-  </main>
+                <a href="/biblioteca" class="menu-item">
+                    <figure class="icone-menu">
+                        <img src="../image/bibliotecau.png" alt="Biblioteca" class="icone">
+                    </figure>
+                    <span class="texto-menu">Biblioteca</span>
+                    <span class="seta-menu">›</span>
+                </a>
+
+                <a href="/areapremium" class="menu-item">
+                    <figure class="icone-menu">
+                        <img src="../image/premiumu.png" alt="Premium" class="icone">
+                    </figure>
+                    <span class="texto-menu">Área Premium</span>
+                    <span class="seta-menu">›</span>
+                </a>
+
+                <a href="/contato" class="menu-item">
+                    <figure class="icone-menu">
+                        <img src="../image/contatou.png" alt="Contato" class="icone">
+                    </figure>
+                    <span class="texto-menu">Contato</span>
+                    <span class="seta-menu">›</span>
+                </a>
+            </nav>
+        </article>
+    </main>
 
 </body>
 <%- include('../partials/footer.ejs') %>

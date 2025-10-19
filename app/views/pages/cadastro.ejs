@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include('../partials/hdeslogado.ejs') %>
+    <link href="../css/cadastroaluno.css" rel="stylesheet">
+    <title>Cadastro - Primia</title>
+</head>
+<body>
+    <!-- SEÇÃO ROXA DE FUNDO -->
+    <section class="secao-roxa">
+        <!-- CARD DE CADASTRO -->
+        <article class="card-cadastro">
+            <form class="form-cadastro" action="/cadastro" method="POST">
+                
+                <!-- CAMPO USUÁRIO -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/usuario.png" alt="Usuário" class="icone">
+                    </figure>
+                    <input type="text" name="usuario" placeholder="Usuário do Aluno" class="input-campo" required>
+                </label>
+
+                <!-- CAMPO EMAIL -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/usuario.png" alt="Email" class="icone">
+                    </figure>
+                    <input type="email" name="email" placeholder="Email" class="input-campo" required>
+                </label>
+
+                <!-- CAMPO SENHA -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/cadeado.png" alt="Senha" class="icone">
+                    </figure>
+                    <input type="password" name="senha" placeholder="Senha" class="input-campo" required>
+                </label>
+
+                <!-- CAMPO REPETIR SENHA -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/cadeado.png" alt="Repetir Senha" class="icone">
+                    </figure>
+                    <input type="password" name="confirmar_senha" placeholder="Repetir a senha" class="input-campo" required>
+                </label>
+
+                <!-- CAMPO DATA DE NASCIMENTO -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/data.png" alt="Data de Nascimento" class="icone">
+                    </figure>
+                    <input type="date" name="data_nascimento" placeholder="Data de Nascimento" class="input-campo" required>
+                </label>
+
+                <!-- CAMPO RA -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/ra.png" alt="RA" class="icone">
+                    </figure>
+                    <input type="text" name="ra" placeholder="Escreva seu RA" class="input-campo" required>
+                </label>
+
+                <!-- CAMPO SÉRIE ESCOLAR -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/ra.png" alt="Série" class="icone">
+                    </figure>
+                    <select name="serie" class="input-campo select-campo" required>
+                        <option value="" disabled selected>Série escolar</option>
+                        <option value="1ano">1º Ano</option>
+                        <option value="2ano">2º Ano</option>
+                        <option value="3ano">3º Ano</option>
+                    </select>
+                </label>
+
+                <!-- BOTÃO EDITAR -->
+                <button type="submit" class="botao-submit">Cadastre-se</button>
+            </form>
+        </article>
+    </section>
+
+</body>
+
+</html>

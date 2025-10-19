@@ -14,8 +14,8 @@ router.get("/paginaMaterias", function (req, res) {
   res.render("pages/paginaMaterias");
 });
 
-router.get("/login", function (req, res) {
-  res.render("pages/login", {
+router.get("/cadastro", function (req, res) {
+  res.render("pages/cadastro", {
     erros: null,
     valores: {
       nome: "",
@@ -28,8 +28,8 @@ router.get("/login", function (req, res) {
     msgErro: {},});
 }); 
 
-router.get("/professor", function (req, res) {
-  res.render("pages/professor");
+router.get("/login", function (req, res) {
+  res.render("pages/login");
 });
 
 router.get("/telainicial", function (req, res) {
@@ -72,7 +72,7 @@ router.get("/sobre", function (req, res) {
 });
 
 router.post(
-  "/login",
+  "/cadastro",
   body("nome")
     .trim()
     .notEmpty()
@@ -125,7 +125,7 @@ router.post(
         msgErro[erro.path] = erro.msg;
       });
 
-      return res.render("pages/login", {
+      return res.render("pages/cadastro", {
         erros: errors,
         valores: req.body,
         retorno: null,
@@ -138,6 +138,6 @@ router.post(
 );
 
 
+
+
 module.exports = router;
-
-

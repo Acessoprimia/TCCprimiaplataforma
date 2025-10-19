@@ -1,46 +1,70 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Professor</title>
-  <link rel="stylesheet" href="../css/login.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/login.css" rel="stylesheet">
+    <%- include("../partials/hdeslogado.ejs") %>
+    <title>Login - Primia</title>
 </head>
 <body>
+    <!-- SEÇÃO ROXA DE FUNDO -->
+    <section class="secao-roxa">
+        <!-- LOGO CENTRALIZADA -->
+        <figure class="logo-wrapper">
+            
+        </figure>
 
-  <%- include('../partials/hdeslogado.ejs') %>
+        <!-- CARD DE LOGIN -->
+        <article class="card-login">
+            <form class="form-login" action="/login" method="POST">
+                <!-- CAMPO EMAIL -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/usuario.png" alt="Usuário" class="icone">
+                    </figure>
+                    <input type="email" name="email" placeholder="Email" class="input-campo" required>
+                </label>
 
-  <main class="login-container">
-    <h2>Cadastro</h2>
-    <form action="/login" method="post" autocomplete="off" novalidate>
+                <!-- CAMPO SENHA -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/cadeado.png" alt="Senha" class="icone">
+                    </figure>
+                    <input type="password" name="senha" placeholder="Senha" class="input-campo" required>
+                </label>
 
-      <label class="confirmar" for="nome">Nome completo</label>
-      <input class="<%= erroValidacao.nome %>"  value="<%= valores.nome %>" type="text" id="nome" name="nome" placeholder="Seu nome completo" /> <span class="msgErro"><%= msgErro.nome %></span>
+                <!-- LINK ESQUECEU A SENHA -->
+                <footer class="rodape-form">
+                    <a href="/recuperar-senha" class="link-recuperar">Esqueceu a senha?</a>
+                </footer>
 
-      <label class="confirmar" for="email">Digite seu email</label>
-      <input  class="<%= erroValidacao.email %>" value="<%= valores.email %>" type="email" id="email" name="email" placeholder="exemplo@dominio.com" /> <span class="msgErro"><%= msgErro.email %></span>
+                <!-- BOTÃO LOGIN -->
+                <button type="" class="botao-login">Login</button>
 
-      <label class="confirmar" for="senha">Digite sua senha</label>
-      <input class="<%= erroValidacao.senha %>"  value="<%= valores.senha %>" type="password" id="senha" name="senha" placeholder="Sua Senha" /> <span class="msgErro"><%= msgErro.senha %></span>
+                <!-- DIVISOR OU -->
+                <section class="divisor">
+                    <span class="linha-divisor"></span>
+                    <span class="texto-divisor">Ou</span>
+                    <span class="linha-divisor"></span>
+                </section>
 
-                 <label>
-                  Sua senha deve conter: <br />
-                  Uma letra maiúscula. <br />
-                  Um número. <br />
-                  Um caractere especial.
-                </label> 
-
-      <label class="confirmar" for="confirmarSenha">Sua senha novamente</label>
-      <input  class="<%= erroValidacao.confirmarSenha %>" value="<%= valores.confirmarSenha %>" type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Confirme sua senha" /> <span class="msgErro"><%= msgErro.confirmarSenha %></span>
-
-      <button type="submit" id="btnClique" class="juntar">
-                Cadastre-se
-              </button>
-
-    </form>
-  </main>
+                <!-- REDES SOCIAIS -->
+                <nav class="redes-sociais">
+                    <a href="/login/facebook" class="btn-social" aria-label="Login com Facebook">
+                        <img src="../image/facebook.png" alt="Facebook" class="icone-social">
+                    </a>
+                    <a href="/login/google" class="btn-social" aria-label="Login com Google">
+                        <img src="../image/google.png" alt="Google" class="icone-social">
+                    </a>
+                    <a href="/login/github" class="btn-social" aria-label="Login com GitHub">
+                        <img src="../image/github.png" alt="GitHub" class="icone-social">
+                    </a>
+                </nav>
+            </form>
+        </article>
+    </section>
 
 </body>
-
 
 </html>

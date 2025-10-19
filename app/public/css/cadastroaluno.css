@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* SEÇÃO ROXA COM ARREDONDAMENTO EMBAIXO */
+.secao-roxa {
+    background: linear-gradient(180deg, #B5A9D8 0%, #A398D1 100%);
+    border-radius: 0 0 40px 40px;
+    padding: 80px 20px 30px; /* Mantido o padding superior e lateral */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 0;
+    height: 380px; /* Reduzido a altura da seção roxa para que o card possa se sobrepor mais acima */
+    overflow: visible;
+}
+
+/* CARD DE CADASTRO */
+.card-cadastro {
+    background-color: white;
+    border-radius: 20px;
+    padding: 30px 25px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 100px; /* Ajustado para que o card comece mais acima, sobrepondo a seção roxa */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+/* FORMULÁRIO */
+.form-cadastro {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* CAMPO DE INPUT */
+.campo-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 2px solid #A398D1;
+    border-radius: 10px;
+    padding: 10px 12px;
+    transition: all 0.3s ease;
+    background-color: white;
+}
+
+.campo-wrapper:focus-within {
+    border-color: #8b83ac;
+    box-shadow: 0 0 0 3px rgba(163, 152, 209, 0.1);
+}
+
+.icone-campo {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.icone {
+    width: 18px;
+    height: 18px;
+    opacity: 0.6;
+}
+
+.input-campo {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: #666;
+    background-color: transparent;
+}
+
+.input-campo::placeholder {
+    color: #999;
+    font-size: 13px;
+}
+
+/* SELECT ESPECÍFICO */
+.select-campo {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width=\'12\' height=\'8\' viewBox=\'0 0 12 8\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M1 1L6 6L11 1\' stroke=\'%23999\' stroke-width=\'2\' stroke-linecap=\'round\'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+    padding-right: 30px;
+}
+
+.select-campo option {
+    color: #666;
+}
+
+/* INPUT TYPE DATE */
+.input-campo[type="date"] {
+    color: #999;
+}
+
+.input-campo[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+/* BOTÃO SUBMIT */
+.botao-submit {
+    background-color: #FF9C7D;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 8px;
+}
+
+.botao-submit:hover {
+    background-color: #ff8a66;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 156, 125, 0.4);
+}
+
+/* RESPONSIVO MOBILE */
+@media (max-width: 480px) {
+    .secao-roxa {
+        padding: 70px 15px 25px;
+        border-radius: 0 0 30px 30px;
+        height: 300px; /* Ajuste de altura para mobile */
+    }
+
+    .card-cadastro {
+        padding: 25px 20px;
+        max-width: calc(100% - 30px);
+        top: 80px; /* Ajuste para mobile */
+
+        
+    }
+}
+
+/* RESPONSIVO TABLET E DESKTOP */
+@media (min-width: 768px) {
+    .secao-roxa {
+        padding: 80px 40px 140px;
+        border-radius: 0 0 50px 50px;
+        height: 200px; /* Ajuste de altura para desktop */
+    }
+
+    .card-cadastro {
+        padding: 35px 30px;
+        border-radius: 25px;
+        max-width: 400px;
+        top: 120px; /* Ajuste para desktop */
+    }
+}

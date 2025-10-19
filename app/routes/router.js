@@ -32,6 +32,11 @@ router.get("/contato", function (req, res) {
   res.render("pages/contato");
 });
 
+router.get("/cadastroprofessor", function (req, res) {
+  res.render("pages/cadastroprofessor");
+});
+
+
 router.get("/biblioteca", function (req, res) {
   res.render("pages/biblioteca");
 });
@@ -44,6 +49,11 @@ router.get("/livro", function (req, res) {
 router.get("/logincadastro", function (req, res) {
   res.render("pages/logincadastro");
 });
+
+router.get("/entradaprofessor", function (req, res) {
+  res.render("pages/entradaprofessor");
+});
+
 
 router.get("/entrada", function (req, res) {
   res.render("pages/entrada");

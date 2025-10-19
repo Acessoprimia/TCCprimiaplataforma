@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+  --roxo: #7c68c1;
+  --roxo-claro: #ede9fb;
+  --roxo-escuro: #6c54b4;
+  --branco: #fff;
+  --texto: #333;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--branco);
+  color: var(--texto);
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  padding: 6rem 1.2rem 2rem; /* espaço no topo pro header fixo */
+  text-align: center;
+}
+
+/* --- Título principal --- */
+.titulo-area h1 {
+  color: var(--roxo-escuro);
+  font-weight: 700;
+  font-size: 1.8rem;
+  margin-bottom: 0.3rem;
+}
+
+.titulo-area p {
+  color: #555;
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+}
+
+/* --- Blocos dos planos --- */
+.plano {
+  background-color: var(--roxo-claro);
+  border-radius: 1.2rem;
+  margin: 1.5rem auto;
+  padding: 1rem;
+  max-width: 400px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.plano:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+/* --- Cabeçalho do plano --- */
+.plano header {
+  background-color: var(--roxo);
+  color: var(--branco);
+  border-radius: 1rem 1rem 0 0;
+  padding: 0.8rem;
+  font-style: italic;
+  font-weight: 600;
+}
+
+.premium header {
+  background-color: var(--roxo-escuro);
+}
+
+/* --- Listas --- */
+.plano ul {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+  text-align: left;
+}
+
+.plano li {
+  margin: 0.5rem 1.2rem;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+}
+
+.plano li::before {
+  content: "☑";
+  margin-right: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--roxo-escuro);
+}
+
+.plano a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.plano a:hover {
+  color: var(--roxo-escuro);
+}
+
+/* --- Link da seção Premium --- */
+.link-plano {
+  text-decoration: none;
+  display: block;
+}
+
+.link-plano header:hover {
+  background-color: #5b44a3;
+}
+
+/* --- Responsivo --- */
+@media (min-width: 768px) {
+  main {
+    padding-top: 8rem;
+  }
+
+  .plano {
+    max-width: 500px;
+  }
+}

@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background-color: #f6f5fc;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding-top: 4rem; /* espaço do header */
+}
+
+.container-cadastro {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 25px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  width: 90%;
+  max-width: 400px;
+}
+
+.container-cadastro h1 {
+  text-align: center;
+  color: #7c68c1;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+}
+
+.campo {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.campo .icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a398d1;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  padding: 12px 40px;
+  border: 2px solid #a398d1;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.campo input:focus,
+.campo select:focus {
+  border-color: #7c68c1;
+}
+
+.campo .olho {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+small {
+  color: red;
+  font-size: 0.75rem;
+  margin-top: 2px;
+  display: block;
+}
+
+.botao {
+  width: 100%;
+  padding: 12px;
+  background: #ff9c7d;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.botao:hover {
+  background: #ff815d;
+}

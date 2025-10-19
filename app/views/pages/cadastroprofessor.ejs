@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro Professor</title>
+  <%- include('../partials/hdeslogado.ejs') %>
+  <link rel="stylesheet" href="/css/cadastroprofessor.css">
+</head>
+<body>
+
+  <main class="container-cadastro">
+    <form id="formProfessor" action="/entradaprofessor" method="POST" enctype="multipart/form-data">
+
+      <h1>Cadastro do Professor</h1>
+
+      <section class="campo">
+        <i class="icon fa fa-user"></i>
+        <input type="text" id="nome" name="nome" placeholder="Nome completo" required>
+        <small></small>
+      </section>
+
+      <section class="campo">
+        <i class="icon fa fa-envelope"></i>
+        <input type="email" id="email" name="email" placeholder="Email" required>
+        <small></small>
+      </section>
+
+      <section class="campo">
+        <i class="icon fa fa-lock"></i>
+        <input type="password" id="senha" name="senha" placeholder="Senha" required>
+        <button type="button" class="olho" onclick="mostrarSenha('senha')">👁️</button>
+        <small></small>
+      </section>
+
+      <section class="campo">
+        <i class="icon fa fa-lock"></i>
+        <input type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Confirmar senha" required>
+        <button type="button" class="olho" onclick="mostrarSenha('confirmarSenha')">👁️</button>
+        <small></small>
+      </section>
+
+      <section class="campo">
+        <i class="icon fa fa-calendar"></i>
+        <input type="date" id="dataNascimento" name="dataNascimento" required>
+        <small></small>
+      </section>
+
+      <section class="campo">
+        <i class="icon fa fa-file"></i>
+        <input type="file" id="diploma" name="diploma" accept=".pdf, .png, .jpg, .jpeg" required>
+        <small></small>
+      </section>
+
+      <section class="campo">
+        <i class="icon fa fa-book"></i>
+        <select id="materia" name="materia" required>
+          <option value="" disabled selected>Matéria que leciona</option>
+          <option>Matemática</option>
+          <option>Português</option>
+          <option>História</option>
+          <option>Geografia</option>
+          <option>Física</option>
+          <option>Química</option>
+          <option>Biologia</option>
+          <option>Inglês</option>
+          <option>Filosofia</option>
+          <option>Sociologia</option>
+          <option>Artes</option>
+          <option>Educação Física</option>
+        </select>
+        <small></small>
+      </section>
+
+      <button type="submit" class="botao">Cadastrar-se</button>
+    </form>
+  </main>
+
+  <script src="/js/cadastroprofessor.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const { body, validationResult } = require("express-validator")
+const { body, validationResult } = require("express-validator");
 
 router.get("/", function (req, res) {
   res.render("pages/telainicial");
@@ -14,19 +14,6 @@ router.get("/paginaMaterias", function (req, res) {
   res.render("pages/paginaMaterias");
 });
 
-router.get("/cadastro", function (req, res) {
-  res.render("pages/cadastro", {
-    erros: null,
-    valores: {
-      nome: "",
-      email: "",
-      senha: "",
-      confirmarSenha: "",
-    },
-    retorno: null,
-    erroValidacao: {},
-    msgErro: {},});
-}); 
 
 router.get("/login", function (req, res) {
   res.render("pages/login");
@@ -71,52 +58,78 @@ router.get("/sobre", function (req, res) {
   res.render("pages/sobre");
 });
 
+
+// ========== ROTA GET CADASTRO ==========
+router.get("/cadastro", (req, res) => {
+  res.render("pages/cadastro", {
+    erros: null,
+    valores: {
+      usuario: "",
+      email: "",
+      senha: "",
+      confirmar_senha: "",
+      data_nascimento: "",
+      ra: "",
+      serie: "",
+    },
+    retorno: null,
+    erroValidacao: {},
+    msgErro: {},
+  });
+});
+
+// ========== ROTA POST CADASTRO ==========
 router.post(
   "/cadastro",
-  body("nome")
+
+  // Validação dos campos
+  body("usuario")
     .trim()
     .notEmpty()
-    .withMessage("Campo obrigatório!")
-    .bail()
-    .isLength({ min: 3, max: 50 })
-    .withMessage("O Nome de usuário deve conter entre 3 e 50 caracteres!")
-    .matches(/^[A-Za-zÀ-ú\s]+$/)
-    .withMessage("O nome deve conter apenas letras!"),
+    .withMessage("O nome de usuário é obrigatório!")
+    .isLength({ min: 3 })
+    .withMessage("O nome deve ter pelo menos 3 caracteres!"),
 
   body("email")
     .notEmpty()
-    .withMessage("Campo obrigatório!")
-    .bail()
+    .withMessage("O e-mail é obrigatório!")
     .isEmail()
-    .withMessage("Endereço de email inválido!"),
+    .withMessage("Digite um e-mail válido!"),
 
   body("senha")
     .notEmpty()
-    .withMessage("Campo obrigatório!")
-    .bail()
-    .isStrongPassword({
-      minLowercase: 1,
-      minUppercase: 1,
-      minNumbers: 1,
-      minSymbols: 1,
-    })
-    .withMessage(
-      "Senha fraca!"
-    ),
+    .withMessage("A senha é obrigatória!")
+    .isLength({ min: 6 })
+    .withMessage("A senha deve ter pelo menos 6 caracteres!"),
 
-  body("confirmarSenha")
+  body("confirmar_senha")
     .notEmpty()
-    .withMessage("Campo obrigatório!")
+    .withMessage("A confirmação de senha é obrigatória!")
     .custom((value, { req }) => {
       if (value !== req.body.senha) {
-        throw new Error("*As senhas não conferem!");
+        throw new Error("As senhas não conferem!");
       }
       return true;
     }),
 
-  function (req, res) {
+  body("data_nascimento")
+    .notEmpty()
+    .withMessage("A data de nascimento é obrigatória!"),
+
+  body("ra")
+    .notEmpty()
+    .withMessage("O RA é obrigatório!"),
+
+  body("serie")
+    .notEmpty()
+    .withMessage("A série escolar é obrigatória!"),
+
+  // Função principal
+  (req, res) => {
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
+      // Cria objetos para marcar os campos com erro
       const erroValidacao = {};
       const msgErro = {};
 
@@ -125,6 +138,7 @@ router.post(
         msgErro[erro.path] = erro.msg;
       });
 
+      // Recarrega a página de cadastro com as mensagens de erro
       return res.render("pages/cadastro", {
         erros: errors,
         valores: req.body,
@@ -133,11 +147,19 @@ router.post(
         msgErro,
       });
     }
+
+    // Se tudo estiver certo, redireciona pra /entrada
     res.redirect("/entrada");
   }
 );
 
 
 
-
 module.exports = router;
+
+
+
+
+
+
+

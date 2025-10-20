@@ -61,3 +61,47 @@ formFiltro.addEventListener('submit', (event) => {
     modalFiltro.close(); // Fecha o modal após aplicar o filtro
 });
 
+
+document.addEventListener("DOMContentLoaded", () => {
+    const modalFiltro = document.getElementById("modalFiltro");
+    const abreModalFiltro = document.getElementById("abreModalFiltro");
+    const fecharModal = modalFiltro.querySelector(".fechar-modal");
+    const formFiltro = document.getElementById("formFiltro");
+    const secaoVideoaulas = document.getElementById("secao-videoaulas");
+    const cardsVideo = secaoVideoaulas.querySelectorAll(".card-video-link");
+
+    // Abrir modal
+    abreModalFiltro.addEventListener("click", () => {
+        modalFiltro.showModal();
+    });
+
+    // Fechar modal
+    fecharModal.addEventListener("click", () => {
+        modalFiltro.close();
+    });
+
+    // Fechar modal ao clicar fora dele
+    modalFiltro.addEventListener("click", (event) => {
+        if (event.target === modalFiltro) {
+            modalFiltro.close();
+        }
+    });
+
+    // Lógica de filtro
+    formFiltro.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const checkboxes = formFiltro.querySelectorAll("input[name=\"disciplina\"]:checked");
+        const disciplinasSelecionadas = Array.from(checkboxes).map(cb => cb.value);
+
+        cardsVideo.forEach(card => {
+            const disciplinaCard = card.dataset.disciplina;
+            if (disciplinasSelecionadas.length === 0 || disciplinasSelecionadas.includes(disciplinaCard)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+
+        modalFiltro.close();
+    });
+});

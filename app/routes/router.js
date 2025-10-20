@@ -40,6 +40,11 @@ router.get("/videoaula", function (req, res) {
   res.render("pages/videoaula");
 });
 
+router.get("/cronograma", function (req, res) {
+  res.render("pages/cronograma");
+});
+
+
 
 router.get("/areadosimulado", function (req, res) {
   res.render("pages/areadosimulado");
@@ -192,6 +197,16 @@ router.post("/entrada", function(req, res) {
     // Aqui você pode validar de novo no backend se quiser
     // ou simplesmente redirecionar para a página de entrada
     res.render("pages/entrada", { nome }); // se quiser passar algum dado para a página
+});
+
+
+
+router.get("/cadastroprofessor", (req, res) => {
+  res.render("pages/cadastroprofessor");
+});
+
+router.post("/entradaprofessor", (req, res) => {
+  res.render("pages/entradaprofessor");
 });
 
 

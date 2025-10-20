@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cronogramas</title>
+    <link href="../css/cronograma.css" rel="stylesheet">
+    <%- include("../partials/hdeslogado.ejs") %>
+</head>
+<body>
+    <main>
+        <h1>Cronogramas</h1>
+
+        <section class="filter-section">
+            <label for="materia-filter">
+                <svg class="filter-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+                </svg>
+            </label>
+            <select id="materia-filter">
+                <option value="">Todas as matérias</option>
+                <option value="matematica">Matemática</option>
+                <option value="fisica">Física</option>
+                <option value="quimica">Química</option>
+                <option value="biologia">Biologia</option>
+                <option value="portugues">Português</option>
+                <option value="literatura">Literatura</option>
+                <option value="ingles">Inglês</option>
+                <option value="espanhol">Espanhol</option>
+                <option value="historia">História</option>
+                <option value="geografia">Geografia</option>
+                <option value="filosofia">Filosofia</option>
+                <option value="sociologia">Sociologia</option>
+                <option value="artes">Artes</option>
+                <option value="educacao-fisica">Educação Física</option>
+            </select>
+        </section>
+
+        <section class="cards-container">
+            <article data-materia="matematica">
+                <button class="card-button" data-image="cronograma-matematica.jpg">
+                    <img src="../image/calendarioeasy.png" alt="Cronograma Matemática" class="card-image">
+                    <section class="card-content">
+                        <h2>Matemática – Álgebra e Geometria</h2>
+                        <p>Este cronograma organiza os principais tópicos de álgebra e geometria que serão trabalhados durante o semestre. Nele, você encontrará as datas das aulas, exercícios práticos, provas e revisões para facilitar seu planejamento e garantir o domínio dos conceitos.</p>
+                    </section>
+                </button>
+            </article>
+
+            <article data-materia="biologia">
+                <button class="card-button" data-image="cronograma-biologia.jpg">
+                    <img src="../image/calendarioeasy.png" alt="Cronograma Biologia" class="card-image">
+                    <section class="card-content">
+                        <h2>Biologia – Genética e Evolução</h2>
+                        <p>Confira o cronograma com o planejamento das aulas sobre genética, hereditariedade e teoria da evolução. Com ele, você pode acompanhar os conteúdos, as atividades em grupo e as avaliações, para aprofundar seu conhecimento e se preparar para as provas.</p>
+                    </section>
+                </button>
+            </article>
+
+            <article data-materia="historia">
+                <button class="card-button" data-image="cronograma-historia.jpg">
+                    <img src="../image/calendarioeasy.png" alt="Cronograma História" class="card-image">
+                    <section class="card-content">
+                        <h2>História – Era Moderna e Contemporânea</h2>
+                        <p>Este cronograma apresenta o desenvolvimento das aulas e estudos sobre os principais acontecimentos da Era Moderna e Contemporânea. Nele estão indicados os prazos para trabalhos, debates e avaliações, ajudando você a organizar os estudos e refletir sobre os impactos históricos</p>
+                    </section>
+                </button>
+            </article>
+        </section>
+    </main>
+
+    <aside id="modal" class="modal">
+        <button class="modal-close" aria-label="Fechar">×</button>
+        <figure class="modal-content">
+            <img id="modal-image" src="../image/calendarioeasy.png" alt="Cronograma ampliado">
+        </figure>
+    </aside>
+
+     <%- include("../partials/footer.ejs") %>
+
+    <script src="../js/cronograma.js"></script>
+</body>
+</html>

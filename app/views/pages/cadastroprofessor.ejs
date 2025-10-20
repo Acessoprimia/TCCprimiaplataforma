@@ -6,76 +6,82 @@
   <title>Cadastro Professor</title>
   <%- include('../partials/hdeslogado.ejs') %>
   <link rel="stylesheet" href="/css/cadastroprofessor.css">
+  <script src="https://kit.fontawesome.com/a2d9a64d65.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
-  <main class="container-cadastro">
-    <form id="formProfessor" action="/entradaprofessor" method="POST" enctype="multipart/form-data">
+<main class="cadastro-container">
+  <section class="cadastro-form">
+    <form id="cadastroProfessorForm" action="/entradaprofessor" method="POST" novalidate>
+      
+      <label>
+        <i class="fa fa-user"></i>
+        <input type="text" id="nomeCompleto" name="nomeCompleto" placeholder="Nome completo" required>
+      </label>
+      <small id="erro-nome" class="mensagem-erro"></small>
 
-      <h1>Cadastro do Professor</h1>
-
-      <section class="campo">
-        <i class="icon fa fa-user"></i>
-        <input type="text" id="nome" name="nome" placeholder="Nome completo" required>
-        <small></small>
-      </section>
-
-      <section class="campo">
-        <i class="icon fa fa-envelope"></i>
+      <label>
+        <i class="fa fa-envelope"></i>
         <input type="email" id="email" name="email" placeholder="Email" required>
-        <small></small>
-      </section>
+      </label>
 
-      <section class="campo">
-        <i class="icon fa fa-lock"></i>
+      <label>
+        <i class="fa fa-lock"></i>
         <input type="password" id="senha" name="senha" placeholder="Senha" required>
-        <button type="button" class="olho" onclick="mostrarSenha('senha')">👁️</button>
-        <small></small>
-      </section>
+        <i class="fa fa-eye toggleSenha" data-target="senha"></i>
+      </label>
 
-      <section class="campo">
-        <i class="icon fa fa-lock"></i>
+      <ul class="requisitos">
+        <li id="tamanho">Entre 8 e 15 caracteres</li>
+        <li id="maiuscula">Letra maiúscula</li>
+        <li id="minuscula">Letra minúscula</li>
+        <li id="numero">Número</li>
+        <li id="especial">Caractere especial (@!#$%&)</li>
+      </ul>
+
+      <label>
+        <i class="fa fa-lock"></i>
         <input type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Confirmar senha" required>
-        <button type="button" class="olho" onclick="mostrarSenha('confirmarSenha')">👁️</button>
-        <small></small>
-      </section>
+        <i class="fa fa-eye toggleSenha" data-target="confirmarSenha"></i>
+      </label>
+      <small id="erro-confirmar" class="mensagem-erro"></small>
 
-      <section class="campo">
-        <i class="icon fa fa-calendar"></i>
+      <label>
+        <i class="fa fa-calendar"></i>
         <input type="date" id="dataNascimento" name="dataNascimento" required>
-        <small></small>
-      </section>
+      </label>
 
-      <section class="campo">
-        <i class="icon fa fa-file"></i>
-        <input type="file" id="diploma" name="diploma" accept=".pdf, .png, .jpg, .jpeg" required>
-        <small></small>
-      </section>
+      <label>
+        <i class="fa fa-file-upload"></i>
+        <input type="file" id="diploma" name="diploma" accept=".pdf,.jpg,.png" required>
+      </label>
 
-      <section class="campo">
-        <i class="icon fa fa-book"></i>
+      <label>
+        <i class="fa fa-book"></i>
         <select id="materia" name="materia" required>
-          <option value="" disabled selected>Matéria que leciona</option>
-          <option>Matemática</option>
+          <option value="">Matéria que leciona</option>
           <option>Português</option>
+          <option>Matemática</option>
           <option>História</option>
           <option>Geografia</option>
+          <option>Biologia</option>
           <option>Física</option>
           <option>Química</option>
-          <option>Biologia</option>
           <option>Inglês</option>
+          <option>Educação Física</option>
           <option>Filosofia</option>
           <option>Sociologia</option>
           <option>Artes</option>
-          <option>Educação Física</option>
         </select>
-        <small></small>
-      </section>
+      </label>
 
-      <button type="submit" class="botao">Cadastrar-se</button>
+      <button type="submit" class="btn-cadastrar">Cadastrar</button>
     </form>
-  </main>
+  </section>
 
-  <script src="/js/cadastroprofessor.js"></script>
+  
+</main>
+
+<script src="../js/cadastroprofessor.js"></script>
 </body>
 </html>

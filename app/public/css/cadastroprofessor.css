@@ -13,85 +13,105 @@ body {
   justify-content: center;
   align-items: flex-start;
   min-height: 100vh;
-  padding-top: 4rem; /* espaço do header */
+  padding-top: 5rem;
 }
 
-.container-cadastro {
+.cadastro-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  position: relative;
+}
+
+.cadastro-form form {
   background: #fff;
   padding: 2rem;
-  border-radius: 25px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-  width: 90%;
-  max-width: 400px;
+  border-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  width: 400px;
+  z-index: 2;
 }
 
-.container-cadastro h1 {
-  text-align: center;
-  color: #7c68c1;
-  margin-bottom: 1.5rem;
-  font-size: 1.4rem;
-}
-
-.campo {
+label {
   position: relative;
+  display: flex;
+  align-items: center;
   margin-bottom: 1rem;
+  border: 2px solid #bba6f8;
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
 }
 
-.campo .icon {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #a398d1;
+label i {
+  color: #8c7ae6;
+  margin-right: 0.5rem;
 }
 
-.campo input,
-.campo select {
-  width: 100%;
-  padding: 12px 40px;
-  border: 2px solid #a398d1;
-  border-radius: 12px;
-  font-size: 0.9rem;
+input, select {
+  border: none;
   outline: none;
-  transition: border-color 0.2s ease;
+  flex: 1;
+  font-size: 1rem;
+  background: transparent;
 }
 
-.campo input:focus,
-.campo select:focus {
-  border-color: #7c68c1;
-}
-
-.campo .olho {
+.toggleSenha {
   position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
-  border: none;
   cursor: pointer;
-  font-size: 1.1rem;
+  color: #8c7ae6;
 }
 
-small {
+.requisitos {
+  margin: 0.5rem 0 1rem 1.5rem;
+}
+
+.requisitos li {
+  font-size: 0.85rem;
   color: red;
-  font-size: 0.75rem;
-  margin-top: 2px;
-  display: block;
+  list-style: disc;
 }
 
-.botao {
+.requisitos li.valid {
+  color: green;
+}
+
+.mensagem-erro {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: -0.6rem;
+  margin-bottom: 0.8rem;
+}
+
+.btn-cadastrar {
   width: 100%;
-  padding: 12px;
-  background: #ff9c7d;
-  border: none;
-  border-radius: 10px;
+  background: #fc8a6b;
   color: white;
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: bold;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 12px;
   cursor: pointer;
-  transition: 0.2s ease;
+  margin-top: 1rem;
+  transition: 0.3s;
 }
 
-.botao:hover {
-  background: #ff815d;
+.btn-cadastrar:hover {
+  background: #ff6f4b;
+}
+
+.detalhe-roxo {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  width: 200px;
+  height: 100%;
+  background: linear-gradient(180deg, #7b2ff7, #f107a3);
+  border-top-left-radius: 150px;
+  border-bottom-left-radius: 150px;
+  z-index: 1;
+  opacity: 0.9;
 }

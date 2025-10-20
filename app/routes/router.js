@@ -31,6 +31,16 @@ router.get("/telainicial", function (req, res) {
 router.get("/contato", function (req, res) {
   res.render("pages/contato");
 });
+
+router.get("/video", function (req, res) {
+  res.render("pages/video");
+});
+
+router.get("/videoaula", function (req, res) {
+  res.render("pages/videoaula");
+});
+
+
 router.get("/areadosimulado", function (req, res) {
   res.render("pages/areadosimulado");
 });

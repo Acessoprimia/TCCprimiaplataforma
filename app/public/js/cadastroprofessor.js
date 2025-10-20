@@ -1,169 +1,209 @@
 // cadastroprofessor.js - validações completas e submit controlado
 
-// helpers
-const $ = id => document.getElementById(id);
-
-// Mostrar/ocultar senha (olhinho)
-document.querySelectorAll(".toggleSenha").forEach(icon => {
-  icon.addEventListener("click", () => {
-    const targetId = icon.getAttribute("data-target");
-    const input = $(targetId);
-    if (!input) return;
-    input.type = input.type === "password" ? "text" : "password";
-    icon.classList.toggle("fa-eye-slash");
-  });
-});
-
-// ----- validações individuais (mantendo mensagens estilo aluno) -----
-
-function validarNome() {
-  const el = $("nomeCompleto");
-  const err = $("erro-nome");
-  const v = el.value.trim();
-  const re = /^[A-Za-zÀ-ú]+(\s[A-Za-zÀ-ú]+)+$/;
-  if (!v) { err.textContent = "Campo obrigatório!"; return false; }
-  if (!re.test(v)) { err.textContent = "Digite seu nome completo (pelo menos duas palavras)"; return false; }
-  err.textContent = "";
-  return true;
+// Mostrar/ocultar senha
+function toggleSenha(idCampo) {
+    const campo = document.getElementById(idCampo);
+    if (campo) {
+        campo.type = campo.type === "password" ? "text" : "password";
+    }
 }
 
+// Validação do nome completo
+function validarNomeCompleto() {
+    const nomeCompleto = document.getElementById("nome_completo").value.trim();
+    const erro = document.getElementById("erro-nome-completo");
+    const regex = /^[A-Za-zÀ-ú]+(\s[A-Za-zÀ-ú]+)+$/;
+
+    if (!nomeCompleto) {
+        erro.textContent = "Campo obrigatório!";
+        return false;
+    } else if (!regex.test(nomeCompleto)) {
+        erro.textContent = "Digite seu nome completo (pelo menos duas palavras)";
+        return false;
+    } else {
+        erro.textContent = "";
+        return true;
+    }
+}
+
+// Validação do email
 function validarEmail() {
-  const el = $("email");
-  // se quiser mensagem visual similar, crie um small com id erro-email no HTML
-  // aqui só vamos bloquear envio se inválido
-  const v = el.value.trim();
-  const re = /^\S+@\S+\.\S+$/;
-  if (!v) return false;
-  return re.test(v);
+    const email = document.getElementById("email").value.trim();
+    const erro = document.getElementById("erro-email");
+    const regex = /^\S+@\S+\.\S+$/;
+
+    if (!email) {
+        erro.textContent = "Campo obrigatório!";
+        return false;
+    } else if (!regex.test(email)) {
+        erro.textContent = "Digite um e-mail válido!";
+        return false;
+    } else {
+        erro.textContent = "";
+        return true;
+    }
 }
 
-function validarSenhaRegras() {
-  const el = $("senha");
-  const val = el.value;
-  const cond = {
-    tamanho: val.length >= 8 && val.length <= 15,
-    maiuscula: /[A-Z]/.test(val),
-    minuscula: /[a-z]/.test(val),
-    numero: /[0-9]/.test(val),
-    especial: /[@!#$%&]/.test(val)
-  };
-  // atualiza visual das li (assume que cada li tem ids: tamanho, maiuscula, minuscula, numero, especial)
-  Object.keys(cond).forEach(k => {
-    const li = $(k);
-    if (!li) return;
-    li.classList.toggle("valid", cond[k]);
-    li.classList.toggle("invalid", !cond[k]);
-  });
-  return Object.values(cond).every(v => v);
-}
+// Validação da senha
+function validarSenha() {
+    const senha = document.getElementById("senha").value;
+    const regras = {
+        tamanho: senha.length >= 8 && senha.length <= 15,
+        maiuscula: /[A-Z]/.test(senha),
+        minuscula: /[a-z]/.test(senha),
+        numero: /[0-9]/.test(senha),
+        especial: /[@!#$%&]/.test(senha)
+    };
 
-function validarConfirmacao() {
-  const s = $("senha").value;
-  const c = $("confirmarSenha").value;
-  const err = $("erro-confirmar");
-  if (!c) { err.textContent = ""; return false; }
-  if (s === c) { err.textContent = "As senhas conferem ✔"; err.style.color = "green"; return true; }
-  err.textContent = "As senhas não conferem ✖"; err.style.color = "red"; return false;
-}
-
-function validarData() {
-  const el = $("dataNascimento");
-  const err = $("erro-data");
-  const val = el.value;
-  if (!val) { if (err) { err.textContent = "Campo obrigatório!"; } return false; }
-  const hoje = new Date();
-  const nasc = new Date(val);
-  let idade = hoje.getFullYear() - nasc.getFullYear();
-  const m = hoje.getMonth() - nasc.getMonth();
-  if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
-  if (idade < 21) {
-    if (err) { err.textContent = "Apenas professores com 21 anos ou mais podem se cadastrar."; err.style.color = "red"; }
-    return false;
-  }
-  if (err) { err.textContent = ""; }
-  return true;
-}
-
-function validarDiploma() {
-  const inp = $("diploma");
-  const err = $("erro-diploma");
-  if (!inp) return false;
-  const file = inp.files && inp.files[0];
-  if (!file) {
-    if (err) { err.textContent = "É necessário enviar um diploma."; err.style.color = "red"; }
-    return false;
-  }
-  const allowed = ["application/pdf","image/png","image/jpeg"];
-  if (!allowed.includes(file.type)) {
-    if (err) { err.textContent = "Formato inválido (PDF, PNG, JPG)."; err.style.color = "red"; }
-    return false;
-  }
-  // opcional: tamanho máximo 5MB
-  const maxMB = 5;
-  if (file.size > maxMB * 1024 * 1024) {
-    if (err) { err.textContent = `Arquivo muito grande (máx ${maxMB}MB).`; err.style.color = "red"; }
-    return false;
-  }
-  if (err) { err.textContent = ""; }
-  return true;
-}
-
-function validarMateria() {
-  const el = $("materia");
-  const err = $("erro-materia");
-  if (!el || !el.value) {
-    if (err) { err.textContent = "Selecione uma matéria!"; }
-    return false;
-  }
-  if (err) { err.textContent = ""; }
-  return true;
-}
-
-// ----- real-time listeners -----
-document.addEventListener("DOMContentLoaded", () => {
-  if ($("nomeCompleto")) $("nomeCompleto").addEventListener("input", validarNome);
-  if ($("email")) $("email").addEventListener("input", () => { /* optional visual */ });
-  if ($("senha")) {
-    $("senha").addEventListener("input", () => {
-      validarSenhaRegras();
-      validarConfirmacao(); // revalida confirmação quando senha muda
-    });
-  }
-  if ($("confirmarSenha")) $("confirmarSenha").addEventListener("input", validarConfirmacao);
-  if ($("dataNascimento")) $("dataNascimento").addEventListener("change", validarData);
-  if ($("diploma")) $("diploma").addEventListener("change", validarDiploma);
-  if ($("materia")) $("materia").addEventListener("change", validarMateria);
-
-  // ----- submit handler que impede envio até tudo ok -----
-  const form = document.getElementById("cadastroProfessorForm");
-  if (!form) return;
-
-  form.addEventListener("submit", function(e) {
-    e.preventDefault(); // sempre previne por padrão; só submete manualmente se OK
-
-    const nomeOk = validarNome();
-    const emailOk = validarEmail();
-    const senhaOk = validarSenhaRegras();
-    const confirmarOk = validarConfirmacao();
-    const dataOk = validarData();
-    const diplomaOk = validarDiploma();
-    const materiaOk = validarMateria();
-
-    const tudoOk = nomeOk && emailOk && senhaOk && confirmarOk && dataOk && diplomaOk && materiaOk;
-
-    if (!tudoOk) {
-      // foca no primeiro campo com erro
-      if (!nomeOk) { $("nomeCompleto").focus(); return; }
-      if (!emailOk) { $("email").focus(); return; }
-      if (!senhaOk) { $("senha").focus(); return; }
-      if (!confirmarOk) { $("confirmarSenha").focus(); return; }
-      if (!dataOk) { $("dataNascimento").focus(); return; }
-      if (!diplomaOk) { $("diploma").focus(); return; }
-      if (!materiaOk) { $("materia").focus(); return; }
-      return;
+    let todasCorretas = true;
+    for (const regra in regras) {
+        const li = document.getElementById(regra);
+        if (li) {
+            if (regras[regra]) {
+                li.classList.add("correto");
+            } else {
+                li.classList.remove("correto");
+                todasCorretas = false;
+            }
+        }
     }
 
-    // tudo certo: submete de verdade
-    form.submit();
-  });
+    validarConfirmarSenha(); // atualiza também o confirmar senha
+    return todasCorretas;
+}
+
+// Validação do confirmar senha
+function validarConfirmarSenha() {
+    const senha = document.getElementById("senha").value;
+    const confirmar = document.getElementById("confirmar_senha").value;
+    const erro = document.getElementById("erro-confirmar");
+
+    if (!confirmar) {
+        erro.textContent = "";
+        erro.classList.remove("correto");
+        return false;
+    }
+
+    if (senha === confirmar) {
+        erro.textContent = "As senhas conferem ✔";
+        erro.classList.add("correto");
+        return true;
+    } else {
+        erro.textContent = "As senhas não são iguais ✖";
+        erro.classList.remove("correto");
+        return false;
+    }
+}
+
+// Validação da data de nascimento
+function validarDataNascimento() {
+    const dataInput = document.getElementById("data_nascimento");
+    const erro = document.getElementById("erro-data");
+    const valor = dataInput.value;
+
+    if (!valor) {
+        erro.textContent = "Campo obrigatório!";
+        erro.classList.remove("correto");
+        return false;
+    }
+
+    const hoje = new Date();
+    const nascimento = new Date(valor);
+    let idade = hoje.getFullYear() - nascimento.getFullYear();
+    const m = hoje.getMonth() - nascimento.getMonth();
+    if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) idade--;
+
+    if (idade < 21) { // Professores devem ter 21 anos ou mais
+        erro.textContent = "Apenas professores com 21 anos ou mais podem se cadastrar.";
+        erro.classList.remove("correto");
+        return false;
+    } else {
+        erro.textContent = "Data válida ✔";
+        erro.classList.add("correto");
+        return true;
+    }
+}
+
+// Validação do Diploma
+function validarDiploma() {
+    const diplomaInput = document.getElementById("diploma");
+    const erro = document.getElementById("erro-diploma");
+    const file = diplomaInput.files && diplomaInput.files[0];
+
+    if (!file) {
+        erro.textContent = "É necessário enviar um diploma.";
+        erro.classList.remove("correto");
+        return false;
+    }
+
+    const allowedTypes = ["application/pdf", "image/png", "image/jpeg"];
+    if (!allowedTypes.includes(file.type)) {
+        erro.textContent = "Formato inválido (PDF, PNG, JPG).";
+        erro.classList.remove("correto");
+        return false;
+    }
+
+    const maxSizeMB = 5;
+    if (file.size > maxSizeMB * 1024 * 1024) {
+        erro.textContent = `Arquivo muito grande (máx ${maxSizeMB}MB).`;
+        erro.classList.remove("correto");
+        return false;
+    }
+
+    erro.textContent = "Diploma válido ✔";
+    erro.classList.add("correto");
+    return true;
+}
+
+// Validação da Matéria
+function validarMateria() {
+    const materia = document.getElementById("materia").value;
+    const erro = document.getElementById("erro-materia");
+
+    if (!materia) {
+        erro.textContent = "Selecione uma matéria!";
+        erro.classList.remove("correto");
+        return false;
+    } else {
+        erro.textContent = "Matéria selecionada ✔";
+        erro.classList.add("correto");
+        return true;
+    }
+}
+
+// Inicialização de eventos
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.querySelector(".form-cadastro");
+    const nomeCompletoInput = document.getElementById("nome_completo");
+    const emailInput = document.getElementById("email");
+    const senhaInput = document.getElementById("senha");
+    const confirmarInput = document.getElementById("confirmar_senha");
+    const dataInput = document.getElementById("data_nascimento");
+    const diplomaInput = document.getElementById("diploma");
+    const materiaInput = document.getElementById("materia");
+
+    if (nomeCompletoInput) nomeCompletoInput.addEventListener("input", validarNomeCompleto);
+    if (emailInput) emailInput.addEventListener("input", validarEmail);
+    if (senhaInput) senhaInput.addEventListener("input", validarSenha);
+    if (confirmarInput) confirmarInput.addEventListener("input", validarConfirmarSenha);
+    if (dataInput) dataInput.addEventListener("input", validarDataNascimento);
+    if (diplomaInput) diplomaInput.addEventListener("change", validarDiploma);
+    if (materiaInput) materiaInput.addEventListener("change", validarMateria);
+
+    if (form) {
+        form.addEventListener("submit", function(e) {
+            const nomeCompletoValido = validarNomeCompleto();
+            const emailValido = validarEmail();
+            const senhaValida = validarSenha();
+            const confirmarValido = validarConfirmarSenha();
+            const dataValida = validarDataNascimento();
+            const diplomaValido = validarDiploma();
+            const materiaValida = validarMateria();
+
+            if (!nomeCompletoValido || !emailValido || !senhaValida || !confirmarValido || !dataValida || !diplomaValido || !materiaValida) {
+                e.preventDefault(); // bloqueia submit
+                alert("Preencha corretamente todos os campos antes de enviar!");
+            }
+        });
+    }
 });

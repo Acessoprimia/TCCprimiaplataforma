@@ -97,7 +97,7 @@ router.get("/sobre", function (req, res) {
 });
 
 
-// ========== ROTA GET CADASTRO ==========
+// ========== ROTA GET CADASTRO ALUNO ==========
 router.get("/cadastro", (req, res) => {
   res.render("pages/cadastro", {
     erros: null,
@@ -116,7 +116,7 @@ router.get("/cadastro", (req, res) => {
   });
 });
 
-// ========== ROTA POST CADASTRO ==========
+// ========== ROTA POST CADASTRO ALUNO ==========
 router.post(
   "/cadastro",
 
@@ -200,21 +200,102 @@ router.post("/entrada", function(req, res) {
 });
 
 
-
+// ========== ROTA GET CADASTRO PROFESSOR ==========
 router.get("/cadastroprofessor", (req, res) => {
-  res.render("pages/cadastroprofessor");
+  res.render("pages/cadastroprofessor", {
+    erros: null,
+    valores: {
+      nome_completo: "",
+      email: "",
+      senha: "",
+      confirmar_senha: "",
+      data_nascimento: "",
+      materia: "",
+    },
+    retorno: null,
+    erroValidacao: {},
+    msgErro: {},
+  });
 });
 
+// ========== ROTA POST CADASTRO PROFESSOR ==========
+router.post(
+  "/cadastroprofessor",
+
+  // Validação dos campos
+  body("nome_completo")
+    .trim()
+    .notEmpty()
+    .withMessage("O nome completo é obrigatório!")
+    .isLength({ min: 3 })
+    .withMessage("O nome deve ter pelo menos 3 caracteres!"),
+
+  body("email")
+    .notEmpty()
+    .withMessage("O e-mail é obrigatório!")
+    .isEmail()
+    .withMessage("Digite um e-mail válido!"),
+
+  body("senha")
+    .notEmpty()
+    .withMessage("A senha é obrigatória!")
+    .isLength({ min: 6 })
+    .withMessage("A senha deve ter pelo menos 6 caracteres!"),
+
+  body("confirmar_senha")
+    .notEmpty()
+    .withMessage("A confirmação de senha é obrigatória!")
+    .custom((value, { req }) => {
+      if (value !== req.body.senha) {
+        throw new Error("As senhas não conferem!");
+      }
+      return true;
+    }),
+
+  body("data_nascimento")
+    .notEmpty()
+    .withMessage("A data de nascimento é obrigatória!"),
+
+  body("materia")
+    .notEmpty()
+    .withMessage("A matéria é obrigatória!"),
+
+  // Função principal
+  (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      // Cria objetos para marcar os campos com erro
+      const erroValidacao = {};
+      const msgErro = {};
+
+      errors.array().forEach((erro) => {
+        erroValidacao[erro.path] = "erro";
+        msgErro[erro.path] = erro.msg;
+      });
+
+      // Recarrega a página de cadastro com as mensagens de erro
+      return res.render("pages/cadastroprofessor", {
+        erros: errors,
+        valores: req.body,
+        retorno: null,
+        erroValidacao,
+        msgErro,
+      });
+    }
+
+    // Se tudo estiver certo, redireciona pra /entradaprofessor
+    res.redirect("/entradaprofessor");
+  }
+);
+
 router.post("/entradaprofessor", (req, res) => {
-  res.render("pages/entradaprofessor");
+  const { nome_completo, email, senha, confirmar_senha, data_nascimento, materia } = req.body;
+  // Aqui você pode validar de novo no backend se quiser
+  // ou simplesmente redirecionar para a página de entrada
+  res.render("pages/entradaprofessor", { nome_completo }); // se quiser passar algum dado para a página
 });
 
 
 module.exports = router;
-
-
-
-
-
-
 

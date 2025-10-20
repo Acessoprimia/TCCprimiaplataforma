@@ -1,86 +1,106 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cadastro Professor</title>
-  <%- include('../partials/hdeslogado.ejs') %>
-  <link rel="stylesheet" href="/css/cadastroprofessor.css">
-  <script src="https://kit.fontawesome.com/a2d9a64d65.js" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%- include("../partials/hdeslogado.ejs") %>
+    <link href="../css/cadastroprofessor.css" rel="stylesheet">
+    <title>Cadastro Professor - Primia</title>
 </head>
 <body>
+<section class="secao-roxa">
+    <article class="card-cadastro">
+        <form class="form-cadastro" action="/cadastroprofessor" method="POST" enctype="multipart/form-data">
 
-<main class="cadastro-container">
-  <section class="cadastro-form">
-    <form id="cadastroProfessorForm" action="/entradaprofessor" method="POST" novalidate>
-      
-      <label>
-        <i class="fa fa-user"></i>
-        <input type="text" id="nomeCompleto" name="nomeCompleto" placeholder="Nome completo" required>
-      </label>
-      <small id="erro-nome" class="mensagem-erro"></small>
+            <!-- NOME COMPLETO -->
+            <label class="campo-wrapper">
+                <figure class="icone-campo">
+                    <img src="../image/usuario.png" alt="Nome Completo" class="icone">
+                </figure>
+                <input type="text" id="nome_completo" name="nome_completo" placeholder="Nome completo" class="input-campo">
+            </label>
+            <p id="erro-nome-completo" class="erro-msg"></p>
 
-      <label>
-        <i class="fa fa-envelope"></i>
-        <input type="email" id="email" name="email" placeholder="Email" required>
-      </label>
+            <!-- EMAIL -->
+            <label class="campo-wrapper">
+                <figure class="icone-campo">
+                    <img src="../image/usuario.png" alt="Email" class="icone">
+                </figure>
+                <input type="email" id="email" name="email" placeholder="Email" class="input-campo">
+            </label>
+            <p id="erro-email" class="erro-msg"></p>
 
-      <label>
-        <i class="fa fa-lock"></i>
-        <input type="password" id="senha" name="senha" placeholder="Senha" required>
-        <i class="fa fa-eye toggleSenha" data-target="senha"></i>
-      </label>
+            <!-- SENHA -->
+            <label class="campo-wrapper">
+                <figure class="icone-campo">
+                    <img src="../image/cadeado.png" alt="Senha" class="icone">
+                </figure>
+                <input type="password" id="senha" name="senha" placeholder="Senha" class="input-campo">
+                <span class="mostrar-senha" onclick="toggleSenha('senha')">&#128065;</span>
+            </label>
+            <ul id="regras-senha" class="regras-senha-modern">
+                <li id="tamanho">8 a 15 caracteres</li>
+                <li id="maiuscula">Uma letra maiúscula</li>
+                <li id="minuscula">Uma letra minúscula</li>
+                <li id="numero">Um número</li>
+                <li id="especial">Um caractere especial (@, !, #, $, %, &)</li>
+            </ul>
 
-      <ul class="requisitos">
-        <li id="tamanho">Entre 8 e 15 caracteres</li>
-        <li id="maiuscula">Letra maiúscula</li>
-        <li id="minuscula">Letra minúscula</li>
-        <li id="numero">Número</li>
-        <li id="especial">Caractere especial (@!#$%&)</li>
-      </ul>
+            <!-- CONFIRMAR SENHA -->
+            <label class="campo-wrapper">
+                <figure class="icone-campo">
+                    <img src="../image/cadeado.png" alt="Repetir Senha" class="icone">
+                </figure>
+                <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Repetir a senha" class="input-campo">
+                <span class="mostrar-senha" onclick="toggleSenha('confirmar_senha')">&#128065;</span>
+            </label>
+            <p id="erro-confirmar" class="erro-msg"></p>
 
-      <label>
-        <i class="fa fa-lock"></i>
-        <input type="password" id="confirmarSenha" name="confirmarSenha" placeholder="Confirmar senha" required>
-        <i class="fa fa-eye toggleSenha" data-target="confirmarSenha"></i>
-      </label>
-      <small id="erro-confirmar" class="mensagem-erro"></small>
+            <!-- DATA DE NASCIMENTO -->
+            <label class="campo-wrapper">
+                <figure class="icone-campo">
+                    <img src="../image/data.png" alt="Data de Nascimento" class="icone">
+                </figure>
+                <input type="date" id="data_nascimento" name="data_nascimento" class="input-campo">
+            </label>
+            <p id="erro-data" class="erro-msg"></p>
 
-      <label>
-        <i class="fa fa-calendar"></i>
-        <input type="date" id="dataNascimento" name="dataNascimento" required>
-      </label>
+            <!-- DIPLOMA -->
+            <label class="campo-wrapper">
+                <figure class="icone-campo">
+                    <img src="../image/diploma.png" alt="Diploma" class="icone">
+                </figure>
+                <input type="file" id="diploma" name="diploma" accept=".pdf,.jpg,.png" class="input-campo">
+            </label>
+            <p id="erro-diploma" class="erro-msg"></p>
 
-      <label>
-        <i class="fa fa-file-upload"></i>
-        <input type="file" id="diploma" name="diploma" accept=".pdf,.jpg,.png" required>
-      </label>
+            <!-- MATÉRIA QUE LECIONA -->
+            <label class="campo-wrapper">
+                <figure class="icone-campo">
+                    <img src="../image/materia.png" alt="Matéria" class="icone">
+                </figure>
+                <select id="materia" name="materia" class="input-campo select-campo">
+                    <option value="" disabled selected>Matéria que leciona</option>
+                    <option value="Português">Português</option>
+                    <option value="Matemática">Matemática</option>
+                    <option value="História">História</option>
+                    <option value="Geografia">Geografia</option>
+                    <option value="Física">Física</option>
+                    <option value="Química">Química</option>
+                    <option value="Biologia">Biologia</option>
+                    <option value="Inglês">Inglês</option>
+                    <option value="Educação Física">Educação Física</option>
+                    <option value="Filosofia">Filosofia</option>
+                    <option value="Sociologia">Sociologia</option>
+                    <option value="Artes">Artes</option>
+                </select>
+            </label>
+            <p id="erro-materia" class="erro-msg"></p>
 
-      <label>
-        <i class="fa fa-book"></i>
-        <select id="materia" name="materia" required>
-          <option value="">Matéria que leciona</option>
-          <option>Português</option>
-          <option>Matemática</option>
-          <option>História</option>
-          <option>Geografia</option>
-          <option>Biologia</option>
-          <option>Física</option>
-          <option>Química</option>
-          <option>Inglês</option>
-          <option>Educação Física</option>
-          <option>Filosofia</option>
-          <option>Sociologia</option>
-          <option>Artes</option>
-        </select>
-      </label>
-
-      <button type="submit" class="btn-cadastrar">Cadastrar</button>
-    </form>
-  </section>
-
-  
-</main>
+            <button type="submit" class="botao-submit">Cadastre-se</button>
+        </form>
+    </article>
+</section>
 
 <script src="../js/cadastroprofessor.js"></script>
 </body>

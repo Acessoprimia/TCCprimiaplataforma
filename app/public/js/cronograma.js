@@ -23,7 +23,9 @@ const cardButtons = document.querySelectorAll('.card-button');
 cardButtons.forEach(button => {
     button.addEventListener('click', () => {
         const imageSrc = button.dataset.image;
-        modalImage.src = imageSrc;
+        const fullPath = '/image/' + imageSrc; // Caminho absoluto
+        console.log('Tentando abrir imagem:', fullPath);
+        modalImage.src = fullPath;
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
     });

@@ -1,0 +1,266 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8f9fa;
+}
+
+main {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    margin-top: 5rem;
+    padding-bottom: 2rem;
+}
+
+.titulo-principal {
+    font-size: 2rem;
+    color: #A398D1;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.filtro-section {
+    margin-bottom: 1.5rem;
+}
+
+.filtro-label {
+    display: block;
+    color: #a0a0a0;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.filtro-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    color: #333;
+    cursor: pointer;
+}
+
+.duvidas-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.card-duvida {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.card-header {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    background: #c5b8e8;
+    border-radius: 50%;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.user-serie {
+    font-size: 0.85rem;
+    color: #666;
+    font-style: italic;
+}
+
+.materia-tag {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.8rem;
+    color: #667eea;
+    font-style: italic;
+}
+
+.pergunta-texto,
+.alternativas-texto {
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+.alternativas-texto {
+    font-size: 0.95rem;
+}
+
+.btn-responder {
+    background: #A398D1;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    float: right;
+    transition: background 0.3s;
+}
+
+.btn-responder:hover {
+    background: #A398D1;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 100%;
+    position: relative;
+}
+
+.modal-titulo {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 1.5rem;
+}
+
+.modal-textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    margin-bottom: 1rem;
+    background: #f8f9fa;
+}
+
+.modal-textarea:focus {
+    outline: none;
+    border-color: #A398D1;
+}
+
+.modal-opcoes {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-opcao {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.materia-btn {
+    background: #e8e4f3;
+    color: #A398D1;
+    font-weight: 600;
+}
+
+.foto-btn,
+.anexo-btn,
+.formula-btn {
+    background: #f0f0f0;
+    color: #666;
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.dropdown-icon {
+    font-size: 0.8rem;
+}
+
+.btn-opcao:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.btn-enviar {
+    width: 100%;
+    padding: 1rem;
+    background: #A398D1;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-enviar:hover {
+    background: #A398D1;
+}
+
+.btn-fechar {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #999;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-fechar:hover {
+    color: #333;
+}

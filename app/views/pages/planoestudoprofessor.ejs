@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano de Aulas</title>
+     <%- include("../partials/headerprofessor.ejs") %>
+  <link href="../css/planoestudoprofessor.css" rel="stylesheet">
+</head>
+<body>
+    <main>
+        <section class="plano-estudos">
+            <h1 class="titulo-principal">Planos de Estudos</h1>
+            <figure class="tabela-container">
+                <img src="../image/planoaulam.png" alt="Tabela de Planos de Estudos" class="tabela-image">
+            </figure>
+        </section>
+
+        <section class="prioridades">
+            <h2 class="titulo-secao">Prioridades</h2>
+            <ul class="lista-prioridades">
+                <li class="item-lista">
+                    <input type="checkbox" id="prioridade1" class="checkbox">
+                    <label for="prioridade1" class="label-checkbox">1ª Prioridade</label>
+                </li>
+                <li class="item-lista">
+                    <input type="checkbox" id="prioridade2" class="checkbox">
+                    <label for="prioridade2" class="label-checkbox">2ª Prioridade</label>
+                </li>
+                <li class="item-lista">
+                    <input type="checkbox" id="prioridade3" class="checkbox">
+                    <label for="prioridade3" class="label-checkbox">3ª Prioridade</label>
+                </li>
+                <li class="item-lista">
+                    <input type="checkbox" id="prioridade4" class="checkbox">
+                    <label for="prioridade4" class="label-checkbox">4ª Prioridade</label>
+                </li>
+            </ul>
+        </section>
+
+        <section class="conteudos">
+            <h2 class="titulo-secao">Conteúdos da Semana</h2>
+            <ul class="lista-conteudos">
+                <li class="item-lista">
+                    <input type="checkbox" id="conteudo1" class="checkbox">
+                    <label for="conteudo1" class="label-checkbox">1º Conteúdo</label>
+                </li>
+                <li class="item-lista">
+                    <input type="checkbox" id="conteudo2" class="checkbox">
+                    <label for="conteudo2" class="label-checkbox">2º Conteúdo</label>
+                </li>
+                <li class="item-lista">
+                    <input type="checkbox" id="conteudo3" class="checkbox">
+                    <label for="conteudo3" class="label-checkbox">3º Conteúdo</label>
+                </li>
+                <li class="item-lista">
+                    <input type="checkbox" id="conteudo4" class="checkbox">
+                    <label for="conteudo4" class="label-checkbox">4º Conteúdo</label>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+
+    <%- include('../partials/footer.ejs') %>
+</body>
+</html>

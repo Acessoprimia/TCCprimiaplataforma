@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fórum de Dúvidas</title>
+       <%- include("../partials/headerprofessor.ejs") %>
+  <link href="../css/forumprofessor.css" rel="stylesheet">
+</head>
+<body>
+    <main>
+        <h1 class="titulo-principal">Fórum de Dúvidas</h1>
+
+        <section class="filtro-section">
+            <label for="materia-filtro" class="filtro-label">Filtro</label>
+            <select id="materia-filtro" class="filtro-select">
+                <option value="">Todas as matérias</option>
+                <option value="matematica">Matemática</option>
+                <option value="fisica">Física</option>
+                <option value="quimica">Química</option>
+                <option value="biologia">Biologia</option>
+                <option value="portugues">Português</option>
+                <option value="literatura">Literatura</option>
+                <option value="ingles">Inglês</option>
+                <option value="espanhol">Espanhol</option>
+                <option value="historia">História</option>
+                <option value="geografia">Geografia</option>
+                <option value="filosofia">Filosofia</option>
+                <option value="sociologia">Sociologia</option>
+                <option value="artes">Artes</option>
+                <option value="educacao-fisica">Educação Física</option>
+            </select>
+        </section>
+
+        <section class="duvidas-container">
+            <article class="card-duvida" data-materia="matematica">
+                <header class="card-header">
+                    <figure class="avatar"></figure>
+                    <section class="user-info">
+                        <h3 class="user-name">Usuário do Aluno</h3>
+                        <p class="user-serie">1° ano Ensino Médio</p>
+                    </section>
+                    <span class="materia-tag">Matéria: Matemática</span>
+                </header>
+                <p class="pergunta-texto">Estou em dúvida em fatorar esse polinômio: 5xb³-10x²b³+15x³b.</p>
+                <button class="btn-responder">Responder</button>
+            </article>
+
+            <article class="card-duvida" data-materia="filosofia">
+                <header class="card-header">
+                    <figure class="avatar"></figure>
+                    <section class="user-info">
+                        <h3 class="user-name">Usuário do Aluno</h3>
+                        <p class="user-serie">3° ano Ensino Médio</p>
+                    </section>
+                    <span class="materia-tag">Matéria: Filosofia</span>
+                </header>
+                <p class="pergunta-texto">Qual é a relação entre a arte, a religião e a filosofia na visão de Hegel como manifestações do espírito absoluto, e como essas formas contribuem para o desenvolvimento da consciência humana ao longo da história?</p>
+                <p class="alternativas-texto">a) A arte é apenas uma forma de entretenimento, sem relação com a filosofia.<br>
+                b) A religião é considerada inferior à filosofia e à arte.<br>
+                c) A arte, a religião e a filosofia são interligadas e ajudam a revelar verdades profundas da humanidade.<br>
+                d) O espírito absoluto é um conceito que não se aplica à arte e à religião.</p>
+                <button class="btn-responder">Responder</button>
+            </article>
+
+            <article class="card-duvida" data-materia="portugues">
+                <header class="card-header">
+                    <figure class="avatar"></figure>
+                    <section class="user-info">
+                        <h3 class="user-name">Usuário do Aluno</h3>
+                        <p class="user-serie">1° ano Ensino Médio</p>
+                    </section>
+                    <span class="materia-tag">Matéria: Português</span>
+                </header>
+                <p class="pergunta-texto">Como o romantismo se relaciona com a independência do brasil?</p>
+                <button class="btn-responder">Responder</button>
+            </article>
+
+            <article class="card-duvida" data-materia="historia">
+                <header class="card-header">
+                    <figure class="avatar"></figure>
+                    <section class="user-info">
+                        <h3 class="user-name">Usuário do Aluno</h3>
+                        <p class="user-serie">2° ano Ensino Médio</p>
+                    </section>
+                    <span class="materia-tag">Matéria: História</span>
+                </header>
+                <p class="pergunta-texto">(UNIFESP) "Nunca temi homens que têm no centro de sua cidade um local para reunirem-se e enganarem-se uns aos outros com juramentos. Com estas palavras, Ciro insultou todos os gregos, pois eles têm em suas ágoras [praças] onde se reúnem para comprar e vender; os persas ignoram completamente o uso de ágoras e não têm lugar algum com essa finalidade". (Heródoto, Histórias, séc. V a.C.)</p>
+                <p class="alternativas-texto">O texto expressa<br>
+                a) a inferioridade dos persas que, ao contrário dos gregos, não conheciam ainda a vida em cidades.<br>
+                b) a desigualdade entre gregos e persas, apesar dos mesmos usos que ambos faziam do espaço urbano.<br>
+                c) o caráter grego, fundamentado no uso específico do espaço cívico, construído em oposição aos outros.<br>
+                d) a incapacidade do autor olhar com objetividade os persas e descrever seus objetividade os persas e descrever seus costumes diferentes.<br>
+                e) a complacência dos persas para com os gregos, decorrente da superioridade de seu poderio econômico e militar.</p>
+                <button class="btn-responder">Responder</button>
+            </article>
+        </section>
+    </main>
+
+    <aside id="modal-resposta" class="modal">
+        <section class="modal-content">
+            <h2 class="modal-titulo">Responda a dúvida selecionada</h2>
+            <textarea class="modal-textarea" placeholder="Responda a pergunta aqui"></textarea>
+            
+            <section class="modal-opcoes">
+                <button class="btn-opcao materia-btn">
+                    Matéria 
+                    <span class="dropdown-icon">▼</span>
+                </button>
+                <button class="btn-opcao foto-btn" aria-label="Adicionar foto">
+                    <span class="icon-camera">📷</span>
+                </button>
+                <button class="btn-opcao anexo-btn" aria-label="Adicionar anexo">
+                    <span class="icon-anexo">📎</span>
+                </button>
+                <button class="btn-opcao formula-btn" aria-label="Adicionar fórmula">
+                    <span class="icon-formula">√</span>
+                </button>
+            </section>
+
+            <button class="btn-enviar">Enviar</button>
+            <button class="btn-fechar" id="btn-fechar-modal">×</button>
+        </section>
+    </aside>
+
+    <script src="../js/forumprofessor.js"></script>
+</body>
+</html>

@@ -64,6 +64,11 @@ router.get("/biblioteca", function (req, res) {
   res.render("pages/biblioteca");
 });
 
+router.get("/bibliotecaprofessor", function (req, res) {
+  res.render("pages/bibliotecaprofessor");
+});
+
+
 router.get("/livro", function (req, res) {
   res.render("pages/livro");
 });
@@ -72,6 +77,13 @@ router.get("/forumdeduvidas", function (req, res) {
   res.render("pages/forumdeduvidas");
 });
 
+router.get("/forumprofessor", function (req, res) {
+  res.render("pages/forumprofessor");
+});
+
+router.get("/planoestudoprofessor", function (req, res) {
+  res.render("pages/planoestudoprofessor");
+});
 
 
 router.get("/logincadastro", function (req, res) {

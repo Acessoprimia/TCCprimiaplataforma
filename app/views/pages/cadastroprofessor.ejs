@@ -1,107 +1,123 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <%- include("../partials/hdeslogado.ejs") %>
-    <link href="../css/cadastroprofessor.css" rel="stylesheet">
-    <title>Cadastro Professor - Primia</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro Professor</title>
+  <%- include('../partials/hdeslogado.ejs') %>
+  <link rel="stylesheet" href="/css/cadastroprofessor.css">
 </head>
 <body>
-<section class="secao-roxa">
-    <article class="card-cadastro">
-        <form class="form-cadastro" action="/cadastroprofessor" method="POST" enctype="multipart/form-data">
 
-            <!-- NOME COMPLETO -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/usuario.png" alt="Nome Completo" class="icone">
-                </figure>
-                <input type="text" id="nome_completo" name="nome_completo" placeholder="Nome completo" class="input-campo">
-            </label>
-            <p id="erro-nome-completo" class="erro-msg"></p>
+  <!-- SEÇÃO ROXA COM ARREDONDAMENTO EMBAIXO -->
+  <header class="secao-roxa"></header>
 
-            <!-- EMAIL -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/usuario.png" alt="Email" class="icone">
-                </figure>
-                <input type="email" id="email" name="email" placeholder="Email" class="input-campo">
-            </label>
-            <p id="erro-email" class="erro-msg"></p>
+  <!-- ARTIGO COM FORMULÁRIO DE CADASTRO -->
+  <article class="card-cadastro">
+    <form id="cadastroProfessorForm" class="form-cadastro" action="/entradaprofessor" method="POST" novalidate>
+      
+      <!-- NOME COMPLETO -->
+      <fieldset class="campo-wrapper">
+        <legend class="sr-only">Nome completo</legend>
+        <span class="icone-campo">
+          <img src="../image/usuario.png" alt="" class="icone" aria-hidden="true">
+        </span>
+        <input type="text" id="nomeCompleto" name="nomeCompleto" class="input-campo" placeholder="Nome completo" required aria-label="Nome completo">
+      </fieldset>
+      <small id="erro-nome" class="erro-msg" role="alert"></small>
 
-            <!-- SENHA -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/cadeado.png" alt="Senha" class="icone">
-                </figure>
-                <input type="password" id="senha" name="senha" placeholder="Senha" class="input-campo">
-                <span class="mostrar-senha" onclick="toggleSenha('senha')">&#128065;</span>
-            </label>
-            <ul id="regras-senha" class="regras-senha-modern">
-                <li id="tamanho">8 a 15 caracteres</li>
-                <li id="maiuscula">Uma letra maiúscula</li>
-                <li id="minuscula">Uma letra minúscula</li>
-                <li id="numero">Um número</li>
-                <li id="especial">Um caractere especial (@, !, #, $, %, &)</li>
-            </ul>
+      <!-- EMAIL -->
+      <fieldset class="campo-wrapper">
+        <legend class="sr-only">Email</legend>
+        <span class="icone-campo">
+          <img src="../image/usuario.png" alt="" class="icone" aria-hidden="true">
+        </span>
+        <input type="email" id="email" name="email" class="input-campo" placeholder="Email" required aria-label="Email">
+      </fieldset>
 
-            <!-- CONFIRMAR SENHA -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/cadeado.png" alt="Repetir Senha" class="icone">
-                </figure>
-                <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Repetir a senha" class="input-campo">
-                <span class="mostrar-senha" onclick="toggleSenha('confirmar_senha')">&#128065;</span>
-            </label>
-            <p id="erro-confirmar" class="erro-msg"></p>
+      <!-- SENHA -->
+      <fieldset class="campo-wrapper">
+        <legend class="sr-only">Senha</legend>
+        <span class="icone-campo">
+          <img src="../image/cadeado.png" alt="" class="icone" aria-hidden="true">
+        </span>
+        <input type="password" id="senha" name="senha" class="input-campo" placeholder="Senha" required aria-label="Senha" aria-describedby="regras-senha">
+        <button type="button" class="btn-olhinho" id="btn-olhinho-senha" onclick="toggleSenha('senha')" aria-label="Mostrar ou ocultar senha">
+          <img src="../image/olho_aberto.png" alt="Mostrar Senha" class="olhinho-icon" aria-hidden="true">
+        </button>
+      </fieldset>
 
-            <!-- DATA DE NASCIMENTO -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/data.png" alt="Data de Nascimento" class="icone">
-                </figure>
-                <input type="date" id="data_nascimento" name="data_nascimento" class="input-campo">
-            </label>
-            <p id="erro-data" class="erro-msg"></p>
+      <!-- REQUISITOS DE SENHA -->
+      <ul class="regras-senha-modern" id="regras-senha">
+        <li id="tamanho">Entre 8 e 15 caracteres</li>
+        <li id="maiuscula">Uma letra maiúscula</li>
+        <li id="minuscula">Uma letra minúscula</li>
+        <li id="numero">Um número</li>
+        <li id="especial">Um caractere especial (@, !, #, $, %, &)</li>
+      </ul>
 
-            <!-- DIPLOMA -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/diploma.png" alt="Diploma" class="icone">
-                </figure>
-                <input type="file" id="diploma" name="diploma" accept=".pdf,.jpg,.png" class="input-campo">
-            </label>
-            <p id="erro-diploma" class="erro-msg"></p>
+      <!-- CONFIRMAR SENHA -->
+      <fieldset class="campo-wrapper">
+        <legend class="sr-only">Repetir senha</legend>
+        <span class="icone-campo">
+          <img src="../image/cadeado.png" alt="" class="icone" aria-hidden="true">
+        </span>
+        <input type="password" id="confirmarSenha" name="confirmarSenha" class="input-campo" placeholder="Repetir a senha" required aria-label="Repetir a senha">
+        <button type="button" class="btn-olhinho" id="btn-olhinho-confirmar" onclick="toggleSenha('confirmarSenha')" aria-label="Mostrar ou ocultar senha">
+          <img src="../image/olho_aberto.png" alt="Mostrar Senha" class="olhinho-icon" aria-hidden="true">
+        </button>
+      </fieldset>
+      <small id="erro-confirmar" class="erro-msg" role="alert"></small>
 
-            <!-- MATÉRIA QUE LECIONA -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/materia.png" alt="Matéria" class="icone">
-                </figure>
-                <select id="materia" name="materia" class="input-campo select-campo">
-                    <option value="" disabled selected>Matéria que leciona</option>
-                    <option value="Português">Português</option>
-                    <option value="Matemática">Matemática</option>
-                    <option value="História">História</option>
-                    <option value="Geografia">Geografia</option>
-                    <option value="Física">Física</option>
-                    <option value="Química">Química</option>
-                    <option value="Biologia">Biologia</option>
-                    <option value="Inglês">Inglês</option>
-                    <option value="Educação Física">Educação Física</option>
-                    <option value="Filosofia">Filosofia</option>
-                    <option value="Sociologia">Sociologia</option>
-                    <option value="Artes">Artes</option>
-                </select>
-            </label>
-            <p id="erro-materia" class="erro-msg"></p>
+      <!-- DATA DE NASCIMENTO -->
+      <fieldset class="campo-wrapper">
+        <legend class="sr-only">Data de nascimento</legend>
+        <span class="icone-campo">
+          <img src="../image/usuario.png" alt="" class="icone" aria-hidden="true">
+        </span>
+        <input type="date" id="dataNascimento" name="dataNascimento" class="input-campo" required aria-label="Data de nascimento">
+      </fieldset>
+      <small id="erro-data" class="erro-msg" role="alert"></small>
 
-            <button type="submit" class="botao-submit">Cadastre-se</button>
-        </form>
-    </article>
-</section>
+      <!-- UPLOAD DIPLOMA -->
+      <fieldset class="campo-wrapper campo-diploma">
+        <legend class="sr-only">Diploma</legend>
+        <span class="icone-campo">
+          <img src="../image/diploma.png" alt="" class="icone" aria-hidden="true">
+        </span>
+        <span class="nome-arquivo">Selecione um arquivo</span>
+        <input type="file" id="diploma" name="diploma" class="input-arquivo" accept=".pdf,.jpg,.png" required aria-label="Enviar diploma">
+      </fieldset>
 
-<script src="../js/cadastroprofessor.js"></script>
+      <!-- MATÉRIA -->
+      <fieldset class="campo-wrapper">
+        <legend class="sr-only">Matéria que leciona</legend>
+        <span class="icone-campo">
+          <img src="../image/materiacd.png" alt="" class="icone" aria-hidden="true">
+        </span>
+        <select id="materia" name="materia" class="input-campo select-campo" required aria-label="Matéria que leciona">
+          <option value="">Matéria que leciona</option>
+          <option>Português</option>
+          <option>Matemática</option>
+          <option>História</option>
+          <option>Geografia</option>
+          <option>Biologia</option>
+          <option>Física</option>
+          <option>Química</option>
+          <option>Inglês</option>
+          <option>Educação Física</option>
+          <option>Filosofia</option>
+          <option>Sociologia</option>
+          <option>Artes</option>
+        </select>
+      </fieldset>
+
+      <!-- BOTÃO SUBMIT -->
+      <button type="submit" class="botao-submit">Cadastre-se</button>
+    </form>
+  </article>
+
+  <script src="../js/cadastroprofessor.js"></script>
 </body>
 </html>
+

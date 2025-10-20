@@ -15,22 +15,22 @@ body {
 }
 
 /* SEÇÃO ROXA COM ARREDONDAMENTO EMBAIXO */
-.secao-roxa {
+header.secao-roxa {
     background: linear-gradient(180deg, #B5A9D8 0%, #A398D1 100%);
     border-radius: 0 0 40px 40px;
-    padding: 80px 20px 30px; /* Mantido o padding superior e lateral */
+    padding: 80px 20px 30px;
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     margin-bottom: 0;
-    height: 380px; /* Reduzido a altura da seção roxa para que o card possa se sobrepor mais acima */
+    height: 380px;
     overflow: visible;
 }
 
-/* CARD DE CADASTRO */
-.card-cadastro {
+/* ARTIGO COM CADASTRO */
+article.card-cadastro {
     background-color: white;
     border-radius: 20px;
     padding: 30px 25px;
@@ -38,7 +38,7 @@ body {
     max-width: 380px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     position: absolute;
-    top: 100px; /* Ajustado para que o card comece mais acima, sobrepondo a seção roxa */
+    top: 100px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
@@ -51,7 +51,7 @@ body {
     gap: 14px;
 }
 
-/* CAMPO DE INPUT */
+/* CAMPO DE INPUT COM FIELDSET */
 .campo-wrapper {
     position: relative;
     display: flex;
@@ -61,11 +61,17 @@ body {
     padding: 10px 12px;
     transition: all 0.3s ease;
     background-color: white;
+    border: 2px solid #A398D1;
+    margin: 0;
 }
 
 .campo-wrapper:focus-within {
     border-color: #8b83ac;
     box-shadow: 0 0 0 3px rgba(163, 152, 209, 0.1);
+}
+
+.campo-wrapper legend {
+    display: none;
 }
 
 .icone-campo {
@@ -78,9 +84,10 @@ body {
     flex-shrink: 0;
 }
 
-.icone {
-    width: 18px;
-    height: 18px;
+.icone-campo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     opacity: 0.6;
 }
 
@@ -116,39 +123,37 @@ body {
 /* INPUT TYPE DATE */
 .input-campo[type="date"] {
     color: #999;
+    padding-right: 30px;
 }
 
 .input-campo[type="date"]::-webkit-calendar-picker-indicator {
     opacity: 0.6;
     cursor: pointer;
+    margin-right: 0;
 }
 
 /* INPUT TYPE FILE */
-.input-campo[type="file"] {
-    padding-left: 0;
-    color: #999;
-}
-
-.input-campo[type="file"]::-webkit-file-upload-button {
-    visibility: hidden;
-    width: 0;
-    padding: 0;
-    margin: 0;
-}
-
-.input-campo[type="file"]::before {
-    content: 'Importar seu diploma'; /* Placeholder para o input de arquivo */
-    display: inline-block;
-    background: none;
-    border: none;
-    padding: 0;
-    outline: none;
-    white-space: nowrap;
-    -webkit-user-select: none;
+.input-arquivo {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
     cursor: pointer;
-    color: #999;
-    font-size: 13px;
+    top: 0;
+    left: 0;
+}
+
+.campo-diploma {
+    position: relative;
+}
+
+.nome-arquivo {
     flex: 1;
+    font-size: 14px;
+    color: #999;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* BOTÃO SUBMIT */
@@ -172,51 +177,39 @@ body {
     box-shadow: 0 5px 15px rgba(255, 156, 125, 0.4);
 }
 
-/* RESPONSIVO MOBILE */
-@media (max-width: 480px) {
-    .secao-roxa {
-        padding: 70px 15px 25px;
-        border-radius: 0 0 30px 30px;
-        height: 300px; /* Ajuste de altura para mobile */
-    }
-
-    .card-cadastro {
-        padding: 25px 20px;
-        max-width: calc(100% - 30px);
-        top: 80px; /* Ajuste para mobile */
-    }
-}
-
-/* RESPONSIVO TABLET E DESKTOP */
-@media (min-width: 768px) {
-    .secao-roxa {
-        padding: 80px 40px 140px;
-        border-radius: 0 0 50px 50px;
-        height: 200px; /* Ajuste de altura para desktop */
-    }
-
-    .card-cadastro {
-        padding: 35px 30px;
-        border-radius: 25px;
-        max-width: 400px;
-        top: 120px; /* Ajuste para desktop */
-    }
-}
-
-.mostrar-senha {
+/* MOSTRAR/OCULTAR SENHA */
+.btn-olhinho {
     position: absolute;
     right: 12px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    font-size: 16px;
-    color: #666;
+    background: none;
+    border: none;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     user-select: none;
-}
-.campo-wrapper {
-    position: relative; /* necessário para o span do olhinho */
+    transition: all 0.3s ease;
 }
 
+.olhinho-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.btn-olhinho:hover .olhinho-icon {
+    opacity: 0.8;
+}
+
+.btn-olhinho:active {
+    transform: scale(0.95);
+}
+
+/* REGRAS DE SENHA */
 .regras-senha-modern {
     list-style: none;
     padding: 10px 15px;
@@ -232,9 +225,13 @@ body {
     position: relative;
     padding-left: 24px;
     margin-bottom: 4px;
-    color: #d9534f; /* vermelho = não cumprido */
+    color: #d9534f;
     font-weight: 500;
     transition: all 0.3s;
+}
+
+.regras-senha-modern li:last-child {
+    margin-bottom: 0;
 }
 
 .regras-senha-modern li::before {
@@ -247,7 +244,7 @@ body {
 }
 
 .regras-senha-modern li.correto {
-    color: #28a745; /* verde = cumprido */
+    color: #28a745;
 }
 
 .regras-senha-modern li.correto::before {
@@ -255,26 +252,59 @@ body {
     color: #28a745;
 }
 
+/* MENSAGENS DE ERRO */
 .erro-msg {
     color: #d9534f;
     font-size: 12px;
     margin-top: 4px;
     font-weight: 500;
 }
+
 .erro-msg.correto {
     color: #28a745;
 }
 
-
-
-
-.erro-msg {
-    font-size: 12px;
-    margin-top: 4px;
-    font-weight: 500;
-    color: #d9534f; /* vermelho = erro */
+/* CLASSE PARA LEITORES DE TELA */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
 }
 
-.erro-msg.correto {
-    color: #28a745; /* verde = correto */
+/* RESPONSIVO MOBILE */
+@media (max-width: 480px) {
+    header.secao-roxa {
+        padding: 70px 15px 25px;
+        border-radius: 0 0 30px 30px;
+        height: 300px;
+    }
+
+    article.card-cadastro {
+        padding: 25px 20px;
+        max-width: calc(100% - 30px);
+        top: 80px;
+    }
 }
+
+/* RESPONSIVO TABLET E DESKTOP */
+@media (min-width: 768px) {
+    header.secao-roxa {
+        padding: 80px 40px 140px;
+        border-radius: 0 0 50px 50px;
+        height: 200px;
+    }
+
+    article.card-cadastro {
+        padding: 35px 30px;
+        border-radius: 25px;
+        max-width: 400px;
+        top: 120px;
+    }
+}
+

@@ -1,42 +1,31 @@
-// cadastroprofessor.js - validações completas e submit controlado
-
 // Mostrar/ocultar senha
 function toggleSenha(idCampo) {
     const campo = document.getElementById(idCampo);
-    if (campo) {
-        campo.type = campo.type === "password" ? "text" : "password";
+    const botao = document.getElementById('btn-olhinho-' + (idCampo === 'senha' ? 'senha' : 'confirmar'));
+    const icon = botao.querySelector('.olhinho-icon');
+    
+    if (campo.type === "password") {
+        campo.type = "text";
+        icon.src = "../image/olho_fechado.png"; // Ícone de olho fechado
+        icon.alt = "Ocultar Senha";
+    } else {
+        campo.type = "password";
+        icon.src = "../image/olho_aberto.png"; // Ícone de olho aberto
+        icon.alt = "Mostrar Senha";
     }
 }
 
-// Validação do nome completo
-function validarNomeCompleto() {
-    const nomeCompleto = document.getElementById("nome_completo").value.trim();
-    const erro = document.getElementById("erro-nome-completo");
+// Validação do nome
+function validarNome() {
+    const nome = document.getElementById("nomeCompleto").value.trim();
+    const erro = document.getElementById("erro-nome");
     const regex = /^[A-Za-zÀ-ú]+(\s[A-Za-zÀ-ú]+)+$/;
 
-    if (!nomeCompleto) {
+    if (!nome) {
         erro.textContent = "Campo obrigatório!";
         return false;
-    } else if (!regex.test(nomeCompleto)) {
+    } else if (!regex.test(nome)) {
         erro.textContent = "Digite seu nome completo (pelo menos duas palavras)";
-        return false;
-    } else {
-        erro.textContent = "";
-        return true;
-    }
-}
-
-// Validação do email
-function validarEmail() {
-    const email = document.getElementById("email").value.trim();
-    const erro = document.getElementById("erro-email");
-    const regex = /^\S+@\S+\.\S+$/;
-
-    if (!email) {
-        erro.textContent = "Campo obrigatório!";
-        return false;
-    } else if (!regex.test(email)) {
-        erro.textContent = "Digite um e-mail válido!";
         return false;
     } else {
         erro.textContent = "";
@@ -58,13 +47,11 @@ function validarSenha() {
     let todasCorretas = true;
     for (const regra in regras) {
         const li = document.getElementById(regra);
-        if (li) {
-            if (regras[regra]) {
-                li.classList.add("correto");
-            } else {
-                li.classList.remove("correto");
-                todasCorretas = false;
-            }
+        if (regras[regra]) {
+            li.classList.add("correto");
+        } else {
+            li.classList.remove("correto");
+            todasCorretas = false;
         }
     }
 
@@ -75,7 +62,7 @@ function validarSenha() {
 // Validação do confirmar senha
 function validarConfirmarSenha() {
     const senha = document.getElementById("senha").value;
-    const confirmar = document.getElementById("confirmar_senha").value;
+    const confirmar = document.getElementById("confirmarSenha").value;
     const erro = document.getElementById("erro-confirmar");
 
     if (!confirmar) {
@@ -95,15 +82,28 @@ function validarConfirmarSenha() {
     }
 }
 
+// Validação do email
+function validarEmail() {
+    const email = document.getElementById("email").value.trim();
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+        return false;
+    } else if (!regex.test(email)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
 // Validação da data de nascimento
 function validarDataNascimento() {
-    const dataInput = document.getElementById("data_nascimento");
+    const dataInput = document.getElementById("dataNascimento");
     const erro = document.getElementById("erro-data");
     const valor = dataInput.value;
 
     if (!valor) {
         erro.textContent = "Campo obrigatório!";
-        erro.classList.remove("correto");
         return false;
     }
 
@@ -113,8 +113,12 @@ function validarDataNascimento() {
     const m = hoje.getMonth() - nascimento.getMonth();
     if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) idade--;
 
-    if (idade < 21) { // Professores devem ter 21 anos ou mais
-        erro.textContent = "Apenas professores com 21 anos ou mais podem se cadastrar.";
+    if (idade < 21) {
+        erro.textContent = "Idade mínima: 21 anos";
+        erro.classList.remove("correto");
+        return false;
+    } else if (idade > 105) {
+        erro.textContent = "Idade máxima: 105 anos";
         erro.classList.remove("correto");
         return false;
     } else {
@@ -124,86 +128,60 @@ function validarDataNascimento() {
     }
 }
 
-// Validação do Diploma
+// Validação do diploma
 function validarDiploma() {
-    const diplomaInput = document.getElementById("diploma");
-    const erro = document.getElementById("erro-diploma");
-    const file = diplomaInput.files && diplomaInput.files[0];
-
-    if (!file) {
-        erro.textContent = "É necessário enviar um diploma.";
-        erro.classList.remove("correto");
-        return false;
-    }
-
-    const allowedTypes = ["application/pdf", "image/png", "image/jpeg"];
-    if (!allowedTypes.includes(file.type)) {
-        erro.textContent = "Formato inválido (PDF, PNG, JPG).";
-        erro.classList.remove("correto");
-        return false;
-    }
-
-    const maxSizeMB = 5;
-    if (file.size > maxSizeMB * 1024 * 1024) {
-        erro.textContent = `Arquivo muito grande (máx ${maxSizeMB}MB).`;
-        erro.classList.remove("correto");
-        return false;
-    }
-
-    erro.textContent = "Diploma válido ✔";
-    erro.classList.add("correto");
-    return true;
+    const diploma = document.getElementById("diploma").value;
+    return diploma !== "";
 }
 
-// Validação da Matéria
+// Validação da matéria
 function validarMateria() {
     const materia = document.getElementById("materia").value;
-    const erro = document.getElementById("erro-materia");
+    return materia !== "";
+}
 
-    if (!materia) {
-        erro.textContent = "Selecione uma matéria!";
-        erro.classList.remove("correto");
-        return false;
+// Atualizar nome do arquivo de diploma
+function atualizarNomeDiploma() {
+    const diplomaInput = document.getElementById("diploma");
+    const nomeArquivoSpan = document.querySelector(".nome-arquivo");
+    
+    if (diplomaInput.files && diplomaInput.files[0]) {
+        nomeArquivoSpan.textContent = diplomaInput.files[0].name;
     } else {
-        erro.textContent = "Matéria selecionada ✔";
-        erro.classList.add("correto");
-        return true;
+        nomeArquivoSpan.textContent = "Selecione um arquivo";
     }
 }
 
 // Inicialização de eventos
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.querySelector(".form-cadastro");
-    const nomeCompletoInput = document.getElementById("nome_completo");
-    const emailInput = document.getElementById("email");
     const senhaInput = document.getElementById("senha");
-    const confirmarInput = document.getElementById("confirmar_senha");
-    const dataInput = document.getElementById("data_nascimento");
+    const confirmarInput = document.getElementById("confirmarSenha");
+    const nomeInput = document.getElementById("nomeCompleto");
+    const dataInput = document.getElementById("dataNascimento");
     const diplomaInput = document.getElementById("diploma");
-    const materiaInput = document.getElementById("materia");
 
-    if (nomeCompletoInput) nomeCompletoInput.addEventListener("input", validarNomeCompleto);
-    if (emailInput) emailInput.addEventListener("input", validarEmail);
-    if (senhaInput) senhaInput.addEventListener("input", validarSenha);
-    if (confirmarInput) confirmarInput.addEventListener("input", validarConfirmarSenha);
-    if (dataInput) dataInput.addEventListener("input", validarDataNascimento);
-    if (diplomaInput) diplomaInput.addEventListener("change", validarDiploma);
-    if (materiaInput) materiaInput.addEventListener("change", validarMateria);
+    senhaInput.addEventListener("input", validarSenha);
+    senhaInput.addEventListener("input", validarConfirmarSenha);
+    confirmarInput.addEventListener("input", validarConfirmarSenha);
+    nomeInput.addEventListener("input", validarNome);
+    dataInput.addEventListener("change", validarDataNascimento);
+    diplomaInput.addEventListener("change", atualizarNomeDiploma);
 
-    if (form) {
-        form.addEventListener("submit", function(e) {
-            const nomeCompletoValido = validarNomeCompleto();
-            const emailValido = validarEmail();
-            const senhaValida = validarSenha();
-            const confirmarValido = validarConfirmarSenha();
-            const dataValida = validarDataNascimento();
-            const diplomaValido = validarDiploma();
-            const materiaValida = validarMateria();
+    form.addEventListener("submit", function(e) {
+        const nomeValido = validarNome();
+        const emailValido = validarEmail();
+        const senhaValida = validarSenha();
+        const confirmarValido = validarConfirmarSenha();
+        const dataValida = validarDataNascimento();
+        const diplomaValido = validarDiploma();
+        const materiaValida = validarMateria();
 
-            if (!nomeCompletoValido || !emailValido || !senhaValida || !confirmarValido || !dataValida || !diplomaValido || !materiaValida) {
-                e.preventDefault(); // bloqueia submit
-                alert("Preencha corretamente todos os campos antes de enviar!");
-            }
-        });
-    }
+        if (!nomeValido || !emailValido || !senhaValida || !confirmarValido || !dataValida || !diplomaValido || !materiaValida) {
+            e.preventDefault(); // bloqueia submit
+            alert("Preencha corretamente todos os campos antes de enviar!");
+        }
+        // Se todos os campos estiverem corretos, o form envia para /entradaprofessor
+    });
 });
+

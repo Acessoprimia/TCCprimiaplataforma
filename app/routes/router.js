@@ -31,6 +31,10 @@ router.get("/telainicial", function (req, res) {
 router.get("/contato", function (req, res) {
   res.render("pages/contato");
 });
+router.get("/areadosimulado", function (req, res) {
+  res.render("pages/areadosimulado");
+});
+
 
 router.get("/cadastroprofessor", function (req, res) {
   res.render("pages/cadastroprofessor");

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/areadosimulado.css" rel="stylesheet">
+    <%- include('../partials/hdeslogado.ejs') %>
+    <title>Meus Simulados - Primia</title>
+</head>
+<body>
+    <!-- SEÇÃO PRINCIPAL -->
+    <main class="container-simulados">
+        <!-- TÍTULO -->
+        <h1 class="titulo-simulados">Meus simulados</h1>
+
+        <!-- ABAS DE FILTRO -->
+        <nav class="abas-filtro">
+            <button class="aba-botao aba-ativa" data-filtro="andamento">
+                Em andamento
+            </button>
+            <button class="aba-botao" data-filtro="finalizados">
+                Finalizados
+            </button>
+        </nav>
+
+        <!-- SEÇÃO DE FILTRO -->
+        <section class="secao-filtro">
+            <figure class="icone-filtro">
+                <img src="../image/filtro.png" alt="Filtro" class="icone">
+            </figure>
+            <span class="texto-filtro">Filtro</span>
+        </section>
+
+        <!-- MODAL DE FILTRO (com elemento dialog) -->
+        <dialog class="modal-filtro" id="modalFiltro">
+            <article class="modal-conteudo">
+                <button class="fechar-modal">&times;</button>
+                <h3>Selecione A Disciplina:</h3>
+                <form id="formFiltro">
+                    <label><input type="checkbox" name="disciplina" value="Português"> Língua Portuguesa</label>
+                    <label><input type="checkbox" name="disciplina" value="Literatura"> Literatura</label>
+                    <label><input type="checkbox" name="disciplina" value="Inglês"> Língua Estrangeira (inglês)</label>
+                    <label><input type="checkbox" name="disciplina" value="Matemática"> Matemática</label>
+                    <label><input type="checkbox" name="disciplina" value="História"> História</label>
+                    <label><input type="checkbox" name="disciplina" value="Geografia"> Geografia</label>
+                    <label><input type="checkbox" name="disciplina" value="Física"> Física</label>
+                    <label><input type="checkbox" name="disciplina" value="Química"> Química</label>
+                    <label><input type="checkbox" name="disciplina" value="Biologia"> Biologia</label>
+                    <label><input type="checkbox" name="disciplina" value="Arte"> Arte</label>
+                    <button type="submit" class="botao-buscar">Buscar</button>
+                </form>
+            </article>
+        </dialog>
+
+        <!-- SEÇÃO DE SIMULADOS EM ANDAMENTO -->
+        <section class="secao-simulados" id="secao-andamento">
+            <article class="card-simulado" data-status="andamento" data-disciplina="Português">
+                <h2 class="titulo-simulado">Simulado (Português)</h2>
+                <time class="data-simulado">
+                    <img src="../image/calendariologo.png" alt="Data" class="icone-data">
+                    13/11/2025, 07:00 a 17/11/2025, 23:59
+                </time>
+                <a href="#" class="botao-simulado botao-andamento">Faça</a>
+            </article>
+
+            <article class="card-simulado" data-status="andamento" data-disciplina="Matemática">
+                <h2 class="titulo-simulado">Simulado (Matemática)</h2>
+                <time class="data-simulado">
+                     <img src="../image/calendariologo.png" alt="Data" class="icone-data">
+                    13/11/2025, 07:00 a 17/11/2025, 23:59
+                </time>
+                <a href="#" class="botao-simulado botao-andamento">Faça</a>
+            </article>
+
+            <article class="card-simulado" data-status="andamento" data-disciplina="Português">
+                <h2 class="titulo-simulado">Simulado (Português)</h2>
+                <time class="data-simulado">
+                     <img src="../image/calendariologo.png" alt="Data" class="icone-data">
+                    13/11/2025, 07:00 a 17/11/2025, 23:59
+                </time>
+                <a href="#" class="botao-simulado botao-andamento">Faça</a>
+            </article>
+        </section>
+
+        <!-- SEÇÃO DE SIMULADOS FINALIZADOS (OCULTA POR PADRÃO) -->
+        <section class="secao-simulados oculta" id="secao-finalizados">
+            <article class="card-simulado" data-status="finalizados" data-disciplina="Literatura">
+                <h2 class="titulo-simulado">Simulado (Literatura)</h2>
+                <time class="data-simulado">
+                    <img src="https://raw.githubusercontent.com/google-gemini/manus/main/image/icons/calendar.png" alt="Data" class="icone-data">
+                    13/11/2025, 07:00 a 17/11/2025, 23:59
+                </time>
+                <a href="#" class="botao-simulado botao-finalizado">Feito</a>
+            </article>
+
+            <article class="card-simulado" data-status="finalizados" data-disciplina="Inglês">
+                <h2 class="titulo-simulado">Simulado (Inglês)</h2>
+                <time class="data-simulado">
+                    <img src="https://raw.githubusercontent.com/google-gemini/manus/main/image/icons/calendar.png" alt="Data" class="icone-data">
+                    13/11/2025, 07:00 a 17/11/2025, 23:59
+                </time>
+                <a href="#" class="botao-simulado botao-finalizado">Feito</a>
+            </article>
+
+            <article class="card-simulado" data-status="finalizados" data-disciplina="Matemática">
+                <h2 class="titulo-simulado">Simulado (Matemática)</h2>
+                <time class="data-simulado">
+                    <img src="https://raw.githubusercontent.com/google-gemini/manus/main/image/icons/calendar.png" alt="Data" class="icone-data">
+                    13/11/2025, 07:00 a 17/11/2025, 23:59
+                </time>
+                <a href="https://forms.office.com/Pages/DesignPagev2.aspx" class="botao-simulado botao-finalizado">Feito</a>
+            </article>
+        </section>
+    </main>
+
+     <script src="../js/areadosimulado.js"></script>
+<%- include('../partials/footer.ejs') %>
+</body>
+</html>

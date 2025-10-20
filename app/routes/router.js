@@ -68,6 +68,11 @@ router.get("/livro", function (req, res) {
   res.render("pages/livro");
 });
 
+router.get("/forumdeduvidas", function (req, res) {
+  res.render("pages/forumdeduvidas");
+});
+
+
 
 router.get("/logincadastro", function (req, res) {
   res.render("pages/logincadastro");
@@ -75,6 +80,10 @@ router.get("/logincadastro", function (req, res) {
 
 router.get("/entradaprofessor", function (req, res) {
   res.render("pages/entradaprofessor");
+});
+
+router.get("/planoestudo", function (req, res) {
+  res.render("pages/planoestudo");
 });
 
 

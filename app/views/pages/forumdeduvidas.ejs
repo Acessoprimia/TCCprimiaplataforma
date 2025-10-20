@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fórum de Dúvidas</title>
+    <link href="../css/forumdeduvidas.css" rel="stylesheet">
+    <%- include('../partials/hdeslogado.ejs') %>
+</head>
+<body>
+    <main>
+        <h1 class="titulo-principal">Fórum de Dúvidas</h1>
+
+        <section class="filtro-section">
+            <label for="materia-filtro" class="filtro-label">Filtro</label>
+            <select id="materia-filtro" class="filtro-select">
+                <option value="">Todas as matérias</option>
+                <option value="matematica">Matemática</option>
+                <option value="fisica">Física</option>
+                <option value="quimica">Química</option>
+                <option value="biologia">Biologia</option>
+                <option value="portugues">Português</option>
+                <option value="literatura">Literatura</option>
+                <option value="ingles">Inglês</option>
+                <option value="espanhol">Espanhol</option>
+                <option value="historia">História</option>
+                <option value="geografia">Geografia</option>
+                <option value="filosofia">Filosofia</option>
+                <option value="sociologia">Sociologia</option>
+                <option value="artes">Artes</option>
+                <option value="educacao-fisica">Educação Física</option>
+            </select>
+        </section>
+
+        <button class="btn-fazer-pergunta" id="btn-abrir-modal">Faça sua pergunta</button>
+
+        <section class="duvidas-container">
+            <article class="card-duvida" data-materia="matematica">
+                <header class="card-header">
+                    <figure class="avatar"></figure>
+                    <section class="user-info">
+                        <h3 class="user-name">Usuário do Aluno</h3>
+                        <p class="user-serie">1° ano Ensino Médio</p>
+                    </section>
+                    <span class="materia-tag">Matéria: Matemática</span>
+                </header>
+                <p class="pergunta-texto">Estou em dúvida em fatorar esse polinômio: 5xb³-10x²b³+15x³b.</p>
+                <button class="btn-ver-resposta">Ver resposta</button>
+                <section class="resposta-container" style="display: none;">
+                    <h4 class="resposta-titulo">Resposta</h4>
+                    <header class="resposta-header">
+                        <figure class="avatar-professor"></figure>
+                        <section class="professor-info">
+                            <h5 class="professor-name">Usuário do Professor</h5>
+                            <p class="professor-materia">Professor(a) de Matemática</p>
+                        </section>
+                    </header>
+                    <p class="resposta-texto"><strong>Resposta:</strong> Para fatorar 5xb³-10x²b³+15x³b, primeiro identificamos o fator comum: 5xb³. Colocando em evidência: 5xb³(1 - 2x + 3x²).</p>
+                    <p class="explicacao-titulo"><strong>Explicação passo-a-passo:</strong></p>
+                    <p class="explicacao-texto">Identificamos que todos os termos compartilham 5, x e b³. Dividindo cada termo pelo fator comum, obtemos a expressão fatorada.</p>
+                </section>
+            </article>
+
+            <article class="card-duvida" data-materia="filosofia">
+                <header class="card-header">
+                    <figure class="avatar"></figure>
+                    <section class="user-info">
+                        <h3 class="user-name">Usuário do Aluno</h3>
+                        <p class="user-serie">3° ano Ensino Médio</p>
+                    </section>
+                    <span class="materia-tag">Matéria: Filosofia</span>
+                </header>
+                <p class="pergunta-texto">Qual é a relação entre a arte, a religião e a filosofia na visão de Hegel como manifestações do espírito absoluto, e como essas formas contribuem para o desenvolvimento da consciência humana ao longo da história?</p>
+                <button class="btn-ver-resposta">Ver resposta</button>
+                <section class="resposta-container" style="display: none;">
+                    <h4 class="resposta-titulo">Resposta</h4>
+                    <header class="resposta-header">
+                        <figure class="avatar-professor"></figure>
+                        <section class="professor-info">
+                            <h5 class="professor-name">Usuário do Professor</h5>
+                            <p class="professor-materia">Professor(a) de Filosofia</p>
+                        </section>
+                    </header>
+                    <p class="resposta-texto"><strong>Resposta:</strong> c) A arte, a religião e a filosofia são interligadas e ajudam a revelar verdades profundas da humanidade.</p>
+                    <p class="explicacao-titulo"><strong>Explicação passo-a-passo:</strong></p>
+                    <p class="explicacao-texto">Hegel, um dos filósofos mais influentes do século XIX, desenvolveu a ideia de que a arte, a religião e a filosofia são manifestações do Espírito Absoluto. Vamos explorar como cada uma dessas formas contribui para o desenvolvimento da consciência humana ao longo da história.</p>
+                </section>
+            </article>
+
+            <article class="card-duvida" data-materia="historia">
+                <header class="card-header">
+                    <figure class="avatar"></figure>
+                    <section class="user-info">
+                        <h3 class="user-name">Usuário do Aluno</h3>
+                        <p class="user-serie">2° ano Ensino Médio</p>
+                    </section>
+                    <span class="materia-tag">Matéria: História</span>
+                </header>
+                <p class="pergunta-texto">(UNIFESP) "Nunca temi homens que têm no centro de sua cidade um local para reunirem-se e enganarem-se uns aos outros com juramentos. Com estas palavras, Ciro insultou todos os gregos, pois eles têm em suas ágoras [praças] onde se reúnem para comprar e vender; os persas ignoram completamente o uso de ágoras e não têm lugar algum com essa finalidade". (Heródoto, Histórias, séc. V a.C.)</p>
+                <button class="btn-ver-resposta">Ver resposta</button>
+                <section class="resposta-container" style="display: none;">
+                    <h4 class="resposta-titulo">Resposta</h4>
+                    <header class="resposta-header">
+                        <figure class="avatar-professor"></figure>
+                        <section class="professor-info">
+                            <h5 class="professor-name">Usuário do Professor</h5>
+                            <p class="professor-materia">Professor(a) de História</p>
+                        </section>
+                    </header>
+                    <p class="resposta-texto"><strong>Resposta:</strong> c) O caráter grego, fundamentado no uso específico do espaço cívico, construído em oposição aos outros.</p>
+                </section>
+            </article>
+
+            <article class="card-duvida" data-materia="portugues">
+                <header class="card-header">
+                    <figure class="avatar"></figure>
+                    <section class="user-info">
+                        <h3 class="user-name">Usuário do Aluno</h3>
+                        <p class="user-serie">1° ano Ensino Médio</p>
+                    </section>
+                    <span class="materia-tag">Matéria: Português</span>
+                </header>
+                <p class="pergunta-texto">Como o romantismo se relaciona com a independência do Brasil?</p>
+                <button class="btn-ver-resposta">Ver resposta</button>
+                <section class="resposta-container" style="display: none;">
+                    <h4 class="resposta-titulo">Resposta</h4>
+                    <header class="resposta-header">
+                        <figure class="avatar-professor"></figure>
+                        <section class="professor-info">
+                            <h5 class="professor-name">Usuário do Professor</h5>
+                            <p class="professor-materia">Professor(a) de Português</p>
+                        </section>
+                    </header>
+                    <p class="resposta-texto"><strong>Resposta:</strong> O romantismo brasileiro surge após a independência e busca criar uma identidade nacional própria, valorizando a natureza, o índio e temas brasileiros.</p>
+                </section>
+            </article>
+        </section>
+
+        <button class="btn-add-fixo" id="btn-add-fixo" aria-label="Adicionar pergunta">+</button>
+    </main>
+
+    <aside id="modal-pergunta" class="modal">
+        <section class="modal-content">
+            <h2 class="modal-titulo">Tire Sua Dúvida:</h2>
+            <textarea class="modal-textarea" placeholder="Escreva sua pergunta aqui"></textarea>
+            <select class="modal-select">
+                <option value="">Matéria</option>
+                <option value="matematica">Matemática</option>
+                <option value="fisica">Física</option>
+                <option value="quimica">Química</option>
+                <option value="biologia">Biologia</option>
+                <option value="portugues">Português</option>
+                <option value="literatura">Literatura</option>
+                <option value="ingles">Inglês</option>
+                <option value="espanhol">Espanhol</option>
+                <option value="historia">História</option>
+                <option value="geografia">Geografia</option>
+                <option value="filosofia">Filosofia</option>
+                <option value="sociologia">Sociologia</option>
+                <option value="artes">Artes</option>
+                <option value="educacao-fisica">Educação Física</option>
+            </select>
+            <button class="btn-enviar">Enviar</button>
+            <button class="btn-fechar" id="btn-fechar-modal">×</button>
+        </section>
+    </aside>
+<%- include('../partials/footer.ejs') %>
+    <script src="../js/forumdeduvidas.js"></script>
+</body>
+</html>

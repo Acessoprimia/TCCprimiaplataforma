@@ -1,158 +1,331 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
-
-
-
-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+/* ========================================
+   RESET BÁSICO
+   ======================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-#title {
-    flex-direction: column;
-    line-height: 10px;
+:root {
+  --header-bg: #ffffff;
+  --text-color: #A398D1;
+  --accent: #A398D1;
+  --max-width: 1200px;
 }
 
-li {
-    display: inline-block;
-    margin: 20px;
+/* ========================================
+   HEADER FIXO
+   ======================================== */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: var(--header-bg);
+  z-index: 10001; /* Aumentado para ficar acima do menu mobile */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.a1 {
-    color: black;
-    text-decoration: none;
+.header-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
 }
 
-.a1:hover {
-    color: #A398D1;
-    transition: 0.3s all;
+/* ========================================
+   LOGO
+   ======================================== */
+.logo {
+  display: flex;
+  align-items: center;
+  z-index: 10003; /* Aumentado para ficar acima do menu mobile e hambúrguer */
+  text-decoration: none;
+  position: relative; /* Garante que o z-index funcione */
 }
 
-#iu {
-    border: 2px solid #A398D1;
-    padding: 10px;
-    border-radius: 15px;
+.logo img {
+  max-height: 42px;
+  transition: transform 0.3s ease;
 }
 
-#iu:hover {
-    background-color: #A398D1;
-    color: white;
+.logo:hover img {
+  transform: scale(1.05);
 }
 
-.h11 {
-    font-weight: 200;
+/* Logo placeholder (caso não tenha imagem) */
+.logo-text {
+  color: var(--text-color);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
-
-
-span {
-    color: #A398D1;
+/* ========================================
+   NAVEGAÇÃO DESKTOP
+   ======================================== */
+.nav-desktop {
+  display: none; /* Escondido por padrão (mobile first) */
 }
 
-p {
-    line-height: 20px;
-    max-width: 500px;
-    font-family: 'Poppins';
+.nav-desktop ul {
+  list-style: none;
+  display: flex;
+  gap: 32px;
+  margin: 0;
+  padding: 0;
 }
 
-
-
-#hamburger-toggle {
-    margin-top: 20px;
-    height: 50px;
-    padding: 15px;
-    border-radius: 20px;
-    border: none;
-    font-size: 15px;
-    width: 50%;
-    background-color: #A398D1;
-    color: white;
-    font-weight: bold;
-    display: none;
+.nav-desktop ul li a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  position: relative;
+  transition: opacity 0.3s ease;
 }
 
-/* Menu hambúrguer */
+.nav-desktop ul li a::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--text-color);
+  transition: width 0.3s ease;
+}
+
+.nav-desktop ul li a:hover {
+  opacity: 0.85;
+}
+
+.nav-desktop ul li a:hover::after {
+  width: 100%;
+}
+
+/* ========================================
+   BOTÃO LOGIN DESKTOP
+   ======================================== */
+.btn-login {
+  display: none; /* Escondido por padrão (mobile first) */
+  border: 2px solid var(--accent);
+  padding: 8px 20px;
+  border-radius: 25px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.btn-login:hover {
+  background: var(--accent);
+  color: var(--header-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ========================================
+   BOTÃO HAMBÚRGUER
+   ======================================== */
 .hamburger {
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 28px;
-    height: 20px;
-    cursor: pointer;
+  display: flex; /* Visível por padrão (mobile first) */
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 24px;
+  cursor: pointer;
+  z-index: 10004; /* Aumentado para ficar acima de tudo (overlay, menu, logo) */
+  background: none;
+  border: none;
+  padding: 0;
+  position: relative; /* Garante que o z-index funcione */
+  /* Ajuste para posicionamento */
+  margin-right: 10px; /* Adiciona um pequeno espaçamento à direita */
 }
 
 .hamburger span {
-    display: block;
-    height: 3px;
-    background: #000;
-    border-radius: 3px;
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: var(--text-color);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  transform-origin: center;
 }
 
-#hamburger-toggle:checked + .hamburger span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-}
-#hamburger-toggle:checked + .hamburger span:nth-child(2) {
-    opacity: 0;
-}
-#hamburger-toggle:checked + .hamburger span:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
+/* Animação hambúrguer -> X */
+.hamburger.active span:nth-child(1) {
+  transform: translateY(10.5px) rotate(45deg);
 }
 
-#hamburger-toggle:checked ~ .ul1 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
 }
 
-/* Responsivo */
-@media (max-width: 768px) {
-    .hamburger {
-        display: flex;
-    }
-
-    #menuToggle .ul1 {
-        display: none;
-        background: #fff;
-        border-radius: 10px;
-        padding: 20px;
-        margin-top: 10px;
-        gap: 15px;
-    }
-
-    #menuToggle .ul1 .a1 {
-        display: block;
-        color: #000;
-        font-size: 18px;
-    }
-
-    header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    
+.hamburger.active span:nth-child(3) {
+  transform: translateY(-10.5px) rotate(-45deg);
 }
 
-
-.h11{
-      display: flex;
-     flex-direction: column;
-     color: black;
-     text-decoration: none;
-     height: 100%;
-    font-size: 24px;
-    margin: 20px 0px;
-    
-  
+/* ========================================
+   MENU MOBILE LATERAL (DIREITA)
+   ======================================== */
+.nav-mobile {
+  position: fixed;
+  top: 0;
+  right: -100%; /* Começa escondido à direita */
+  width: 85%;
+  max-width: 320px;
+  height: 100vh;
+  background: var(--header-bg);
+  padding: 80px 30px 30px 30px;
+  transition: right 0.3s ease;
+  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.2); /* Sombra para o lado esquerdo */
+  overflow-y: auto;
+  z-index: 10000;
 }
-#sair{
-    color: red;
-    
+
+/* Quando o menu está ativo, desliza para a direita */
+.nav-mobile.active {
+  right: 0;
 }
 
-#sair:hover{
-    color: darkred;
-    
+.nav-mobile ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-mobile ul li {
+  margin-bottom: 8px;
+}
+
+.nav-mobile ul li a {
+  display: block;
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 14px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: padding-left 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-mobile ul li a:hover {
+  padding-left: 12px;
+  opacity: 0.85;
+}
+
+.mobile-login-btn {
+  border: 2px solid var(--accent) !important;
+  border-radius: 20px !important;
+  padding: 12px 20px !important;
+  display: inline-block !important;
+  text-align: center;
+  margin-top: 20px !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.mobile-login-btn:hover {
+  background: var(--accent) !important;
+  color: var(--header-bg) !important;
+  padding-left: 20px !important;
+}
+
+/* Overlay escuro */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 9998;
+}
+
+.overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ========================================
+   MEDIA QUERIES - TABLET (500px a 1023px)
+   ======================================== */
+@media (min-width: 500px) and (max-width: 1023px) {
+  .header-inner {
+    padding: 14px 30px;
+  }
+
+  .logo img {
+    max-height: 45px;
+  }
+
+  .hamburger {
+    display: flex; /* Garante que o hambúrguer esteja visível */
+    margin-right: 20px; /* Ajusta o espaçamento do hambúrguer */
+  }
+
+  .nav-desktop, .btn-login {
+    display: none; /* Garante que o menu desktop e botão de login estejam escondidos */
+  }
+
+  .nav-mobile {
+    width: 60%;
+    max-width: 380px;
+  }
+}
+
+/* ========================================
+   MEDIA QUERIES - DESKTOP (1024px+)
+   ======================================== */
+@media (min-width: 1024px) {
+  .hamburger {
+    display: none; /* Esconde hambúrguer no desktop */
+  }
+
+  .nav-mobile {
+    display: none; /* Esconde menu mobile no desktop */
+  }
+
+  .overlay {
+    display: none;
+  }
+
+  .nav-desktop {
+    display: block; /* Mostra menu desktop */
+  }
+
+  .btn-login {
+    display: inline-block; /* Mostra botão de login no desktop */
+  }
+
+  .header-inner {
+    padding: 16px 40px;
+  }
+
+  .logo img {
+    max-height: 48px;
+  }
+}
+
+/* ========================================
+   ACESSIBILIDADE
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
 }

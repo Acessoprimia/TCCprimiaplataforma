@@ -12,7 +12,7 @@
     <section class="secao-roxa">
         <!-- LOGO CENTRALIZADA -->
         <figure class="logo-wrapper">
-            
+            <!-- Adicione sua logo aqui -->
         </figure>
 
         <!-- CARD DE LOGIN -->
@@ -23,16 +23,19 @@
                     <figure class="icone-campo">
                         <img src="../image/usuario.png" alt="Usuário" class="icone">
                     </figure>
-                    <input type="email" name="email" placeholder="Email" class="input-campo" required>
+                    <input type="email" id="email" name="email" placeholder="Email" class="input-campo">
                 </label>
+                <p id="erro-email" class="erro-msg"></p>
 
                 <!-- CAMPO SENHA -->
                 <label class="campo-wrapper">
                     <figure class="icone-campo">
                         <img src="../image/cadeado.png" alt="Senha" class="icone">
                     </figure>
-                    <input type="password" name="senha" placeholder="Senha" class="input-campo" required>
+                    <input type="password" id="senha" name="senha" placeholder="Senha" class="input-campo">
+                    <span class="mostrar-senha" onclick="toggleSenha('senha')">&#128065;</span>
                 </label>
+                <p id="erro-senha" class="erro-msg"></p>
 
                 <!-- LINK ESQUECEU A SENHA -->
                 <footer class="rodape-form">
@@ -40,7 +43,7 @@
                 </footer>
 
                 <!-- BOTÃO LOGIN -->
-                <button type="" class="botao-login">Login</button>
+                <button type="submit" class="botao-login">Login</button>
 
                 <!-- DIVISOR OU -->
                 <section class="divisor">
@@ -65,6 +68,6 @@
         </article>
     </section>
 
+    <script src="../js/login.js"></script>
 </body>
-
 </html>

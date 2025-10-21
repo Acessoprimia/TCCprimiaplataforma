@@ -265,6 +265,69 @@ router.post("/entradaprofessor", (req, res) => {
   res.render("pages/entradaprofessor");
 });
 
+// ========== ROTA GET LOGIN ==========
+router.get("/login", (req, res) => {
+  res.render("pages/login", {
+    erros: null,
+    valores: { email: "", senha: "" },
+    erroValidacao: {},
+    msgErro: {},
+  });
+});
+
+// ========== ROTA POST LOGIN ==========
+router.post(
+  "/login",
+  [
+    body("email")
+      .trim()
+      .notEmpty()
+      .withMessage("O e-mail é obrigatório!")
+      .isEmail()
+      .withMessage("Digite um e-mail válido!"),
+    body("senha")
+      .notEmpty()
+      .withMessage("A senha é obrigatória!")
+      .isLength({ min: 6 })
+      .withMessage("A senha deve ter pelo menos 6 caracteres!"),
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+
+    // Se houver erros, volta pro login com mensagens
+    if (!errors.isEmpty()) {
+      const erroValidacao = {};
+      const msgErro = {};
+
+      errors.array().forEach((erro) => {
+        erroValidacao[erro.path] = "erro";
+        msgErro[erro.path] = erro.msg;
+      });
+
+      return res.render("pages/login", {
+        erros: errors,
+        valores: req.body,
+        erroValidacao,
+        msgErro,
+      });
+    }
+
+    // Caso não haja erros
+    const { email, senha } = req.body;
+
+    // 🔹 Aqui você pode mudar depois pra uma checagem real no banco de dados
+    // Por enquanto, detecta professor/aluno por uma regra simples:
+    if (email.includes("prof") || email.includes("teacher")) {
+      // Login de professor
+      return res.redirect("/entradaprofessor");
+    } else {
+      // Login de aluno
+      return res.redirect("/entrada");
+    }
+  }
+);
+
+
 
 module.exports = router;
 

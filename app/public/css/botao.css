@@ -1,11 +1,11 @@
 /* Botão flutuante */
 .btn-add-flutuante {
     position: fixed;
-    bottom: 2rem;
+    bottom: 25rem;
     right: 2rem;
     width: 60px;
     height: 60px;
-    background: #667eea;
+    background: #A398D1;
     color: white;
     border: none;
     border-radius: 50%;
@@ -17,7 +17,7 @@
 }
 
 .btn-add-flutuante:hover {
-    background: #5568d3;
+    background: #A398D1;
     transform: scale(1.1);
 }
 

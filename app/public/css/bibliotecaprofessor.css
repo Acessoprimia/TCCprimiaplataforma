@@ -1,0 +1,255 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+}
+
+body {
+    min-height: 100vh; /* Garante que o body ocupe no mínimo 100% da altura da viewport */
+    margin: 0; /* Remove margens padrão */
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    color: rgb(0, 0, 0);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* TÍTULO E FILTRO */
+.biblioteca-header {
+    text-align: center;
+    margin: 90px 0 30px 0;
+}
+
+.biblioteca-header h1 {
+    font-size: 48px;
+    color: #A398D1;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.filtro-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 30px;
+    padding-left: 20px;
+}
+
+.filtro-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: transparent;
+    border: none;
+    color: #A398D1;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 10px;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.filtro-btn:hover {
+    color: #8b83ac;
+}
+
+.filtro-icon {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 12px solid #A398D1;
+}
+
+/* MODAL DE FILTRO */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    background-color: #E8E5F2;
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 400px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-header {
+    margin-bottom: 25px;
+}
+
+.modal-header h2 {
+    font-size: 24px;
+    color: #4a4574;
+    font-weight: 600;
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #4a4574;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.disciplinas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.disciplina-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.disciplina-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #A398D1;
+}
+
+.disciplina-item span {
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+}
+
+.buscar-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #A398D1;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.buscar-btn:hover {
+    background-color: #8b83ac;
+    transform: translateY(-2px);
+}
+
+/* GRADE DE LIVROS */
+.livros-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px;
+    padding: 20px;
+}
+
+.livro-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.livro-card {
+    background-color: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+}
+
+.livro-link:hover .livro-card {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(163, 152, 209, 0.3);
+}
+
+.livro-cover {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+}
+
+.livro-info {
+    padding: 15px;
+    text-align: center;
+}
+
+.livro-titulo {
+    font-size: 14px;
+    color: #A398D1;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+    .biblioteca-header h1 {
+        font-size: 36px;
+    }
+
+    .livros-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 20px;
+        padding: 10px;
+    }
+
+    .livro-cover {
+        height: 220px;
+    }
+
+    .modal-content {
+        padding: 30px 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    .biblioteca-header h1 {
+        font-size: 28px;
+    }
+
+    .livros-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .livro-cover {
+        height: 200px;
+    }
+
+    .livro-titulo {
+        font-size: 12px;
+    }
+}

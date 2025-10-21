@@ -32,6 +32,12 @@ router.get("/contato", function (req, res) {
   res.render("pages/contato");
 });
 
+router.get("/contatoprofessor", function (req, res) {
+  res.render("pages/contatoprofessor");
+});
+
+
+
 router.get("/video", function (req, res) {
   res.render("pages/video");
 });

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videoaulas</title>
+    <link href="../css/videoaulaprofessor.css" rel="stylesheet">
+    <%- include('../partials/botao.ejs') %>
+    <%- include("../partials/headerprofessorpremium.ejs") %>
+</head>
+<body>
+    <main>
+        <h1>Videoaulas</h1>
+
+        <section class="filter-section">
+            <label for="materia-filter">
+                <svg class="filter-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+                </svg>
+                Filtro
+            </label>
+            <select id="materia-filter">
+                <option value="">Todas as matérias</option>
+                <option value="matematica">Matemática</option>
+                <option value="fisica">Física</option>
+                <option value="quimica">Química</option>
+                <option value="biologia">Biologia</option>
+                <option value="portugues">Português</option>
+                <option value="literatura">Literatura</option>
+                <option value="ingles">Inglês</option>
+                <option value="espanhol">Espanhol</option>
+                <option value="historia">História</option>
+                <option value="geografia">Geografia</option>
+                <option value="filosofia">Filosofia</option>
+                <option value="sociologia">Sociologia</option>
+                <option value="artes">Artes</option>
+                <option value="educacao-fisica">Educação Física</option>
+            </select>
+        </section>
+
+        <section class="cards-container">
+            <article data-materia="fisica">
+                <a href="/videoaula">
+                    <img src="../image/lousa.png" alt="Lei de Ohm e Circuitos Elétricos" class="card-image">
+                    <section class="card-content">
+                        <h2>Lei de Ohm e Circuitos Elétricos</h2>
+                        <p>A Lei de Ohm é fundamental para entender o comportamento dos circuitos elétricos. A videoaula explica como a relação entre tensão, corrente e resistência define o funcionamento de circuitos simples e como calcular os valores usando a equação V = R x I.</p>
+                    </section>
+                </a>
+            </article>
+
+            <article data-materia="biologia">
+                <a href="/videoaula">
+                    <img src="../image/lousa.png" alt="Classificação dos Seres Vivos" class="card-image">
+                    <section class="card-content">
+                        <h2>Classificação dos Seres Vivos</h2>
+                        <p>A taxonomia é o sistema utilizado para classificar os seres vivos em diferentes grupos. A videoaula detalha os critérios para separar os organismos em reinos, filos, classes e outras categorias, com exemplos de cada um deles.</p>
+                    </section>
+                </a>
+            </article>
+
+            <article data-materia="historia">
+                <a href="/videoaula">
+                    <img src="../image/lousa.png" alt="Revolução Francesa: O que houve?" class="card-image">
+                    <section class="card-content">
+                        <h2>Revolução Francesa: O que houve?</h2>
+                        <p>A Revolução Francesa foi um marco na história mundial. A videoaula analisa as causas políticas, sociais e econômicas que levaram à revolta, assim como as transformações que ela trouxe para o sistema político e a sociedade francesa.</p>
+                    </section>
+                </a>
+            </article>
+        </section>
+    </main>
+
+        <%- include("../partials/footer.ejs") %>
+
+    <script src="../js/video.js"></script>
+</body>
+</html>

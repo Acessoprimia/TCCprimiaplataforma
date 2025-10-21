@@ -1,0 +1,42 @@
+<!-- No seu HTML/EJS -->
+<head>
+    <link rel="stylesheet" href="../css/botao.css">
+</head>
+<body>
+    <!-- Seu conteúdo aqui -->
+    
+    
+    
+    <script src="../js/botao.js"></script>
+</body>
+
+
+<!-- Botão Flutuante -->
+<button class="btn-add-flutuante" id="btn-add-flutuante" aria-label="Adicionar">+</button>
+
+<!-- Modal -->
+<aside id="modal-flutuante" class="modal-flutuante">
+    <section class="modal-flutuante-content">
+        <h2 class="modal-flutuante-titulo">Importe o arquivo</h2>
+        
+        <input type="text" class="modal-flutuante-input" placeholder="Título">
+        <textarea class="modal-flutuante-textarea" placeholder="Descrição"></textarea>
+        <input type="url" class="modal-flutuante-input" placeholder="URL">
+        
+        <section class="modal-flutuante-opcoes">
+            <button class="btn-flutuante-opcao materia-btn-flutuante">
+                Matéria 
+                <span class="dropdown-icon-flutuante">▼</span>
+            </button>
+            <button class="btn-flutuante-opcao foto-btn-flutuante" aria-label="Adicionar foto">
+                <span class="icon-camera-flutuante">📷</span>
+            </button>
+            <button class="btn-flutuante-opcao anexo-btn-flutuante" aria-label="Adicionar anexo">
+                <span class="icon-anexo-flutuante">📎</span>
+            </button>
+        </section>
+
+        <button class="btn-enviar-flutuante">Enviar</button>
+        <button class="btn-fechar-flutuante" id="btn-fechar-flutuante">×</button>
+    </section>
+</aside>

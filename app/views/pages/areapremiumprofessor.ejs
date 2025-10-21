@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área Premium - Primia</title>
+    <link href="../css/areapremiumprofessor.css" rel="stylesheet">
+</head>
+<body>
+    
+    <%- include('../partials/headerprofessor.ejs') %>
+
+    <main>
+        <header class="titulo-area">
+            <h1>Área Premium</h1>
+            <p>Teste uma semana grátis</p>
+        </header>
+
+        <section class="plano gratuito">
+            <header>
+                <h2>Gratuito</h2>
+            </header>
+            <ul>
+                <li><a href="/forumprofessor">Fórum de Dúvida</a></li>
+                <li><a href="/planoestudoprofessor">Planos de Estudo</a></li>
+                <li><a href="/bibliotecaprofessor">Biblioteca</a></li>
+                <li><a href="#">Interação com Professor</a></li>
+            </ul>
+        </section>
+
+        <section class="plano premium">
+            <a href="/partepremiumprofessor" class="link-plano" aria-label="Acessar área premium">
+                <header>
+                    <h2>Premium</h2>
+                </header>
+            </a>
+            <ul>
+                <li><a href="/simuladoprofessor">Simulados</a></li>
+                <li><a href="/videoaulaprofessor">Videoaulas</a></li>
+                <li><a href="/planoestudoprofessor">Planos de Estudo Especializados</a></li>
+                <li><a href="/#">Preparatório para o ENEM</a></li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <%- include('../partials/footer.ejs') %>
+    </footer>
+</body>
+</html>

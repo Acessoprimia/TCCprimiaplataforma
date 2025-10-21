@@ -1,0 +1,168 @@
+/* Botão flutuante */
+.btn-add-flutuante {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transition: transform 0.3s, background 0.3s;
+    z-index: 100;
+}
+
+.btn-add-flutuante:hover {
+    background: #5568d3;
+    transform: scale(1.1);
+}
+
+/* Modal */
+.modal-flutuante {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 1rem;
+}
+
+.modal-flutuante.active {
+    display: flex;
+}
+
+.modal-flutuante-content {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+}
+
+.modal-flutuante-titulo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 1.5rem;
+}
+
+.modal-flutuante-input,
+.modal-flutuante-textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e8e4f3;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-family: inherit;
+    margin-bottom: 1rem;
+    background: #f8f9fa;
+}
+
+.modal-flutuante-textarea {
+    min-height: 80px;
+    resize: vertical;
+    border-radius: 20px;
+}
+
+.modal-flutuante-input:focus,
+.modal-flutuante-textarea:focus {
+    outline: none;
+    border-color: #a78bfa;
+}
+
+.modal-flutuante-input::placeholder,
+.modal-flutuante-textarea::placeholder {
+    color: #bbb;
+}
+
+.modal-flutuante-opcoes {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-flutuante-opcao {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.materia-btn-flutuante {
+    background: #e8e4f3;
+    color: #a78bfa;
+    font-weight: 600;
+}
+
+.foto-btn-flutuante,
+.anexo-btn-flutuante {
+    background: #f0f0f0;
+    color: #666;
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+.dropdown-icon-flutuante {
+    font-size: 0.8rem;
+}
+
+.btn-flutuante-opcao:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.btn-enviar-flutuante {
+    width: 100%;
+    padding: 1rem;
+    background: #a78bfa;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-enviar-flutuante:hover {
+    background: #9370db;
+}
+
+.btn-fechar-flutuante {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #999;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-fechar-flutuante:hover {
+    color: #333;
+}

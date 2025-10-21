@@ -60,9 +60,35 @@ router.get("/partepremium", function (req, res) {
 });
 
 
+router.get("/partepremiumprofessor", function (req, res) {
+  res.render("pages/partepremiumprofessor");
+});
+
+
+
 router.get("/biblioteca", function (req, res) {
   res.render("pages/biblioteca");
 });
+
+
+router.get("/areapremiumprofessor", function (req, res) {
+  res.render("pages/areapremiumprofessor");
+});
+
+
+router.get("/simuladoprofessor", function (req, res) {
+  res.render("pages/simuladoprofessor");
+});
+
+router.get("/videoaulaprofessor", function (req, res) {
+  res.render("pages/videoaulaprofessor");
+});
+
+router.get("/cronogramaprofessor", function (req, res) {
+  res.render("pages/cronogramaprofessor");
+});
+
+
 
 router.get("/bibliotecaprofessor", function (req, res) {
   res.render("pages/bibliotecaprofessor");

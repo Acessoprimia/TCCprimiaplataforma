@@ -1,0 +1,245 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* CONTAINER PRINCIPAL */
+.perfil-container {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 80px 20px 40px;
+   
+}
+
+/* CARD DE PERFIL */
+.perfil-card {
+    background-color: white;
+    border-radius: 20px;
+    padding: 0;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-top: 40px;
+}
+
+/* INFORMAÇÕES DO USUÁRIO */
+.usuario-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 35px 25px 30px;
+    background-color: white;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.avatar-container {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 18px;
+    border: 2px solid #e0e0e0;
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.info-texto {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.nome-usuario {
+    font-size: 17px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.email-usuario {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.matricula-usuario {
+    font-size: 12px;
+    color: #999;
+}
+
+.btn-editar {
+    background-color: #A398D1;
+    color: white;
+    text-decoration: none;
+    padding: 9px 22px;
+    border-radius: 18px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.btn-editar:hover {
+    background-color: #8b83ac;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(163, 152, 209, 0.3);
+}
+
+/* MENU DE NAVEGAÇÃO */
+.menu-navegacao {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.menu-item:last-child {
+    border-bottom: none;
+}
+
+.menu-item:hover {
+    background-color: #fafafa;
+}
+
+.icone-menu {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    flex-shrink: 0;
+}
+
+.icone {
+    width: 20px;
+    height: 20px;
+    opacity: 0.65;
+}
+
+.texto-menu {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 400;
+    color: #555;
+}
+
+.seta-menu {
+    font-size: 22px;
+    color: #aaa;
+    font-weight: 300;
+}
+
+/* RESPONSIVO MOBILE */
+@media (max-width: 480px) {
+    .perfil-container {
+        padding: 40px 15px 30px;
+    }
+
+    .perfil-card {
+        border-radius: 18px;
+        max-width: 100%;
+    }
+
+    .usuario-info {
+        padding: 30px 20px 25px;
+    }
+
+    .avatar-container {
+        width: 65px;
+        height: 65px;
+    }
+
+    .nome-usuario {
+        font-size: 16px;
+    }
+
+    .email-usuario {
+        font-size: 12px;
+    }
+
+    .matricula-usuario {
+        font-size: 11px;
+    }
+
+    .btn-editar {
+        font-size: 12px;
+        padding: 8px 18px;
+    }
+
+    .menu-item {
+        padding: 15px 18px;
+    }
+
+    .texto-menu {
+        font-size: 13px;
+    }
+}
+
+/* RESPONSIVO TABLET E DESKTOP */
+@media (min-width: 768px) {
+    .perfil-container {
+        padding: 80px 40px 60px;
+    }
+
+    .perfil-card {
+        max-width: 450px;
+        border-radius: 22px;
+    }
+
+    .usuario-info {
+        padding: 40px 30px 35px;
+    }
+
+    .avatar-container {
+        width: 75px;
+        height: 75px;
+    }
+
+    .nome-usuario {
+        font-size: 18px;
+    }
+
+    .email-usuario {
+        font-size: 14px;
+    }
+
+    .btn-editar {
+        font-size: 14px;
+        padding: 10px 24px;
+    }
+
+    .menu-item {
+        padding: 18px 25px;
+    }
+
+    .texto-menu {
+        font-size: 15px;
+    }
+}

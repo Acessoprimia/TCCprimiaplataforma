@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+}
+
+body {
+    min-height: 100vh; /* Garante que o body ocupe no mínimo 100% da altura da viewport */
+    margin: 0; /* Remove margens padrão */
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    color: rgb(0, 0, 0);
+    font-family: 'Poppins', sans-serif;
+}
+
+
+
+.sobre-container {
+  display: flex;
+  gap: 40px;
+  margin-top: 50px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 210px;
+}
+
+.texto-sobre {
+  flex: 1 1 400px;
+  max-width: 600px;
+}
+
+.texto-sobre h2 {
+  font-size: 1.8rem;
+  margin-bottom: 50px;
+  font-weight: 700;
+  color: #000;
+}
+
+.texto-sobre p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+main {
+  margin-top: 100px; /* empurra o conteúdo para baixo, ajuste o valor conforme precisar */
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 10px;
+}
+.imagem-sobre {
+  flex: 1 1 300px;
+  max-width: 500px;
+}
+
+.imagem-sobre img {
+  width: 110%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .sobre-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .texto-sobre, .imagem-sobre {
+    max-width: 100%;
+  }
+}

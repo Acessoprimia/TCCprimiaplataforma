@@ -143,6 +143,9 @@ router.get("/chat", function (req, res) {
   res.render("pages/chat");
 });
 
+router.get("/sobreprofessor", function (req, res) {
+  res.render("pages/sobreprofessor");
+});
 
 
 router.get("/sobre", function (req, res) {

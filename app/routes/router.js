@@ -130,6 +130,12 @@ router.get("/planoestudo", function (req, res) {
   res.render("pages/planoestudo");
 });
 
+router.get("/termouso", function (req, res) {
+  res.render("pages/termouso");
+});
+
+
+
 
 router.get("/entrada", function (req, res) {
   res.render("pages/entrada");

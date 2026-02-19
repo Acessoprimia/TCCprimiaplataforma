@@ -135,7 +135,9 @@ router.get("/termouso", function (req, res) {
 });
 
 
-
+router.get("/termopriva", function (req, res) {
+  res.render("pages/termopriva");
+});
 
 router.get("/entrada", function (req, res) {
   res.render("pages/entrada");

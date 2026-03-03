@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1; /* empurra o footer para baixo */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+}
+
+section.form-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 420px;
+    margin-top: 40px;
+}
+
+
+
+.titulo-pagina{
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #FF9466;
+}
+
+
+
+form.editar-perfil{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+form.editar-perfil input,
+form.editar-perfil select  {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    color: #333;
+    background-color: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+form.editar-perfil input:focus {
+    border-color: #FF9466;
+}
+
+/* deve ficar DEPOIS do estilo geral */
+form.editar-perfil input[readonly] {
+    background-color: #f4f3f2;
+    color: #9a9aaa;
+    cursor: not-allowed;
+}
+
+.pagina-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centraliza horizontalmente */
+    padding: 40px 20px;
+}
+
+.avatar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e0e0e0;
+}
+
+.avatar-edit-btn {
+    background-color: #A398D1;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.avatar-edit-btn:hover {
+    background-color: #897eb6;
+}
+
+/*RESPONSIVIDADES*/
+
+/* TABLET */
+@media (max-width: 768px) {
+    main {
+        padding: 30px 16px;
+    }
+
+    section.form-container {
+        max-width: 100%;
+        margin-top: 20px;
+        padding: 18px;
+    }
+
+    .titulo-pagina {
+        font-size: 20px;
+    }
+
+    form.editar-perfil input,
+    form.editar-perfil select {
+        font-size: 13px;
+        padding: 11px 14px;
+    }
+
+    .avatar {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+    main {
+        padding: 20px 12px;
+    }
+
+    section.form-container {
+        padding: 16px;
+        border-radius: 6px;
+        margin-top: 12px;
+    }
+
+    .titulo-pagina {
+        font-size: 18px;
+        margin-bottom: 14px;
+    }
+
+    form.editar-perfil {
+        gap: 10px;
+    }
+
+    form.editar-perfil input,
+    form.editar-perfil select {
+        font-size: 13px;
+        padding: 10px 12px;
+    }
+
+    .avatar {
+        width: 65px;
+        height: 65px;
+    }
+
+    .avatar-edit-btn {
+        font-size: 11px;
+        padding: 5px 12px;
+    }
+}

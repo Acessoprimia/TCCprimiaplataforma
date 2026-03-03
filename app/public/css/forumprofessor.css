@@ -19,7 +19,7 @@ main {
 
 .titulo-principal {
     font-size: 2rem;
-    color: #A398D1;
+    color: #FF9466;
     text-align: center;
     margin-bottom: 1.5rem;
     font-weight: 700;
@@ -160,7 +160,7 @@ main {
 .modal-titulo {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: #FF9466;
     margin-bottom: 1.5rem;
 }
 

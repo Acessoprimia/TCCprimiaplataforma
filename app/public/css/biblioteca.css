@@ -8,12 +8,12 @@
 
 html {
   height: 100%;
-  overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+  overflow-x: hidden; 
 }
 
 body {
-    min-height: 100vh; /* Garante que o body ocupe no mínimo 100% da altura da viewport */
-    margin: 0; /* Remove margens padrão */
+    min-height: 100vh; 
+    margin: 0; 
     display: flex;
     flex-direction: column;
     background-color: white;
@@ -29,7 +29,7 @@ body {
 
 .biblioteca-header h1 {
     font-size: 48px;
-    color: #A398D1;
+    color: #FF9466;
     font-weight: 700;
     margin-bottom: 20px;
 }

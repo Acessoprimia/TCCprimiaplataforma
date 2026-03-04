@@ -1,13 +1,12 @@
 <link rel="stylesheet" href="../css/hdeslogado.css">
-    
 
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title></title>
-  <link rel="stylesheet" href="header-semantico.css">
+  <link href="../css/header.css" rel="stylesheet">
 </head>
 <body>
 
@@ -17,22 +16,38 @@
   <!-- Header -->
   <header class="site-header">
     <section class="header-inner">
+
       <!-- Logo -->
-      <a href="/entradaprofessor" class="logo">
+      <a href="/entrada" class="logo">
         <img src="../image/logo.png.png" alt="Logo Primia" />
       </a>
 
       <!-- Menu Desktop -->
       <nav class="nav-desktop" aria-label="Menu principal desktop">
         <ul>
-          <li><a href="/entradaprofessor">Início</a></li>
-          <li><a href="/sobreprofessor">Sobre</a></li>
-          <li><a href="/contatoprofessor">Contato</a></li>
+          <li><a href="/entrada">Início</a></li>
+          <li><a href="/sobre">Sobre</a></li>
+          <li><a href="/contato">Contato</a></li>
         </ul>
       </nav>
 
-      <!-- Botão login desktop -->
-      <a href="/telainicial" class="btn-login">Sair</a>
+      <!-- Sino + Botão Sair agrupados -->
+      <span class="header-acoes">
+
+        <span class="sino-container">
+            <a href="#" class="nav-sino" id="sino-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                <span class="sino-contador">3</span>
+            </a>
+            <%- include('./notificacoes.ejs') %>
+        </span>
+
+        <a href="/telainicial" class="btn-login">Sair</a>
+
+      </span>
 
       <!-- Botão hamburguer -->
       <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false">
@@ -40,13 +55,14 @@
         <span></span>
         <span></span>
       </button>
+
     </section>
   </header>
 
   <!-- Menu Mobile -->
   <nav class="nav-mobile" id="navMobile" aria-label="Menu principal mobile">
     <ul>
-      <li><a href="/entradaprofessor">Início</a></li>
+      <li><a href="/entrada">Início</a></li>
       <li><a href="/sobre">Sobre</a></li>
       <li><a href="/contato">Contato</a></li>
       <li><a href="/telainicial" class="mobile-login-btn">SAIR</a></li>

@@ -6,12 +6,12 @@
 
 html {
   height: 100%;
-  overflow-x: hidden; /* Evita rolagem horizontal indesejada */
+  overflow-x: hidden; 
 }
 
 body {
-    min-height: 100vh; /* Garante que o body ocupe no mínimo 100% da altura da viewport */
-    margin: 0; /* Remove margens padrão */
+    min-height: 100vh; 
+    margin: 0; 
     display: flex;
     flex-direction: column;
     background-color: white;
@@ -21,7 +21,7 @@ body {
 
 
 .contato-container {
-  flex: 1; /* faz o footer descer quando pouco conteúdo */
+  flex: 1; 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -33,7 +33,7 @@ body {
 .contato-titulo {
   font-size: 32px;
   margin-bottom: 30px;
-  color: #333;
+  color: #FF9466;
   text-align: center;
 }
 
@@ -49,6 +49,7 @@ body {
 .form-container h2 {
   text-align: center;
   margin-bottom: 20px;
+  color: #fda078;
 }
 
 form label {

@@ -132,6 +132,183 @@
 }
 
 /* ========================================
+   NOTIFICAÇÕES
+   ======================================== */
+
+.header-acoes {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto;
+}
+
+/* centraliza o menu no header */
+.header-inner {
+    position: relative;
+}
+
+.nav-desktop {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.sino-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.nav-sino {
+    color: #A398D1;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.nav-sino:hover {
+    color: #FF9466;
+}
+
+.sino-contador {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background-color: #ff4d4d;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notif-dropdown {
+    display: none;
+    position: absolute;
+    top: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    z-index: 99999;
+    overflow: hidden;
+}
+
+.notif-dropdown.aberto {
+    display: block;
+}
+
+.notif-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.notif-topo h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.notif-topo span {
+    font-size: 12px;
+    color: #FF9466;
+    font-weight: 500;
+}
+
+.notif-lista {
+    list-style: none;
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.notif-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.notif-item:hover {
+    background-color: #fafafa;
+}
+
+.notif-item.nova {
+    background-color: #fff5f0;
+    border-left: 3px solid #FF9466;
+}
+
+.notif-texto {
+    font-size: 13px;
+    color: #444;
+    margin-bottom: 4px;
+}
+
+.notif-tempo {
+    font-size: 11px;
+    color: #aaa;
+}
+
+.notif-rodape {
+    padding: 12px 16px;
+    text-align: center;
+    border-top: 1px solid #f0f0f0;
+}
+
+.notif-rodape a {
+    font-size: 13px;
+    color: #A398D1;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.notif-rodape a:hover {
+    color: #FF9466;
+}
+
+.notif-fechar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #aaa;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.notif-fechar:hover {
+    color: #ff4d4d;
+}
+
+.notif-marcar-todas {
+    background: none;
+    border: none;
+    font-size: 11px;
+    color: #A398D1;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+.notif-marcar-todas:hover {
+    color: #FF9466;
+}
+
+/* MOBILE */
+@media (max-width: 1023px) {
+    .header-acoes {
+        margin-right: 50px; /* ajuste esse valor conforme precisar */
+    }
+}
+
+/* ========================================
    BOTÃO HAMBÚRGUER
    ======================================== */
 .hamburger {

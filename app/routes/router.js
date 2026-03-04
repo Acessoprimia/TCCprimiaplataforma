@@ -138,6 +138,10 @@ router.get("/editarperfil", function (req, res) {
   res.render("pages/editarperfil");
 });
 
+router.get("/editarprofessor", function (req, res) {
+  res.render("pages/editarprofessor");
+});
+
 router.get("/termopriva", function (req, res) {
   res.render("pages/termopriva");
 });

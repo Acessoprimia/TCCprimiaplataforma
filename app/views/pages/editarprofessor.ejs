@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil - Primia</title>
+
+    <link href="../css/editarperfil.css" rel="stylesheet">
+    <%- include('../partials/header.ejs') %>
+</head>
+<body>
+     <main class="pagina-container">
+        <h1 class="titulo-pagina">Editar Perfil</h1>
+
+    <!-- Formulário de edição de perfil -->
+    <section class="form-container"> 
+        <form class="editar-perfil">
+
+            <figure class="avatar-container">
+    <img src="../image/usuario.png" alt="Foto de perfil" id="preview-avatar" class="avatar">
+    <label for="avatar-upload" class="avatar-edit-btn">
+         Alterar foto
+    </label>
+    <input type="file" id="avatar-upload" name="avatar" accept="image/*" hidden>
+            </figure>
+
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" value="Usuário do Professor">
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" value="usuarioprofessor@gmail.com">
+
+            
+
+            <label for="matricula">Matéria:</label>
+            <input type="text" id="matricula" name="matricula" value="Máteria: Exemplo" readonly>
+
+            <label for="data-nascimento">Data de Nascimento:</label>
+            <input type="date" id="data-nascimento" name="data-nascimento" value="2000-01-01" readonly>
+
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha">
+
+            <label for="confirmar-senha">Confirmar Senha:</label>
+            <input type="password" id="confirmar-senha" name="confirmar-senha">
+        </form>
+    </section>
+     </main>
+</body>
+<%- include('../partials/footer.ejs') %>
+</html>

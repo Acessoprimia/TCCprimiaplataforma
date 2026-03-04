@@ -122,6 +122,11 @@ router.get("/logincadastro", function (req, res) {
   res.render("pages/logincadastro");
 });
 
+router.get("/naotemumaconta", function (req, res) {
+  res.render("pages/naotemumaconta");
+});
+
+
 router.get("/entradaprofessor", function (req, res) {
   res.render("pages/entradaprofessor");
 });
@@ -339,6 +344,91 @@ router.post(
       // Login de aluno
       return res.redirect("/entrada");
     }
+  }
+);
+
+
+// ========== ROTA GET EDITAR PERFIL ==========
+router.get("/editarperfil", (req, res) => {
+  res.render("pages/editarperfil", {
+    erros: null,
+    valores: {
+      nome: "",
+      email: "",
+      serie: "",
+    },
+    erroValidacao: {},
+    msgErro: {},
+  });
+});
+
+// ========== ROTA POST EDITAR PERFIL ==========
+router.post(
+  "/editarperfil",
+
+  body("nome")
+    .trim()
+    .notEmpty()
+    .withMessage("O nome é obrigatório!")
+    .matches(/^[A-Za-zÀ-ú]+(\s[A-Za-zÀ-ú]+)+$/)
+    .withMessage("Digite seu nome completo (pelo menos duas palavras)"),
+
+  body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("O e-mail é obrigatório!")
+    .isEmail()
+    .withMessage("Digite um e-mail válido!"),
+
+  body("serie")
+    .notEmpty()
+    .withMessage("A série escolar é obrigatória!"),
+
+  // Senha é opcional — só valida se o usuário preencheu
+  body("senha")
+    .optional({ checkFalsy: true })
+    .isLength({ min: 8, max: 15 })
+    .withMessage("A senha deve ter entre 8 e 15 caracteres!")
+    .matches(/[A-Z]/)
+    .withMessage("A senha deve ter pelo menos uma letra maiúscula!")
+    .matches(/[a-z]/)
+    .withMessage("A senha deve ter pelo menos uma letra minúscula!")
+    .matches(/[0-9]/)
+    .withMessage("A senha deve ter pelo menos um número!")
+    .matches(/[@!#$%&]/)
+    .withMessage("A senha deve ter pelo menos um caractere especial (@!#$%&)!"),
+
+  body("confirmar-senha")
+    .optional({ checkFalsy: true })
+    .custom((value, { req }) => {
+      if (req.body.senha && value !== req.body.senha) {
+        throw new Error("As senhas não conferem!");
+      }
+      return true;
+    }),
+
+  (req, res) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const erroValidacao = {};
+      const msgErro = {};
+
+      errors.array().forEach((erro) => {
+        erroValidacao[erro.path] = "erro";
+        msgErro[erro.path] = erro.msg;
+      });
+
+      return res.render("pages/editarperfil", {
+        erros: errors,
+        valores: req.body,
+        erroValidacao,
+        msgErro,
+      });
+    }
+
+    // Tudo certo — redireciona para a entrada do aluno
+    res.redirect("/entrada");
   }
 );
 

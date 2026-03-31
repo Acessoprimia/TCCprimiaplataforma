@@ -45,6 +45,8 @@ window.addEventListener('resize', () => {
   }
 });
 
+// JavaScript para controlar o dropdown de notificações
+
 // abre e fecha ao clicar no sino
 if (sinoBtn) {
     sinoBtn.addEventListener('click', function(e) {

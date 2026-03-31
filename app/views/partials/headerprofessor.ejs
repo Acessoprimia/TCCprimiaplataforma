@@ -1,76 +1,113 @@
-<link rel="stylesheet" href="../css/hdeslogado.css">
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title></title>
-  <link href="../css/header.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Perfil - Primia</title>
+    <%- include('../partials/header.ejs') %>
+    <link href="../css/editarperfil.css" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Overlay escuro -->
-  <aside class="overlay" id="overlay" aria-hidden="true"></aside>
+<main class="pagina-container">
+    
+        <h1 class="titulo-pagina">Editar Perfil</h1>
 
-  <!-- Header -->
-  <header class="site-header">
-    <section class="header-inner">
+        <section class="form-container">
+            <form class="editar-perfil" action="/editarperfil" method="POST">
 
-      <!-- Logo -->
-      <a href="/entrada" class="logo">
-        <img src="../image/logo.png.png" alt="Logo Primia" />
-      </a>
+                <!-- AVATAR -->
+                <figure class="avatar-container">
+                    <img src="../image/usuario.png" alt="Foto de perfil" id="preview-avatar" class="avatar">
+                    <label for="avatar-upload" class="avatar-edit-btn">Alterar foto</label>
+                    <input type="file" id="avatar-upload" name="avatar" accept="image/*" hidden>
+                </figure>
 
-      <!-- Menu Desktop -->
-      <nav class="nav-desktop" aria-label="Menu principal desktop">
-        <ul>
-          <li><a href="/entrada">Início</a></li>
-          <li><a href="/sobre">Sobre</a></li>
-          <li><a href="/contato">Contato</a></li>
-        </ul>
-      </nav>
+                <!-- NOME -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/usuario.png" alt="Usuário" class="icone">
+                    </figure>
+                    <input type="text" id="nome" name="nome" placeholder="Nome completo" class="input-campo" value="Usuário do Aluno">
+                </label>
+                <p id="erro-nome" class="erro-msg"></p>
 
-      <!-- Sino + Botão Sair agrupados -->
-      <span class="header-acoes">
+                <!-- EMAIL -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/usuario.png" alt="Email" class="icone">
+                    </figure>
+                    <input type="email" id="email" name="email" placeholder="Email" class="input-campo" value="usuarioaluno@gmail.com">
+                </label>
+                <p id="erro-email" class="erro-msg"></p>
 
-        <span class="sino-container">
-            <a href="#" class="nav-sino" id="sino-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                </svg>
-                <span class="sino-contador">3</span>
-            </a>
-            <%- include('./notificacoes.ejs') %>
-        </span>
+                <!-- SÉRIE -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/ra.png" alt="Série" class="icone">
+                    </figure>
+                    <select id="serie" name="serie" class="input-campo select-campo">
+                        <option value="" disabled selected>Série escolar</option>
+                        <option value="1ano">1º Ano</option>
+                        <option value="2ano">2º Ano</option>
+                        <option value="3ano">3º Ano</option>
+                    </select>
+                </label>
+                <p id="erro-serie" class="erro-msg"></p>
 
-        <a href="/telainicial" class="btn-login">Sair</a>
+                <!-- RA (readonly) -->
+                <label class="campo-wrapper readonly-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/ra.png" alt="RA" class="icone">
+                    </figure>
+                    <input type="number" id="matricula" name="matricula" placeholder="RA" class="input-campo" value="0000" readonly>
+                </label>
 
-      </span>
+                <!-- DATA DE NASCIMENTO (readonly) -->
+                <label class="campo-wrapper readonly-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/data.png" alt="Data de Nascimento" class="icone">
+                    </figure>
+                    <input type="date" id="data-nascimento" name="data-nascimento" class="input-campo" value="2000-01-01" readonly>
+                </label>
 
-      <!-- Botão hamburguer -->
-      <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+                <!-- SENHA -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/cadeado.png" alt="Senha" class="icone">
+                    </figure>
+                    <input type="password" id="senha" name="senha" placeholder="Nova senha (opcional)" class="input-campo">
+                    <span class="mostrar-senha" onclick="toggleSenha('senha')">
+                        <img src="../image/olho_fechado.png" alt="mostrar senha" class="icone-olho">
+                    </span>
+                </label>
+                <ul id="regras-senha" class="regras-senha-modern">
+                    <li id="tamanho">8 a 15 caracteres</li>
+                    <li id="maiuscula">Uma letra maiúscula</li>
+                    <li id="minuscula">Uma letra minúscula</li>
+                    <li id="numero">Um número</li>
+                    <li id="especial">Um caractere especial (@, !, #, $, %, &)</li>
+                </ul>
 
-    </section>
-  </header>
+                <!-- CONFIRMAR SENHA -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/cadeado.png" alt="Repetir Senha" class="icone">
+                    </figure>
+                    <input type="password" id="confirmar-senha" name="confirmar-senha" placeholder="Confirmar nova senha" class="input-campo">
+                    <span class="mostrar-senha" onclick="toggleSenha('confirmar-senha')">
+                        <img src="../image/olho_fechado.png" alt="mostrar senha" class="icone-olho">
+                    </span>
+                </label>
+                <p id="erro-confirmar" class="erro-msg"></p>
 
-  <!-- Menu Mobile -->
-  <nav class="nav-mobile" id="navMobile" aria-label="Menu principal mobile">
-    <ul>
-      <li><a href="/entrada">Início</a></li>
-      <li><a href="/sobre">Sobre</a></li>
-      <li><a href="/contato">Contato</a></li>
-      <li><a href="/telainicial" class="mobile-login-btn">SAIR</a></li>
-    </ul>
-  </nav>
+                <button type="submit" class="botao-submit">Salvar alterações</button>
 
-  <!-- JavaScript -->
-  <script src="../js/hamburguer.js"></script>
+            </form>
+        </section>
+</main>
 
+<%- include('../partials/footer.ejs') %>
+<script src="../js/editarperfil.js"></script>
 </body>
 </html>

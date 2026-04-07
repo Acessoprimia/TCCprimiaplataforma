@@ -1,99 +1,103 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Primia</title>
-    
+
     <%- include('../partials/hdeslogado.ejs') %>
-    <link href="../css/cadastroaluno.css" rel="stylesheet">
+        <link href="../css/cadastroaluno.css" rel="stylesheet">
 </head>
+
 <body>
-<section class="secao-roxa">
-    <article class="card-cadastro">
-        <form class="form-cadastro" action="/entrada" method="POST">
+    <section class="secao-roxa">
+        <article class="card-cadastro">
+            <form class="form-cadastro" action="/entrada" method="POST">
 
-            <!-- NOME -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/usuario.png" alt="Usuário" class="icone">
-                </figure>
-                <input type="text" id="nome" name="nome" placeholder="Nome completo" class="input-campo">
-            </label>
-            <p id="erro-nome" class="erro-msg"></p>
+                <!-- NOME -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/usuario.png" alt="Usuário" class="icone">
+                    </figure>
+                    <input type="text" id="nome" name="nome" placeholder="Nome completo" class="input-campo">
+                </label>
+                <p id="erro-nome" class="erro-msg"></p>
 
-            <!-- EMAIL -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/usuario.png" alt="Email" class="icone">
-                </figure>
-                <input type="email" id="email" name="email" placeholder="Email" class="input-campo">
-            </label>
-            <p id="erro-email" class="erro-msg"></p>
+                <!-- EMAIL -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/usuario.png" alt="Email" class="icone">
+                    </figure>
+                    <input type="email" id="email" name="email" placeholder="Email" class="input-campo">
+                </label>
+                <p id="erro-email" class="erro-msg"></p>
 
-            <!-- SENHA -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/cadeado.png" alt="Senha" class="icone">
-                </figure>
-                <input type="password" id="senha" name="senha" placeholder="Senha" class="input-campo">
-                <span class="mostrar-senha" onclick="toggleSenha('senha')">&#128065;</span>
-            </label>
-            <ul id="regras-senha" class="regras-senha-modern">
-                <li id="tamanho">8 a 15 caracteres</li>
-                <li id="maiuscula">Uma letra maiúscula</li>
-                <li id="minuscula">Uma letra minúscula</li>
-                <li id="numero">Um número</li>
-                <li id="especial">Um caractere especial (@, !, #, $, %, &)</li>
-            </ul>
+                <!-- SENHA -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/cadeado.png" alt="Senha" class="icone">
+                    </figure>
+                    <input type="password" id="senha" name="senha" placeholder="Senha" class="input-campo">
+                    <span class="mostrar-senha" onclick="toggleSenha('senha')">&#128065;</span>
+                </label>
+                <ul id="regras-senha" class="regras-senha-modern">
+                    <li id="tamanho">8 a 15 caracteres</li>
+                    <li id="maiuscula">Uma letra maiúscula</li>
+                    <li id="minuscula">Uma letra minúscula</li>
+                    <li id="numero">Um número</li>
+                    <li id="especial">Um caractere especial (@, !, #, $, %, &)</li>
+                </ul>
 
-            <!-- CONFIRMAR SENHA -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/cadeado.png" alt="Repetir Senha" class="icone">
-                </figure>
-                <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Repetir a senha" class="input-campo">
-                <span class="mostrar-senha" onclick="toggleSenha('confirmar_senha')">&#128065;</span>
-            </label>
-            <p id="erro-confirmar" class="erro-msg"></p>
+                <!-- CONFIRMAR SENHA -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/cadeado.png" alt="Repetir Senha" class="icone">
+                    </figure>
+                    <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Repetir a senha"
+                        class="input-campo">
+                    <span class="mostrar-senha" onclick="toggleSenha('confirmar_senha')">&#128065;</span>
+                </label>
+                <p id="erro-confirmar" class="erro-msg"></p>
 
-            <!-- DATA DE NASCIMENTO -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/data.png" alt="Data de Nascimento" class="icone">
-                </figure>
-                <input type="date" id="data_nascimento" name="data_nascimento" class="input-campo">
-            </label>
-            <p id="erro-data" class="erro-msg"></p>
+                <!-- DATA DE NASCIMENTO -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/data.png" alt="Data de Nascimento" class="icone">
+                    </figure>
+                    <input type="date" id="data_nascimento" name="data_nascimento" class="input-campo">
+                </label>
+                <p id="erro-data" class="erro-msg"></p>
 
-            <!-- RA -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/ra.png" alt="RA" class="icone">
-                </figure>
-                <input type="text" id="ra" name="ra" placeholder="RA do aluno" class="input-campo">
-            </label>
-            <p id="erro-ra" class="erro-msg"></p>
+                <!-- RA -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/ra.png" alt="RA" class="icone">
+                    </figure>
+                    <input type="text" id="ra" name="ra" placeholder="RA do aluno" class="input-campo">
+                </label>
+                <p id="erro-ra" class="erro-msg"></p>
 
-            <!-- SÉRIE ESCOLAR -->
-            <label class="campo-wrapper">
-                <figure class="icone-campo">
-                    <img src="../image/ra.png" alt="Série" class="icone">
-                </figure>
-                <select id="serie" name="serie" class="input-campo select-campo">
-                    <option value="" disabled selected>Série escolar</option>
-                    <option value="1ano">1º Ano</option>
-                    <option value="2ano">2º Ano</option>
-                    <option value="3ano">3º Ano</option>
-                </select>
-            </label>
-            <p id="erro-serie" class="erro-msg"></p>
+                <!-- SÉRIE ESCOLAR -->
+                <label class="campo-wrapper">
+                    <figure class="icone-campo">
+                        <img src="../image/ra.png" alt="Série" class="icone">
+                    </figure>
+                    <select id="serie" name="serie" class="input-campo select-campo">
+                        <option value="" disabled selected>Série escolar</option>
+                        <option value="1ano">1º Ano</option>
+                        <option value="2ano">2º Ano</option>
+                        <option value="3ano">3º Ano</option>
+                    </select>
+                </label>
+                <p id="erro-serie" class="erro-msg"></p>
 
-            <button type="submit" class="botao-submit">Cadastre-se</button>
-        </form>
-    </article>
-</section>
+                <button type="submit" class="botao-submit">Cadastre-se</button>
+            </form>
+        </article>
+    </section>
 
-<script src="../js/cadastroaluno.js"></script>
+    <script src="../js/cadastroaluno.js"></script>
 </body>
+
 </html>

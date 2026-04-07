@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <meta property="og:title" content="Primia — Plataforma de estudos para o futuro" />
-    <meta property="og:description" content="Estude de forma inteligente com a Primia: conteúdos atualizados, reforço personalizado e foco no seu futuro." />
-    <meta property="og:image" content="https://i.ibb.co/bgS2h5LL/image.webp" />
+<meta property="og:description" content="Estude de forma inteligente com a Primia: conteúdos atualizados, reforço personalizado e foco no seu futuro." />
+<meta property="og:image" content="https://i.ibb.co/bgS2h5LL/image.webp" />
+
     <meta property="og:url" content="https://plataforma-primia.onrender.com" />
     <meta property="og:type" content="website" />
-    
+
     <title>PrimiaHome</title>
-    
+
     <link href="../css/telainicial.css" rel="stylesheet">
     <link href="../css/media.css" rel="stylesheet">
     <%- include('../partials/hdeslogado.ejs') %>
-    
+
 </head>
+
 <body>
     <section class="page-content-wrapper">
         <!-- MAIN: INSCRIÇÃO + IMAGEM -->
@@ -26,27 +29,29 @@
                 <h2><span>Inscreva-se agora</span></h2>
                 <h2 class="primia">na Primia</h2>
                 <p>
-                    A Primia é um espaço colaborativo feito para alunos e professores que querem aprender, ensinar e crescer juntos. 
-                    Aqui, você pode tirar dúvidas, compartilhar conhecimento e acompanhar o desempenho de forma simples e prática. 
+                    A Primia é um espaço colaborativo feito para alunos e professores que querem aprender, ensinar e
+                    crescer juntos.
+                    Aqui, você pode tirar dúvidas, compartilhar conhecimento e acompanhar o desempenho de forma simples
+                    e prática.
                     Junte-se à nossa comunidade e transforme a forma de aprender!
                 </p>
                 <nav>
                     <a class="inscreva" href="/logincadastro">Inscreva-se</a>
                 </nav>
             </aside>
-            
+
             <article>
                 <img src="../image/roxoestudo.jpg" alt="homem em dúvida">
             </article>
         </main>
-    
+
         <!-- JORNADA COLABORATIVA -->
         <section id="jornada">
             <article class="jornada-card">
                 <h2 class="jornada-title">Uma jornada de aprendizagem colaborativa...</h2>
                 <p class="jornada-text">
-                    Valorizar cada estudante como único(a) foi o que nos permitiu desenvolver uma 
-                    solução completa e que promove a personalização do processo de aprendizado 
+                    Valorizar cada estudante como único(a) foi o que nos permitiu desenvolver uma
+                    solução completa e que promove a personalização do processo de aprendizado
                     em cada segmento de ensino.
                 </p>
                 <nav class="jornada-buttons">
@@ -55,7 +60,7 @@
                     <button class="jornada-btn">Perfis</button>
                 </nav>
             </article>
-            
+
             <nav class="carrossel-pontos">
                 <span class="ponto active"></span>
                 <span class="ponto"></span>
@@ -64,23 +69,24 @@
                 <span class="ponto"></span>
             </nav>
         </section>
-    
+
         <!-- RECURSOS PARA ESCOLA -->
         <section id="recursos">
             <figure class="recursos-image">
                 <img src="../image/escolab.png" alt="Estudantes em sala de aula">
             </figure>
             <article class="recursos-content">
-                <h2 class="recursos-title">E ainda os melhores <span class="destaque">recursos para sua escola brilhar!</span></h2>
+                <h2 class="recursos-title">E ainda os melhores <span class="destaque">recursos para sua escola
+                        brilhar!</span></h2>
                 <p class="recursos-text">
-                    O Brilhando Junto é um programa de ações e conteúdos que tem como 
-                    finalidade apoiar, de forma estratégica, pedagógica e afetiva, todas as 
-                    escolas parceiras em suas jornadas de excelência. Trabalhamos a formação, 
+                    O Brilhando Junto é um programa de ações e conteúdos que tem como
+                    finalidade apoiar, de forma estratégica, pedagógica e afetiva, todas as
+                    escolas parceiras em suas jornadas de excelência. Trabalhamos a formação,
                     a retenção e captação de novos alunos de forma muito mais!
                 </p>
             </article>
         </section>
-    
+
         <!-- MATERIAS - CARROSSEL -->
         <section id="materias">
             <h2 class="material">Explore as matérias:</h2>
@@ -102,7 +108,7 @@
                 <button class="pass" id="next">&gt;&gt;</button>
             </nav>
         </section>
-    
+
         <!-- ACESSO -->
         <section id="acesso">
             <h2 class="areas">Áreas de Acesso</h2>
@@ -110,13 +116,17 @@
                 <article class="acesso-card1">
                     <h3>Alunos</h3>
                     <p>Esclareça suas dúvidas e participe das discussões.</p>
-                    <a href="/cadastro"><p>Cadastre-se >></p></a>
+                    <a href="/cadastro">
+                        <p>Cadastre-se >></p>
+                    </a>
                 </article>
-                
+
                 <article class="acesso-card3">
                     <h3>Professor</h3>
                     <p>Tire dúvidas, dê suporte aos alunos e acompanhe atividades.</p>
-                    <a href="/cadastroprofessor"><p>Cadastre-se >></p></a>
+                    <a href="/cadastroprofessor">
+                        <p>Cadastre-se >></p>
+                    </a>
                 </article>
             </section>
         </section>
@@ -126,4 +136,5 @@
 
     <%- include('../partials/footer.ejs') %>
 </body>
+
 </html>

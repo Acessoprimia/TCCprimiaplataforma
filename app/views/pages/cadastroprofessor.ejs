@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro Professor</title>
   <%- include('../partials/hdeslogado.ejs') %>
-  <link rel="stylesheet" href="/css/cadastroprofessor.css">
+    <link rel="stylesheet" href="/css/cadastroprofessor.css">
 </head>
+
 <body>
 
   <!-- SEÇÃO ROXA COM ARREDONDAMENTO EMBAIXO -->
@@ -15,14 +17,15 @@
   <!-- ARTIGO COM FORMULÁRIO DE CADASTRO -->
   <article class="card-cadastro">
     <form id="cadastroProfessorForm" class="form-cadastro" action="/entradaprofessor" method="POST" novalidate>
-      
+
       <!-- NOME COMPLETO -->
       <fieldset class="campo-wrapper">
         <legend class="sr-only">Nome completo</legend>
         <span class="icone-campo">
           <img src="../image/usuario.png" alt="" class="icone" aria-hidden="true">
         </span>
-        <input type="text" id="nomeCompleto" name="nomeCompleto" class="input-campo" placeholder="Nome completo" required aria-label="Nome completo">
+        <input type="text" id="nomeCompleto" name="nomeCompleto" class="input-campo" placeholder="Nome completo"
+          required aria-label="Nome completo">
       </fieldset>
       <small id="erro-nome" class="erro-msg" role="alert"></small>
 
@@ -41,8 +44,10 @@
         <span class="icone-campo">
           <img src="../image/cadeado.png" alt="" class="icone" aria-hidden="true">
         </span>
-        <input type="password" id="senha" name="senha" class="input-campo" placeholder="Senha" required aria-label="Senha" aria-describedby="regras-senha">
-        <button type="button" class="btn-olhinho" id="btn-olhinho-senha" onclick="toggleSenha('senha')" aria-label="Mostrar ou ocultar senha">
+        <input type="password" id="senha" name="senha" class="input-campo" placeholder="Senha" required
+          aria-label="Senha" aria-describedby="regras-senha">
+        <button type="button" class="btn-olhinho" id="btn-olhinho-senha" onclick="toggleSenha('senha')"
+          aria-label="Mostrar ou ocultar senha">
           <img src="../image/olho_aberto.png" alt="Mostrar Senha" class="olhinho-icon" aria-hidden="true">
         </button>
       </fieldset>
@@ -62,8 +67,10 @@
         <span class="icone-campo">
           <img src="../image/cadeado.png" alt="" class="icone" aria-hidden="true">
         </span>
-        <input type="password" id="confirmarSenha" name="confirmarSenha" class="input-campo" placeholder="Repetir a senha" required aria-label="Repetir a senha">
-        <button type="button" class="btn-olhinho" id="btn-olhinho-confirmar" onclick="toggleSenha('confirmarSenha')" aria-label="Mostrar ou ocultar senha">
+        <input type="password" id="confirmarSenha" name="confirmarSenha" class="input-campo"
+          placeholder="Repetir a senha" required aria-label="Repetir a senha">
+        <button type="button" class="btn-olhinho" id="btn-olhinho-confirmar" onclick="toggleSenha('confirmarSenha')"
+          aria-label="Mostrar ou ocultar senha">
           <img src="../image/olho_aberto.png" alt="Mostrar Senha" class="olhinho-icon" aria-hidden="true">
         </button>
       </fieldset>
@@ -75,7 +82,8 @@
         <span class="icone-campo">
           <img src="../image/usuario.png" alt="" class="icone" aria-hidden="true">
         </span>
-        <input type="date" id="dataNascimento" name="dataNascimento" class="input-campo" required aria-label="Data de nascimento">
+        <input type="date" id="dataNascimento" name="dataNascimento" class="input-campo" required
+          aria-label="Data de nascimento">
       </fieldset>
       <small id="erro-data" class="erro-msg" role="alert"></small>
 
@@ -86,7 +94,8 @@
           <img src="../image/diploma.png" alt="" class="icone" aria-hidden="true">
         </span>
         <span class="nome-arquivo">Selecione um arquivo</span>
-        <input type="file" id="diploma" name="diploma" class="input-arquivo" accept=".pdf,.jpg,.png" required aria-label="Enviar diploma">
+        <input type="file" id="diploma" name="diploma" class="input-arquivo" accept=".pdf,.jpg,.png" required
+          aria-label="Enviar diploma">
       </fieldset>
 
       <!-- MATÉRIA -->
@@ -119,5 +128,5 @@
 
   <script src="../js/cadastroprofessor.js"></script>
 </body>
-</html>
 
+</html>

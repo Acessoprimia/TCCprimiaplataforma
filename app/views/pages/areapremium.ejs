@@ -1,49 +1,52 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Área Premium - Primia</title>
     <link href="../css/areapremium.css" rel="stylesheet">
 </head>
+
 <body>
     <%- include('../partials/header.ejs') %>
 
-    <main>
-        <header class="titulo-area">
-            <h1>Área Premium</h1>
-            <p>Teste uma semana grátis</p>
-        </header>
-
-        <section class="plano gratuito">
-            <header>
-                <h2>Gratuito</h2>
+        <main>
+            <header class="titulo-area">
+                <h1>Área Premium</h1>
+                <p>Teste uma semana grátis</p>
             </header>
-            <ul>
-                <li><a href="/forumdeduvidas">Fórum de Dúvida</a></li>
-                <li><a href="/planoestudo">Planos de Estudo</a></li>
-                <li><a href="/biblioteca">Biblioteca</a></li>
-                <li><a href="#">Interação com Professor</a></li>
-            </ul>
-        </section>
 
-        <section class="plano premium">
-            <a href="/partepremium" class="link-plano" aria-label="Acessar área premium">
+            <section class="plano gratuito">
                 <header>
-                    <h2>Premium</h2>
+                    <h2>Gratuito</h2>
                 </header>
-            </a>
-            <ul>
-                <li><a href="/areadosimulado">Simulados</a></li>
-                <li><a href="/video">Videoaulas</a></li>
-                <li><a href="/planoestudo">Planos de Estudo Especializados</a></li>
-                <li><a href="#">Preparatório para o ENEM</a></li>
-            </ul>
-        </section>
-    </main>
+                <ul>
+                    <li><a href="/forumdeduvidas">Fórum de Dúvida</a></li>
+                    <li><a href="/planoestudo">Planos de Estudo</a></li>
+                    <li><a href="/biblioteca">Biblioteca</a></li>
+                    <li><a href="#">Interação com Professor</a></li>
+                </ul>
+            </section>
 
-    <footer>
-        <%- include('../partials/footer.ejs') %>
-    </footer>
+            <section class="plano premium">
+                <a href="/partepremium" class="link-plano" aria-label="Acessar área premium">
+                    <header>
+                        <h2>Premium</h2>
+                    </header>
+                </a>
+                <ul>
+                    <li><a href="/areadosimulado">Simulados</a></li>
+                    <li><a href="/video">Videoaulas</a></li>
+                    <li><a href="/planoestudo">Planos de Estudo Especializados</a></li>
+                    <li><a href="#">Preparatório para o ENEM</a></li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <%- include('../partials/footer.ejs') %>
+        </footer>
 </body>
+
 </html>

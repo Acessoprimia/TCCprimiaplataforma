@@ -44,27 +44,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.querySelector(".form-login");
 
   form.addEventListener("submit", (e) => {
-    e.preventDefault(); // evita envio imediato
-
     const emailValido = validarEmail();
     const senhaValida = validarSenha();
 
-    if (!emailValido || !senhaValida) return;
-
-    const email = document.getElementById("email").value.trim();
-
-    // Futuramente este redirecionamento deve vir do backend apos buscar usuario no banco.
-    // Buscar usuario no banco pelo email.
-    // Verificar senha com hash armazenado.
-    // Confirmar se o tipo_usuario e admin, professor ou aluno.
-    // Criar sessao/token e proteger as rotas de acordo com o cargo.
-    // Por enquanto, a deteccao e simulada por palavra-chave no email.
-    if (email.includes("admin") || email.includes("adm")) {
-      window.location.href = "/admin";
-    } else if (email.includes("prof") || email.includes("teacher")) {
-      window.location.href = "/entradaprofessor";
-    } else {
-      window.location.href = "/entrada";
+    if (!emailValido || !senhaValida) {
+      e.preventDefault();
     }
   });
 });

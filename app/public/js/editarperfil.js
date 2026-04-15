@@ -65,7 +65,13 @@ function validarEmail() {
 
 // ---------- SÉRIE ----------
 function validarSerie() {
-    const serie = document.getElementById("serie").value;
+    const serieInput = document.getElementById("serie");
+
+    if (!serieInput) {
+        return true;
+    }
+
+    const serie = serieInput.value;
     const erro = document.getElementById("erro-serie");
 
     if (!serie) {

@@ -21,9 +21,9 @@
                     <img src="../image/usuario.png" alt="Avatar do usuário" class="avatar">
                 </figure>
                 <article class="info-texto">
-                    <h1 class="nome-usuario">Usuário do Professor</h1>
-                    <p class="email-usuario">usuarioprofessor@gmail.com</p>
-                    <span class="matricula-usuario">Materia:Exemplo</span>
+                    <h1 class="nome-usuario"><%= typeof usuario !== 'undefined' ? usuario.nome : 'Usuario do Professor' %></h1>
+                    <p class="email-usuario"><%= typeof usuario !== 'undefined' ? usuario.email : 'usuarioprofessor@gmail.com' %></p>
+                    <span class="matricula-usuario"><%= typeof usuario !== 'undefined' && usuario.materia ? usuario.materia : 'Materia: Exemplo' %></span>
                 </article>
                 <a href="/editarprofessor" class="btn-editar">Editar perfil</a>
             </section>

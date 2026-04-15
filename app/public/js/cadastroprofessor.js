@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", function() {
             e.preventDefault(); // bloqueia submit
             alert("Preencha corretamente todos os campos antes de enviar!");
         }
-        // Se todos os campos estiverem corretos, o form envia para /entradaprofessor
+        // Se todos os campos estiverem corretos, o form envia para /cadastroprofessor.
     });
 });
 

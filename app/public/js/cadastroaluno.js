@@ -102,19 +102,22 @@ function validarDataNascimento() {
 
 // Validação do RA
 function validarRA() {
-    const ra = document.getElementById("ra").value.trim();
+    const raInput = document.getElementById("ra");
+    const ra = raInput.value.trim().toUpperCase().replace(/\s+/g, "");
     const erro = document.getElementById("erro-ra");
-    const regex = /^[0-9]{5,10}$/;
+    const formatoComSeparadores = /^[0-9]{6,15}-[0-9A-Z]{1,2}\/[A-Z]{2}$/;
+    const formatoSemSeparadores = /^[0-9]{7,17}[A-Z]{2}$/;
 
     if (!ra) {
         erro.textContent = "Campo obrigatório!";
         erro.classList.remove("correto");
         return false;
-    } else if (!regex.test(ra)) {
-        erro.textContent = "RA inválido (5 a 10 números)";
+    } else if (!formatoComSeparadores.test(ra) && !formatoSemSeparadores.test(ra)) {
+        erro.textContent = "RA inválido. Use o formato 000123456789-0/SP ou 0001234567890SP.";
         erro.classList.remove("correto");
         return false;
     } else {
+        raInput.value = ra;
         erro.textContent = "RA válido ✔";
         erro.classList.add("correto");
         return true;
@@ -148,6 +151,6 @@ document.addEventListener("DOMContentLoaded", function() {
             e.preventDefault(); // bloqueia submit
             alert("Preencha corretamente todos os campos antes de enviar!");
         }
-        // Se todos os campos estiverem corretos, o form envia para /entrada
+        // Se todos os campos estiverem corretos, o form envia para /cadastro.
     });
 });

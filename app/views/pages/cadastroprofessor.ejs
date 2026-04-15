@@ -16,7 +16,13 @@
 
   <!-- ARTIGO COM FORMULÁRIO DE CADASTRO -->
   <article class="card-cadastro">
-    <form id="cadastroProfessorForm" class="form-cadastro" action="/entradaprofessor" method="POST" novalidate>
+    <form id="cadastroProfessorForm" class="form-cadastro" action="/cadastroprofessor" method="POST" novalidate>
+      <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.geral) { %>
+        <small class="erro-msg" role="alert"><%= msgErro.geral %></small>
+      <% } %>
+      <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.email) { %>
+        <small class="erro-msg" role="alert"><%= msgErro.email %></small>
+      <% } %>
 
       <!-- NOME COMPLETO -->
       <fieldset class="campo-wrapper">

@@ -17,6 +17,9 @@
 
         <section class="form-container">
             <form class="editar-perfil" action="/editarperfil" method="POST">
+                <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.geral) { %>
+                    <p class="erro-msg"><%= msgErro.geral %></p>
+                <% } %>
 
                 <!-- AVATAR -->
                 <figure class="avatar-container">
@@ -31,7 +34,7 @@
                         <img src="../image/usuario.png" alt="Usuário" class="icone">
                     </figure>
                     <input type="text" id="nome" name="nome" placeholder="Nome completo" class="input-campo"
-                        value="Usuário do Aluno">
+                        value="<%= typeof valores !== 'undefined' && valores.nome ? valores.nome : '' %>">
                 </label>
                 <p id="erro-nome" class="erro-msg"></p>
 
@@ -41,7 +44,7 @@
                         <img src="../image/usuario.png" alt="Email" class="icone">
                     </figure>
                     <input type="email" id="email" name="email" placeholder="Email" class="input-campo"
-                        value="usuarioaluno@gmail.com">
+                        value="<%= typeof valores !== 'undefined' && valores.email ? valores.email : '' %>">
                 </label>
                 <p id="erro-email" class="erro-msg"></p>
 
@@ -51,10 +54,10 @@
                         <img src="../image/ra.png" alt="Série" class="icone">
                     </figure>
                     <select id="serie" name="serie" class="input-campo select-campo">
-                        <option value="" disabled selected>Série escolar</option>
-                        <option value="1ano">1º Ano</option>
-                        <option value="2ano">2º Ano</option>
-                        <option value="3ano">3º Ano</option>
+                        <option value="" disabled <%= !valores || !valores.serie ? 'selected' : '' %>>Série escolar</option>
+                        <option value="1ano" <%= valores && valores.serie === '1ano' ? 'selected' : '' %>>1º Ano</option>
+                        <option value="2ano" <%= valores && valores.serie === '2ano' ? 'selected' : '' %>>2º Ano</option>
+                        <option value="3ano" <%= valores && valores.serie === '3ano' ? 'selected' : '' %>>3º Ano</option>
                     </select>
                 </label>
                 <p id="erro-serie" class="erro-msg"></p>
@@ -64,8 +67,8 @@
                     <figure class="icone-campo">
                         <img src="../image/ra.png" alt="RA" class="icone">
                     </figure>
-                    <input type="number" id="matricula" name="matricula" placeholder="RA" class="input-campo"
-                        value="0000" readonly>
+                    <input type="text" id="matricula" name="matricula" placeholder="RA" class="input-campo"
+                        value="<%= typeof valores !== 'undefined' && valores.ra ? valores.ra : '0000' %>" readonly>
                 </label>
 
                 <!-- DATA DE NASCIMENTO (readonly) -->
@@ -74,7 +77,7 @@
                         <img src="../image/data.png" alt="Data de Nascimento" class="icone">
                     </figure>
                     <input type="date" id="data-nascimento" name="data-nascimento" class="input-campo"
-                        value="2000-01-01" readonly>
+                        value="<%= typeof valores !== 'undefined' && valores.data_nascimento ? valores.data_nascimento : '' %>" readonly>
                 </label>
 
                 <!-- SENHA -->

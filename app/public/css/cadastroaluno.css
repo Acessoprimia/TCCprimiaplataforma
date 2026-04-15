@@ -240,6 +240,13 @@ body {
     color: #28a745;
 }
 
+.ajuda-campo {
+    display: block;
+    color: #777;
+    font-size: 12px;
+    margin: -6px 0 8px 12px;
+}
+
 
 
 

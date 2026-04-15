@@ -20,6 +20,9 @@
         <!-- CARD DE LOGIN -->
         <article class="card-login">
             <form class="form-login" action="/login" method="POST">
+                <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.geral) { %>
+                    <p class="erro-msg"><%= msgErro.geral %></p>
+                <% } %>
                 <!-- CAMPO EMAIL -->
                 <label class="campo-wrapper">
                     <figure class="icone-campo">

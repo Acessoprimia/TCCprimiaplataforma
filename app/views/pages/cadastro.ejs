@@ -13,7 +13,13 @@
 <body>
     <section class="secao-roxa">
         <article class="card-cadastro">
-            <form class="form-cadastro" action="/entrada" method="POST">
+            <form class="form-cadastro" action="/cadastro" method="POST">
+                <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.geral) { %>
+                    <p class="erro-msg"><%= msgErro.geral %></p>
+                <% } %>
+                <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.email) { %>
+                    <p class="erro-msg"><%= msgErro.email %></p>
+                <% } %>
 
                 <!-- NOME -->
                 <label class="campo-wrapper">
@@ -74,8 +80,10 @@
                     <figure class="icone-campo">
                         <img src="../image/ra.png" alt="RA" class="icone">
                     </figure>
-                    <input type="text" id="ra" name="ra" placeholder="RA do aluno" class="input-campo">
+                    <input type="text" id="ra" name="ra" placeholder="RA DO ALUNO"
+                        class="input-campo" maxlength="30" autocomplete="off">
                 </label>
+                <small class="ajuda-campo">Ex: 000123456789-0/SP</small>
                 <p id="erro-ra" class="erro-msg"></p>
 
                 <!-- SÉRIE ESCOLAR -->

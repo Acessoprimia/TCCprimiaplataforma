@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Primia</title>
+    <link href="/css/admin.css" rel="stylesheet">
+    <%- include('../partials/headeradmin.ejs') %>
+</head>
+
+<body>
+    <% // Futuramente estes dados devem vir do banco de dados por meio do controller da rota /admin. %>
+    <% // Exemplo: const dashboard = await AdminDashboardService.montarResumo(); %>
+    <main class="admin-page">
+        <section class="admin-mobile-intro">
+            <p class="admin-kicker">Painel Administrativo</p>
+            <h1>Gestao Primia</h1>
+            <p>Controle usuarios, conteudos, forum, premium e suporte em um unico lugar.</p>
+        </section>
+
+        <aside class="admin-sidebar" aria-label="Navegacao administrativa">
+            <section class="admin-profile">
+                <figure class="admin-avatar">
+                    <img src="/image/usuario.png" alt="Administrador Primia">
+                </figure>
+                <h2>Administrador</h2>
+                <p>admin@primia.com</p>
+                <span>Acesso administrativo</span>
+            </section>
+
+            <nav class="admin-side-menu">
+                <a href="#dashboard" class="admin-side-link ativo">Dashboard</a>
+                <a href="#usuarios" class="admin-side-link">Usuarios</a>
+                <a href="#professores" class="admin-side-link">Professores</a>
+                <a href="#conteudos" class="admin-side-link">Conteudos</a>
+                <a href="#forum" class="admin-side-link">Forum</a>
+                <a href="#premium" class="admin-side-link">Premium</a>
+                <a href="#suporte" class="admin-side-link">Suporte</a>
+                <a href="#relatorios" class="admin-side-link">Relatorios</a>
+                <a href="#configuracoes" class="admin-side-link">Configuracoes</a>
+            </nav>
+        </aside>
+
+        <section class="admin-content">
+            <section class="admin-hero" id="dashboard">
+                <article>
+                    <p class="admin-kicker">Painel Administrativo Primia</p>
+                    <h1>Bem-vindo ao centro de gestao</h1>
+                    <p>Use estes dados simulados para validar o fluxo administrativo antes da integracao com banco, sessoes e permissoes reais.</p>
+                </article>
+                <a href="#usuarios" class="admin-primary-action">Gerenciar usuarios</a>
+            </section>
+
+            <section class="admin-metrics" aria-label="Metricas principais">
+                <% // Futuramente buscar quantidade real de usuarios, professores, duvidas, conteudos e premium no banco. %>
+                <article class="metric-card">
+                    <span>Total de alunos</span>
+                    <strong>245</strong>
+                    <p>Alunos ativos na plataforma</p>
+                </article>
+                <article class="metric-card">
+                    <span>Total de professores</span>
+                    <strong>18</strong>
+                    <p>Professores cadastrados</p>
+                </article>
+                <article class="metric-card">
+                    <span>Contas professor</span>
+                    <strong>18</strong>
+                    <p>Logins docentes cadastrados</p>
+                </article>
+                <article class="metric-card alerta">
+                    <span>Denuncias abertas</span>
+                    <strong>5</strong>
+                    <p>Moderacao aguardando analise</p>
+                </article>
+                <article class="metric-card">
+                    <span>Conteudos cadastrados</span>
+                    <strong>74</strong>
+                    <p>Biblioteca, videos e planos</p>
+                </article>
+                <article class="metric-card">
+                    <span>Usuarios premium</span>
+                    <strong>39</strong>
+                    <p>Acessos premium ativos</p>
+                </article>
+                <article class="metric-card">
+                    <span>Mensagens de contato</span>
+                    <strong>12</strong>
+                    <p>Chamados abertos</p>
+                </article>
+            </section>
+
+            <section class="admin-row">
+                <article class="admin-panel">
+                    <header class="panel-header">
+                        <article>
+                            <h2>Resumo de atividade</h2>
+                            <p>Movimentacao simulada dos ultimos dias.</p>
+                        </article>
+                    </header>
+                    <% // Futuramente montar grafico com agregacoes por data vindas do banco. %>
+                    <section class="mini-chart" aria-label="Grafico de cadastros">
+                        <span style="height: 42%"></span>
+                        <span style="height: 68%"></span>
+                        <span style="height: 56%"></span>
+                        <span style="height: 82%"></span>
+                        <span style="height: 63%"></span>
+                        <span style="height: 92%"></span>
+                        <span style="height: 74%"></span>
+                    </section>
+                    <section class="chart-caption">
+                        <span>Cadastros</span>
+                        <span>Duvidas respondidas</span>
+                        <span>Uso premium</span>
+                    </section>
+                </article>
+
+                <article class="admin-panel">
+                    <header class="panel-header">
+                        <article>
+                            <h2>Pendencias importantes</h2>
+                            <p>Itens que precisam de revisao administrativa.</p>
+                        </article>
+                    </header>
+                    <ul class="admin-list">
+                        <li><strong>18 professores</strong><span>Contas docentes cadastradas para consulta</span></li>
+                        <li><strong>5 denuncias</strong><span>Moderacao do forum pendente</span></li>
+                        <li><strong>4 conteudos</strong><span>Materiais esperando publicacao</span></li>
+                        <li><strong>12 mensagens</strong><span>Contato aguardando resposta</span></li>
+                    </ul>
+                </article>
+            </section>
+
+            <section class="admin-panel" id="materias">
+                <header class="panel-header panel-header-actions">
+                    <article>
+                        <h2>Materias da plataforma</h2>
+                        <p>Controle as materias usadas em biblioteca, simulados, forum e planos.</p>
+                    </article>
+                    <button class="admin-button primary" type="button" data-admin-action="adicionar-materia">Adicionar materia</button>
+                </header>
+
+                <% // Futuramente buscar materias da tabela materias e impedir exclusao se houver conteudos vinculados. %>
+                <section class="materias-lista" id="materiasLista">
+                    <article class="materia-chip"><span>Matematica</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Portugues</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Biologia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Historia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Filosofia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Fisica</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Quimica</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Geografia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Ingles</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Espanhol</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Literatura</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Sociologia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Artes</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Educacao Fisica</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                </section>
+            </section>
+
+            <section class="admin-panel" id="usuarios">
+                <header class="panel-header panel-header-actions">
+                    <article>
+                        <h2>Consulta de usuarios</h2>
+                        <p>Visualizacao de dados de login e status das contas cadastradas.</p>
+                    </article>
+                </header>
+
+                <% // Futuramente listar usuarios com SELECT filtrando tipo_usuario, status, identificador de acesso e data de cadastro. %>
+                <% // Esta area e apenas de consulta; edicoes de login/senha devem ficar em fluxo proprio e auditado. %>
+                <section class="table-scroll">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Tipo</th>
+                                <th>Status</th>
+                                <th>ID acesso</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usuariosTabela">
+                            <tr>
+                                <td data-label="Nome">Maria Souza</td>
+                                <td data-label="Email">maria.aluna@primia.com</td>
+                                <td data-label="Tipo"><span class="badge aluno">Aluno</span></td>
+                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
+                                <td data-label="ID acesso">ALU-0001</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="ver-login-usuario">Ver login</button>
+                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
+                                    <button data-admin-action="bloquear-conta">Bloquear</button>
+                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-label="Nome">Prof. Carlos Lima</td>
+                                <td data-label="Email">carlos.prof@primia.com</td>
+                                <td data-label="Tipo"><span class="badge professor">Professor</span></td>
+                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
+                                <td data-label="ID acesso">PROF-0018</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="ver-login-usuario">Ver login</button>
+                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
+                                    <button data-admin-action="bloquear-conta">Bloquear</button>
+                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-label="Nome">Equipe Primia</td>
+                                <td data-label="Email">admin@primia.com</td>
+                                <td data-label="Tipo"><span class="badge admin">Admin</span></td>
+                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
+                                <td data-label="ID acesso">ADM-0001</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="ver-login-usuario">Ver login</button>
+                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
+                                    <button data-admin-action="bloquear-conta">Bloquear</button>
+                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <section class="admin-panel" id="professores">
+                <header class="panel-header panel-header-actions">
+                    <article>
+                        <h2>Consulta de professores</h2>
+                        <p>Visualizacao de dados principais e login docente, sem fluxo de alteracao direta.</p>
+                    </article>
+                </header>
+
+                <% // Futuramente buscar professores no banco com JOIN entre usuarios, professores e materias. %>
+                <% // Esta secao deve ser somente leitura; alteracoes de login ou materia devem ocorrer em fluxo separado e auditado. %>
+                <section class="table-scroll">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Professor</th>
+                                <th>Email</th>
+                                <th>Tipo</th>
+                                <th>Status</th>
+                                <th>Materia</th>
+                                <th>ID acesso</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Professor">Ana Lima</td>
+                                <td data-label="Email">ana.prof@primia.com</td>
+                                <td data-label="Tipo"><span class="badge professor">Professor</span></td>
+                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
+                                <td data-label="Materia">Biologia</td>
+                                <td data-label="ID acesso">PROF-0012</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="ver-login-professor">Ver login</button>
+                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
+                                    <button data-admin-action="bloquear-conta">Bloquear</button>
+                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-label="Professor">Rafael Costa</td>
+                                <td data-label="Email">rafael.prof@primia.com</td>
+                                <td data-label="Tipo"><span class="badge professor">Professor</span></td>
+                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
+                                <td data-label="Materia">Matematica</td>
+                                <td data-label="ID acesso">PROF-0015</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="ver-login-professor">Ver login</button>
+                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
+                                    <button data-admin-action="bloquear-conta">Bloquear</button>
+                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <section class="admin-panel" id="conteudos">
+                <header class="panel-header panel-header-actions">
+                    <article>
+                        <h2>Gerenciamento de conteudos</h2>
+                        <p>Biblioteca, livros, videoaulas, cronogramas, planos e simulados.</p>
+                    </article>
+                    <button class="admin-button primary" type="button" data-admin-action="adicionar-conteudo">Adicionar conteudo</button>
+                </header>
+
+                <% // Futuramente salvar, editar, destacar e marcar conteudos como premium no banco de dados. %>
+                <section class="content-grid" id="conteudosLista">
+                    <article class="content-admin-card">
+                        <span>Biblioteca</span>
+                        <h3>Livro de Matematica Basica</h3>
+                        <p>Materia: Matematica | Status: publicado | Acesso: gratuito</p>
+                        <nav>
+                            <button data-admin-action="editar-conteudo">Editar</button>
+                            <button data-admin-action="destacar-conteudo">Destacar</button>
+                            <button data-admin-action="premium-conteudo">Marcar premium</button>
+                            <button class="danger" data-admin-action="excluir-conteudo">Excluir</button>
+                        </nav>
+                    </article>
+                    <article class="content-admin-card">
+                        <span>Videoaula</span>
+                        <h3>Revisao de Biologia</h3>
+                        <p>Materia: Biologia | Status: rascunho | Acesso: premium</p>
+                        <nav>
+                            <button data-admin-action="editar-conteudo">Editar</button>
+                            <button data-admin-action="destacar-conteudo">Destacar</button>
+                            <button data-admin-action="premium-conteudo">Editar premium</button>
+                            <button class="danger" data-admin-action="excluir-conteudo">Excluir</button>
+                        </nav>
+                    </article>
+                    <article class="content-admin-card">
+                        <span>Simulado</span>
+                        <h3>Simulado de Portugues</h3>
+                        <p>Materia: Portugues | Status: agendado | Periodo: 13/11 a 17/11</p>
+                        <nav>
+                            <button data-admin-action="editar-conteudo">Editar</button>
+                            <button data-admin-action="destacar-conteudo">Destacar</button>
+                            <button data-admin-action="premium-conteudo">Marcar premium</button>
+                            <button class="danger" data-admin-action="excluir-conteudo">Excluir</button>
+                        </nav>
+                    </article>
+                    <article class="content-admin-card">
+                        <span>Plano de estudo</span>
+                        <h3>Cronograma ENEM</h3>
+                        <p>Materia: Geral | Status: publicado | Acesso: gratuito</p>
+                        <nav>
+                            <button data-admin-action="editar-conteudo">Editar</button>
+                            <button data-admin-action="destacar-conteudo">Destacar</button>
+                            <button data-admin-action="premium-conteudo">Marcar premium</button>
+                            <button class="danger" data-admin-action="excluir-conteudo">Excluir</button>
+                        </nav>
+                    </article>
+                </section>
+            </section>
+
+            <section class="admin-panel" id="forum">
+                <header class="panel-header">
+                    <article>
+                        <h2>Moderacao de denuncias</h2>
+                        <p>Analise denuncias do forum sem responder ou participar diretamente das duvidas.</p>
+                    </article>
+                </header>
+
+                <% // Futuramente listar denuncias do forum com motivo, autor da denuncia, conteudo denunciado e status. %>
+                <% // O admin nao responde duvidas; apenas analisa, remove, ignora ou resolve denuncias. %>
+                <section class="table-scroll">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Denuncia</th>
+                                <th>Materia</th>
+                                <th>Conteudo denunciado</th>
+                                <th>Motivo</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="forumTabela">
+                            <tr>
+                                <td data-label="Denuncia">DEN-001</td>
+                                <td data-label="Materia">Matematica</td>
+                                <td data-label="Conteudo denunciado">Resposta com explicacao incorreta em fatoracao.</td>
+                                <td data-label="Motivo">Conteudo incorreto</td>
+                                <td data-label="Status"><span class="status pendente">Aberta</span></td>
+                                <td data-label="Data">12/04/2026</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="visualizar-denuncia">Visualizar</button>
+                                    <button data-admin-action="analisar-denuncia">Analisar</button>
+                                    <button data-admin-action="ignorar-denuncia">Ignorar</button>
+                                    <button data-admin-action="resolver-denuncia">Resolver</button>
+                                    <button class="danger" data-admin-action="remover-conteudo-denunciado">Remover conteudo</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-label="Denuncia">DEN-002</td>
+                                <td data-label="Materia">Filosofia</td>
+                                <td data-label="Conteudo denunciado">Pergunta com linguagem inadequada.</td>
+                                <td data-label="Motivo">Linguagem inadequada</td>
+                                <td data-label="Status"><span class="status ativo">Em analise</span></td>
+                                <td data-label="Data">10/04/2026</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="visualizar-denuncia">Visualizar</button>
+                                    <button data-admin-action="analisar-denuncia">Analisar</button>
+                                    <button data-admin-action="ignorar-denuncia">Ignorar</button>
+                                    <button data-admin-action="resolver-denuncia">Resolver</button>
+                                    <button class="danger" data-admin-action="remover-conteudo-denunciado">Remover conteudo</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <section class="admin-panel" id="premium">
+                <header class="panel-header panel-header-actions">
+                    <article>
+                        <h2>Controle da area premium</h2>
+                        <p>Gerencie acessos, periodos e beneficios premium.</p>
+                    </article>
+                    <button class="admin-button primary" type="button" data-admin-action="editar-beneficios">Editar beneficios</button>
+                </header>
+
+                <% // Futuramente ligar premium ao banco e ao gateway de pagamento, salvando periodo_inicio, periodo_fim e status_pagamento. %>
+                <section class="premium-grid" id="premiumLista">
+                    <article class="premium-card">
+                        <h3>Julia Fernandes</h3>
+                        <p>Premium ativo ate 30/05/2026</p>
+                        <nav>
+                            <button data-admin-action="controlar-periodo-premium">Controlar periodo</button>
+                            <button class="danger" data-admin-action="remover-premium">Remover premium</button>
+                        </nav>
+                    </article>
+                    <article class="premium-card">
+                        <h3>Pedro Martins</h3>
+                        <p>Conta gratuita</p>
+                        <nav>
+                            <button data-admin-action="liberar-premium">Liberar premium</button>
+                            <button data-admin-action="controlar-periodo-premium">Controlar periodo</button>
+                        </nav>
+                    </article>
+                </section>
+            </section>
+
+            <section class="admin-panel" id="suporte">
+                <header class="panel-header">
+                    <article>
+                        <h2>Suporte e contato</h2>
+                        <p>Mensagens enviadas pela pagina de contato.</p>
+                    </article>
+                </header>
+
+                <% // Futuramente carregar mensagens do banco e enviar respostas por backend/email transacional. %>
+                <section class="table-scroll">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Assunto</th>
+                                <th>Status</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="suporteTabela">
+                            <tr>
+                                <td data-label="Nome">Camila Nunes</td>
+                                <td data-label="Email">camila@email.com</td>
+                                <td data-label="Assunto">Problema no cadastro</td>
+                                <td data-label="Status"><span class="status pendente">Aberto</span></td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="visualizar-contato">Visualizar</button>
+                                    <button data-admin-action="responder-contato">Responder</button>
+                                    <button data-admin-action="resolver-contato">Marcar resolvido</button>
+                                    <button class="danger" data-admin-action="excluir-contato">Excluir</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-label="Nome">Escola Horizonte</td>
+                                <td data-label="Email">contato@horizonte.com</td>
+                                <td data-label="Assunto">Parceria escolar</td>
+                                <td data-label="Status"><span class="status ativo">Respondido</span></td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="visualizar-contato">Visualizar</button>
+                                    <button data-admin-action="responder-contato">Responder</button>
+                                    <button data-admin-action="resolver-contato">Marcar resolvido</button>
+                                    <button class="danger" data-admin-action="excluir-contato">Excluir</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <section class="admin-panel" id="relatorios">
+                <header class="panel-header">
+                    <article>
+                        <h2>Relatorios administrativos</h2>
+                        <p>Indicadores simulados para acompanhar crescimento e engajamento.</p>
+                    </article>
+                </header>
+
+                <% // Futuramente gerar relatorios com queries agregadas e filtros por periodo, materia e tipo de usuario. %>
+                <section class="report-grid">
+                    <article><strong>+18%</strong><span>Crescimento de cadastros</span></article>
+                    <article><strong>84</strong><span>Duvidas respondidas no mes</span></article>
+                    <article><strong>Biologia</strong><span>Conteudo mais acessado</span></article>
+                    <article><strong>39</strong><span>Assinaturas premium ativas</span></article>
+                </section>
+            </section>
+
+            <section class="admin-panel" id="configuracoes">
+                <header class="panel-header">
+                    <article>
+                        <h2>Configuracoes gerais</h2>
+                        <p>Campos visuais para preparar ajustes de textos, banners e recursos premium.</p>
+                    </article>
+                </header>
+
+                <% // Futuramente salvar configuracoes em tabela configuracoes_plataforma com chave, valor e usuario_admin_alteracao. %>
+                <form class="settings-form">
+                    <label>
+                        Aviso do site
+                        <input type="text" value="Novos simulados disponiveis esta semana">
+                    </label>
+                    <label>
+                        Texto institucional
+                        <textarea>Estude de forma colaborativa com a Primia.</textarea>
+                    </label>
+                    <label>
+                        Banner principal
+                        <input type="file" accept="image/*">
+                    </label>
+                    <label>
+                        Recurso premium em destaque
+                        <select>
+                            <option>Simulados exclusivos</option>
+                            <option>Videoaulas premium</option>
+                            <option>Planos personalizados</option>
+                        </select>
+                    </label>
+                    <button class="admin-button primary" type="button" data-admin-action="salvar-configuracoes">Salvar configuracoes</button>
+                </form>
+            </section>
+        </section>
+    </main>
+
+    <aside class="admin-modal" id="adminModal" aria-hidden="true">
+        <section class="admin-modal-card">
+            <header class="admin-modal-header">
+                <h2 id="adminModalTitulo">Acao administrativa</h2>
+                <button type="button" class="admin-modal-close" id="adminModalFechar" aria-label="Fechar">x</button>
+            </header>
+
+            <% // Futuramente os formularios devem enviar dados para rotas POST/PUT protegidas por permissao admin. %>
+            <% // Exemplo: POST /api/admin/usuarios, PUT /api/admin/conteudos/:id, PUT /api/admin/configuracoes. %>
+            <form class="admin-modal-form" id="adminModalForm">
+                <section class="admin-modal-fields" id="adminModalCampos"></section>
+                <footer class="admin-modal-actions">
+                    <button type="button" class="admin-button" id="adminModalCancelar">Cancelar</button>
+                    <button type="submit" class="admin-button primary">Salvar</button>
+                </footer>
+            </form>
+        </section>
+    </aside>
+
+    <aside class="admin-modal" id="confirmModal" aria-hidden="true">
+        <section class="admin-modal-card confirm-card">
+            <header class="admin-modal-header">
+                <h2 id="confirmTitulo">Confirmar acao</h2>
+                <button type="button" class="admin-modal-close" id="confirmFechar" aria-label="Fechar">x</button>
+            </header>
+            <section class="admin-modal-form">
+                <p class="confirm-text" id="confirmTexto">Tem certeza que deseja continuar?</p>
+                <% // Futuramente a confirmacao deve chamar uma rota protegida e registrar a acao em logs_admin. %>
+                <footer class="admin-modal-actions">
+                    <button type="button" class="admin-button" id="confirmCancelar">Cancelar</button>
+                    <button type="button" class="admin-button primary" id="confirmExecutar">Confirmar</button>
+                </footer>
+            </section>
+        </section>
+    </aside>
+
+    <section class="admin-toast" id="adminToast" aria-live="polite"></section>
+
+    <script src="/js/admin.js"></script>
+    <%- include('../partials/footer.ejs') %>
+</body>
+
+</html>

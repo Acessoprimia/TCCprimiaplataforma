@@ -1,0 +1,31 @@
+<% // Futuramente buscar notificacoes administrativas no banco pelo id do admin logado. %>
+<% // Exemplo: NotificacaoModel.listarPorUsuario(req.session.usuario.id, { tipo: "admin" }). %>
+<article class="notif-dropdown" id="notif-dropdown">
+    <header class="notif-topo">
+        <h3>Alertas admin</h3>
+        <button class="notif-marcar-todas" id="notif-marcar-todas">Marcar todas como lidas</button>
+    </header>
+
+    <ul class="notif-lista">
+        <li class="notif-item nova">
+            <p class="notif-texto">6 professores aguardam aprovacao.</p>
+            <time class="notif-tempo">ha 8 min</time>
+        </li>
+        <li class="notif-item nova">
+            <p class="notif-texto">5 duvidas foram denunciadas no forum.</p>
+            <time class="notif-tempo">ha 25 min</time>
+        </li>
+        <li class="notif-item nova">
+            <p class="notif-texto">12 mensagens de contato precisam de resposta.</p>
+            <time class="notif-tempo">hoje</time>
+        </li>
+        <li class="notif-item">
+            <p class="notif-texto">4 conteudos aguardam revisao para publicacao.</p>
+            <time class="notif-tempo">ontem</time>
+        </li>
+    </ul>
+
+    <footer class="notif-rodape">
+        <a href="/admin#suporte">Ver pendencias</a>
+    </footer>
+</article>

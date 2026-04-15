@@ -1,0 +1,71 @@
+<link rel="stylesheet" href="/css/hdeslogado.css">
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <link href="/css/header.css" rel="stylesheet">
+</head>
+<body>
+
+  <aside class="overlay" id="overlay" aria-hidden="true"></aside>
+
+  <header class="site-header">
+    <section class="header-inner">
+      <a href="/admin" class="logo">
+        <img src="/image/logo.png.png" alt="Logo Primia" />
+      </a>
+
+      <nav class="nav-desktop" aria-label="Menu administrativo desktop">
+        <ul>
+          <li><a href="/admin">Dashboard</a></li>
+          <li><a href="/admin#usuarios">Usuarios</a></li>
+          <li><a href="/admin#conteudos">Conteudos</a></li>
+          <li><a href="/admin#forum">Forum</a></li>
+        </ul>
+      </nav>
+
+      <span class="header-acoes">
+        <span class="sino-container">
+          <a href="#" class="nav-sino" id="sino-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="sino-contador">3</span>
+          </a>
+          <%- include('./notificacoesadmin.ejs') %>
+        </span>
+
+        <a href="/telainicial" class="btn-login">Sair</a>
+      </span>
+
+      <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </section>
+  </header>
+
+  <nav class="nav-mobile" id="navMobile" aria-label="Menu administrativo mobile">
+    <ul>
+      <li><a href="/admin">Dashboard</a></li>
+      <li><a href="/admin#usuarios">Usuarios</a></li>
+      <li><a href="/admin#professores">Professores</a></li>
+      <li><a href="/admin#conteudos">Conteudos</a></li>
+      <li><a href="/admin#forum">Forum</a></li>
+      <li><a href="/admin#premium">Premium</a></li>
+      <li><a href="/admin#suporte">Suporte</a></li>
+      <li><a href="/admin#relatorios">Relatorios</a></li>
+      <li><a href="/admin#configuracoes">Configuracoes</a></li>
+      <li><a href="/telainicial" class="mobile-login-btn">SAIR</a></li>
+    </ul>
+  </nav>
+
+  <script src="/js/hamburguer.js"></script>
+
+</body>
+</html>

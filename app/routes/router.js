@@ -2,6 +2,17 @@ var express = require("express");
 var router = express.Router();
 const { body, validationResult } = require("express-validator");
 
+function somenteAdminSimulado(req, res, next) {
+  // Futuramente bloquear acesso se nao houver sessao valida:
+  // if (!req.session || !req.session.usuario) return res.redirect("/login");
+  // Futuramente confirmar se o cargo do usuario logado e admin:
+  // if (req.session.usuario.tipo_usuario !== "admin") return res.status(403).render("pages/acesso-negado");
+  // Futuramente validar permissoes especificas para acoes sensiveis:
+  // const podeGerenciarUsuarios = req.session.usuario.permissoes.includes("gerenciar_usuarios");
+  // if (!podeGerenciarUsuarios) return res.status(403).send("Acesso negado");
+  next();
+}
+
 router.get("/", function (req, res) {
   res.render("pages/telainicial");
 });
@@ -21,6 +32,19 @@ router.get("/login", function (req, res) {
 
 router.get("/areapremium", function (req, res) {
   res.render("pages/areapremium");
+});
+
+router.get("/admin", somenteAdminSimulado, function (req, res) {
+  // Futuramente buscar metricas reais no banco de dados antes de renderizar:
+  // const metricas = await AdminModel.buscarMetricasDashboard();
+  // const usuarios = await UsuarioModel.listarUsuariosRecentes();
+  // res.render("pages/admin", { metricas, usuarios });
+  res.render("pages/admin");
+});
+
+router.get("/admin/dashboard", somenteAdminSimulado, function (req, res) {
+  // Futuramente manter esta rota como alias ou separar dashboard de outras telas admin.
+  res.redirect("/admin");
 });
 
 
@@ -295,6 +319,17 @@ router.get("/login", (req, res) => {
   });
 });
 
+router.get("/loginprofessor", (req, res) => {
+  // Esta tela usa o mesmo fluxo de POST /login.
+  // Futuramente o backend deve autenticar pelo banco e redirecionar pelo tipo_usuario.
+  res.render("pages/loginprofessor", {
+    erros: null,
+    valores: { email: "", senha: "" },
+    erroValidacao: {},
+    msgErro: {},
+  });
+});
+
 // ========== ROTA POST LOGIN ==========
 router.post(
   "/login",
@@ -335,9 +370,23 @@ router.post(
     // Caso não haja erros
     const { email, senha } = req.body;
 
-    // 🔹 Aqui você pode mudar depois pra uma checagem real no banco de dados
-    // Por enquanto, detecta professor/aluno por uma regra simples:
-    if (email.includes("prof") || email.includes("teacher")) {
+    // Buscar usuario no banco pelo email:
+    // const usuario = await UsuarioModel.buscarPorEmail(email);
+    // Verificar senha com hash armazenado no banco:
+    // const senhaValida = await bcrypt.compare(senha, usuario.senha);
+    // if (!usuario || !senhaValida) return res.render("pages/login", { msgErroLogin: "Credenciais invalidas" });
+    // Criar sessao/token apos login valido:
+    // req.session.usuario = { id: usuario.id, tipo_usuario: usuario.tipo_usuario, nome: usuario.nome };
+    // Confirmar cargo/perfil e redirecionar por tipo de usuario:
+    // if (usuario.tipo_usuario === "admin") return res.redirect("/admin");
+    // if (usuario.tipo_usuario === "professor") return res.redirect("/entradaprofessor");
+    // return res.redirect("/entrada");
+
+    // Sem banco de dados por enquanto, o acesso e simulado pelo email digitado.
+    if (email.includes("admin") || email.includes("adm")) {
+      // Login temporario de administrador.
+      return res.redirect("/admin");
+    } else if (email.includes("prof") || email.includes("teacher")) {
       // Login de professor
       return res.redirect("/entradaprofessor");
     } else {

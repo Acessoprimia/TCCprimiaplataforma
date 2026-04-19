@@ -9,8 +9,9 @@ const TABELAS = Object.freeze({
   forum: "Forum",
   duvidas: "Duvidas",
   respostas: "Respostas",
+  notificacoes: "Notificacao",
+  denuncias: "Denuncia",
   conteudos: "Conteudo",
-  denunciasForum: "Denuncia_Forum",
   mensagensContato: "Mensagem_Contato",
   assinaturasPremium: "Assinatura_Premium",
 });

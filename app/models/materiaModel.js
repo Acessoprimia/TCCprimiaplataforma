@@ -13,6 +13,12 @@ const queries = Object.freeze({
     WHERE nome = ?
     LIMIT 1
   `,
+  buscarPorId: `
+    SELECT id_materia, nome, descricao
+    FROM ${TABELAS.materias}
+    WHERE id_materia = ?
+    LIMIT 1
+  `,
   criarMateria: `
     INSERT INTO ${TABELAS.materias}
       (nome, descricao)
@@ -36,6 +42,11 @@ const MateriaModel = Object.freeze({
 
   async buscarPorNome(nome, conexao) {
     const [materias] = await banco(conexao).query(queries.buscarPorNome, [nome]);
+    return materias[0] || null;
+  },
+
+  async buscarPorId(idMateria, conexao) {
+    const [materias] = await banco(conexao).query(queries.buscarPorId, [idMateria]);
     return materias[0] || null;
   },
 

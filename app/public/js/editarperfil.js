@@ -9,11 +9,11 @@ function toggleSenha(idCampo) {
     if (campo.type === "password") {
         campo.type = "text";
         olhinho.classList.add("aberto");
-        img.src = img.src.replace("olho_fechado.png", "olho_aberto.png");
+        img.src = img.src.replace("olho_fechado.webp", "olho_aberto.webp");
     } else {
         campo.type = "password";
         olhinho.classList.remove("aberto");
-        img.src = img.src.replace("olho_aberto.png", "olho_fechado.png");
+        img.src = img.src.replace("olho_aberto.webp", "olho_fechado.webp");
     }
 }
 

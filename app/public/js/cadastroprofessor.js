@@ -6,11 +6,11 @@ function toggleSenha(idCampo) {
     
     if (campo.type === "password") {
         campo.type = "text";
-        icon.src = "../image/olho_fechado.png"; // Ícone de olho fechado
+        icon.src = "../image/olho_fechado.webp"; // Ícone de olho fechado
         icon.alt = "Ocultar Senha";
     } else {
         campo.type = "password";
-        icon.src = "../image/olho_aberto.png"; // Ícone de olho aberto
+        icon.src = "../image/olho_aberto.webp"; // Ícone de olho aberto
         icon.alt = "Mostrar Senha";
     }
 }

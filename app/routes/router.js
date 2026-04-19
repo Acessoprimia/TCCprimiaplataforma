@@ -115,6 +115,55 @@ function formatarDataInput(data) {
   return String(data).slice(0, 10);
 }
 
+function textoTempoRelativo(data) {
+  if (!data) return "agora";
+
+  const dataEvento = new Date(data);
+  const diferencaMs = Date.now() - dataEvento.getTime();
+  const segundos = Math.max(0, Math.floor(diferencaMs / 1000));
+  const minutos = Math.floor(segundos / 60);
+  const horas = Math.floor(minutos / 60);
+  const dias = Math.floor(horas / 24);
+
+  if (segundos < 60) return "agora";
+  if (minutos < 60) return `há ${minutos} minuto${minutos === 1 ? "" : "s"}`;
+  if (horas < 24) return `há ${horas} hora${horas === 1 ? "" : "s"}`;
+  return `há ${dias} dia${dias === 1 ? "" : "s"}`;
+}
+
+function textoTempoRelativoSeguro(data, segundosBanco = null) {
+  let segundos = Number(segundosBanco);
+
+  if (!Number.isFinite(segundos)) {
+    if (!data) return "agora";
+
+    const dataEvento = new Date(data);
+    if (Number.isNaN(dataEvento.getTime())) return "agora";
+
+    segundos = Math.floor((Date.now() - dataEvento.getTime()) / 1000);
+  }
+
+  segundos = Math.max(0, segundos);
+
+  const minutos = Math.floor(segundos / 60);
+  const horas = Math.floor(minutos / 60);
+  const dias = Math.floor(horas / 24);
+
+  if (segundos < 60) return "agora pouco";
+  if (minutos < 60) return `ha ${minutos} minuto${minutos === 1 ? "" : "s"}`;
+  if (horas < 24) return `ha ${horas} hora${horas === 1 ? "" : "s"}`;
+  return `ha ${dias} dia${dias === 1 ? "" : "s"}`;
+}
+
+function slugMateria(nome) {
+  return String(nome || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 function renderizarCadastroAluno(res, valores = VALORES_INICIAIS_CADASTRO_ALUNO, msgErro = {}) {
   return res.render(VIEWS.cadastro, {
     erros: null,
@@ -248,6 +297,29 @@ function formatarPerfil(tipoUsuario, perfil, usuarioBase = {}) {
   };
 }
 
+function formatarNotificacao(notificacao) {
+  return {
+    ...notificacao,
+    tempo: textoTempoRelativoSeguro(notificacao.data_criacao, notificacao.segundos_desde_criacao),
+    link: notificacao.link || "/sobre",
+  };
+}
+
+function formatarDuvida(duvida) {
+  return {
+    ...duvida,
+    materia_slug: slugMateria(duvida.materia),
+    tempo: textoTempoRelativoSeguro(duvida.data_envio, duvida.segundos_desde_envio),
+    serie_formatada: duvida.serie
+      ? String(duvida.serie).replace("ano", "º ano Ensino Médio")
+      : "Ensino Médio",
+    respostas: (duvida.respostas || []).map((resposta) => ({
+      ...resposta,
+      tempo: textoTempoRelativoSeguro(resposta.data_resposta, resposta.segundos_desde_resposta),
+    })),
+  };
+}
+
 async function buscarUltimoPerfil(tipoUsuario) {
   try {
     const perfil =
@@ -301,6 +373,28 @@ function somenteAdminSimulado(req, res, next) {
   // if (!podeGerenciarUsuarios) return res.status(403).send("Acesso negado");
   next();
 }
+
+async function carregarNotificacoes(req, res, next) {
+  res.locals.notificacoes = [];
+  res.locals.totalNotificacoesNaoLidas = 0;
+
+  const usuario = lerCookieUsuario(req);
+  if (!usuario) return next();
+
+  try {
+    const notificacoes = await Models.notificacoes.listarPorUsuario(usuario.id, 5);
+    const total = await Models.notificacoes.contarNaoLidas(usuario.id);
+
+    res.locals.notificacoes = notificacoes.map(formatarNotificacao);
+    res.locals.totalNotificacoesNaoLidas = total;
+  } catch (erro) {
+    console.error("Erro ao carregar notificacoes:", erro);
+  }
+
+  return next();
+}
+
+router.use(carregarNotificacoes);
 
 router.get("/", function (req, res) {
   res.render("pages/telainicial");
@@ -418,12 +512,287 @@ router.get("/livro", function (req, res) {
   res.render("pages/livro");
 });
 
-router.get("/forumdeduvidas", function (req, res) {
-  res.render("pages/forumdeduvidas");
+router.get("/forumdeduvidas", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const materias = await Models.materias.listarAtivas();
+    const duvidas = await Models.forum.listarDuvidas();
+
+    return res.render("pages/forumdeduvidas", {
+      materias,
+      duvidas: duvidas.map(formatarDuvida),
+      msgErro: {},
+      msgSucesso: null,
+    });
+  } catch (erro) {
+    console.error("Erro ao carregar forum do aluno:", erro);
+    return res.render("pages/forumdeduvidas", {
+      materias: [],
+      duvidas: [],
+      msgErro: { geral: "Nao foi possivel carregar o forum agora." },
+      msgSucesso: null,
+    });
+  }
 });
 
-router.get("/forumprofessor", function (req, res) {
-  res.render("pages/forumprofessor");
+router.post(
+  "/forumdeduvidas",
+  body("duvida").trim().notEmpty().withMessage("Digite sua duvida antes de enviar."),
+  body("id_materia").notEmpty().withMessage("Escolha uma materia."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.redirect("/forumdeduvidas");
+    }
+
+    const { duvida, id_materia } = req.body;
+    const conexao = await pool.getConnection();
+
+    try {
+      await conexao.beginTransaction();
+
+      const materia = await Models.materias.buscarPorId(id_materia, conexao);
+
+      if (!materia) {
+        await conexao.rollback();
+        return res.redirect("/forumdeduvidas");
+      }
+
+      const idForum = await Models.forum.buscarOuCriarForumPorMateria(
+        {
+          idMateria: materia.id_materia,
+          nomeMateria: materia.nome,
+        },
+        conexao
+      );
+
+      const idDuvida = await Models.forum.criarDuvida(
+        {
+          idAluno: usuarioBase.id,
+          idForum,
+          duvida,
+        },
+        conexao
+      );
+
+      const professores = await Models.forum.listarProfessoresPorForum(idForum, conexao);
+
+      for (const professor of professores) {
+        await Models.notificacoes.criar(
+          {
+            idUsuario: professor.id_professor,
+            tipo: "nova_duvida",
+            titulo: "Nova dúvida na sua matéria",
+            mensagem: `Um aluno enviou uma dúvida de ${professor.materia}.`,
+            link: `/forumprofessor?duvida=${idDuvida}#duvida-${idDuvida}`,
+          },
+          conexao
+        );
+      }
+
+      await conexao.commit();
+      return res.redirect(`/forumdeduvidas?duvida=${idDuvida}`);
+    } catch (erro) {
+      await conexao.rollback();
+      console.error("Erro ao criar duvida:", erro);
+      return res.redirect("/forumdeduvidas");
+    } finally {
+      conexao.release();
+    }
+  }
+);
+
+router.post("/forumdeduvidas/:id/excluir", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const conexao = await pool.getConnection();
+
+  try {
+    await conexao.beginTransaction();
+
+    await Models.forum.excluirRespostasDaDuvidaDoAluno(
+      {
+        idDuvida: req.params.id,
+        idAluno: usuarioBase.id,
+      },
+      conexao
+    );
+
+    const resultado = await Models.forum.excluirDuvidaDoAluno(
+      {
+        idDuvida: req.params.id,
+        idAluno: usuarioBase.id,
+      },
+      conexao
+    );
+
+    await conexao.commit();
+
+    if (!resultado.affectedRows) {
+      console.warn("Nenhuma duvida foi excluida. Verifique se a duvida pertence ao aluno logado.");
+    }
+  } catch (erro) {
+    await conexao.rollback();
+    console.error("Erro ao excluir duvida:", erro);
+  } finally {
+    conexao.release();
+  }
+
+  return res.redirect("/forumdeduvidas");
+});
+
+router.get("/forumprofessor", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+    const materias = professor?.materia
+      ? [{ id_materia: professor.id_materia, nome: professor.materia }]
+      : [];
+    const duvidas = await Models.forum.listarDuvidasPorProfessor(usuarioBase.id);
+
+    return res.render("pages/forumprofessor", {
+      professor,
+      materias,
+      duvidas: duvidas.map(formatarDuvida),
+      msgErro: {},
+      msgSucesso: null,
+    });
+  } catch (erro) {
+    console.error("Erro ao carregar forum do professor:", erro);
+    return res.render("pages/forumprofessor", {
+      professor: null,
+      materias: [],
+      duvidas: [],
+      msgErro: { geral: "Nao foi possivel carregar as duvidas agora." },
+      msgSucesso: null,
+    });
+  }
+});
+
+router.post(
+  "/forumprofessor/responder",
+  body("id_duvida").notEmpty().withMessage("Duvida invalida."),
+  body("resposta").trim().notEmpty().withMessage("Digite uma resposta antes de enviar."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.redirect("/forumprofessor");
+    }
+
+    const { id_duvida, resposta } = req.body;
+    const conexao = await pool.getConnection();
+
+    try {
+      await conexao.beginTransaction();
+
+      const duvida = await Models.forum.buscarDuvidaParaResposta(
+        {
+          idDuvida: id_duvida,
+          idProfessor: usuarioBase.id,
+        },
+        conexao
+      );
+
+      if (!duvida) {
+        await conexao.rollback();
+        return res.redirect("/forumprofessor");
+      }
+
+      await Models.forum.criarResposta(
+        {
+          idProfessor: usuarioBase.id,
+          idDuvida: id_duvida,
+          resposta,
+        },
+        conexao
+      );
+      await Models.forum.marcarDuvidaRespondida(id_duvida, conexao);
+
+      await Models.notificacoes.criar(
+        {
+          idUsuario: duvida.id_aluno,
+          tipo: "resposta_duvida",
+          titulo: "Sua dúvida foi respondida",
+          mensagem: `Um professor respondeu sua dúvida de ${duvida.materia}.`,
+          link: `/forumdeduvidas?duvida=${id_duvida}#duvida-${id_duvida}`,
+        },
+        conexao
+      );
+
+      await conexao.commit();
+      return res.redirect("/forumprofessor");
+    } catch (erro) {
+      await conexao.rollback();
+      console.error("Erro ao responder duvida:", erro);
+      return res.redirect("/forumprofessor");
+    } finally {
+      conexao.release();
+    }
+  }
+);
+
+router.post("/forumprofessor/respostas/:id/excluir", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const idDuvida = req.body.id_duvida;
+  const conexao = await pool.getConnection();
+
+  try {
+    await conexao.beginTransaction();
+
+    await Models.forum.excluirRespostaDoProfessor(
+      {
+        idResposta: req.params.id,
+        idProfessor: usuarioBase.id,
+      },
+      conexao
+    );
+
+    if (idDuvida) {
+      await Models.forum.atualizarStatusDuvidaPorRespostas(idDuvida, conexao);
+    }
+
+    await conexao.commit();
+  } catch (erro) {
+    await conexao.rollback();
+    console.error("Erro ao excluir resposta:", erro);
+  } finally {
+    conexao.release();
+  }
+
+  return res.redirect("/forumprofessor");
 });
 
 router.get("/planoestudoprofessor", function (req, res) {
@@ -522,6 +891,62 @@ router.get("/sobreprofessor", function (req, res) {
 
 router.get("/sobre", function (req, res) {
   res.render("pages/sobre");
+});
+
+router.get("/api/notificacoes", async function (req, res) {
+  const usuario = lerCookieUsuario(req);
+
+  if (!usuario) {
+    return res.json({ notificacoes: [], totalNaoLidas: 0 });
+  }
+
+  try {
+    const notificacoes = await Models.notificacoes.listarPorUsuario(usuario.id, 10);
+    const totalNaoLidas = await Models.notificacoes.contarNaoLidas(usuario.id);
+
+    return res.json({
+      notificacoes: notificacoes.map(formatarNotificacao),
+      totalNaoLidas,
+    });
+  } catch (erro) {
+    console.error("Erro na API de notificacoes:", erro);
+    return res.status(500).json({ notificacoes: [], totalNaoLidas: 0 });
+  }
+});
+
+router.post("/api/notificacoes/:id/lida", async function (req, res) {
+  const usuario = lerCookieUsuario(req);
+
+  if (!usuario) {
+    return res.status(401).json({ ok: false });
+  }
+
+  try {
+    await Models.notificacoes.marcarComoLida({
+      idNotificacao: req.params.id,
+      idUsuario: usuario.id,
+    });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao marcar notificacao como lida:", erro);
+    return res.status(500).json({ ok: false });
+  }
+});
+
+router.post("/api/notificacoes/marcar-todas", async function (req, res) {
+  const usuario = lerCookieUsuario(req);
+
+  if (!usuario) {
+    return res.status(401).json({ ok: false });
+  }
+
+  try {
+    await Models.notificacoes.marcarTodasComoLidas(usuario.id);
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao marcar todas notificacoes:", erro);
+    return res.status(500).json({ ok: false });
+  }
 });
 
 
@@ -629,6 +1054,16 @@ router.post(
           ra,
           serie,
           dataNascimento: data_nascimento,
+        },
+        conexao
+      );
+      await Models.notificacoes.criar(
+        {
+          idUsuario: idUsuario,
+          tipo: "sistema",
+          titulo: "Bem-vindo à Primia",
+          mensagem: "Seu cadastro foi criado com sucesso. Conheça a plataforma.",
+          link: "/sobre",
         },
         conexao
       );
@@ -765,6 +1200,16 @@ router.post(
           idMateria,
           diploma,
           dataNascimento,
+        },
+        conexao
+      );
+      await Models.notificacoes.criar(
+        {
+          idUsuario: idUsuario,
+          tipo: "sistema",
+          titulo: "Bem-vindo à Primia",
+          mensagem: "Seu cadastro de professor foi criado com sucesso.",
+          link: "/sobre",
         },
         conexao
       );

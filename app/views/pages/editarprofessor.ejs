@@ -23,7 +23,7 @@
 
                 <!-- AVATAR -->
                 <figure class="avatar-container">
-                    <img src="../image/usuario.png" alt="Foto de perfil" id="preview-avatar" class="avatar">
+                    <img src="../image/usuario.webp" alt="Foto de perfil" id="preview-avatar" class="avatar">
                     <label for="avatar-upload" class="avatar-edit-btn">Alterar foto</label>
                     <input type="file" id="avatar-upload" name="avatar" accept="image/*" hidden>
                 </figure>
@@ -31,7 +31,7 @@
                 <!-- NOME -->
                 <label class="campo-wrapper">
                     <figure class="icone-campo">
-                        <img src="../image/usuario.png" alt="Usuário" class="icone">
+                        <img src="../image/usuario.webp" alt="Usuário" class="icone">
                     </figure>
                     <input type="text" id="nome" name="nome" placeholder="Nome completo" class="input-campo"
                         value="<%= typeof valores !== 'undefined' && valores.nome ? valores.nome : '' %>">
@@ -41,7 +41,7 @@
                 <!-- EMAIL -->
                 <label class="campo-wrapper">
                     <figure class="icone-campo">
-                        <img src="../image/usuario.png" alt="Email" class="icone">
+                        <img src="../image/usuario.webp" alt="Email" class="icone">
                     </figure>
                     <input type="email" id="email" name="email" placeholder="Email" class="input-campo"
                         value="<%= typeof valores !== 'undefined' && valores.email ? valores.email : '' %>">
@@ -51,7 +51,7 @@
                 <!-- MATÉRIA (readonly) -->
                 <label class="campo-wrapper readonly-wrapper">
                     <figure class="icone-campo">
-                        <img src="../image/ra.png" alt="Matéria" class="icone">
+                        <img src="../image/ra.webp" alt="Matéria" class="icone">
                     </figure>
                     <input type="text" id="materia" name="materia" placeholder="Matéria" class="input-campo"
                         value="<%= typeof valores !== 'undefined' && valores.materia ? valores.materia : 'Materia: Exemplo' %>" readonly>
@@ -60,7 +60,7 @@
                 <!-- DATA DE NASCIMENTO (readonly) -->
                 <label class="campo-wrapper readonly-wrapper">
                     <figure class="icone-campo">
-                        <img src="../image/data.png" alt="Data de Nascimento" class="icone">
+                        <img src="../image/data.webp" alt="Data de Nascimento" class="icone">
                     </figure>
                     <input type="date" id="data-nascimento" name="data-nascimento" class="input-campo"
                         value="<%= typeof valores !== 'undefined' && valores.data_nascimento ? valores.data_nascimento : '' %>" readonly>
@@ -69,12 +69,12 @@
                 <!-- SENHA -->
                 <label class="campo-wrapper">
                     <figure class="icone-campo">
-                        <img src="../image/cadeado.png" alt="Senha" class="icone">
+                        <img src="../image/cadeado.webp" alt="Senha" class="icone">
                     </figure>
                     <input type="password" id="senha" name="senha" placeholder="Nova senha (opcional)"
                         class="input-campo">
                     <span class="mostrar-senha" onclick="toggleSenha('senha')">
-                        <img src="../image/olho_fechado.png" alt="mostrar senha" class="icone-olho">
+                        <img src="../image/olho_fechado.webp" alt="mostrar senha" class="icone-olho">
                     </span>
                 </label>
                 <ul id="regras-senha" class="regras-senha-modern">
@@ -88,12 +88,12 @@
                 <!-- CONFIRMAR SENHA -->
                 <label class="campo-wrapper">
                     <figure class="icone-campo">
-                        <img src="../image/cadeado.png" alt="Repetir Senha" class="icone">
+                        <img src="../image/cadeado.webp" alt="Repetir Senha" class="icone">
                     </figure>
                     <input type="password" id="confirmar-senha" name="confirmar-senha"
                         placeholder="Confirmar nova senha" class="input-campo">
                     <span class="mostrar-senha" onclick="toggleSenha('confirmar-senha')">
-                        <img src="../image/olho_fechado.png" alt="mostrar senha" class="icone-olho">
+                        <img src="../image/olho_fechado.webp" alt="mostrar senha" class="icone-olho">
                     </span>
                 </label>
                 <p id="erro-confirmar" class="erro-msg"></p>

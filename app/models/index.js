@@ -5,6 +5,7 @@ module.exports = Object.freeze({
   materias: require("./materiaModel"),
   conteudos: require("./conteudoModel"),
   forum: require("./forumModel"),
+  notificacoes: require("./notificacaoModel"),
   contato: require("./contatoModel"),
   admin: require("./adminModel"),
 });

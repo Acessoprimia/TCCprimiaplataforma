@@ -1,110 +1,156 @@
-// JavaScript para controlar o menu hambúrguer
-const hamburger = document.getElementById('hamburger');
-const navMobile = document.getElementById('navMobile');
-const overlay = document.getElementById('overlay');
+const hamburger = document.getElementById("hamburger");
+const navMobile = document.getElementById("navMobile");
+const overlay = document.getElementById("overlay");
 const body = document.body;
-const sinoBtn = document.getElementById('sino-btn');
-const notifDropdown = document.getElementById('notif-dropdown');
-const notifFechar = document.getElementById('notif-fechar');
-const notifItens = document.querySelectorAll('.notif-item');
-const marcarTodas = document.getElementById('notif-marcar-todas');
-const mobileSinoBtn = document.getElementById('mobile-sino-btn');
+const sinoBtn = document.getElementById("sino-btn");
+const notifDropdown = document.getElementById("notif-dropdown");
+const marcarTodas = document.getElementById("notif-marcar-todas");
+const mobileSinoBtn = document.getElementById("mobile-sino-btn");
 
-// Função para abrir/fechar o menu
 function toggleMenu() {
-  hamburger.classList.toggle('active');
-  navMobile.classList.toggle('active');
-  overlay.classList.toggle('active');
-  
-  // Previne scroll do body quando menu está aberto
-  if (navMobile.classList.contains('active')) {
-    body.style.overflow = 'hidden';
-  } else {
-    body.style.overflow = '';
-  }
+  if (!hamburger || !navMobile || !overlay) return;
+
+  hamburger.classList.toggle("active");
+  navMobile.classList.toggle("active");
+  overlay.classList.toggle("active");
+  body.style.overflow = navMobile.classList.contains("active") ? "hidden" : "";
 }
 
-// Event listeners
-hamburger.addEventListener('click', toggleMenu);
-overlay.addEventListener('click', toggleMenu);
+if (hamburger) hamburger.addEventListener("click", toggleMenu);
+if (overlay) overlay.addEventListener("click", toggleMenu);
 
-// Fechar menu ao clicar em um link
-const mobileLinks = navMobile.querySelectorAll('a');
-mobileLinks.forEach(link => {
-  link.addEventListener('click', () => {
-    if (window.innerWidth < 1024) {
-      toggleMenu();
-    }
+if (navMobile) {
+  const mobileLinks = navMobile.querySelectorAll("a");
+  mobileLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      if (window.innerWidth < 1024) {
+        toggleMenu();
+      }
+    });
   });
-});
+}
 
-// Fechar menu ao redimensionar para desktop
-window.addEventListener('resize', () => {
-  if (window.innerWidth >= 1024 && navMobile.classList.contains('active')) {
+window.addEventListener("resize", () => {
+  if (navMobile && window.innerWidth >= 1024 && navMobile.classList.contains("active")) {
     toggleMenu();
   }
 });
 
-// JavaScript para controlar o dropdown de notificações
+function atualizarContador(total) {
+  const contador = document.querySelector(".sino-contador");
+  if (!contador) return;
 
-// abre e fecha ao clicar no sino
-if (sinoBtn) {
-    sinoBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation(); // adiciona essa linha
-        notifDropdown.classList.toggle('aberto');
-    });
+  if (!total) {
+    contador.style.display = "none";
+    contador.textContent = "0";
+  } else {
+    contador.textContent = total;
+    contador.style.display = "flex";
+  }
 }
 
-// fecha ao clicar fora
-document.addEventListener('click', function(e) {
-    const container = document.querySelector('.sino-container');
-    if (container && !container.contains(e.target)) {
-        notifDropdown.classList.remove('aberto');
+function montarItemNotificacao(notificacao) {
+  const li = document.createElement("li");
+  li.className = `notif-item ${notificacao.lida ? "" : "nova"}`;
+  li.dataset.id = notificacao.id_notificacao;
+
+  const link = document.createElement("a");
+  link.className = "notif-link";
+  link.href = notificacao.link || "/sobre";
+
+  const texto = document.createElement("p");
+  texto.className = "notif-texto";
+  texto.textContent = `${notificacao.titulo} - ${notificacao.mensagem}`;
+
+  const tempo = document.createElement("time");
+  tempo.className = "notif-tempo";
+  tempo.textContent = notificacao.tempo || "agora";
+
+  link.appendChild(texto);
+  link.appendChild(tempo);
+  li.appendChild(link);
+
+  li.addEventListener("click", async (event) => {
+    event.preventDefault();
+    li.classList.remove("nova");
+    if (notificacao.id_notificacao) {
+      await fetch(`/api/notificacoes/${notificacao.id_notificacao}/lida`, {
+        method: "POST",
+      });
+      carregarNotificacoes();
     }
-});
+    window.location.href = link.href || "/sobre";
+  });
 
-// fecha ao clicar no X
-if (notifFechar) {
-    notifFechar.addEventListener('click', function() {
-        notifDropdown.classList.remove('aberto');
-    });
+  return li;
 }
 
-// marca como lida ao clicar na notificação
+function renderizarNotificacoes(notificacoes) {
+  const lista = document.getElementById("notif-lista");
+  if (!lista) return;
 
-notifItens.forEach(item => {
-    item.addEventListener('click', function() {
-        this.classList.remove('nova');
-        atualizarContador();
-    });
+  lista.innerHTML = "";
+
+  if (!notificacoes.length) {
+    const li = document.createElement("li");
+    li.className = "notif-item";
+    li.innerHTML = '<p class="notif-texto">Você ainda não tem notificações.</p><time class="notif-tempo">agora</time>';
+    lista.appendChild(li);
+    return;
+  }
+
+  notificacoes.forEach((notificacao) => {
+    lista.appendChild(montarItemNotificacao(notificacao));
+  });
+}
+
+async function carregarNotificacoes() {
+  try {
+    const resposta = await fetch("/api/notificacoes");
+    if (!resposta.ok) return;
+
+    const dados = await resposta.json();
+    renderizarNotificacoes(dados.notificacoes || []);
+    atualizarContador(dados.totalNaoLidas || 0);
+  } catch (erro) {
+    console.error("Erro ao atualizar notificações:", erro);
+  }
+}
+
+if (sinoBtn && notifDropdown) {
+  sinoBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    notifDropdown.classList.toggle("aberto");
+    carregarNotificacoes();
+  });
+}
+
+document.addEventListener("click", function (e) {
+  const container = document.querySelector(".sino-container");
+  if (container && notifDropdown && !container.contains(e.target)) {
+    notifDropdown.classList.remove("aberto");
+  }
 });
 
 if (marcarTodas) {
-    marcarTodas.addEventListener('click', function() {
-        document.querySelectorAll('.notif-item.nova').forEach(item => {
-            item.classList.remove('nova');
-        });
-        atualizarContador();
+  marcarTodas.addEventListener("click", async function () {
+    await fetch("/api/notificacoes/marcar-todas", { method: "POST" });
+    document.querySelectorAll(".notif-item.nova").forEach((item) => {
+      item.classList.remove("nova");
     });
+    atualizarContador(0);
+    carregarNotificacoes();
+  });
 }
 
-function atualizarContador() {
-    const novas = document.querySelectorAll('.notif-item.nova').length;
-    const contador = document.querySelector('.sino-contador');
-    if (novas === 0) {
-        contador.style.display = 'none';
-    } else {
-        contador.textContent = novas;
-        contador.style.display = 'flex';
-    }
+if (mobileSinoBtn && notifDropdown) {
+  mobileSinoBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    notifDropdown.classList.toggle("aberto");
+    carregarNotificacoes();
+  });
 }
 
-// Para o sino no mobile
-if (mobileSinoBtn) {
-    mobileSinoBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        // reutiliza o mesmo dropdown
-        notifDropdown.classList.toggle('aberto');
-    });
-}
+carregarNotificacoes();
+setInterval(carregarNotificacoes, 30000);

@@ -237,6 +237,12 @@
     transition: background 0.2s;
 }
 
+.notif-link {
+    color: inherit;
+    display: block;
+    text-decoration: none;
+}
+
 .notif-item:hover {
     background-color: #fafafa;
 }

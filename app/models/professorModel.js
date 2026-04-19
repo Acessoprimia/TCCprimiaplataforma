@@ -14,14 +14,14 @@ const queries = Object.freeze({
     ORDER BY u.nome
   `,
   buscarPerfilCompleto: `
-    SELECT u.id_usuario, u.nome, u.email, u.tipo_usuario, u.status, p.diploma, p.data_nascimento, m.nome AS materia
+    SELECT u.id_usuario, u.nome, u.email, u.tipo_usuario, u.status, p.id_materia, p.diploma, p.data_nascimento, m.nome AS materia
     FROM ${TABELAS.usuarios} u
     LEFT JOIN ${TABELAS.professores} p ON p.id_professor = u.id_usuario
     LEFT JOIN ${TABELAS.materias} m ON m.id_materia = p.id_materia
     WHERE u.id_usuario = ?
   `,
   buscarUltimoPerfil: `
-    SELECT u.id_usuario, u.nome, u.email, u.tipo_usuario, u.status, p.diploma, p.data_nascimento, m.nome AS materia
+    SELECT u.id_usuario, u.nome, u.email, u.tipo_usuario, u.status, p.id_materia, p.diploma, p.data_nascimento, m.nome AS materia
     FROM ${TABELAS.usuarios} u
     INNER JOIN ${TABELAS.professores} p ON p.id_professor = u.id_usuario
     LEFT JOIN ${TABELAS.materias} m ON m.id_materia = p.id_materia

@@ -3,21 +3,7 @@ var router = express.Router();
 const { body, validationResult } = require("express-validator");
 const pool = require("../../db");
 const bcrypt = require("bcrypt");
-
-// Constantes centrais para a futura integracao com o banco de dados.
-// A ideia e evitar nomes de tabelas, status e rotas espalhados pelo arquivo.
-const TABELAS = Object.freeze({
-  usuarios: "Usuario",
-  alunos: "Aluno",
-  professores: "Professor",
-  materias: "Materia",
-  planosEstudo: "Plano_de_Estudo",
-  cronogramas: "Cronograma",
-  planosAula: "Plano_de_Aula",
-  forum: "Forum",
-  duvidas: "Duvidas",
-  respostas: "Respostas",
-});
+const Models = require("../models");
 
 const TIPOS_USUARIO = Object.freeze({
   aluno: "aluno",
@@ -72,194 +58,6 @@ const VALORES_INICIAIS_EDITAR_PERFIL = Object.freeze({
   nome: "",
   email: "",
   serie: "",
-});
-
-// Consultas SQL que serao usadas quando as rotas deixarem de ser simuladas.
-// Futuramente cada bloco pode ir para uma camada de model/repository.
-const SQL = Object.freeze({
-  usuarios: {
-    buscarPorEmail: `
-      SELECT id_usuario, nome, email, senha, tipo_usuario, status
-      FROM ${TABELAS.usuarios}
-      WHERE email = ?
-      LIMIT 1
-    `,
-    buscarEmailDeOutroUsuario: `
-      SELECT id_usuario
-      FROM ${TABELAS.usuarios}
-      WHERE email = ? AND id_usuario <> ?
-      LIMIT 1
-    `,
-    criarUsuario: `
-      INSERT INTO ${TABELAS.usuarios}
-        (nome, senha, email, tipo_usuario, status)
-      VALUES (?, ?, ?, ?, ?)
-    `,
-    atualizarPerfilBasico: `
-      UPDATE ${TABELAS.usuarios}
-      SET nome = ?, email = ?
-      WHERE id_usuario = ?
-    `,
-    atualizarSenha: `
-      UPDATE ${TABELAS.usuarios}
-      SET senha = ?
-      WHERE id_usuario = ?
-    `,
-    alterarTipoConta: `
-      UPDATE ${TABELAS.usuarios}
-      SET tipo_usuario = ?
-      WHERE id_usuario = ?
-    `,
-    alterarStatusConta: `
-      UPDATE ${TABELAS.usuarios}
-      SET status = ?
-      WHERE id_usuario = ?
-    `,
-    excluirConta: `
-      DELETE FROM ${TABELAS.usuarios}
-      WHERE id_usuario = ?
-    `,
-  },
-  alunos: {
-    criarAluno: `
-      INSERT INTO ${TABELAS.alunos}
-        (id_aluno, RA, serie, data_nascimento)
-      VALUES (?, ?, ?, ?)
-    `,
-    buscarPerfilCompleto: `
-      SELECT u.id_usuario, u.nome, u.email, u.tipo_usuario, u.status, a.RA, a.serie, a.data_nascimento
-      FROM ${TABELAS.usuarios} u
-      LEFT JOIN ${TABELAS.alunos} a ON a.id_aluno = u.id_usuario
-      WHERE u.id_usuario = ?
-    `,
-    buscarUltimoPerfil: `
-      SELECT u.id_usuario, u.nome, u.email, u.tipo_usuario, u.status, a.RA, a.serie, a.data_nascimento
-      FROM ${TABELAS.usuarios} u
-      INNER JOIN ${TABELAS.alunos} a ON a.id_aluno = u.id_usuario
-      WHERE u.tipo_usuario = 'aluno'
-      ORDER BY u.id_usuario DESC
-      LIMIT 1
-    `,
-    atualizarAluno: `
-      UPDATE ${TABELAS.alunos}
-      SET serie = ?
-      WHERE id_aluno = ?
-    `,
-  },
-  professores: {
-    criarProfessor: `
-      INSERT INTO ${TABELAS.professores}
-        (id_professor, id_materia, diploma, data_nascimento)
-      VALUES (?, ?, ?, ?)
-    `,
-    listarProfessores: `
-      SELECT p.id_professor, u.nome, u.email, u.tipo_usuario, u.status, p.diploma
-      FROM ${TABELAS.professores} p
-      INNER JOIN ${TABELAS.usuarios} u ON u.id_usuario = p.id_professor
-      ORDER BY u.nome
-    `,
-    buscarPerfilCompleto: `
-      SELECT u.id_usuario, u.nome, u.email, u.tipo_usuario, u.status, p.diploma, p.data_nascimento, m.nome AS materia
-      FROM ${TABELAS.usuarios} u
-      LEFT JOIN ${TABELAS.professores} p ON p.id_professor = u.id_usuario
-      LEFT JOIN ${TABELAS.materias} m ON m.id_materia = p.id_materia
-      WHERE u.id_usuario = ?
-    `,
-    buscarUltimoPerfil: `
-      SELECT u.id_usuario, u.nome, u.email, u.tipo_usuario, u.status, p.diploma, p.data_nascimento, m.nome AS materia
-      FROM ${TABELAS.usuarios} u
-      INNER JOIN ${TABELAS.professores} p ON p.id_professor = u.id_usuario
-      LEFT JOIN ${TABELAS.materias} m ON m.id_materia = p.id_materia
-      WHERE u.tipo_usuario = 'professor'
-      ORDER BY u.id_usuario DESC
-      LIMIT 1
-    `,
-  },
-  materias: {
-    listarAtivas: `
-      SELECT id_materia, nome, descricao
-      FROM ${TABELAS.materias}
-      ORDER BY nome
-    `,
-    buscarPorNome: `
-      SELECT id_materia, nome
-      FROM ${TABELAS.materias}
-      WHERE nome = ?
-      LIMIT 1
-    `,
-    criarMateria: `
-      INSERT INTO ${TABELAS.materias}
-        (nome, descricao)
-      VALUES (?, ?)
-    `,
-    removerMateria: `
-      DELETE FROM ${TABELAS.materias}
-      WHERE id_materia = ?
-    `,
-  },
-  conteudos: {
-    listarPublicados: `
-      SELECT c.id, c.titulo, c.descricao, c.tipo, c.is_premium, c.destaque, m.nome AS materia
-      FROM ${TABELAS.conteudos} c
-      LEFT JOIN ${TABELAS.materias} m ON m.id = c.materia_id
-      WHERE c.status = 'publicado'
-      ORDER BY c.criado_em DESC
-    `,
-    criarConteudo: `
-      INSERT INTO ${TABELAS.conteudos}
-        (titulo, descricao, tipo, materia_id, professor_id, arquivo_url, imagem_url, is_premium, destaque, status)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `,
-  },
-  forum: {
-    listarDuvidas: `
-      SELECT d.id, d.titulo, d.pergunta, d.status, d.criado_em, u.nome AS autor, m.nome AS materia
-      FROM ${TABELAS.duvidas} d
-      INNER JOIN ${TABELAS.alunos} a ON a.id = d.aluno_id
-      INNER JOIN ${TABELAS.usuarios} u ON u.id = a.usuario_id
-      LEFT JOIN ${TABELAS.materias} m ON m.id = d.materia_id
-      ORDER BY d.criado_em DESC
-    `,
-    listarDenuncias: `
-      SELECT df.id, df.motivo, df.descricao, df.status, df.criado_em, d.titulo AS duvida_titulo, u.nome AS denunciante
-      FROM ${TABELAS.denunciasForum} df
-      LEFT JOIN ${TABELAS.duvidas} d ON d.id = df.duvida_id
-      INNER JOIN ${TABELAS.usuarios} u ON u.id = df.denunciante_id
-      ORDER BY df.criado_em DESC
-    `,
-    atualizarStatusDenuncia: `
-      UPDATE ${TABELAS.denunciasForum}
-      SET status = ?, resolvido_em = NOW()
-      WHERE id = ?
-    `,
-  },
-  contato: {
-    criarMensagem: `
-      INSERT INTO ${TABELAS.mensagensContato}
-        (usuario_id, nome, email, assunto, mensagem, origem, status)
-      VALUES (?, ?, ?, ?, ?, ?, 'pendente')
-    `,
-    listarMensagens: `
-      SELECT id, nome, email, assunto, mensagem, origem, status, criado_em
-      FROM ${TABELAS.mensagensContato}
-      ORDER BY criado_em DESC
-    `,
-    marcarRespondido: `
-      UPDATE ${TABELAS.mensagensContato}
-      SET status = 'respondido'
-      WHERE id = ?
-    `,
-  },
-  admin: {
-    metricasDashboard: {
-      totalAlunos: `SELECT COUNT(*) AS total FROM ${TABELAS.usuarios} WHERE tipo_usuario = 'aluno'`,
-      totalProfessores: `SELECT COUNT(*) AS total FROM ${TABELAS.usuarios} WHERE tipo_usuario = 'professor'`,
-      duvidasPendentes: `SELECT COUNT(*) AS total FROM ${TABELAS.duvidas} WHERE status = 'pendente'`,
-      conteudosCadastrados: `SELECT COUNT(*) AS total FROM ${TABELAS.conteudos}`,
-      usuariosPremium: `SELECT COUNT(*) AS total FROM ${TABELAS.assinaturasPremium} WHERE status = 'ativa'`,
-      mensagensContato: `SELECT COUNT(*) AS total FROM ${TABELAS.mensagensContato} WHERE status = 'pendente'`,
-    },
-  },
 });
 
 // Variaveis de apoio para integrar banco, sessoes e seguranca depois.
@@ -347,36 +145,36 @@ function renderizarLogin(res, valores = VALORES_INICIAIS_LOGIN, msgErro = {}) {
 }
 
 async function emailJaCadastrado(conexao, email) {
-  const [usuarios] = await conexao.query(SQL.usuarios.buscarPorEmail, [email]);
-  return usuarios.length > 0;
+  return Models.usuarios.emailJaCadastrado(email, conexao);
 }
 
 async function cadastrarUsuarioBase(conexao, { nome, email, senha, tipoUsuario }) {
   const senhaCriptografada = await bcrypt.hash(senha, 10);
-  const [resultado] = await conexao.query(SQL.usuarios.criarUsuario, [
-    nome,
-    senhaCriptografada,
-    email,
-    tipoUsuario,
-    STATUS_CONTA.ativo,
-  ]);
-
-  return resultado.insertId;
+  return Models.usuarios.criar(
+    {
+      nome,
+      senhaCriptografada,
+      email,
+      tipoUsuario,
+      status: STATUS_CONTA.ativo,
+    },
+    conexao
+  );
 }
 
 async function buscarOuCriarMateria(conexao, nomeMateria) {
-  const [materias] = await conexao.query(SQL.materias.buscarPorNome, [nomeMateria]);
+  return Models.materias.buscarOuCriar(nomeMateria, conexao);
+}
 
-  if (materias.length > 0) {
-    return materias[0].id_materia;
-  }
-
-  const [resultado] = await conexao.query(SQL.materias.criarMateria, [
-    nomeMateria,
-    `Conteudos de ${nomeMateria}`,
-  ]);
-
-  return resultado.insertId;
+async function atualizarSenhaUsuario(conexao, { senha, idUsuario }) {
+  const senhaCriptografada = await bcrypt.hash(senha, 10);
+  return Models.usuarios.atualizarSenha(
+    {
+      senhaCriptografada,
+      idUsuario,
+    },
+    conexao
+  );
 }
 
 function criarCookieUsuario(res, usuario) {
@@ -418,8 +216,7 @@ function usuarioAutenticado(req, tipoUsuario) {
 }
 
 async function emailPertenceAOutroUsuario(email, idUsuario) {
-  const [usuarios] = await pool.query(SQL.usuarios.buscarEmailDeOutroUsuario, [email, idUsuario]);
-  return usuarios.length > 0;
+  return Models.usuarios.emailPertenceAOutroUsuario(email, idUsuario);
 }
 
 function perfilFallback(tipoUsuario) {
@@ -453,13 +250,10 @@ function formatarPerfil(tipoUsuario, perfil, usuarioBase = {}) {
 
 async function buscarUltimoPerfil(tipoUsuario) {
   try {
-    const consulta =
+    const perfil =
       tipoUsuario === TIPOS_USUARIO.professor
-        ? SQL.professores.buscarUltimoPerfil
-        : SQL.alunos.buscarUltimoPerfil;
-
-    const [linhas] = await pool.query(consulta);
-    const perfil = linhas[0];
+        ? await Models.professores.buscarUltimoPerfil()
+        : await Models.alunos.buscarUltimoPerfil();
 
     if (!perfil) {
       return perfilFallback(tipoUsuario);
@@ -481,13 +275,10 @@ async function buscarPerfilLogado(req, tipoUsuario) {
   }
 
   try {
-    const consulta =
+    const perfil =
       tipoUsuario === TIPOS_USUARIO.professor
-        ? SQL.professores.buscarPerfilCompleto
-        : SQL.alunos.buscarPerfilCompleto;
-
-    const [linhas] = await pool.query(consulta, [usuarioBase.id]);
-    const perfil = linhas[0];
+        ? await Models.professores.buscarPerfilCompleto(usuarioBase.id)
+        : await Models.alunos.buscarPerfilCompleto(usuarioBase.id);
 
     if (!perfil) {
       return { ...perfilFallback(tipoUsuario), ...usuarioBase };
@@ -832,7 +623,15 @@ router.post(
         tipoUsuario: TIPOS_USUARIO.aluno,
       });
 
-      await conexao.query(SQL.alunos.criarAluno, [idUsuario, ra, serie, data_nascimento]);
+      await Models.alunos.criar(
+        {
+          idAluno: idUsuario,
+          ra,
+          serie,
+          dataNascimento: data_nascimento,
+        },
+        conexao
+      );
       await conexao.commit();
 
       usuarioLogadoSimulado = {
@@ -865,8 +664,7 @@ router.post("/entrada", async function(req, res) {
 
   if (email) {
     try {
-      const [usuarios] = await pool.query(SQL.usuarios.buscarPorEmail, [email]);
-      const usuario = usuarios[0];
+      const usuario = await Models.usuarios.buscarPorEmail(email);
 
       if (usuario) {
         criarCookieUsuario(res, {
@@ -961,7 +759,15 @@ router.post(
 
       const idMateria = await buscarOuCriarMateria(conexao, materia);
 
-      await conexao.query(SQL.professores.criarProfessor, [idUsuario, idMateria, diploma, dataNascimento]);
+      await Models.professores.criar(
+        {
+          idProfessor: idUsuario,
+          idMateria,
+          diploma,
+          dataNascimento,
+        },
+        conexao
+      );
       await conexao.commit();
 
       usuarioLogadoSimulado = {
@@ -993,8 +799,7 @@ router.post("/entradaprofessor", async (req, res) => {
 
   if (email) {
     try {
-      const [usuarios] = await pool.query(SQL.usuarios.buscarPorEmail, [email]);
-      const usuario = usuarios[0];
+      const usuario = await Models.usuarios.buscarPorEmail(email);
 
       if (usuario) {
         criarCookieUsuario(res, {
@@ -1054,8 +859,7 @@ router.post(
     const { email, senha } = req.body;
 
     try {
-      const [usuarios] = await pool.query(SQL.usuarios.buscarPorEmail, [email]);
-      const usuario = usuarios[0];
+      const usuario = await Models.usuarios.buscarPorEmail(email);
 
       if (!usuario) {
         return renderizarLogin(res, req.body, {
@@ -1156,12 +960,27 @@ router.post(
         });
       }
 
-      await conexao.query(SQL.usuarios.atualizarPerfilBasico, [nome, email, usuarioBase.id]);
-      await conexao.query(SQL.alunos.atualizarAluno, [serie, usuarioBase.id]);
+      await Models.usuarios.atualizarPerfilBasico(
+        {
+          nome,
+          email,
+          idUsuario: usuarioBase.id,
+        },
+        conexao
+      );
+      await Models.alunos.atualizar(
+        {
+          serie,
+          idAluno: usuarioBase.id,
+        },
+        conexao
+      );
 
       if (senha) {
-        const senhaCriptografada = await bcrypt.hash(senha, 10);
-        await conexao.query(SQL.usuarios.atualizarSenha, [senhaCriptografada, usuarioBase.id]);
+        await atualizarSenhaUsuario(conexao, {
+          senha,
+          idUsuario: usuarioBase.id,
+        });
       }
 
       await conexao.commit();
@@ -1241,11 +1060,20 @@ router.post(
         });
       }
 
-      await conexao.query(SQL.usuarios.atualizarPerfilBasico, [nome, email, usuarioBase.id]);
+      await Models.usuarios.atualizarPerfilBasico(
+        {
+          nome,
+          email,
+          idUsuario: usuarioBase.id,
+        },
+        conexao
+      );
 
       if (senha) {
-        const senhaCriptografada = await bcrypt.hash(senha, 10);
-        await conexao.query(SQL.usuarios.atualizarSenha, [senhaCriptografada, usuarioBase.id]);
+        await atualizarSenhaUsuario(conexao, {
+          senha,
+          idUsuario: usuarioBase.id,
+        });
       }
 
       await conexao.commit();

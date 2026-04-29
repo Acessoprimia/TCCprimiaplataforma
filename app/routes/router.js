@@ -320,6 +320,17 @@ function formatarDuvida(duvida) {
   };
 }
 
+async function anexarRespostasNasDuvidas(duvidas, conexao) {
+  const duvidasComRespostas = [];
+
+  for (const duvida of duvidas) {
+    const respostas = await Models.respostas.listarPorDuvida(duvida.id_duvida, conexao);
+    duvidasComRespostas.push({ ...duvida, respostas });
+  }
+
+  return duvidasComRespostas;
+}
+
 async function buscarUltimoPerfil(tipoUsuario) {
   try {
     const perfil =
@@ -521,7 +532,8 @@ router.get("/forumdeduvidas", async function (req, res) {
 
   try {
     const materias = await Models.materias.listarAtivas();
-    const duvidas = await Models.forum.listarDuvidas();
+    const duvidasBase = await Models.duvidas.listar();
+    const duvidas = await anexarRespostasNasDuvidas(duvidasBase);
 
     return res.render("pages/forumdeduvidas", {
       materias,
@@ -578,7 +590,7 @@ router.post(
         conexao
       );
 
-      const idDuvida = await Models.forum.criarDuvida(
+      const idDuvida = await Models.duvidas.criar(
         {
           idAluno: usuarioBase.id,
           idForum,
@@ -626,7 +638,7 @@ router.post("/forumdeduvidas/:id/excluir", async function (req, res) {
   try {
     await conexao.beginTransaction();
 
-    await Models.forum.excluirRespostasDaDuvidaDoAluno(
+    await Models.respostas.excluirDaDuvidaDoAluno(
       {
         idDuvida: req.params.id,
         idAluno: usuarioBase.id,
@@ -634,7 +646,7 @@ router.post("/forumdeduvidas/:id/excluir", async function (req, res) {
       conexao
     );
 
-    const resultado = await Models.forum.excluirDuvidaDoAluno(
+    const resultado = await Models.duvidas.excluirDoAluno(
       {
         idDuvida: req.params.id,
         idAluno: usuarioBase.id,
@@ -669,7 +681,8 @@ router.get("/forumprofessor", async function (req, res) {
     const materias = professor?.materia
       ? [{ id_materia: professor.id_materia, nome: professor.materia }]
       : [];
-    const duvidas = await Models.forum.listarDuvidasPorProfessor(usuarioBase.id);
+    const duvidasBase = await Models.duvidas.listarPorProfessor(usuarioBase.id);
+    const duvidas = await anexarRespostasNasDuvidas(duvidasBase);
 
     return res.render("pages/forumprofessor", {
       professor,
@@ -713,7 +726,7 @@ router.post(
     try {
       await conexao.beginTransaction();
 
-      const duvida = await Models.forum.buscarDuvidaParaResposta(
+      const duvida = await Models.duvidas.buscarParaResposta(
         {
           idDuvida: id_duvida,
           idProfessor: usuarioBase.id,
@@ -726,7 +739,7 @@ router.post(
         return res.redirect("/forumprofessor");
       }
 
-      await Models.forum.criarResposta(
+      await Models.respostas.criar(
         {
           idProfessor: usuarioBase.id,
           idDuvida: id_duvida,
@@ -734,7 +747,7 @@ router.post(
         },
         conexao
       );
-      await Models.forum.marcarDuvidaRespondida(id_duvida, conexao);
+      await Models.duvidas.marcarRespondida(id_duvida, conexao);
 
       await Models.notificacoes.criar(
         {
@@ -772,7 +785,7 @@ router.post("/forumprofessor/respostas/:id/excluir", async function (req, res) {
   try {
     await conexao.beginTransaction();
 
-    await Models.forum.excluirRespostaDoProfessor(
+    await Models.respostas.excluirDoProfessor(
       {
         idResposta: req.params.id,
         idProfessor: usuarioBase.id,
@@ -781,7 +794,7 @@ router.post("/forumprofessor/respostas/:id/excluir", async function (req, res) {
     );
 
     if (idDuvida) {
-      await Models.forum.atualizarStatusDuvidaPorRespostas(idDuvida, conexao);
+      await Models.duvidas.atualizarStatusPorRespostas(idDuvida, conexao);
     }
 
     await conexao.commit();

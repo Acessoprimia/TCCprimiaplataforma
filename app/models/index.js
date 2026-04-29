@@ -3,9 +3,9 @@ module.exports = Object.freeze({
   alunos: require("./alunoModel"),
   professores: require("./professorModel"),
   materias: require("./materiaModel"),
-  conteudos: require("./conteudoModel"),
   forum: require("./forumModel"),
+  duvidas: require("./duvidaModel"),
+  respostas: require("./respostaModel"),
   notificacoes: require("./notificacaoModel"),
   contato: require("./contatoModel"),
-  admin: require("./adminModel"),
 });

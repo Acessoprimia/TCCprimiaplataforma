@@ -49,9 +49,11 @@
                         <span class="materia-tag">Matéria: <%= duvida.materia %></span>
                     </header>
                     <p class="pergunta-texto"><%= duvida.duvida %></p>
-                    <form action="/forumdeduvidas/<%= duvida.id_duvida %>/excluir" method="POST" class="form-excluir-forum" onsubmit="return confirm('Deseja excluir esta pergunta? As respostas dela também serão removidas.');">
-                        <button class="btn-excluir-forum" type="submit">Excluir pergunta</button>
-                    </form>
+                    <% if (duvida.podeExcluirComoAluno) { %>
+                        <form action="/forumdeduvidas/<%= duvida.id_duvida %>/excluir" method="POST" class="form-excluir-forum" onsubmit="return confirm('Deseja excluir esta pergunta? As respostas dela tambem serao removidas.');">
+                            <button class="btn-excluir-forum" type="submit">Excluir pergunta</button>
+                        </form>
+                    <% } %>
                     <button class="btn-ver-resposta">
                         <%= duvida.respostas && duvida.respostas.length ? 'Ver resposta' : 'Aguardando resposta' %>
                     </button>

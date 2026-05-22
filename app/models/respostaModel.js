@@ -24,6 +24,10 @@ const queries = Object.freeze({
       (id_professor, id_duvida, resposta)
     VALUES (?, ?, ?)
   `,
+  excluirPorDuvida: `
+    DELETE FROM ${TABELAS.respostas}
+    WHERE id_duvida = ?
+  `,
   excluirDaDuvidaDoAluno: `
     DELETE r
     FROM ${TABELAS.respostas} r
@@ -55,6 +59,11 @@ const RespostaModel = Object.freeze({
       resposta,
     ]);
     return resultado.insertId;
+  },
+
+  async excluirPorDuvida(idDuvida, conexao) {
+    const [resultado] = await banco(conexao).query(queries.excluirPorDuvida, [idDuvida]);
+    return resultado;
   },
 
   async excluirDaDuvidaDoAluno({ idDuvida, idAluno }, conexao) {

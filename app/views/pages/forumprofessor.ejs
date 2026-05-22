@@ -20,10 +20,10 @@
         <section class="filtro-section">
             <label for="materia-filtro" class="filtro-label">Filtro</label>
             <select id="materia-filtro" class="filtro-select">
-                <option value="">Minha matéria</option>
+                <option value="">todas as materias</option>
                 <% (materias || []).forEach((materia) => { %>
                     <option value="<%= materia.nome.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') %>">
-                        <%= materia.nome %>
+                        minha materia
                     </option>
                 <% }) %>
             </select>
@@ -47,6 +47,11 @@
                         <span class="materia-tag">Matéria: <%= duvida.materia %></span>
                     </header>
                     <p class="pergunta-texto"><%= duvida.duvida %></p>
+                    <% if (duvida.podeExcluirComoProfessor) { %>
+                        <form action="/forumprofessor/duvidas/<%= duvida.id_duvida %>/excluir" method="POST" class="form-excluir-forum" onsubmit="return confirm('Deseja excluir esta pergunta? As respostas dela tamb??m ser??o removidas.');">
+                            <button class="btn-excluir-forum" type="submit">Excluir pergunta</button>
+                        </form>
+                    <% } %>
 
                     <% if (duvida.respostas && duvida.respostas.length) { %>
                         <section class="resposta-container" style="display: block;">
@@ -62,7 +67,9 @@
                         </section>
                     <% } %>
 
-                    <button class="btn-responder" data-duvida-id="<%= duvida.id_duvida %>">Responder</button>
+                    <% if (duvida.podeResponderComoProfessor) { %>
+                        <button class="btn-responder" data-duvida-id="<%= duvida.id_duvida %>">Responder</button>
+                    <% } %>
                 </article>
             <% }) %>
         </section>

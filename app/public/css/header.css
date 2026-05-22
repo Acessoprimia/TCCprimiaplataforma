@@ -51,6 +51,7 @@
 
 .logo img {
   max-height: 42px;
+  filter: brightness(0) saturate(100%) invert(67%) sepia(14%) saturate(979%) hue-rotate(209deg) brightness(89%) contrast(88%);
   transition: transform 0.3s ease;
 }
 

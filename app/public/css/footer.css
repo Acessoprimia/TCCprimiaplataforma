@@ -1,19 +1,19 @@
-/* Estilos para o novo footer */
+﻿/* Estilos para o novo footer */
 
-/* As regras para 'html' e 'body' foram movidas para o CSS principal da sua aplicação (telainicial.css) */
+/* As regras para 'html' e 'body' foram movidas para o CSS principal da sua aplicaÃ§Ã£o (telainicial.css) */
 
 .site-footer {
   background-color: #A398D1;
   color: white;
   padding: 20px 0;
-  width: 100%; /* Garante que o footer ocupe 100% da largura disponível */
+  width: 100%; /* Garante que o footer ocupe 100% da largura disponÃ­vel */
   box-sizing: border-box; /* Inclui padding na largura total */
   margin-top: auto; /* Empurra o footer para baixo */
 }
 
 .site-footer-top,
 .site-footer-bottom {
-  max-width: 1100px; /* Mantém o conteúdo centralizado e com largura máxima */
+  max-width: 1100px; /* MantÃ©m o conteÃºdo centralizado e com largura mÃ¡xima */
   margin: 0 auto;
   padding: 0 20px; /* Adiciona padding horizontal para telas menores */
 }
@@ -49,7 +49,7 @@
 }
 
 .site-footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.3); /* Linha divisória */
+  border-top: 1px solid rgba(255, 255, 255, 0.3); /* Linha divisÃ³ria */
   padding-top: 15px;
   display: flex;
   flex-direction: column;
@@ -65,7 +65,7 @@
 .site-footer-social-icon img {
   width: 24px;
   height: 24px;
-  filter: invert(100%); /* Para ícones brancos */
+  filter: invert(100%); /* Para Ã­cones brancos */
 }
 
 .site-footer-text-bottom {

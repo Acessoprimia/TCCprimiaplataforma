@@ -239,6 +239,13 @@ function criarCookieUsuario(res, usuario) {
   res.setHeader("Set-Cookie", `primia_usuario=${payload}; Path=/; HttpOnly; SameSite=Lax`);
 }
 
+function limparCookieUsuario(res) {
+  res.setHeader(
+    "Set-Cookie",
+    "primia_usuario=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0"
+  );
+}
+
 function lerCookieUsuario(req) {
   const cookies = (req.headers.cookie || "").split(";").map((cookie) => cookie.trim());
   const cookieUsuario = cookies.find((cookie) => cookie.startsWith("primia_usuario="));
@@ -320,6 +327,20 @@ function formatarDuvida(duvida) {
   };
 }
 
+function mapearPermissoesDuvida(duvida, contexto = {}) {
+  const { tipoUsuario = null, idUsuario = null, idMateriaProfessor = null } = contexto;
+
+  return {
+    ...duvida,
+    podeExcluirComoAluno:
+      tipoUsuario === TIPOS_USUARIO.aluno && Number(duvida.id_aluno) === Number(idUsuario),
+    podeExcluirComoProfessor: tipoUsuario === TIPOS_USUARIO.professor,
+    podeResponderComoProfessor:
+      tipoUsuario === TIPOS_USUARIO.professor &&
+      Number(idMateriaProfessor) === Number(duvida.id_materia),
+  };
+}
+
 async function anexarRespostasNasDuvidas(duvidas, conexao) {
   const duvidasComRespostas = [];
 
@@ -354,7 +375,7 @@ async function buscarPerfilLogado(req, tipoUsuario) {
   const usuarioBase = usuarioCookie || usuarioLogadoSimulado;
 
   if (!usuarioBase || usuarioBase.tipo_usuario !== tipoUsuario) {
-    return buscarUltimoPerfil(tipoUsuario);
+    return null;
   }
 
   try {
@@ -370,7 +391,7 @@ async function buscarPerfilLogado(req, tipoUsuario) {
     return formatarPerfil(tipoUsuario, perfil, usuarioBase);
   } catch (erro) {
     console.error("Erro ao buscar perfil:", erro);
-    return { ...perfilFallback(tipoUsuario), ...usuarioBase };
+    return null;
   }
 }
 
@@ -386,10 +407,34 @@ function somenteAdminSimulado(req, res, next) {
 }
 
 async function carregarNotificacoes(req, res, next) {
+  const usuario = lerCookieUsuario(req);
+  const paginasSemprePublicas = new Set([
+    "/",
+    "/telainicial",
+    "/login",
+    "/loginprofessor",
+    "/cadastro",
+    "/cadastroprofessor",
+    "/logincadastro",
+    "/naotemumaconta",
+  ]);
+  const paginasMistas = new Set([
+    "/sobre",
+    "/contato",
+    "/termopriva",
+    "/termouso",
+  ]);
+
+  res.locals.emPaginaPublica =
+    paginasSemprePublicas.has(req.path) || (!usuario && paginasMistas.has(req.path));
+  res.locals.usuarioHeader = usuario;
+  res.locals.rotaInicioHeader = res.locals.emPaginaPublica
+    ? "/telainicial"
+    : rotaInicialPorTipoUsuario(usuario?.tipo_usuario);
+
   res.locals.notificacoes = [];
   res.locals.totalNotificacoesNaoLidas = 0;
 
-  const usuario = lerCookieUsuario(req);
   if (!usuario) return next();
 
   try {
@@ -444,6 +489,12 @@ router.get("/admin/dashboard", somenteAdminSimulado, function (req, res) {
 
 router.get("/telainicial", function (req, res) {
   res.render("pages/telainicial");
+});
+
+router.get("/logout", function (req, res) {
+  usuarioLogadoSimulado = null;
+  limparCookieUsuario(res);
+  res.redirect("/telainicial");
 });
 
 router.get("/contato", function (req, res) {
@@ -537,7 +588,14 @@ router.get("/forumdeduvidas", async function (req, res) {
 
     return res.render("pages/forumdeduvidas", {
       materias,
-      duvidas: duvidas.map(formatarDuvida),
+      duvidas: duvidas
+        .map(formatarDuvida)
+        .map((duvida) =>
+          mapearPermissoesDuvida(duvida, {
+            tipoUsuario: TIPOS_USUARIO.aluno,
+            idUsuario: usuarioBase.id,
+          })
+        ),
       msgErro: {},
       msgSucesso: null,
     });
@@ -681,13 +739,21 @@ router.get("/forumprofessor", async function (req, res) {
     const materias = professor?.materia
       ? [{ id_materia: professor.id_materia, nome: professor.materia }]
       : [];
-    const duvidasBase = await Models.duvidas.listarPorProfessor(usuarioBase.id);
+    const duvidasBase = await Models.duvidas.listar();
     const duvidas = await anexarRespostasNasDuvidas(duvidasBase);
 
     return res.render("pages/forumprofessor", {
       professor,
       materias,
-      duvidas: duvidas.map(formatarDuvida),
+      duvidas: duvidas
+        .map(formatarDuvida)
+        .map((duvida) =>
+          mapearPermissoesDuvida(duvida, {
+            tipoUsuario: TIPOS_USUARIO.professor,
+            idUsuario: usuarioBase.id,
+            idMateriaProfessor: professor?.id_materia,
+          })
+        ),
       msgErro: {},
       msgSucesso: null,
     });
@@ -808,6 +874,32 @@ router.post("/forumprofessor/respostas/:id/excluir", async function (req, res) {
   return res.redirect("/forumprofessor");
 });
 
+router.post("/forumprofessor/duvidas/:id/excluir", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const conexao = await pool.getConnection();
+
+  try {
+    await conexao.beginTransaction();
+
+    await Models.respostas.excluirPorDuvida(req.params.id, conexao);
+    await Models.duvidas.excluirPorId(req.params.id, conexao);
+
+    await conexao.commit();
+  } catch (erro) {
+    await conexao.rollback();
+    console.error("Erro ao excluir duvida pelo professor:", erro);
+  } finally {
+    conexao.release();
+  }
+
+  return res.redirect("/forumprofessor");
+});
+
 router.get("/planoestudoprofessor", function (req, res) {
   res.render("pages/planoestudoprofessor");
 });
@@ -823,7 +915,18 @@ router.get("/naotemumaconta", function (req, res) {
 
 
 router.get("/entradaprofessor", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
   const usuario = await buscarPerfilLogado(req, TIPOS_USUARIO.professor);
+
+  if (!usuario) {
+    return res.redirect("/login");
+  }
+
   res.render("pages/entradaprofessor", { usuario });
 });
 
@@ -885,7 +988,18 @@ router.get("/termopriva", function (req, res) {
 });
 
 router.get("/entrada", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
   const usuario = await buscarPerfilLogado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuario) {
+    return res.redirect("/login");
+  }
+
   res.render("pages/entrada", { usuario });
 });
 

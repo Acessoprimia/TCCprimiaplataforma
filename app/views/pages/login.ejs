@@ -20,17 +20,14 @@
         <!-- CARD DE LOGIN -->
         <article class="card-login">
             <form class="form-login" action="/login" method="POST">
-                <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.geral) { %>
-                    <p class="erro-msg"><%= msgErro.geral %></p>
-                <% } %>
                 <!-- CAMPO EMAIL -->
                 <label class="campo-wrapper">
                     <figure class="icone-campo">
                         <img src="../image/usuario.webp" alt="Usuário" class="icone">
                     </figure>
-                    <input type="email" id="email" name="email" placeholder="Email" class="input-campo">
+                    <input type="email" id="email" name="email" placeholder="Email" class="input-campo" value="<%= typeof valores !== 'undefined' && valores.email ? valores.email : '' %>">
                 </label>
-                <p id="erro-email" class="erro-msg"></p>
+                <p id="erro-email" class="erro-msg"><%= typeof msgErro !== 'undefined' && msgErro && msgErro.email ? msgErro.email : '' %></p>
 
                 <!-- CAMPO SENHA -->
                 <label class="campo-wrapper">
@@ -40,7 +37,11 @@
                     <input type="password" id="senha" name="senha" placeholder="Senha" class="input-campo">
                     <span class="mostrar-senha" onclick="toggleSenha('senha')">&#128065;</span>
                 </label>
-                <p id="erro-senha" class="erro-msg"></p>
+                <p id="erro-senha" class="erro-msg"><%= typeof msgErro !== 'undefined' && msgErro && msgErro.senha ? msgErro.senha : '' %></p>
+
+                <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.geral) { %>
+                    <p class="erro-msg erro-login-geral"><%= msgErro.geral %></p>
+                <% } %>
 
                 <!-- LINK ESQUECEU A SENHA -->
                 <footer class="rodape-form">

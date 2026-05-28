@@ -22,6 +22,31 @@ function validarNome() {
     }
 }
 
+// Validação do email
+function validarEmail() {
+    const email = document.getElementById("email").value.trim();
+    const erro = document.getElementById("erro-email");
+
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+        erro.textContent = "Campo obrigatório!";
+        erro.classList.remove("correto");
+        return false;
+    }
+
+    if (!regex.test(email)) {
+        erro.textContent = "Digite um e-mail válido!";
+        erro.classList.remove("correto");
+        return false;
+    }
+
+    erro.textContent = "E-mail válido ✔";
+    erro.classList.add("correto");
+
+    return true;
+}
+
 // Validação da senha
 function validarSenha() {
     const senha = document.getElementById("senha").value;
@@ -44,7 +69,7 @@ function validarSenha() {
         }
     }
 
-    validarConfirmarSenha(); // atualiza também o confirmar senha
+    validarConfirmarSenha();
     return todasCorretas;
 }
 
@@ -87,6 +112,7 @@ function validarDataNascimento() {
     const nascimento = new Date(valor);
     let idade = hoje.getFullYear() - nascimento.getFullYear();
     const m = hoje.getMonth() - nascimento.getMonth();
+
     if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) idade--;
 
     if (idade < 15 || idade > 19) {
@@ -105,6 +131,7 @@ function validarRA() {
     const raInput = document.getElementById("ra");
     const ra = raInput.value.trim().toUpperCase().replace(/\s+/g, "");
     const erro = document.getElementById("erro-ra");
+
     const formatoComSeparadores = /^[0-9]{6,15}-[0-9A-Z]{1,2}\/[A-Z]{2}$/;
     const formatoSemSeparadores = /^[0-9]{7,17}[A-Z]{2}$/;
 
@@ -125,32 +152,39 @@ function validarRA() {
 }
 
 // Inicialização de eventos
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
+
     const form = document.querySelector(".form-cadastro");
+
+    const nomeInput = document.getElementById("nome");
+    const emailInput = document.getElementById("email");
     const senhaInput = document.getElementById("senha");
     const confirmarInput = document.getElementById("confirmar_senha");
-    const nomeInput = document.getElementById("nome");
     const dataInput = document.getElementById("data_nascimento");
     const raInput = document.getElementById("ra");
 
+    nomeInput.addEventListener("input", validarNome);
+    emailInput.addEventListener("input", validarEmail);
     senhaInput.addEventListener("input", validarSenha);
     senhaInput.addEventListener("input", validarConfirmarSenha);
     confirmarInput.addEventListener("input", validarConfirmarSenha);
-    nomeInput.addEventListener("input", validarNome);
     dataInput.addEventListener("input", validarDataNascimento);
     raInput.addEventListener("input", validarRA);
 
-    form.addEventListener("submit", function(e) {
+    form.addEventListener("submit", function (e) {
+
         const nomeValido = validarNome();
+        const emailValido = validarEmail();
         const senhaValida = validarSenha();
         const confirmarValido = validarConfirmarSenha();
         const dataValida = validarDataNascimento();
         const raValido = validarRA();
 
-        if (!nomeValido || !senhaValida || !confirmarValido || !dataValida || !raValido) {
-            e.preventDefault(); // bloqueia submit
+        if (!nomeValido || !emailValido || !senhaValida || !confirmarValido || !dataValida || !raValido) {
+
+            e.preventDefault();
+
             alert("Preencha corretamente todos os campos antes de enviar!");
         }
-        // Se todos os campos estiverem corretos, o form envia para /cadastro.
     });
 });

@@ -14,11 +14,13 @@
     <section class="secao-roxa">
         <article class="card-cadastro">
             <form class="form-cadastro" action="/cadastro" method="POST">
-                
                 <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.geral) { %>
-        <p class="erro-msg"><%= msgErro.geral %></p>
-    <% } %>
-      
+                    <p class="erro-msg"><%= msgErro.geral %></p>
+                <% } %>
+                <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.email) { %>
+                    <p class="erro-msg"><%= msgErro.email %></p>
+                <% } %>
+
                 <!-- NOME -->
                 <label class="campo-wrapper">
                     <figure class="icone-campo">

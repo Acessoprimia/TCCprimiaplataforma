@@ -230,12 +230,16 @@ body {
     color: #28a745;
 }
 
+/* Move espaco de tudo*/
 .erro-msg {
     color: #d9534f;
     font-size: 12px;
     margin-top: 4px;
+
     font-weight: 500;
 }
+
+
 .erro-msg.correto {
     color: #28a745;
 }

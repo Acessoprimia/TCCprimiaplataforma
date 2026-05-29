@@ -20,10 +20,10 @@
         <section class="filtro-section">
             <label for="materia-filtro" class="filtro-label">Filtro</label>
             <select id="materia-filtro" class="filtro-select">
-                <option value="">todas as materias</option>
+                <option value="">Todas as matérias</option>
                 <% (materias || []).forEach((materia) => { %>
                     <option value="<%= materia.nome.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') %>">
-                        minha materia
+                        Minha matéria
                     </option>
                 <% }) %>
             </select>

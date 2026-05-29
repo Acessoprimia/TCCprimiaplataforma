@@ -6,11 +6,11 @@ function toggleSenha(idCampo) {
     
     if (campo.type === "password") {
         campo.type = "text";
-        icon.src = "../image/olho_fechado.webp"; // Ícone de olho fechado
+        icon.src = "../image/olho_fechado.webp";
         icon.alt = "Ocultar Senha";
     } else {
         campo.type = "password";
-        icon.src = "../image/olho_aberto.webp"; // Ícone de olho aberto
+        icon.src = "../image/olho_aberto.webp";
         icon.alt = "Mostrar Senha";
     }
 }
@@ -31,6 +31,29 @@ function validarNome() {
         erro.textContent = "";
         return true;
     }
+}
+
+// Validação do email
+function validarEmail() {
+    const email = document.getElementById("email").value.trim();
+    const erro = document.getElementById("erro-email");
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+        erro.textContent = "Campo obrigatório!";
+        erro.classList.remove("correto");
+        return false;
+    }
+
+    if (!regex.test(email)) {
+        erro.textContent = "Digite um e-mail válido!";
+        erro.classList.remove("correto");
+        return false;
+    }
+
+    erro.textContent = "E-mail válido ✔";
+    erro.classList.add("correto");
+    return true;
 }
 
 // Validação da senha
@@ -55,7 +78,7 @@ function validarSenha() {
         }
     }
 
-    validarConfirmarSenha(); // atualiza também o confirmar senha
+    validarConfirmarSenha();
     return todasCorretas;
 }
 
@@ -79,20 +102,6 @@ function validarConfirmarSenha() {
         erro.textContent = "As senhas não são iguais ✖";
         erro.classList.remove("correto");
         return false;
-    }
-}
-
-// Validação do email
-function validarEmail() {
-    const email = document.getElementById("email").value.trim();
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!email) {
-        return false;
-    } else if (!regex.test(email)) {
-        return false;
-    } else {
-        return true;
     }
 }
 
@@ -158,6 +167,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const senhaInput = document.getElementById("senha");
     const confirmarInput = document.getElementById("confirmarSenha");
     const nomeInput = document.getElementById("nomeCompleto");
+    const emailInput = document.getElementById("email");
     const dataInput = document.getElementById("dataNascimento");
     const diplomaInput = document.getElementById("diploma");
 
@@ -165,6 +175,7 @@ document.addEventListener("DOMContentLoaded", function() {
     senhaInput.addEventListener("input", validarConfirmarSenha);
     confirmarInput.addEventListener("input", validarConfirmarSenha);
     nomeInput.addEventListener("input", validarNome);
+    emailInput.addEventListener("input", validarEmail);
     dataInput.addEventListener("change", validarDataNascimento);
     diplomaInput.addEventListener("change", atualizarNomeDiploma);
 
@@ -178,10 +189,8 @@ document.addEventListener("DOMContentLoaded", function() {
         const materiaValida = validarMateria();
 
         if (!nomeValido || !emailValido || !senhaValida || !confirmarValido || !dataValida || !diplomaValido || !materiaValida) {
-            e.preventDefault(); // bloqueia submit
+            e.preventDefault();
             alert("Preencha corretamente todos os campos antes de enviar!");
         }
-        // Se todos os campos estiverem corretos, o form envia para /cadastroprofessor.
     });
 });
-

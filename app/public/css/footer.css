@@ -98,3 +98,13 @@
     font-size: 12px;
   }
 }
+
+
+
+
+
+.site-footer-social-icon img {
+  width: 30px;
+  height: 30px;
+  filter: brightness(0) invert(1);
+}

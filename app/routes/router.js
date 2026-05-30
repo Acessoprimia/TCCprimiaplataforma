@@ -8,6 +8,7 @@ const Models = require("../models");
 const TIPOS_USUARIO = Object.freeze({
   aluno: "aluno",
   professor: "professor",
+  admin: "admin", 
 });
 
 const STATUS_CONTA = Object.freeze({
@@ -19,6 +20,7 @@ const STATUS_CONTA = Object.freeze({
 const ROTAS_POR_TIPO_USUARIO = Object.freeze({
   [TIPOS_USUARIO.aluno]: "/entrada",
   [TIPOS_USUARIO.professor]: "/entradaprofessor",
+  [TIPOS_USUARIO.admin]: "/admin",
 });
 
 const VIEWS = Object.freeze({
@@ -226,39 +228,71 @@ async function atualizarSenhaUsuario(conexao, { senha, idUsuario }) {
   );
 }
 
-function criarCookieUsuario(res, usuario) {
-  // Temporario: guardar apenas id e tipo para carregar o perfil apos redirect.
-  // Futuramente substituir por express-session ou JWT assinado e com expiracao segura.
-  const payload = Buffer.from(
-    JSON.stringify({
-      id: usuario.id,
-      tipo_usuario: usuario.tipo_usuario,
-    })
-  ).toString("base64url");
+// ── COOKIE ASSINADO ─────────────────────────────────────────
+const crypto = require("crypto");
 
-  res.setHeader("Set-Cookie", `primia_usuario=${payload}; Path=/; HttpOnly; SameSite=Lax`);
+if (!process.env.COOKIE_SECRET) {
+  throw new Error("COOKIE_SECRET não está definido no .env");
+}
+
+function criarCookieUsuario(res, usuario) {
+  const json = JSON.stringify({ id: usuario.id, tipo_usuario: usuario.tipo_usuario });
+  const dados = Buffer.from(json).toString("base64url");
+  const assinatura = crypto
+    .createHmac("sha256", process.env.COOKIE_SECRET)
+    .update(dados)
+    .digest("base64url");
+
+  res.setHeader(
+    "Set-Cookie",
+    `primia_usuario=${dados}.${assinatura}; Path=/; HttpOnly; SameSite=Strict; Max-Age=86400`
+  );
 }
 
 function limparCookieUsuario(res) {
   res.setHeader(
     "Set-Cookie",
-    "primia_usuario=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0"
+    "primia_usuario=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0"
   );
 }
 
 function lerCookieUsuario(req) {
-  const cookies = (req.headers.cookie || "").split(";").map((cookie) => cookie.trim());
-  const cookieUsuario = cookies.find((cookie) => cookie.startsWith("primia_usuario="));
+  const raw = req.headers.cookie || "";
+  const cookie = raw.split(";").map((c) => c.trim()).find((c) => c.startsWith("primia_usuario="));
+  if (!cookie) return null;
 
-  if (!cookieUsuario) return null;
+  const valor = cookie.slice("primia_usuario=".length);
+  const ponto = valor.lastIndexOf(".");
+  if (ponto === -1) return null;
+
+  const dados = valor.slice(0, ponto);
+  const assinaturaRecebida = valor.slice(ponto + 1);
+
+  const assinaturaEsperada = crypto
+    .createHmac("sha256", process.env.COOKIE_SECRET)
+    .update(dados)
+    .digest("base64url");
+
+  // timingSafeEqual evita timing attacks — os buffers precisam ter o mesmo tamanho
+  let valido = false;
+  try {
+    valido = crypto.timingSafeEqual(
+      Buffer.from(assinaturaRecebida),
+      Buffer.from(assinaturaEsperada)
+    );
+  } catch {
+    return null; // tamanhos diferentes = assinatura inválida
+  }
+
+  if (!valido) return null;
 
   try {
-    const valor = cookieUsuario.split("=")[1];
-    return JSON.parse(Buffer.from(valor, "base64url").toString("utf8"));
-  } catch (erro) {
+    return JSON.parse(Buffer.from(dados, "base64url").toString("utf8"));
+  } catch {
     return null;
   }
 }
+
 
 function usuarioAutenticado(req, tipoUsuario) {
   const usuarioCookie = lerCookieUsuario(req);
@@ -395,15 +429,18 @@ async function buscarPerfilLogado(req, tipoUsuario) {
   }
 }
 
-function somenteAdminSimulado(req, res, next) {
-  // Futuramente bloquear acesso se nao houver sessao valida:
-  // if (!req.session || !req.session.usuario) return res.redirect("/login");
-  // Futuramente confirmar se o cargo do usuario logado e admin:
-  // if (req.session.usuario.tipo_usuario !== "admin") return res.status(403).render("pages/acesso-negado");
-  // Futuramente validar permissoes especificas para acoes sensiveis:
-  // const podeGerenciarUsuarios = req.session.usuario.permissoes.includes("gerenciar_usuarios");
-  // if (!podeGerenciarUsuarios) return res.status(403).send("Acesso negado");
-  next();
+function somenteAdmin(req, res, next) {
+  const usuario = lerCookieUsuario(req);
+
+  if (!usuario) {
+    return res.redirect("/login");
+  }
+
+  if (usuario.tipo_usuario !== TIPOS_USUARIO.admin) {
+    return res.status(403).redirect("/login");
+  }
+
+  return next();
 }
 
 async function carregarNotificacoes(req, res, next) {
@@ -456,33 +493,15 @@ router.get("/", function (req, res) {
   res.render("pages/telainicial");
 });
 
-router.get("/materia1", function (req, res) {
-  res.render("pages/materia1");
-});
-
-router.get("/paginaMaterias", function (req, res) {
-  res.render("pages/paginaMaterias");
-});
-
-
-router.get("/login", function (req, res) {
-  renderizarLogin(res);
-});
-
 router.get("/areapremium", function (req, res) {
   res.render("pages/areapremium");
 });
 
-router.get("/admin", somenteAdminSimulado, function (req, res) {
-  // Futuramente buscar metricas reais no banco de dados antes de renderizar:
-  // const metricas = await AdminModel.buscarMetricasDashboard();
-  // const usuarios = await UsuarioModel.listarUsuariosRecentes();
-  // res.render("pages/admin", { metricas, usuarios });
+router.get("/admin", somenteAdmin, function (req, res) {
   res.render(VIEWS.admin);
 });
 
-router.get("/admin/dashboard", somenteAdminSimulado, function (req, res) {
-  // Futuramente manter esta rota como alias ou separar dashboard de outras telas admin.
+router.get("/admin/dashboard", somenteAdmin, function (req, res) {
   res.redirect("/admin");
 });
 
@@ -1003,10 +1022,6 @@ router.get("/entrada", async function (req, res) {
   res.render("pages/entrada", { usuario });
 });
 
-router.get("/duvida", function (req, res) {
-  res.render("pages/duvida");
-});
-
 router.get("/chat", function (req, res) {
   res.render("pages/chat");
 });
@@ -1221,32 +1236,9 @@ router.post(
   }
 );
 
-router.post("/entrada", async function(req, res) {
-  const { email } = req.body;
-
-  if (email) {
-    try {
-      const usuario = await Models.usuarios.buscarPorEmail(email);
-
-      if (usuario) {
-        criarCookieUsuario(res, {
-          id: usuario.id_usuario,
-          tipo_usuario: usuario.tipo_usuario,
-        });
-      }
-    } catch (erro) {
-      console.error("Erro ao preparar perfil do aluno:", erro);
-    }
-  }
-
-  res.redirect("/entrada");
-});
 
 
 
-router.get("/cadastroprofessor", (req, res) => {
-  renderizarCadastroProfessor(res);
-});
 
 // ========== ROTA POST CADASTRO PROFESSOR ==========
 router.post(
@@ -1366,26 +1358,8 @@ router.post(
   }
 );
 
-router.post("/entradaprofessor", async (req, res) => {
-  const { email } = req.body;
 
-  if (email) {
-    try {
-      const usuario = await Models.usuarios.buscarPorEmail(email);
 
-      if (usuario) {
-        criarCookieUsuario(res, {
-          id: usuario.id_usuario,
-          tipo_usuario: usuario.tipo_usuario,
-        });
-      }
-    } catch (erro) {
-      console.error("Erro ao preparar perfil do professor:", erro);
-    }
-  }
-
-  res.redirect("/entradaprofessor");
-});
 
 // ========== ROTA GET LOGIN ==========
 router.get("/login", (req, res) => {
@@ -1675,50 +1649,7 @@ router.post(
   }
 );
 
-// ========== ROTA POST EDITAR PERFIL ANTIGA ==========
-router.post(
-  "/editarperfil",
 
-  body("nome")
-    .trim()
-    .notEmpty()
-    .withMessage("O nome é obrigatório!")
-    .matches(/^[A-Za-zÀ-ú]+(\s[A-Za-zÀ-ú]+)+$/)
-    .withMessage("Digite seu nome completo (pelo menos duas palavras)"),
-
-  body("email")
-    .trim()
-    .notEmpty()
-    .withMessage("O e-mail é obrigatório!")
-    .isEmail()
-    .withMessage("Digite um e-mail válido!"),
-
-  body("serie")
-    .notEmpty()
-    .withMessage("A série escolar é obrigatória!"),
-
-  // Senha é opcional — só valida se o usuário preencheu
-  body("senha")
-    .optional({ checkFalsy: true })
-    .isLength({ min: 8, max: 15 })
-    .withMessage("A senha deve ter entre 8 e 15 caracteres!")
-    .matches(/[A-Z]/)
-    .withMessage("A senha deve ter pelo menos uma letra maiúscula!")
-    .matches(/[a-z]/)
-    .withMessage("A senha deve ter pelo menos uma letra minúscula!")
-    .matches(/[0-9]/)
-    .withMessage("A senha deve ter pelo menos um número!")
-    .matches(/[@!#$%&]/)
-    .withMessage("A senha deve ter pelo menos um caractere especial (@!#$%&)!"),
-
-  body("confirmar-senha")
-    .optional({ checkFalsy: true })
-    .custom((value, { req }) => {
-      if (req.body.senha && value !== req.body.senha) {
-        throw new Error("As senhas não conferem!");
-      }
-      return true;
-    }),
 
   async (req, res) => {
     const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
@@ -1743,7 +1674,7 @@ router.post(
     // Tudo certo — redireciona para a entrada do aluno
     res.redirect("/entrada");
   }
-);
+
 
 
 

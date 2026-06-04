@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 const { body, validationResult } = require("express-validator");
 const pool = require("../../db");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const Models = require("../models");
 
 const TIPOS_USUARIO = Object.freeze({
@@ -201,6 +201,7 @@ async function emailJaCadastrado(conexao, email) {
 
 async function cadastrarUsuarioBase(conexao, { nome, email, senha, tipoUsuario }) {
   const senhaCriptografada = await bcrypt.hash(senha, 10);
+  // senha salva criptografada no banco com Hash
   return Models.usuarios.criar(
     {
       nome,

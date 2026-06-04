@@ -6,9 +6,9 @@ SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE Usuario (
     id_usuario INT NOT NULL AUTO_INCREMENT,
     nome VARCHAR(100) NOT NULL,
-    senha VARCHAR(255) NOT NULL,
+    senha VARCHAR(60) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    tipo_usuario ENUM('aluno', 'professor') NOT NULL,
+    tipo_usuario ENUM('aluno', 'professor', 'admin') NOT NULL,
     status ENUM('ativo', 'bloqueado', 'inativo') NOT NULL DEFAULT 'ativo',
 
     CONSTRAINT pk_usuario PRIMARY KEY (id_usuario),

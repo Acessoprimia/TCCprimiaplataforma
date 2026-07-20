@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Painel Administrativo Primia</title>
+    <link href="/css/admin.css" rel="stylesheet">
+    <%- include('../../partials/headeradmin.ejs') %>
+</head>
+
+<body>
+    <main class="admin-page">
+        <section class="admin-mobile-intro">
+            <p class="admin-kicker">Painel Administrativo</p>
+            <h1>Gestao Primia</h1>
+            <p>Controle usuarios, conteudos, suporte, relatorios e configuracoes em um unico lugar.</p>
+        </section>
+
+        <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'dashboard' }) %>
+
+        <section class="admin-content">
+            <section class="admin-hero" id="dashboard">
+                <article>
+                    <p class="admin-kicker">Painel Administrativo Primia</p>
+                    <h1>Bem-vindo ao centro de gestao</h1>
+                </article>
+                <a href="/admin/usuarios" class="admin-primary-action">Gerenciar usuarios</a>
+            </section>
+
+            <section class="admin-metrics" aria-label="Metricas principais">
+                <% // Futuramente buscar quantidade real de usuarios, professores, duvidas, conteudos e premium no banco. %>
+                <article class="metric-card">
+                    <span>Total de alunos</span>
+                    <strong>245</strong>
+                    <p>Alunos ativos na plataforma</p>
+                </article>
+                <article class="metric-card">
+                    <span>Total de professores</span>
+                    <strong>18</strong>
+                    <p>Professores cadastrados</p>
+                </article>
+                <article class="metric-card">
+                    <span>Contas professor</span>
+                    <strong>18</strong>
+                    <p>Logins docentes cadastrados</p>
+                </article>
+                <article class="metric-card alerta">
+                    <span>Denuncias abertas</span>
+                    <strong>5</strong>
+                    <p>Moderacao aguardando analise</p>
+                </article>
+                <article class="metric-card">
+                    <span>Conteudos cadastrados</span>
+                    <strong>74</strong>
+                    <p>Biblioteca, videos e planos</p>
+                </article>
+                <article class="metric-card">
+                    <span>Usuarios premium</span>
+                    <strong>39</strong>
+                    <p>Acessos premium ativos</p>
+                </article>
+                <article class="metric-card">
+                    <span>Mensagens de contato</span>
+                    <strong>12</strong>
+                    <p>Chamados abertos</p>
+                </article>
+            </section>
+
+            <section class="admin-row">
+                <article class="admin-panel">
+                    <header class="panel-header">
+                        <article>
+                            <h2>Resumo de atividade</h2>
+                            <p>Movimentacao simulada dos ultimos dias.</p>
+                        </article>
+                    </header>
+                    <% // Futuramente montar grafico com agregacoes por data vindas do banco. %>
+                    <section class="mini-chart" aria-label="Grafico de cadastros">
+                        <span style="height: 42%"></span>
+                        <span style="height: 68%"></span>
+                        <span style="height: 56%"></span>
+                        <span style="height: 82%"></span>
+                        <span style="height: 63%"></span>
+                        <span style="height: 92%"></span>
+                        <span style="height: 74%"></span>
+                    </section>
+                    <section class="chart-caption">
+                        <span>Cadastros</span>
+                        <span>Duvidas respondidas</span>
+                        <span>Uso premium</span>
+                    </section>
+                </article>
+
+                <article class="admin-panel">
+                    <header class="panel-header">
+                        <article>
+                            <h2>Pendencias importantes</h2>
+                            <p>Itens que precisam de revisao administrativa.</p>
+                        </article>
+                    </header>
+                    <ul class="admin-list">
+                        <li><strong>18 professores</strong><span>Contas docentes cadastradas para consulta</span></li>
+                        <li><strong>5 denuncias</strong><span>Moderacao do forum pendente</span></li>
+                        <li><strong>4 conteudos</strong><span>Materiais esperando publicacao</span></li>
+                        <li><strong>12 mensagens</strong><span>Contato aguardando resposta</span></li>
+                    </ul>
+                </article>
+            </section>
+        </section>
+    </main>
+
+    <%- include('../../partials/footer.ejs') %>
+</body>
+
+</html>

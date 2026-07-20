@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suporte - Painel Administrativo Primia</title>
+    <link href="/css/admin.css" rel="stylesheet">
+    <%- include('../../partials/headeradmin.ejs') %>
+</head>
+
+<body>
+    <main class="admin-page">
+        <section class="admin-mobile-intro">
+            <p class="admin-kicker">Painel Administrativo</p>
+            <h1>Suporte</h1>
+            <p>Denuncias do forum e mensagens enviadas pela pagina de contato.</p>
+        </section>
+
+        <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'suporte' }) %>
+
+        <section class="admin-content">
+            <section class="admin-panel" id="denuncias">
+                <header class="panel-header">
+                    <article>
+                        <h2>Moderacao de denuncias</h2>
+                        <p>Analise denuncias do forum sem responder ou participar diretamente das duvidas.</p>
+                    </article>
+                </header>
+
+                <% // Futuramente listar denuncias do forum com motivo, autor da denuncia, conteudo denunciado e status. %>
+                <% // O admin nao responde duvidas; apenas analisa, remove, ignora ou resolve denuncias. %>
+                <section class="table-scroll">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Denuncia</th>
+                                <th>Materia</th>
+                                <th>Conteudo denunciado</th>
+                                <th>Motivo</th>
+                                <th>Status</th>
+                                <th>Data</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="denunciasTabela">
+                            <tr>
+                                <td data-label="Denuncia">DEN-001</td>
+                                <td data-label="Materia">Matematica</td>
+                                <td data-label="Conteudo denunciado">Resposta com explicacao incorreta em fatoracao.</td>
+                                <td data-label="Motivo">Conteudo incorreto</td>
+                                <td data-label="Status"><span class="status pendente">Aberta</span></td>
+                                <td data-label="Data">12/04/2026</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="visualizar-denuncia">Visualizar</button>
+                                    <button data-admin-action="analisar-denuncia">Analisar</button>
+                                    <button data-admin-action="ignorar-denuncia">Ignorar</button>
+                                    <button data-admin-action="resolver-denuncia">Resolver</button>
+                                    <button class="danger" data-admin-action="remover-conteudo-denunciado">Remover conteudo</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-label="Denuncia">DEN-002</td>
+                                <td data-label="Materia">Filosofia</td>
+                                <td data-label="Conteudo denunciado">Pergunta com linguagem inadequada.</td>
+                                <td data-label="Motivo">Linguagem inadequada</td>
+                                <td data-label="Status"><span class="status ativo">Em analise</span></td>
+                                <td data-label="Data">10/04/2026</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="visualizar-denuncia">Visualizar</button>
+                                    <button data-admin-action="analisar-denuncia">Analisar</button>
+                                    <button data-admin-action="ignorar-denuncia">Ignorar</button>
+                                    <button data-admin-action="resolver-denuncia">Resolver</button>
+                                    <button class="danger" data-admin-action="remover-conteudo-denunciado">Remover conteudo</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <section class="admin-panel" id="contato">
+                <header class="panel-header">
+                    <article>
+                        <h2>Mensagens de contato</h2>
+                        <p>Mensagens enviadas pela pagina de contato.</p>
+                    </article>
+                </header>
+
+                <% // Futuramente carregar mensagens do banco e enviar respostas por backend/email transacional. %>
+                <section class="table-scroll">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Assunto</th>
+                                <th>Status</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="suporteTabela">
+                            <tr>
+                                <td data-label="Nome">Camila Nunes</td>
+                                <td data-label="Email">camila@email.com</td>
+                                <td data-label="Assunto">Problema no cadastro</td>
+                                <td data-label="Status"><span class="status pendente">Aberto</span></td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="visualizar-contato">Visualizar</button>
+                                    <button data-admin-action="responder-contato">Responder</button>
+                                    <button data-admin-action="resolver-contato">Marcar resolvido</button>
+                                    <button class="danger" data-admin-action="excluir-contato">Excluir</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td data-label="Nome">Escola Horizonte</td>
+                                <td data-label="Email">contato@horizonte.com</td>
+                                <td data-label="Assunto">Parceria escolar</td>
+                                <td data-label="Status"><span class="status ativo">Respondido</span></td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="visualizar-contato">Visualizar</button>
+                                    <button data-admin-action="responder-contato">Responder</button>
+                                    <button data-admin-action="resolver-contato">Marcar resolvido</button>
+                                    <button class="danger" data-admin-action="excluir-contato">Excluir</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+        </section>
+    </main>
+
+    <%- include('../../partials/adminModals.ejs') %>
+
+    <script src="/js/admin/common.js"></script>
+    <script src="/js/admin/suporte.js"></script>
+    <%- include('../../partials/footer.ejs') %>
+</body>
+
+</html>

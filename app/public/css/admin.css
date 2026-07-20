@@ -391,6 +391,34 @@ textarea {
     display: none !important;
 }
 
+.admin-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.filtro-btn {
+    border: 1px solid #A398D1;
+    border-radius: 12px;
+    background-color: #ffffff;
+    color: #A398D1;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 9px 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filtro-btn:hover {
+    transform: translateY(-2px);
+}
+
+.filtro-btn.ativo {
+    background-color: #A398D1;
+    color: #ffffff;
+}
+
 .materias-lista {
     display: flex;
     flex-wrap: wrap;

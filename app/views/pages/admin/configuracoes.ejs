@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuracoes - Painel Administrativo Primia</title>
+    <link href="/css/admin.css" rel="stylesheet">
+    <%- include('../../partials/headeradmin.ejs') %>
+</head>
+
+<body>
+    <main class="admin-page">
+        <section class="admin-mobile-intro">
+            <p class="admin-kicker">Painel Administrativo</p>
+            <h1>Configuracoes</h1>
+            <p>Ajustes gerais de textos, banners e recursos premium do site.</p>
+        </section>
+
+        <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'configuracoes' }) %>
+
+        <section class="admin-content">
+            <section class="admin-panel" id="configuracoes">
+                <header class="panel-header">
+                    <article>
+                        <h2>Configuracoes gerais</h2>
+                        <p>Campos visuais para preparar ajustes de textos, banners e recursos premium.</p>
+                    </article>
+                </header>
+
+                <% // Futuramente salvar configuracoes em tabela configuracoes_plataforma com chave, valor e usuario_admin_alteracao. %>
+                <form class="settings-form">
+                    <label>
+                        Aviso do site
+                        <input type="text" value="Novos simulados disponiveis esta semana">
+                    </label>
+                    <label>
+                        Texto institucional
+                        <textarea>Estude de forma colaborativa com a Primia.</textarea>
+                    </label>
+                    <label>
+                        Banner principal
+                        <input type="file" accept="image/*">
+                    </label>
+                    <label>
+                        Recurso premium em destaque
+                        <select>
+                            <option>Simulados exclusivos</option>
+                            <option>Videoaulas premium</option>
+                            <option>Planos personalizados</option>
+                        </select>
+                    </label>
+                    <button class="admin-button primary" type="button" data-admin-action="salvar-configuracoes">Salvar configuracoes</button>
+                </form>
+            </section>
+        </section>
+    </main>
+
+    <%- include('../../partials/adminModals.ejs') %>
+
+    <script src="/js/admin/common.js"></script>
+    <script src="/js/admin/configuracoes.js"></script>
+    <%- include('../../partials/footer.ejs') %>
+</body>
+
+</html>

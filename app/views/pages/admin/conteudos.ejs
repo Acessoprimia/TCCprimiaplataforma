@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conteudos - Painel Administrativo Primia</title>
+    <link href="/css/admin.css" rel="stylesheet">
+    <%- include('../../partials/headeradmin.ejs') %>
+</head>
+
+<body>
+    <main class="admin-page">
+        <section class="admin-mobile-intro">
+            <p class="admin-kicker">Painel Administrativo</p>
+            <h1>Conteudos</h1>
+            <p>Materias, livros, videoaulas, simulados, cronogramas e planos de estudo.</p>
+        </section>
+
+        <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'conteudos' }) %>
+
+        <section class="admin-content">
+            <section class="admin-panel" id="materias">
+                <header class="panel-header panel-header-actions">
+                    <article>
+                        <h2>Materias da plataforma</h2>
+                        <p>Controle as materias usadas em biblioteca, simulados, forum e planos.</p>
+                    </article>
+                    <button class="admin-button primary" type="button" data-admin-action="adicionar-materia">Adicionar materia</button>
+                </header>
+
+                <% // Futuramente buscar materias da tabela Materia e impedir exclusao se houver conteudos vinculados. %>
+                <section class="materias-lista" id="materiasLista">
+                    <article class="materia-chip"><span>Matematica</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Portugues</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Biologia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Historia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Filosofia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Fisica</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Quimica</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Geografia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Ingles</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Espanhol</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Literatura</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Sociologia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Artes</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                    <article class="materia-chip"><span>Educacao Fisica</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
+                </section>
+            </section>
+
+            <section class="admin-panel" id="conteudos">
+                <header class="panel-header panel-header-actions">
+                    <article>
+                        <h2>Gerenciamento de conteudos</h2>
+                        <p>Biblioteca, livros, videoaulas, simulados, cronogramas e planos de estudo.</p>
+                    </article>
+                    <button class="admin-button primary" type="button" data-admin-action="adicionar-conteudo">Adicionar conteudo</button>
+                </header>
+
+                <nav class="admin-filtros" aria-label="Filtrar conteudos">
+                    <button type="button" class="filtro-btn ativo" data-filtro-conteudos="todos">Todos</button>
+                    <button type="button" class="filtro-btn" data-filtro-conteudos="livro">Livros</button>
+                    <button type="button" class="filtro-btn" data-filtro-conteudos="videoaula">Videoaulas</button>
+                    <button type="button" class="filtro-btn" data-filtro-conteudos="simulado">Simulados</button>
+                    <button type="button" class="filtro-btn" data-filtro-conteudos="cronograma">Cronogramas</button>
+                    <button type="button" class="filtro-btn" data-filtro-conteudos="plano-de-estudo">Planos de estudo</button>
+                </nav>
+
+                <% // Futuramente salvar, editar, destacar e marcar conteudos como premium no banco de dados. %>
+                <section class="content-grid" id="conteudosLista">
+                    <article class="content-admin-card" data-categoria="livro">
+                        <span>Livro</span>
+                        <h3>Livro de Matematica Basica</h3>
+                        <p>Materia: Matematica | Status: publicado | Acesso: gratuito</p>
+                        <nav>
+                            <button data-admin-action="editar-conteudo">Editar</button>
+                            <button data-admin-action="destacar-conteudo">Destacar</button>
+                            <button data-admin-action="premium-conteudo">Marcar premium</button>
+                            <button class="danger" data-admin-action="excluir-conteudo">Excluir</button>
+                        </nav>
+                    </article>
+                    <article class="content-admin-card" data-categoria="videoaula">
+                        <span>Videoaula</span>
+                        <h3>Revisao de Biologia</h3>
+                        <p>Materia: Biologia | Status: rascunho | Acesso: premium</p>
+                        <nav>
+                            <button data-admin-action="editar-conteudo">Editar</button>
+                            <button data-admin-action="destacar-conteudo">Destacar</button>
+                            <button data-admin-action="premium-conteudo">Editar premium</button>
+                            <button class="danger" data-admin-action="excluir-conteudo">Excluir</button>
+                        </nav>
+                    </article>
+                    <article class="content-admin-card" data-categoria="simulado">
+                        <span>Simulado</span>
+                        <h3>Simulado de Portugues</h3>
+                        <p>Materia: Portugues | Status: agendado | Periodo: 13/11 a 17/11</p>
+                        <nav>
+                            <button data-admin-action="editar-conteudo">Editar</button>
+                            <button data-admin-action="destacar-conteudo">Destacar</button>
+                            <button data-admin-action="premium-conteudo">Marcar premium</button>
+                            <button class="danger" data-admin-action="excluir-conteudo">Excluir</button>
+                        </nav>
+                    </article>
+                    <article class="content-admin-card" data-categoria="plano-de-estudo">
+                        <span>Plano de estudo</span>
+                        <h3>Cronograma ENEM</h3>
+                        <p>Materia: Geral | Status: publicado | Acesso: gratuito</p>
+                        <nav>
+                            <button data-admin-action="editar-conteudo">Editar</button>
+                            <button data-admin-action="destacar-conteudo">Destacar</button>
+                            <button data-admin-action="premium-conteudo">Marcar premium</button>
+                            <button class="danger" data-admin-action="excluir-conteudo">Excluir</button>
+                        </nav>
+                    </article>
+                </section>
+            </section>
+        </section>
+    </main>
+
+    <%- include('../../partials/adminModals.ejs') %>
+
+    <script src="/js/admin/common.js"></script>
+    <script src="/js/admin/conteudos.js"></script>
+    <%- include('../../partials/footer.ejs') %>
+</body>
+
+</html>

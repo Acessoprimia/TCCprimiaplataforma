@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios - Painel Administrativo Primia</title>
+    <link href="/css/admin.css" rel="stylesheet">
+    <%- include('../../partials/headeradmin.ejs') %>
+</head>
+
+<body>
+    <main class="admin-page">
+        <section class="admin-mobile-intro">
+            <p class="admin-kicker">Painel Administrativo</p>
+            <h1>Usuarios</h1>
+            <p>Alunos, professores, administradores e assinaturas premium em um unico lugar.</p>
+        </section>
+
+        <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'usuarios' }) %>
+
+        <section class="admin-content">
+            <section class="admin-panel" id="usuarios">
+                <header class="panel-header panel-header-actions">
+                    <article>
+                        <h2>Usuarios da plataforma</h2>
+                        <p>Visualizacao de dados de login, tipo de conta, status e acesso premium.</p>
+                    </article>
+                </header>
+
+                <nav class="admin-filtros" aria-label="Filtrar usuarios">
+                    <button type="button" class="filtro-btn ativo" data-filtro-usuarios="todos">Todos</button>
+                    <button type="button" class="filtro-btn" data-filtro-usuarios="aluno">Alunos</button>
+                    <button type="button" class="filtro-btn" data-filtro-usuarios="professor">Professores</button>
+                    <button type="button" class="filtro-btn" data-filtro-usuarios="admin">Admins</button>
+                    <button type="button" class="filtro-btn" data-filtro-usuarios="premium">Premium</button>
+                </nav>
+
+                <% // Futuramente listar usuarios com SELECT unindo Usuario, Aluno, Professor e Assinatura_Premium. %>
+                <% // Esta area e apenas de consulta; edicoes de login/senha devem ficar em fluxo proprio e auditado. %>
+                <section class="table-scroll">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Tipo</th>
+                                <th>Status</th>
+                                <th>Materia</th>
+                                <th>Premium</th>
+                                <th>ID acesso</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usuariosTabela">
+                            <tr data-tipo="aluno" data-premium="sim">
+                                <td data-label="Nome">Maria Souza</td>
+                                <td data-label="Email">maria.aluna@primia.com</td>
+                                <td data-label="Tipo"><span class="badge aluno">Aluno</span></td>
+                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
+                                <td data-label="Materia">-</td>
+                                <td data-label="Premium"><span class="status ativo">Ate 30/05/2026</span></td>
+                                <td data-label="ID acesso">ALU-0001</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="ver-login-usuario">Ver login</button>
+                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
+                                    <button data-admin-action="bloquear-conta">Bloquear</button>
+                                    <button data-admin-action="remover-premium">Remover premium</button>
+                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
+                                </td>
+                            </tr>
+                            <tr data-tipo="aluno" data-premium="nao">
+                                <td data-label="Nome">Pedro Martins</td>
+                                <td data-label="Email">pedro.aluno@primia.com</td>
+                                <td data-label="Tipo"><span class="badge aluno">Aluno</span></td>
+                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
+                                <td data-label="Materia">-</td>
+                                <td data-label="Premium"><span class="status pendente">Nao</span></td>
+                                <td data-label="ID acesso">ALU-0002</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="ver-login-usuario">Ver login</button>
+                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
+                                    <button data-admin-action="bloquear-conta">Bloquear</button>
+                                    <button data-admin-action="liberar-premium">Liberar premium</button>
+                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
+                                </td>
+                            </tr>
+                            <tr data-tipo="professor" data-premium="nao">
+                                <td data-label="Nome">Prof. Carlos Lima</td>
+                                <td data-label="Email">carlos.prof@primia.com</td>
+                                <td data-label="Tipo"><span class="badge professor">Professor</span></td>
+                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
+                                <td data-label="Materia">Matematica</td>
+                                <td data-label="Premium"><span class="status pendente">Nao</span></td>
+                                <td data-label="ID acesso">PROF-0018</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="ver-login-usuario">Ver login</button>
+                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
+                                    <button data-admin-action="bloquear-conta">Bloquear</button>
+                                    <button data-admin-action="liberar-premium">Liberar premium</button>
+                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
+                                </td>
+                            </tr>
+                            <tr data-tipo="professor" data-premium="nao">
+                                <td data-label="Nome">Ana Lima</td>
+                                <td data-label="Email">ana.prof@primia.com</td>
+                                <td data-label="Tipo"><span class="badge professor">Professor</span></td>
+                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
+                                <td data-label="Materia">Biologia</td>
+                                <td data-label="Premium"><span class="status pendente">Nao</span></td>
+                                <td data-label="ID acesso">PROF-0012</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="ver-login-usuario">Ver login</button>
+                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
+                                    <button data-admin-action="bloquear-conta">Bloquear</button>
+                                    <button data-admin-action="liberar-premium">Liberar premium</button>
+                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
+                                </td>
+                            </tr>
+                            <tr data-tipo="admin" data-premium="nao">
+                                <td data-label="Nome">Equipe Primia</td>
+                                <td data-label="Email">admin@primia.com</td>
+                                <td data-label="Tipo"><span class="badge admin">Admin</span></td>
+                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
+                                <td data-label="Materia">-</td>
+                                <td data-label="Premium"><span class="status pendente">Nao</span></td>
+                                <td data-label="ID acesso">ADM-0001</td>
+                                <td data-label="Acoes" class="table-actions">
+                                    <button data-admin-action="ver-login-usuario">Ver login</button>
+                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
+                                    <button data-admin-action="bloquear-conta">Bloquear</button>
+                                    <button data-admin-action="liberar-premium">Liberar premium</button>
+                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+        </section>
+    </main>
+
+    <%- include('../../partials/adminModals.ejs') %>
+
+    <script src="/js/admin/common.js"></script>
+    <script src="/js/admin/usuarios.js"></script>
+    <%- include('../../partials/footer.ejs') %>
+</body>
+
+</html>

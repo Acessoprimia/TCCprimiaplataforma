@@ -28,7 +28,6 @@ const VIEWS = Object.freeze({
   cadastro: "pages/cadastro",
   cadastroProfessor: "pages/cadastroprofessor",
   editarPerfil: "pages/editarperfil",
-  admin: "pages/admin",
 });
 
 const VALORES_INICIAIS_CADASTRO_ALUNO = Object.freeze({
@@ -499,11 +498,31 @@ router.get("/areapremium", function (req, res) {
 });
 
 router.get("/admin", somenteAdmin, function (req, res) {
-  res.render(VIEWS.admin);
+  res.render("pages/admin/dashboard", { activeAdminPage: "dashboard" });
 });
 
 router.get("/admin/dashboard", somenteAdmin, function (req, res) {
   res.redirect("/admin");
+});
+
+router.get("/admin/usuarios", somenteAdmin, function (req, res) {
+  res.render("pages/admin/usuarios", { activeAdminPage: "usuarios" });
+});
+
+router.get("/admin/conteudos", somenteAdmin, function (req, res) {
+  res.render("pages/admin/conteudos", { activeAdminPage: "conteudos" });
+});
+
+router.get("/admin/suporte", somenteAdmin, function (req, res) {
+  res.render("pages/admin/suporte", { activeAdminPage: "suporte" });
+});
+
+router.get("/admin/relatorios", somenteAdmin, function (req, res) {
+  res.render("pages/admin/relatorios", { activeAdminPage: "relatorios" });
+});
+
+router.get("/admin/configuracoes", somenteAdmin, function (req, res) {
+  res.render("pages/admin/configuracoes", { activeAdminPage: "configuracoes" });
 });
 
 

@@ -1,0 +1,37 @@
+<aside class="admin-modal" id="adminModal" aria-hidden="true">
+    <section class="admin-modal-card">
+        <header class="admin-modal-header">
+            <h2 id="adminModalTitulo">Acao administrativa</h2>
+            <button type="button" class="admin-modal-close" id="adminModalFechar" aria-label="Fechar">x</button>
+        </header>
+
+        <% // Futuramente os formularios devem enviar dados para rotas POST/PUT protegidas por permissao admin. %>
+        <% // Exemplo: POST /api/admin/usuarios, PUT /api/admin/conteudos/:id, PUT /api/admin/configuracoes. %>
+        <form class="admin-modal-form" id="adminModalForm">
+            <section class="admin-modal-fields" id="adminModalCampos"></section>
+            <footer class="admin-modal-actions">
+                <button type="button" class="admin-button" id="adminModalCancelar">Cancelar</button>
+                <button type="submit" class="admin-button primary">Salvar</button>
+            </footer>
+        </form>
+    </section>
+</aside>
+
+<aside class="admin-modal" id="confirmModal" aria-hidden="true">
+    <section class="admin-modal-card confirm-card">
+        <header class="admin-modal-header">
+            <h2 id="confirmTitulo">Confirmar acao</h2>
+            <button type="button" class="admin-modal-close" id="confirmFechar" aria-label="Fechar">x</button>
+        </header>
+        <section class="admin-modal-form">
+            <p class="confirm-text" id="confirmTexto">Tem certeza que deseja continuar?</p>
+            <% // Futuramente a confirmacao deve chamar uma rota protegida e registrar a acao em logs_admin. %>
+            <footer class="admin-modal-actions">
+                <button type="button" class="admin-button" id="confirmCancelar">Cancelar</button>
+                <button type="button" class="admin-button primary" id="confirmExecutar">Confirmar</button>
+            </footer>
+        </section>
+    </section>
+</aside>
+
+<section class="admin-toast" id="adminToast" aria-live="polite"></section>

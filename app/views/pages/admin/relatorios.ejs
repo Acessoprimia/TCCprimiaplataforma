@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatorios - Painel Administrativo Primia</title>
+    <link href="/css/admin.css" rel="stylesheet">
+    <%- include('../../partials/headeradmin.ejs') %>
+</head>
+
+<body>
+    <main class="admin-page">
+        <section class="admin-mobile-intro">
+            <p class="admin-kicker">Painel Administrativo</p>
+            <h1>Relatorios</h1>
+            <p>Indicadores gerais de crescimento e engajamento da plataforma.</p>
+        </section>
+
+        <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'relatorios' }) %>
+
+        <section class="admin-content">
+            <section class="admin-panel" id="relatorios">
+                <header class="panel-header">
+                    <article>
+                        <h2>Relatorios administrativos</h2>
+                        <p>Indicadores simulados para acompanhar crescimento e engajamento.</p>
+                    </article>
+                </header>
+
+                <% // Futuramente gerar relatorios com queries agregadas e filtros por periodo, materia e tipo de usuario. %>
+                <section class="report-grid">
+                    <article><strong>+18%</strong><span>Crescimento de cadastros</span></article>
+                    <article><strong>84</strong><span>Duvidas respondidas no mes</span></article>
+                    <article><strong>Biologia</strong><span>Conteudo mais acessado</span></article>
+                    <article><strong>39</strong><span>Assinaturas premium ativas</span></article>
+                </section>
+            </section>
+        </section>
+    </main>
+
+    <%- include('../../partials/footer.ejs') %>
+</body>
+
+</html>

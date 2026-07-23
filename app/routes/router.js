@@ -4,6 +4,7 @@ const { body, validationResult } = require("express-validator");
 const pool = require("../../db");
 const bcrypt = require("bcryptjs");
 const Models = require("../models");
+const AdminDashboardMock = require("../mocks/adminDashboardMock");
 
 const TIPOS_USUARIO = Object.freeze({
   aluno: "aluno",
@@ -497,8 +498,21 @@ router.get("/areapremium", function (req, res) {
   res.render("pages/areapremium");
 });
 
-router.get("/admin", somenteAdmin, function (req, res) {
-  res.render("pages/admin/dashboard", { activeAdminPage: "dashboard" });
+router.get("/admin", somenteAdmin, async function (req, res) {
+  // Futuramente trocar AdminDashboardMock por Models.admin (adminModel.js),
+  // que ja expoe buscarMetricasDashboard com os mesmos nomes de campo.
+  const [metricas, grafico, pendencias] = await Promise.all([
+    AdminDashboardMock.buscarMetricas(),
+    AdminDashboardMock.buscarGraficoCrescimento(),
+    AdminDashboardMock.buscarPendencias(),
+  ]);
+
+  res.render("pages/admin/dashboard", {
+    activeAdminPage: "dashboard",
+    metricas,
+    grafico,
+    pendencias,
+  });
 });
 
 router.get("/admin/dashboard", somenteAdmin, function (req, res) {

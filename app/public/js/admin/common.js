@@ -158,11 +158,47 @@ function abrirModalVisualizacao(titulo, conteudo, origem = null) {
     abrirModal(titulo, "visualizar", campoLeitura("Informacoes", conteudo), origem);
 }
 
-document.addEventListener("click", (evento) => {
-    const botao = evento.target.closest("[data-admin-action]");
+function escapeHtml(valor) {
+    return String(valor ?? "").replace(/[&<>"']/g, (caractere) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;",
+    }[caractere]));
+}
 
-    if (botao && typeof tratarAcaoAdmin === "function") {
-        tratarAcaoAdmin(botao);
+function fecharTodosMenus() {
+    document.querySelectorAll(".table-menu.aberto").forEach((menu) => menu.classList.remove("aberto"));
+    document.querySelectorAll('[data-menu-toggle][aria-expanded="true"]').forEach((botao) => botao.setAttribute("aria-expanded", "false"));
+}
+
+document.addEventListener("click", (evento) => {
+    const gatilhoMenu = evento.target.closest("[data-menu-toggle]");
+
+    if (gatilhoMenu) {
+        const menu = gatilhoMenu.nextElementSibling;
+        const jaAberto = menu.classList.contains("aberto");
+        fecharTodosMenus();
+
+        if (!jaAberto) {
+            menu.classList.add("aberto");
+            gatilhoMenu.setAttribute("aria-expanded", "true");
+        }
+
+        return;
+    }
+
+    const botaoAcao = evento.target.closest("[data-admin-action]");
+
+    if (botaoAcao && typeof tratarAcaoAdmin === "function") {
+        tratarAcaoAdmin(botaoAcao);
+        fecharTodosMenus();
+        return;
+    }
+
+    if (!evento.target.closest(".table-menu")) {
+        fecharTodosMenus();
     }
 });
 

@@ -28,16 +28,35 @@
                     </article>
                 </header>
 
-                <nav class="admin-filtros" aria-label="Filtrar usuarios">
-                    <button type="button" class="filtro-btn ativo" data-filtro-usuarios="todos">Todos</button>
-                    <button type="button" class="filtro-btn" data-filtro-usuarios="aluno">Alunos</button>
-                    <button type="button" class="filtro-btn" data-filtro-usuarios="professor">Professores</button>
-                    <button type="button" class="filtro-btn" data-filtro-usuarios="admin">Admins</button>
-                    <button type="button" class="filtro-btn" data-filtro-usuarios="premium">Premium</button>
-                </nav>
+                <div class="admin-search-bar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="usuariosBusca" placeholder="Buscar por nome, email ou ID de acesso..." aria-label="Buscar usuarios">
+                </div>
 
-                <% // Futuramente listar usuarios com SELECT unindo Usuario, Aluno, Professor e Assinatura_Premium. %>
-                <% // Esta area e apenas de consulta; edicoes de login/senha devem ficar em fluxo proprio e auditado. %>
+                <div class="admin-filtros-group">
+                    <nav class="admin-filtros" aria-label="Filtrar por tipo de conta">
+                        <button type="button" class="filtro-btn ativo" data-filtro-usuarios="todos">Todos</button>
+                        <button type="button" class="filtro-btn" data-filtro-usuarios="aluno">Alunos</button>
+                        <button type="button" class="filtro-btn" data-filtro-usuarios="professor">Professores</button>
+                        <button type="button" class="filtro-btn" data-filtro-usuarios="admin">Administradores</button>
+                        <button type="button" class="filtro-btn" data-filtro-usuarios="premium">Premium</button>
+                    </nav>
+
+                    <nav class="admin-filtros" aria-label="Filtrar por status">
+                        <button type="button" class="filtro-btn ativo" data-filtro-status="todos">Todos os status</button>
+                        <button type="button" class="filtro-btn" data-filtro-status="ativo">Ativo</button>
+                        <button type="button" class="filtro-btn" data-filtro-status="bloqueado">Bloqueado</button>
+                        <button type="button" class="filtro-btn" data-filtro-status="inativo">Inativo</button>
+                    </nav>
+                </div>
+
+                <% // A tabela abaixo e populada em tempo de execucao por usuarios.js a partir de %>
+                <% // USUARIOS_MOCK (app/public/js/admin/usuariosMock.js). Busca, filtros e paginacao %>
+                <% // operam sobre esse array. Futuramente USUARIOS_MOCK sera substituido pela resposta %>
+                <% // de uma API (ex.: GET /api/admin/usuarios) sem precisar alterar este template. %>
                 <section class="table-scroll">
                     <table class="admin-table">
                         <thead>
@@ -46,96 +65,20 @@
                                 <th>Email</th>
                                 <th>Tipo</th>
                                 <th>Status</th>
-                                <th>Materia</th>
                                 <th>Premium</th>
-                                <th>ID acesso</th>
+                                <th>Ultimo acesso</th>
+                                <th>ID</th>
                                 <th>Acoes</th>
                             </tr>
                         </thead>
-                        <tbody id="usuariosTabela">
-                            <tr data-tipo="aluno" data-premium="sim">
-                                <td data-label="Nome">Maria Souza</td>
-                                <td data-label="Email">maria.aluna@primia.com</td>
-                                <td data-label="Tipo"><span class="badge aluno">Aluno</span></td>
-                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
-                                <td data-label="Materia">-</td>
-                                <td data-label="Premium"><span class="status ativo">Ate 30/05/2026</span></td>
-                                <td data-label="ID acesso">ALU-0001</td>
-                                <td data-label="Acoes" class="table-actions">
-                                    <button data-admin-action="ver-login-usuario">Ver login</button>
-                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
-                                    <button data-admin-action="bloquear-conta">Bloquear</button>
-                                    <button data-admin-action="remover-premium">Remover premium</button>
-                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
-                                </td>
-                            </tr>
-                            <tr data-tipo="aluno" data-premium="nao">
-                                <td data-label="Nome">Pedro Martins</td>
-                                <td data-label="Email">pedro.aluno@primia.com</td>
-                                <td data-label="Tipo"><span class="badge aluno">Aluno</span></td>
-                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
-                                <td data-label="Materia">-</td>
-                                <td data-label="Premium"><span class="status pendente">Nao</span></td>
-                                <td data-label="ID acesso">ALU-0002</td>
-                                <td data-label="Acoes" class="table-actions">
-                                    <button data-admin-action="ver-login-usuario">Ver login</button>
-                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
-                                    <button data-admin-action="bloquear-conta">Bloquear</button>
-                                    <button data-admin-action="liberar-premium">Liberar premium</button>
-                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
-                                </td>
-                            </tr>
-                            <tr data-tipo="professor" data-premium="nao">
-                                <td data-label="Nome">Prof. Carlos Lima</td>
-                                <td data-label="Email">carlos.prof@primia.com</td>
-                                <td data-label="Tipo"><span class="badge professor">Professor</span></td>
-                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
-                                <td data-label="Materia">Matematica</td>
-                                <td data-label="Premium"><span class="status pendente">Nao</span></td>
-                                <td data-label="ID acesso">PROF-0018</td>
-                                <td data-label="Acoes" class="table-actions">
-                                    <button data-admin-action="ver-login-usuario">Ver login</button>
-                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
-                                    <button data-admin-action="bloquear-conta">Bloquear</button>
-                                    <button data-admin-action="liberar-premium">Liberar premium</button>
-                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
-                                </td>
-                            </tr>
-                            <tr data-tipo="professor" data-premium="nao">
-                                <td data-label="Nome">Ana Lima</td>
-                                <td data-label="Email">ana.prof@primia.com</td>
-                                <td data-label="Tipo"><span class="badge professor">Professor</span></td>
-                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
-                                <td data-label="Materia">Biologia</td>
-                                <td data-label="Premium"><span class="status pendente">Nao</span></td>
-                                <td data-label="ID acesso">PROF-0012</td>
-                                <td data-label="Acoes" class="table-actions">
-                                    <button data-admin-action="ver-login-usuario">Ver login</button>
-                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
-                                    <button data-admin-action="bloquear-conta">Bloquear</button>
-                                    <button data-admin-action="liberar-premium">Liberar premium</button>
-                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
-                                </td>
-                            </tr>
-                            <tr data-tipo="admin" data-premium="nao">
-                                <td data-label="Nome">Equipe Primia</td>
-                                <td data-label="Email">admin@primia.com</td>
-                                <td data-label="Tipo"><span class="badge admin">Admin</span></td>
-                                <td data-label="Status"><span class="status ativo">Ativo</span></td>
-                                <td data-label="Materia">-</td>
-                                <td data-label="Premium"><span class="status pendente">Nao</span></td>
-                                <td data-label="ID acesso">ADM-0001</td>
-                                <td data-label="Acoes" class="table-actions">
-                                    <button data-admin-action="ver-login-usuario">Ver login</button>
-                                    <button data-admin-action="alterar-tipo-conta">Alterar tipo</button>
-                                    <button data-admin-action="bloquear-conta">Bloquear</button>
-                                    <button data-admin-action="liberar-premium">Liberar premium</button>
-                                    <button class="danger" data-admin-action="excluir-conta">Excluir</button>
-                                </td>
-                            </tr>
-                        </tbody>
+                        <tbody id="usuariosTabela"></tbody>
                     </table>
                 </section>
+
+                <footer class="admin-pagination">
+                    <p class="admin-pagination-info" id="usuariosPaginacaoInfo">Carregando usuarios...</p>
+                    <div class="admin-pagination-controles" id="usuariosPaginacaoControles"></div>
+                </footer>
             </section>
         </section>
     </main>
@@ -143,6 +86,7 @@
     <%- include('../../partials/adminModals.ejs') %>
 
     <script src="/js/admin/common.js"></script>
+    <script src="/js/admin/usuariosMock.js"></script>
     <script src="/js/admin/usuarios.js"></script>
     <%- include('../../partials/footer.ejs') %>
 </body>

@@ -29,23 +29,11 @@
                     <button class="admin-button primary" type="button" data-admin-action="adicionar-materia">Adicionar materia</button>
                 </header>
 
+                <% // A lista abaixo e populada por conteudos.js a partir de MATERIAS_MOCK, com a %>
+                <% // contagem de conteudos vinculados calculada a partir de CONTEUDOS_MOCK. %>
                 <% // Futuramente buscar materias da tabela Materia e impedir exclusao se houver conteudos vinculados. %>
-                <section class="materias-lista" id="materiasLista">
-                    <article class="materia-chip"><span>Matematica</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Portugues</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Biologia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Historia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Filosofia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Fisica</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Quimica</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Geografia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Ingles</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Espanhol</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Literatura</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Sociologia</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Artes</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                    <article class="materia-chip"><span>Educacao Fisica</span><button type="button" data-admin-action="remover-materia">Remover</button></article>
-                </section>
+                <p class="materias-resumo" id="materiasContagem"></p>
+                <section class="materias-lista" id="materiasLista"></section>
             </section>
 
             <section class="admin-panel" id="conteudos">
@@ -57,7 +45,19 @@
                     <button class="admin-button primary" type="button" data-admin-action="adicionar-conteudo">Adicionar conteudo</button>
                 </header>
 
-                <nav class="admin-filtros" aria-label="Filtrar conteudos">
+                <% // Os cards abaixo sao calculados a partir de CONTEUDOS_MOCK em tempo de execucao, %>
+                <% // para refletir edicoes, exclusoes e mudancas de acesso feitas na tabela. %>
+                <div class="resumo-cards" id="conteudosResumo"></div>
+
+                <div class="admin-search-bar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="conteudosBusca" placeholder="Buscar por titulo ou autor..." aria-label="Buscar conteudos">
+                </div>
+
+                <nav class="admin-filtros" aria-label="Filtrar por tipo de conteudo">
                     <button type="button" class="filtro-btn ativo" data-filtro-conteudos="todos">Todos</button>
                     <button type="button" class="filtro-btn" data-filtro-conteudos="livro">Livros</button>
                     <button type="button" class="filtro-btn" data-filtro-conteudos="videoaula">Videoaulas</button>
@@ -66,53 +66,61 @@
                     <button type="button" class="filtro-btn" data-filtro-conteudos="plano-de-estudo">Planos de estudo</button>
                 </nav>
 
-                <% // Futuramente salvar, editar, destacar e marcar conteudos como premium no banco de dados. %>
-                <section class="content-grid" id="conteudosLista">
-                    <article class="content-admin-card" data-categoria="livro">
-                        <span>Livro</span>
-                        <h3>Livro de Matematica Basica</h3>
-                        <p>Materia: Matematica | Status: publicado | Acesso: gratuito</p>
-                        <nav>
-                            <button data-admin-action="editar-conteudo">Editar</button>
-                            <button data-admin-action="destacar-conteudo">Destacar</button>
-                            <button data-admin-action="premium-conteudo">Marcar premium</button>
-                            <button class="danger" data-admin-action="excluir-conteudo">Excluir</button>
+                <div class="admin-filtros-painel">
+                    <div class="admin-filtro-bloco">
+                        <span class="admin-filtros-label">Materia</span>
+                        <select class="filtro-select" id="conteudosFiltroMateria" aria-label="Filtrar por materia">
+                            <option value="todas">Todas as materias</option>
+                        </select>
+                    </div>
+
+                    <div class="admin-filtro-bloco">
+                        <span class="admin-filtros-label">Status</span>
+                        <nav class="admin-filtros" aria-label="Filtrar por status">
+                            <button type="button" class="filtro-btn ativo" data-filtro-status-conteudo="todos">Todos</button>
+                            <button type="button" class="filtro-btn" data-filtro-status-conteudo="publicado">Publicado</button>
+                            <button type="button" class="filtro-btn" data-filtro-status-conteudo="rascunho">Rascunho</button>
+                            <button type="button" class="filtro-btn" data-filtro-status-conteudo="agendado">Agendado</button>
+                            <button type="button" class="filtro-btn" data-filtro-status-conteudo="arquivado">Arquivado</button>
                         </nav>
-                    </article>
-                    <article class="content-admin-card" data-categoria="videoaula">
-                        <span>Videoaula</span>
-                        <h3>Revisao de Biologia</h3>
-                        <p>Materia: Biologia | Status: rascunho | Acesso: premium</p>
-                        <nav>
-                            <button data-admin-action="editar-conteudo">Editar</button>
-                            <button data-admin-action="destacar-conteudo">Destacar</button>
-                            <button data-admin-action="premium-conteudo">Editar premium</button>
-                            <button class="danger" data-admin-action="excluir-conteudo">Excluir</button>
+                    </div>
+
+                    <div class="admin-filtro-bloco">
+                        <span class="admin-filtros-label">Acesso</span>
+                        <nav class="admin-filtros" aria-label="Filtrar por acesso">
+                            <button type="button" class="filtro-btn ativo" data-filtro-acesso-conteudo="todos">Todos</button>
+                            <button type="button" class="filtro-btn" data-filtro-acesso-conteudo="gratuito">Gratuito</button>
+                            <button type="button" class="filtro-btn" data-filtro-acesso-conteudo="premium">Premium</button>
                         </nav>
-                    </article>
-                    <article class="content-admin-card" data-categoria="simulado">
-                        <span>Simulado</span>
-                        <h3>Simulado de Portugues</h3>
-                        <p>Materia: Portugues | Status: agendado | Periodo: 13/11 a 17/11</p>
-                        <nav>
-                            <button data-admin-action="editar-conteudo">Editar</button>
-                            <button data-admin-action="destacar-conteudo">Destacar</button>
-                            <button data-admin-action="premium-conteudo">Marcar premium</button>
-                            <button class="danger" data-admin-action="excluir-conteudo">Excluir</button>
-                        </nav>
-                    </article>
-                    <article class="content-admin-card" data-categoria="plano-de-estudo">
-                        <span>Plano de estudo</span>
-                        <h3>Cronograma ENEM</h3>
-                        <p>Materia: Geral | Status: publicado | Acesso: gratuito</p>
-                        <nav>
-                            <button data-admin-action="editar-conteudo">Editar</button>
-                            <button data-admin-action="destacar-conteudo">Destacar</button>
-                            <button data-admin-action="premium-conteudo">Marcar premium</button>
-                            <button class="danger" data-admin-action="excluir-conteudo">Excluir</button>
-                        </nav>
-                    </article>
+                    </div>
+                </div>
+
+                <% // A tabela abaixo e populada em tempo de execucao por conteudos.js a partir de %>
+                <% // CONTEUDOS_MOCK (app/public/js/admin/conteudosMock.js). Busca, filtros e paginacao %>
+                <% // operam sobre esse array. Futuramente CONTEUDOS_MOCK sera substituido pela resposta %>
+                <% // de uma API (ex.: GET /api/admin/conteudos) sem precisar alterar este template. %>
+                <section class="table-scroll">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Titulo</th>
+                                <th>Tipo</th>
+                                <th>Materia</th>
+                                <th>Status</th>
+                                <th>Acesso</th>
+                                <th>Autor</th>
+                                <th>Data</th>
+                                <th>Acoes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="conteudosTabela"></tbody>
+                    </table>
                 </section>
+
+                <footer class="admin-pagination">
+                    <p class="admin-pagination-info" id="conteudosPaginacaoInfo">Carregando conteudos...</p>
+                    <div class="admin-pagination-controles" id="conteudosPaginacaoControles"></div>
+                </footer>
             </section>
         </section>
     </main>
@@ -120,6 +128,7 @@
     <%- include('../../partials/adminModals.ejs') %>
 
     <script src="/js/admin/common.js"></script>
+    <script src="/js/admin/conteudosMock.js"></script>
     <script src="/js/admin/conteudos.js"></script>
     <%- include('../../partials/footer.ejs') %>
 </body>

@@ -197,17 +197,52 @@ textarea {
 .admin-metrics {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 16px;
 }
 
 .metric-card {
     border-radius: 18px;
     padding: 20px;
     border-top: 4px solid #A398D1;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 26px rgba(163, 152, 209, 0.2);
 }
 
 .metric-card.alerta {
     border-top-color: #FF9C7D;
+}
+
+.metric-card-head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.metric-card-head span {
+    display: block;
+}
+
+.metric-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background-color: rgba(163, 152, 209, 0.14);
+    color: #A398D1;
+}
+
+.metric-card.alerta .metric-card-icon {
+    background-color: rgba(255, 156, 125, 0.18);
+    color: #FF9C7D;
 }
 
 .metric-card span {
@@ -258,36 +293,74 @@ textarea {
     font-size: 18px;
 }
 
-.mini-chart {
-    min-height: 180px;
+.chart-panel {
     display: flex;
-    align-items: flex-end;
-    gap: 10px;
+    flex-direction: column;
+}
+
+.chart-frame {
     padding: 18px;
     background-color: #fafafa;
     border-radius: 16px;
 }
 
-.mini-chart span {
-    flex: 1;
-    min-height: 28px;
-    border-radius: 12px 12px 4px 4px;
-    background: linear-gradient(180deg, #A398D1 0%, #FF9C7D 100%);
+.growth-chart {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+}
+
+.chart-grid-line {
+    stroke: #e8e6f2;
+    stroke-width: 1;
+}
+
+.chart-grid-label,
+.chart-axis-label {
+    font-family: 'Poppins', sans-serif;
+    font-size: 10px;
+    fill: #999;
+}
+
+.chart-area {
+    stroke: none;
+}
+
+.chart-line {
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.chart-point {
+    stroke: #ffffff;
+    stroke-width: 1.5;
 }
 
 .chart-caption {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 14px;
 }
 
 .chart-caption span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     color: #777;
     background-color: #fafafa;
     border-radius: 12px;
     padding: 8px 10px;
     font-size: 11px;
+}
+
+.chart-caption-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
 }
 
 .admin-list {
@@ -302,6 +375,53 @@ textarea {
     border-left: 4px solid #FF9C7D;
     background-color: #fafafa;
     border-radius: 12px;
+}
+
+.admin-list li.prioridade-alta {
+    border-left-color: #d84f4f;
+}
+
+.admin-list li.prioridade-media {
+    border-left-color: #FF9C7D;
+}
+
+.admin-list li.prioridade-baixa {
+    border-left-color: #2f8f6b;
+}
+
+.admin-list-item-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.priority-badge {
+    display: inline-block;
+    flex-shrink: 0;
+    border-radius: 10px;
+    padding: 3px 9px;
+    font-size: 10px;
+    font-weight: 700;
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.priority-badge.alta {
+    color: #d84f4f;
+    background-color: rgba(216, 79, 79, 0.12);
+}
+
+.priority-badge.media {
+    color: #d76f49;
+    background-color: #fff0ea;
+}
+
+.priority-badge.baixa {
+    color: #2f8f6b;
+    background-color: #eaf8f2;
 }
 
 .admin-list strong,
@@ -736,6 +856,10 @@ textarea {
         display: none;
     }
 
+    .admin-content {
+        gap: 22px;
+    }
+
     .admin-sidebar {
         position: sticky;
         top: 100px;
@@ -769,10 +893,17 @@ textarea {
 
     .admin-metrics {
         grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
     }
 
     .admin-row {
-        grid-template-columns: 1.1fr 0.9fr;
+        grid-template-columns: 1.4fr 0.9fr;
+        gap: 20px;
+        align-items: start;
+    }
+
+    .chart-frame {
+        padding: 22px;
     }
 
     .panel-header-actions {

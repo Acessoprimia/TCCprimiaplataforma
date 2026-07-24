@@ -24,21 +24,116 @@
                 <header class="panel-header">
                     <article>
                         <h2>Relatorios administrativos</h2>
-                        <p>Indicadores simulados para acompanhar crescimento e engajamento.</p>
+                        <p>Indicadores, graficos e resumo mensal de crescimento e engajamento.</p>
                     </article>
                 </header>
 
-                <% // Futuramente gerar relatorios com queries agregadas e filtros por periodo, materia e tipo de usuario. %>
-                <section class="report-grid">
-                    <article><strong>+18%</strong><span>Crescimento de cadastros</span></article>
-                    <article><strong>84</strong><span>Duvidas respondidas no mes</span></article>
-                    <article><strong>Biologia</strong><span>Conteudo mais acessado</span></article>
-                    <article><strong>39</strong><span>Assinaturas premium ativas</span></article>
+                <% // Filtro de periodo: controla o intervalo usado para calcular os cards, os %>
+                <% // graficos e a tabela abaixo. "Personalizado" revela o seletor de datas. %>
+                <div class="admin-filtros-painel">
+                    <div class="admin-filtro-bloco">
+                        <span class="admin-filtros-label">Periodo</span>
+                        <nav class="admin-filtros" aria-label="Filtrar relatorios por periodo">
+                            <button type="button" class="filtro-btn" data-filtro-periodo="7d">Ultimos 7 dias</button>
+                            <button type="button" class="filtro-btn ativo" data-filtro-periodo="30d">Ultimos 30 dias</button>
+                            <button type="button" class="filtro-btn" data-filtro-periodo="12m">Ultimos 12 meses</button>
+                            <button type="button" class="filtro-btn" data-filtro-periodo="personalizado">Personalizado</button>
+                        </nav>
+                    </div>
+
+                    <div class="admin-filtro-periodo-personalizado oculto" id="periodoPersonalizado">
+                        <label>
+                            De
+                            <input type="date" id="periodoDataInicio">
+                        </label>
+                        <label>
+                            Ate
+                            <input type="date" id="periodoDataFim">
+                        </label>
+                        <button type="button" class="admin-button primary" id="periodoAplicar">Aplicar</button>
+                    </div>
+                </div>
+
+                <% // Os cards abaixo sao calculados a partir de REGISTROS_DIARIOS_RELATORIOS_MOCK em %>
+                <% // tempo de execucao, comparando o periodo selecionado com o periodo anterior de %>
+                <% // mesma duracao. Futuramente REGISTROS_DIARIOS_RELATORIOS_MOCK vira a resposta de %>
+                <% // uma API (ex.: GET /api/admin/relatorios) sem precisar alterar este template. %>
+                <div class="resumo-cards" id="relatoriosResumo"></div>
+
+                <section class="charts-grid">
+                    <article class="admin-panel chart-panel">
+                        <header class="panel-header">
+                            <article>
+                                <h2>Crescimento de usuarios</h2>
+                                <p>Novos alunos e professores por periodo.</p>
+                            </article>
+                        </header>
+                        <section class="chart-frame" id="graficoUsuariosFrame"></section>
+                        <section class="chart-caption" id="graficoUsuariosLegenda"></section>
+                    </article>
+
+                    <article class="admin-panel chart-panel">
+                        <header class="panel-header">
+                            <article>
+                                <h2>Conteudos publicados</h2>
+                                <p>Volume de publicacoes por periodo.</p>
+                            </article>
+                        </header>
+                        <section class="chart-frame" id="graficoConteudosFrame"></section>
+                    </article>
+                </section>
+
+                <section class="charts-grid">
+                    <article class="admin-panel chart-panel">
+                        <header class="panel-header">
+                            <article>
+                                <h2>Assinaturas Premium</h2>
+                                <p>Novas assinaturas premium ao longo do tempo.</p>
+                            </article>
+                        </header>
+                        <section class="chart-frame" id="graficoPremiumFrame"></section>
+                    </article>
+
+                    <article class="admin-panel">
+                        <header class="panel-header">
+                            <article>
+                                <h2>Acessos por materia</h2>
+                                <p>Materias mais acessadas no periodo selecionado.</p>
+                            </article>
+                        </header>
+                        <div id="graficoMateriasFrame"></div>
+                    </article>
+                </section>
+
+                <section class="admin-panel">
+                    <header class="panel-header">
+                        <article>
+                            <h2>Resumo mensal</h2>
+                            <p>Novos alunos, professores, conteudos e premiums vendidos, mes a mes.</p>
+                        </article>
+                    </header>
+
+                    <section class="table-scroll">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Mes</th>
+                                    <th>Novos alunos</th>
+                                    <th>Novos professores</th>
+                                    <th>Conteudos publicados</th>
+                                    <th>Premiums vendidos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="relatoriosTabela"></tbody>
+                        </table>
+                    </section>
                 </section>
             </section>
         </section>
     </main>
 
+    <script src="/js/admin/relatoriosMock.js"></script>
+    <script src="/js/admin/relatorios.js"></script>
     <%- include('../../partials/footer.ejs') %>
 </body>
 

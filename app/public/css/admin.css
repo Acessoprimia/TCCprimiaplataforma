@@ -261,6 +261,32 @@ textarea {
     color: #FF9C7D;
 }
 
+.metric-card-variacao {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    border-radius: 10px;
+    padding: 3px 8px;
+    margin-left: 6px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.metric-card-variacao.positiva {
+    color: #2f8f6b;
+    background-color: #eaf8f2;
+}
+
+.metric-card-variacao.negativa {
+    color: #d84f4f;
+    background-color: rgba(216, 79, 79, 0.12);
+}
+
+.metric-card-variacao.neutra {
+    color: #888888;
+    background-color: #efefef;
+}
+
 .admin-panel {
     border-radius: 18px;
     padding: 20px;
@@ -271,7 +297,8 @@ textarea {
 .approval-grid,
 .content-grid,
 .premium-grid,
-.report-grid {
+.report-grid,
+.charts-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 14px;
@@ -338,6 +365,14 @@ textarea {
     stroke-width: 1.5;
 }
 
+.chart-bar {
+    transition: opacity 0.2s ease;
+}
+
+.chart-bar:hover {
+    opacity: 0.78;
+}
+
 .chart-caption {
     display: flex;
     flex-wrap: wrap;
@@ -361,6 +396,51 @@ textarea {
     width: 8px;
     height: 8px;
     border-radius: 50%;
+}
+
+.hbar-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.hbar-row {
+    display: grid;
+    grid-template-columns: 84px 1fr 40px;
+    align-items: center;
+    gap: 10px;
+}
+
+.hbar-rotulo {
+    color: #555;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hbar-track {
+    display: block;
+    height: 10px;
+    border-radius: 6px;
+    background-color: #f0eefa;
+    overflow: hidden;
+}
+
+.hbar-fill {
+    display: block;
+    height: 100%;
+    border-radius: 6px;
+    background-color: #A398D1;
+}
+
+.hbar-valor {
+    color: #777;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: right;
 }
 
 .admin-list {
@@ -573,6 +653,13 @@ textarea {
     background-color: #fdecec;
 }
 
+.chart-vazio {
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+    padding: 60px 10px;
+}
+
 .tabela-vazia td {
     text-align: center;
     color: #999;
@@ -638,7 +725,8 @@ textarea {
 }
 
 .badge.aluno,
-.badge.livro {
+.badge.livro,
+.badge.forum {
     color: #6d63a8;
     background-color: #f2f0fb;
 }
@@ -659,9 +747,17 @@ textarea {
 }
 
 .status.inativo,
-.badge.plano-de-estudo {
+.badge.plano-de-estudo,
+.badge.outros {
     color: #888888;
     background-color: #efefef;
+}
+
+.celula-secundaria {
+    display: block;
+    color: #999;
+    font-size: 11px;
+    margin-top: 2px;
 }
 
 .badge.cronograma {
@@ -727,6 +823,57 @@ textarea {
 }
 
 .filtro-btn.ativo {
+    background-color: #A398D1;
+    color: #ffffff;
+}
+
+.admin-abas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    border-bottom: 2px solid #f0f0f0;
+    margin-bottom: 20px;
+}
+
+.aba-botao {
+    border: none;
+    background: none;
+    color: #999;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 6px;
+    margin-bottom: -2px;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.aba-botao:hover {
+    color: #A398D1;
+}
+
+.aba-botao.aba-ativa {
+    color: #A398D1;
+    border-bottom-color: #A398D1;
+}
+
+.aba-contador {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    margin-left: 6px;
+    border-radius: 10px;
+    background-color: rgba(163, 152, 209, 0.16);
+    color: #A398D1;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.aba-botao.aba-ativa .aba-contador {
     background-color: #A398D1;
     color: #ffffff;
 }
@@ -832,6 +979,40 @@ textarea {
     outline: none;
     font-size: 13px;
     font-family: 'Poppins', sans-serif;
+}
+
+.admin-filtro-periodo-personalizado {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.admin-filtro-periodo-personalizado label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #999;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.admin-filtro-periodo-personalizado input[type="date"] {
+    border: 2px solid #A398D1;
+    border-radius: 12px;
+    padding: 9px 12px;
+    color: #666;
+    background-color: #ffffff;
+    outline: none;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.admin-filtro-periodo-personalizado input[type="date"]:focus {
+    border-color: #8b83ac;
+    box-shadow: 0 0 0 3px rgba(163, 152, 209, 0.1);
 }
 
 .filtro-select:focus {
@@ -1192,6 +1373,12 @@ textarea {
 
     .admin-row {
         grid-template-columns: 1.4fr 0.9fr;
+        gap: 20px;
+        align-items: start;
+    }
+
+    .charts-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 20px;
         align-items: start;
     }

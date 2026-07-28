@@ -588,19 +588,8 @@ router.get("/partepremium", function (req, res) {
 });
 
 
-router.get("/partepremiumprofessor", function (req, res) {
-  res.render("pages/partepremiumprofessor");
-});
-
-
-
 router.get("/biblioteca", function (req, res) {
   res.render("pages/biblioteca");
-});
-
-
-router.get("/areapremiumprofessor", function (req, res) {
-  res.render("pages/areapremiumprofessor");
 });
 
 

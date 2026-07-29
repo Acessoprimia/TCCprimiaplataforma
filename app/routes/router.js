@@ -174,6 +174,18 @@ function slugMateria(nome) {
     .replace(/^-|-$/g, "");
 }
 
+function extrairIdYoutube(url) {
+  const match = String(url || "").match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+  );
+  return match ? match[1] : null;
+}
+
+function urlEmbedYoutube(url) {
+  const id = extrairIdYoutube(url);
+  return id ? `https://www.youtube.com/embed/${id}` : null;
+}
+
 function renderizarCadastroAluno(res, valores = VALORES_INICIAIS_CADASTRO_ALUNO, msgErro = {}) {
   return res.render(VIEWS.cadastro, {
     erros: null,
@@ -568,12 +580,26 @@ router.get("/contatoprofessor", function (req, res) {
 
 
 
-router.get("/video", function (req, res) {
-  res.render("pages/video");
+router.get("/video", async function (req, res) {
+  const [materias, videosBase] = await Promise.all([
+    Models.materias.listarAtivas(),
+    Models.conteudos.listarPublicadosPorTipo("video"),
+  ]);
+
+  res.render("pages/video", {
+    materias: materias.map((materia) => ({ ...materia, slug: slugMateria(materia.nome) })),
+    videos: videosBase.map((video) => ({ ...video, materiaSlug: slugMateria(video.materia) })),
+  });
 });
 
-router.get("/videoaula", function (req, res) {
-  res.render("pages/videoaula");
+router.get("/videoaula/:id", async function (req, res) {
+  const video = await Models.conteudos.buscarPorId(req.params.id);
+
+  if (!video || video.tipo !== "video") {
+    return res.redirect("/video");
+  }
+
+  res.render("pages/videoaula", { video, urlEmbed: urlEmbedYoutube(video.arquivo_url) });
 });
 
 router.get("/cronograma", function (req, res) {
@@ -614,8 +640,27 @@ router.get("/simuladoprofessor", function (req, res) {
 });
 
 router.get("/videoaulaprofessor", async function (req, res) {
-  const materias = await Models.materias.listarAtivas();
-  res.render("pages/videoaulaprofessor", { materias });
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const [professor, materiasBase, videosBase] = await Promise.all([
+    Models.professores.buscarPerfilCompleto(usuarioBase.id),
+    Models.materias.listarAtivas(),
+    Models.conteudos.listarPublicadosPorTipo("video"),
+  ]);
+
+  const materiaParaAdicionar = professor?.id_materia
+    ? [{ id_materia: professor.id_materia, nome: professor.materia }]
+    : [];
+
+  res.render("pages/videoaulaprofessor", {
+    materias: materiasBase.map((materia) => ({ ...materia, slug: slugMateria(materia.nome) })),
+    materiaParaAdicionar,
+    videos: videosBase.map((video) => ({ ...video, materiaSlug: slugMateria(video.materia) })),
+  });
 });
 
 router.get("/cronogramaprofessor", function (req, res) {
@@ -661,15 +706,11 @@ router.post(
     const { tipo, titulo, autor, materia_id, url_video } = req.body;
 
     try {
-      let materiaId = materia_id;
-
-      if (tipo !== "video") {
-        const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
-        if (!professor?.id_materia) {
-          return res.status(400).json({ erro: "Voce nao tem uma materia cadastrada." });
-        }
-        materiaId = professor.id_materia;
+      const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+      if (!professor?.id_materia) {
+        return res.status(400).json({ erro: "Voce nao tem uma materia cadastrada." });
       }
+      const materiaId = professor.id_materia;
 
       const materia = materiaId ? await Models.materias.buscarPorId(materiaId) : null;
 
@@ -723,15 +764,11 @@ router.post(
     const rotaVolta = tipo === "video" ? "/videoaulaprofessor" : "/bibliotecaprofessor";
 
     try {
-      let materiaId = materia_id;
-
-      if (tipo !== "video") {
-        const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
-        if (!professor?.id_materia) {
-          throw new Error("Professor sem materia cadastrada.");
-        }
-        materiaId = professor.id_materia;
+      const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+      if (!professor?.id_materia) {
+        throw new Error("Professor sem materia cadastrada.");
       }
+      const materiaId = professor.id_materia;
 
       let arquivoUrl = null;
 

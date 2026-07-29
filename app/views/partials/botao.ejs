@@ -24,16 +24,16 @@
 
             <input type="text" name="autor" class="modal-flutuante-input" placeholder="Autor (opcional)">
 
-            <% if (_tipoConteudo === 'video') { %>
+            <% if (_materias.length === 1) { %>
+                <input type="text" class="modal-flutuante-input modal-flutuante-input-bloqueado" value="Matéria: <%= _materias[0].nome %>" disabled>
+                <input type="hidden" name="materia_id" value="<%= _materias[0].id_materia %>">
+            <% } else if (_materias.length > 1) { %>
                 <select name="materia_id" class="modal-flutuante-input" required>
                     <option value="" disabled selected>Selecione a matéria</option>
                     <% _materias.forEach(function (materia) { %>
                         <option value="<%= materia.id_materia %>"><%= materia.nome %></option>
                     <% }) %>
                 </select>
-            <% } else if (_materias[0]) { %>
-                <input type="text" class="modal-flutuante-input modal-flutuante-input-bloqueado" value="Matéria: <%= _materias[0].nome %>" disabled>
-                <input type="hidden" name="materia_id" value="<%= _materias[0].id_materia %>">
             <% } else { %>
                 <p class="modal-flutuante-aviso">Você ainda não tem uma matéria cadastrada. Fale com o suporte.</p>
             <% } %>

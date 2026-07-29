@@ -56,11 +56,19 @@ const IaService = Object.freeze({
       `para alunos do ensino medio.`,
     ].join(" ");
 
-    const resultado = await modelo.generateContent([
-      { fileData: { mimeType: "video/*", fileUri: urlYoutube } },
-      { text: promptTexto },
-    ]);
-    return resultado.response.text().trim();
+    try {
+      const resultado = await modelo.generateContent([
+        { fileData: { mimeType: "video/*", fileUri: urlYoutube } },
+        { text: promptTexto },
+      ]);
+      return resultado.response.text().trim();
+    } catch (erro) {
+      console.error(
+        "Gemini nao conseguiu analisar o video (provavelmente nao esta publico), caindo para sinopse por metadado:",
+        erro.message
+      );
+      return IaService.gerarSinopse({ titulo, materia });
+    }
   },
 });
 

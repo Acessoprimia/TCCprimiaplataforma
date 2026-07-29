@@ -8,6 +8,7 @@ const Models = require("../models");
 const AdminDashboardMock = require("../mocks/adminDashboardMock");
 const IaService = require("../services/iaService");
 const UploadService = require("../services/uploadService");
+const MailService = require("../services/mailService");
 
 const uploadConteudo = multer({
   storage: multer.memoryStorage(),
@@ -184,6 +185,15 @@ function extrairIdYoutube(url) {
 function urlEmbedYoutube(url) {
   const id = extrairIdYoutube(url);
   return id ? `https://www.youtube.com/embed/${id}` : null;
+}
+
+async function determinarOrigemContato(email) {
+  const usuario = await Models.usuarios.buscarPorEmail(email);
+
+  if (!usuario) return "Futuro parceiro";
+  if (usuario.tipo_usuario === TIPOS_USUARIO.aluno) return "aluno";
+  if (usuario.tipo_usuario === TIPOS_USUARIO.professor) return "professor";
+  return usuario.tipo_usuario;
 }
 
 function renderizarCadastroAluno(res, valores = VALORES_INICIAIS_CADASTRO_ALUNO, msgErro = {}) {
@@ -571,12 +581,110 @@ router.get("/logout", function (req, res) {
 });
 
 router.get("/contato", function (req, res) {
-  res.render("pages/contato");
+  res.render("pages/contato", { msgSucesso: null, msgErro: {}, valores: {} });
 });
 
+router.post(
+  "/contato",
+  body("nome").trim().notEmpty().withMessage("O nome e obrigatorio."),
+  body("email").trim().notEmpty().withMessage("O e-mail e obrigatorio.").isEmail().withMessage("Digite um e-mail valido."),
+  body("mensagem").trim().notEmpty().withMessage("Escreva uma mensagem antes de enviar."),
+  async function (req, res) {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const { msgErro } = montarErrosValidacao(errors);
+      return res.render("pages/contato", { msgSucesso: null, msgErro, valores: req.body });
+    }
+
+    const { nome, email, assunto, mensagem } = req.body;
+    const usuarioCookie = lerCookieUsuario(req);
+    const origem = await determinarOrigemContato(email);
+
+    try {
+      await Models.contato.criar({
+        usuarioId: usuarioCookie?.id || null,
+        nome,
+        email,
+        assunto,
+        mensagem,
+        origem,
+      });
+    } catch (erro) {
+      console.error("Erro ao salvar mensagem de contato:", erro);
+      return res.render("pages/contato", {
+        msgSucesso: null,
+        msgErro: { geral: "Nao foi possivel enviar sua mensagem agora. Tente novamente." },
+        valores: req.body,
+      });
+    }
+
+    try {
+      await MailService.enviarNotificacaoContato({ nome, email, assunto, mensagem, origem });
+    } catch (erro) {
+      console.error("Mensagem de contato salva, mas o e-mail de notificacao falhou:", erro);
+    }
+
+    return res.render("pages/contato", {
+      msgSucesso: "Mensagem enviada com sucesso! Em breve entraremos em contato.",
+      msgErro: {},
+      valores: {},
+    });
+  }
+);
+
 router.get("/contatoprofessor", function (req, res) {
-  res.render("pages/contatoprofessor");
+  res.render("pages/contatoprofessor", { msgSucesso: null, msgErro: {}, valores: {} });
 });
+
+router.post(
+  "/contatoprofessor",
+  body("nome").trim().notEmpty().withMessage("O nome e obrigatorio."),
+  body("email").trim().notEmpty().withMessage("O e-mail e obrigatorio.").isEmail().withMessage("Digite um e-mail valido."),
+  body("mensagem").trim().notEmpty().withMessage("Escreva uma mensagem antes de enviar."),
+  async function (req, res) {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const { msgErro } = montarErrosValidacao(errors);
+      return res.render("pages/contatoprofessor", { msgSucesso: null, msgErro, valores: req.body });
+    }
+
+    const { nome, email, assunto, mensagem } = req.body;
+    const usuarioCookie = lerCookieUsuario(req);
+    const origem = await determinarOrigemContato(email);
+
+    try {
+      await Models.contato.criar({
+        usuarioId: usuarioCookie?.id || null,
+        nome,
+        email,
+        assunto,
+        mensagem,
+        origem,
+      });
+    } catch (erro) {
+      console.error("Erro ao salvar mensagem de contato (professor):", erro);
+      return res.render("pages/contatoprofessor", {
+        msgSucesso: null,
+        msgErro: { geral: "Nao foi possivel enviar sua mensagem agora. Tente novamente." },
+        valores: req.body,
+      });
+    }
+
+    try {
+      await MailService.enviarNotificacaoContato({ nome, email, assunto, mensagem, origem });
+    } catch (erro) {
+      console.error("Mensagem de contato salva, mas o e-mail de notificacao falhou:", erro);
+    }
+
+    return res.render("pages/contatoprofessor", {
+      msgSucesso: "Mensagem enviada com sucesso! Em breve entraremos em contato.",
+      msgErro: {},
+      valores: {},
+    });
+  }
+);
 
 
 

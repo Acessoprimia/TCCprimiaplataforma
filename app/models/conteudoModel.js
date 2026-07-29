@@ -5,7 +5,7 @@ const queries = Object.freeze({
   listarPublicados: `
     SELECT c.id, c.titulo, c.descricao, c.tipo, c.is_premium, c.destaque, m.nome AS materia
     FROM ${TABELAS.conteudos} c
-    LEFT JOIN ${TABELAS.materias} m ON m.id = c.materia_id
+    LEFT JOIN ${TABELAS.materias} m ON m.id_materia = c.materia_id
     WHERE c.status = 'publicado'
     ORDER BY c.criado_em DESC
   `,

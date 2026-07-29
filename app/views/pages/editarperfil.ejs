@@ -16,14 +16,14 @@
         <h1 class="titulo-pagina">Editar Perfil</h1>
 
         <section class="form-container">
-            <form class="editar-perfil" action="/editarperfil" method="POST">
+            <form class="editar-perfil" action="/editarperfil" method="POST" enctype="multipart/form-data">
                 <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.geral) { %>
                     <p class="erro-msg"><%= msgErro.geral %></p>
                 <% } %>
 
                 <!-- AVATAR -->
                 <figure class="avatar-container">
-                    <img src="../image/usuario.webp" alt="Foto de perfil" id="preview-avatar" class="avatar">
+                    <img src="<%= (typeof valores !== 'undefined' && valores.foto_url) ? valores.foto_url : '../image/usuario.webp' %>" alt="Foto de perfil" id="preview-avatar" class="avatar">
                     <label for="avatar-upload" class="avatar-edit-btn">Alterar foto</label>
                     <input type="file" id="avatar-upload" name="avatar" accept="image/*" hidden>
                 </figure>

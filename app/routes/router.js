@@ -1164,6 +1164,7 @@ router.get("/editarperfil", async function (req, res) {
       serie: usuario.serie || "",
       ra: usuario.ra || "0000",
       data_nascimento: usuario.data_nascimento || "",
+      foto_url: usuario.foto_url || "",
     },
     erroValidacao: {},
     msgErro: {},
@@ -1186,6 +1187,7 @@ router.get("/editarprofessor", async function (req, res) {
       email: usuario.email,
       materia: usuario.materia || "Materia: Exemplo",
       data_nascimento: usuario.data_nascimento || "",
+      foto_url: usuario.foto_url || "",
     },
     erroValidacao: {},
     msgErro: {},
@@ -1648,6 +1650,8 @@ router.post(
 router.post(
   "/editarperfil",
 
+  uploadConteudo.single("avatar"),
+
   body("nome").trim().notEmpty().withMessage("O nome e obrigatorio!"),
   body("email").trim().notEmpty().withMessage("O e-mail e obrigatorio!").isEmail().withMessage("Digite um e-mail valido!"),
   body("serie").notEmpty().withMessage("A serie escolar e obrigatoria!"),
@@ -1712,6 +1716,17 @@ router.post(
         conexao
       );
 
+      if (req.file) {
+        const fotoUrl = await UploadService.enviarImagem(req.file.buffer, "primia/avatares");
+        await Models.usuarios.atualizarFoto(
+          {
+            fotoUrl,
+            idUsuario: usuarioBase.id,
+          },
+          conexao
+        );
+      }
+
       if (senha) {
         await atualizarSenhaUsuario(conexao, {
           senha,
@@ -1748,6 +1763,8 @@ router.post(
 
 router.post(
   "/editarprofessor",
+
+  uploadConteudo.single("avatar"),
 
   body("nome").trim().notEmpty().withMessage("O nome e obrigatorio!"),
   body("email").trim().notEmpty().withMessage("O e-mail e obrigatorio!").isEmail().withMessage("Digite um e-mail valido!"),
@@ -1804,6 +1821,17 @@ router.post(
         },
         conexao
       );
+
+      if (req.file) {
+        const fotoUrl = await UploadService.enviarImagem(req.file.buffer, "primia/avatares");
+        await Models.usuarios.atualizarFoto(
+          {
+            fotoUrl,
+            idUsuario: usuarioBase.id,
+          },
+          conexao
+        );
+      }
 
       if (senha) {
         await atualizarSenhaUsuario(conexao, {

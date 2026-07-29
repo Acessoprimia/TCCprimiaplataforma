@@ -29,6 +29,11 @@ const queries = Object.freeze({
     SET senha = ?
     WHERE id_usuario = ?
   `,
+  atualizarFoto: `
+    UPDATE ${TABELAS.usuarios}
+    SET foto_url = ?
+    WHERE id_usuario = ?
+  `,
   alterarTipoConta: `
     UPDATE ${TABELAS.usuarios}
     SET tipo_usuario = ?
@@ -94,6 +99,11 @@ const UsuarioModel = Object.freeze({
       senhaCriptografada,
       idUsuario,
     ]);
+    return resultado;
+  },
+
+  async atualizarFoto({ fotoUrl, idUsuario }, conexao) {
+    const [resultado] = await banco(conexao).query(queries.atualizarFoto, [fotoUrl, idUsuario]);
     return resultado;
   },
 

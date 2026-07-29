@@ -4,9 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>360° Matemática - Detalhes do Livro</title>
-    <%- include('../partials/hdeslogado.ejs') %>
+    <title><%= livro.titulo %> - Detalhes do Livro</title>
+    <%- include('../partials/header.ejs') %>
         <link rel="stylesheet" href="../css/livro.css">
+        <script>
+            const LIVRO_TITULO = <%- JSON.stringify(livro.titulo) %>;
+        </script>
 
 </head>
 
@@ -18,31 +21,28 @@
             <button class="menu-button" onclick="toggleMenu()" aria-label="Menu de opções"></button>
 
             <figure class="book-cover">
-                <img src="../image/360mate.webp" alt="Capa do livro 360° Matemática">
+                <img src="<%= livro.imagem_url || '../image/escolab.webp' %>" alt="Capa do livro <%= livro.titulo %>">
             </figure>
         </section>
 
         <!-- Informações do livro -->
         <section class="book-info">
-            <h1>360° Matemática</h1>
-            <p class="subtitle">Fundamental, Uma Nova Abordagem</p>
-            <p class="authors">Giovanni, Bonjorno e Paulo</p>
+            <h1><%= livro.titulo %></h1>
+            <% if (livro.materia) { %>
+                <p class="subtitle"><%= livro.materia %></p>
+            <% } %>
+            <% if (livro.autor) { %>
+                <p class="authors"><%= livro.autor %></p>
+            <% } %>
 
-            <button class="read-button" onclick="readBook()">Leia o livro</button>
+            <a class="read-button" href="<%= livro.arquivo_url %>" target="_blank" rel="noopener">Leia o livro</a>
         </section>
 
         <!-- Sinopse -->
         <section class="synopsis">
             <h2>Sinopse:</h2>
             <p>
-                A obra 360° Matemática foi desenvolvida considerando as mudanças sociais, tecnológicas e culturais
-                recentes, com o objetivo de formar cidadãos preparados para viver em sociedade, que compreendam e
-                exerçam seus direitos e deveres. Composta de três volumes, oferece recursos diversificados, tais como:
-                comentários, referências externas (sites, vídeos, aplicativos) e orientações completas para o professor,
-                abordando gestão de sala de aula e avaliação. A obra busca ainda promover o ensino e a aprendizagem da
-                Matemática de maneira significativa e contextualizada, focando metodologias ativas e práticas
-                contemporâneas em educação matemática, incentivando o uso de recursos tecnológicos e interdisciplinares
-                e atendendo às demandas pedagógicas e aos objetivos educacionais do Ensino Médio.
+                <%= livro.descricao || 'Sinopse ainda não cadastrada para este livro.' %>
             </p>
         </section>
     </main>

@@ -357,4 +357,8 @@ ALTER TABLE Plano_de_Aula
     ADD COLUMN is_premium BOOLEAN NOT NULL DEFAULT FALSE;
 
 
+ALTER TABLE Usuario
+    ADD COLUMN foto_url VARCHAR(255) NULL;
+
+
 

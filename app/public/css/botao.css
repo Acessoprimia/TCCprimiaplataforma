@@ -43,33 +43,35 @@
 .modal-flutuante-content {
     background: white;
     border-radius: 20px;
-    padding: 2rem;
-    max-width: 500px;
+    padding: 1.25rem 1.5rem;
+    max-width: 440px;
     width: 90%;
+    max-height: 75vh;
+    overflow-y: auto;
     position: relative;
 }
 
 .modal-flutuante-titulo {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: #1a1a1a;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .modal-flutuante-input,
 .modal-flutuante-textarea {
     width: 100%;
-    padding: 1rem;
+    padding: 0.65rem 1rem;
     border: 2px solid #e8e4f3;
     border-radius: 50px;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-family: inherit;
-    margin-bottom: 1rem;
+    margin-bottom: 0.65rem;
     background: #f8f9fa;
 }
 
 .modal-flutuante-textarea {
-    min-height: 80px;
+    min-height: 60px;
     resize: vertical;
     border-radius: 20px;
 }
@@ -165,4 +167,84 @@
 
 .btn-fechar-flutuante:hover {
     color: #333;
+}
+
+select.modal-flutuante-input {
+    appearance: none;
+    cursor: pointer;
+}
+
+.modal-flutuante-input-bloqueado {
+    color: #666;
+    cursor: not-allowed;
+    opacity: 0.85;
+}
+
+.modal-flutuante-aviso {
+    font-size: 0.85rem;
+    color: #c0392b;
+    margin-bottom: 0.65rem;
+}
+
+.modal-flutuante-label-arquivo {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 2px dashed #e8e4f3;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.65rem;
+    background: #f8f9fa;
+}
+
+.modal-flutuante-label-arquivo input[type="file"] {
+    display: block;
+    width: 100%;
+    margin-top: 0.3rem;
+    font-size: 0.8rem;
+}
+
+.modal-flutuante-sinopse {
+    margin-bottom: 0.65rem;
+}
+
+.btn-gerar-sinopse-ia {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: #e8e4f3;
+    color: #a78bfa;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: -0.5rem;
+    margin-bottom: 0.5rem;
+    transition: background 0.3s;
+}
+
+.btn-gerar-sinopse-ia:hover {
+    background: #d9d2ef;
+}
+
+.btn-gerar-sinopse-ia:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.status-sinopse-ia {
+    display: block;
+    font-size: 0.8rem;
+    color: #999;
+    margin-bottom: 0.5rem;
+}
+
+.checkbox-flutuante {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    color: #555;
+    cursor: pointer;
 }

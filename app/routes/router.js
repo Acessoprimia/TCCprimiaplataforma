@@ -3,8 +3,16 @@ var router = express.Router();
 const { body, validationResult } = require("express-validator");
 const pool = require("../../db");
 const bcrypt = require("bcryptjs");
+const multer = require("multer");
 const Models = require("../models");
 const AdminDashboardMock = require("../mocks/adminDashboardMock");
+const IaService = require("../services/iaService");
+const UploadService = require("../services/uploadService");
+
+const uploadConteudo = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 20 * 1024 * 1024 },
+});
 
 const TIPOS_USUARIO = Object.freeze({
   aluno: "aluno",
@@ -588,8 +596,16 @@ router.get("/partepremium", function (req, res) {
 });
 
 
-router.get("/biblioteca", function (req, res) {
-  res.render("pages/biblioteca");
+router.get("/biblioteca", async function (req, res) {
+  const [materias, livrosBase] = await Promise.all([
+    Models.materias.listarAtivas(),
+    Models.conteudos.listarPublicadosPorTipo("livro"),
+  ]);
+
+  res.render("pages/biblioteca", {
+    materias: materias.map((materia) => ({ ...materia, slug: slugMateria(materia.nome) })),
+    livros: livrosBase.map((livro) => ({ ...livro, materiaSlug: slugMateria(livro.materia) })),
+  });
 });
 
 
@@ -597,8 +613,9 @@ router.get("/simuladoprofessor", function (req, res) {
   res.render("pages/simuladoprofessor");
 });
 
-router.get("/videoaulaprofessor", function (req, res) {
-  res.render("pages/videoaulaprofessor");
+router.get("/videoaulaprofessor", async function (req, res) {
+  const materias = await Models.materias.listarAtivas();
+  res.render("pages/videoaulaprofessor", { materias });
 });
 
 router.get("/cronogramaprofessor", function (req, res) {
@@ -607,13 +624,163 @@ router.get("/cronogramaprofessor", function (req, res) {
 
 
 
-router.get("/bibliotecaprofessor", function (req, res) {
-  res.render("pages/bibliotecaprofessor");
+router.get("/bibliotecaprofessor", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const [professor, materiasBase, livrosBase] = await Promise.all([
+    Models.professores.buscarPerfilCompleto(usuarioBase.id),
+    Models.materias.listarAtivas(),
+    Models.conteudos.listarPublicadosPorTipo("livro"),
+  ]);
+
+  const materiaParaAdicionar = professor?.id_materia
+    ? [{ id_materia: professor.id_materia, nome: professor.materia }]
+    : [];
+
+  res.render("pages/bibliotecaprofessor", {
+    materias: materiasBase.map((materia) => ({ ...materia, slug: slugMateria(materia.nome) })),
+    materiaParaAdicionar,
+    livros: livrosBase.map((livro) => ({ ...livro, materiaSlug: slugMateria(livro.materia) })),
+  });
 });
 
+router.post(
+  "/professor/conteudos/gerar-sinopse",
+  uploadConteudo.fields([{ name: "arquivo", maxCount: 1 }]),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
 
-router.get("/livro", function (req, res) {
-  res.render("pages/livro");
+    if (!usuarioBase) {
+      return res.status(401).json({ erro: "Nao autenticado." });
+    }
+
+    const { tipo, titulo, autor, materia_id, url_video } = req.body;
+
+    try {
+      let materiaId = materia_id;
+
+      if (tipo !== "video") {
+        const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+        if (!professor?.id_materia) {
+          return res.status(400).json({ erro: "Voce nao tem uma materia cadastrada." });
+        }
+        materiaId = professor.id_materia;
+      }
+
+      const materia = materiaId ? await Models.materias.buscarPorId(materiaId) : null;
+
+      let sinopse;
+
+      if (tipo === "video") {
+        if (!url_video) {
+          return res.status(400).json({ erro: "Informe o link do video antes de gerar a sinopse." });
+        }
+        sinopse = await IaService.gerarSinopseVideo({
+          titulo,
+          materia: materia?.nome,
+          urlYoutube: url_video,
+        });
+      } else {
+        const arquivoFile = req.files?.arquivo?.[0];
+        const textoConteudo = arquivoFile
+          ? await IaService.extrairTextoPdf(arquivoFile.buffer)
+          : undefined;
+
+        sinopse = await IaService.gerarSinopse({
+          titulo,
+          autor,
+          materia: materia?.nome,
+          textoConteudo,
+        });
+      }
+
+      return res.json({ sinopse });
+    } catch (erro) {
+      console.error("Erro ao gerar sinopse com IA:", erro);
+      return res.status(500).json({ erro: "Nao foi possivel gerar a sinopse agora." });
+    }
+  }
+);
+
+router.post(
+  "/professor/conteudos",
+  uploadConteudo.fields([
+    { name: "arquivo", maxCount: 1 },
+    { name: "capa", maxCount: 1 },
+  ]),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const { tipo, titulo, autor, materia_id, descricao, url_video, is_premium, destaque } = req.body;
+    const rotaVolta = tipo === "video" ? "/videoaulaprofessor" : "/bibliotecaprofessor";
+
+    try {
+      let materiaId = materia_id;
+
+      if (tipo !== "video") {
+        const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+        if (!professor?.id_materia) {
+          throw new Error("Professor sem materia cadastrada.");
+        }
+        materiaId = professor.id_materia;
+      }
+
+      let arquivoUrl = null;
+
+      if (tipo === "video") {
+        arquivoUrl = url_video;
+      } else {
+        const arquivoFile = req.files?.arquivo?.[0];
+        if (!arquivoFile) {
+          throw new Error("Arquivo do livro (PDF) e obrigatorio.");
+        }
+        arquivoUrl = await UploadService.enviarArquivo(arquivoFile.buffer, "primia/conteudos");
+      }
+
+      const capaFile = req.files?.capa?.[0];
+      const imagemUrl = capaFile
+        ? await UploadService.enviarImagem(capaFile.buffer, "primia/capas")
+        : null;
+
+      await Models.conteudos.criar({
+        titulo,
+        autor,
+        descricao,
+        tipo,
+        materiaId,
+        professorId: usuarioBase.id,
+        arquivoUrl,
+        imagemUrl,
+        isPremium: !!is_premium,
+        destaque: !!destaque,
+        status: "publicado",
+      });
+
+      return res.redirect(rotaVolta);
+    } catch (erro) {
+      console.error("Erro ao cadastrar conteudo:", erro);
+      return res.redirect(rotaVolta);
+    }
+  }
+);
+
+
+router.get("/livro/:id", async function (req, res) {
+  const livro = await Models.conteudos.buscarPorId(req.params.id);
+
+  if (!livro || livro.tipo !== "livro") {
+    return res.redirect("/biblioteca");
+  }
+
+  res.render("pages/livro", { livro });
 });
 
 router.get("/forumdeduvidas", async function (req, res) {

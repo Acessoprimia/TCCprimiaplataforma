@@ -1,15 +1,11 @@
-<!-- No seu HTML/EJS -->
-<head>
-    <link rel="stylesheet" href="../css/botao.css">
-</head>
-<body>
-    <!-- Seu conteúdo aqui -->
-    
-    
-    
-    <script src="../js/botao.js"></script>
-</body>
-
+<%
+  // Locals esperados quem inclui este partial:
+  // tipoConteudo: 'livro' | 'video'
+  // materias: lista de { id_materia, nome } (Models.materias.listarAtivas())
+  const _tipoConteudo = typeof tipoConteudo !== 'undefined' ? tipoConteudo : 'livro';
+  const _materias = typeof materias !== 'undefined' ? materias : [];
+%>
+<link rel="stylesheet" href="../css/botao.css">
 
 <!-- Botão Flutuante -->
 <button class="btn-add-flutuante" id="btn-add-flutuante" aria-label="Adicionar">+</button>
@@ -17,26 +13,69 @@
 <!-- Modal -->
 <aside id="modal-flutuante" class="modal-flutuante">
     <section class="modal-flutuante-content">
-        <h2 class="modal-flutuante-titulo">Importe o arquivo</h2>
-        
-        <input type="text" class="modal-flutuante-input" placeholder="Título">
-        <textarea class="modal-flutuante-textarea" placeholder="Descrição"></textarea>
-        <input type="url" class="modal-flutuante-input" placeholder="URL">
-        
-        <section class="modal-flutuante-opcoes">
-            <button class="btn-flutuante-opcao materia-btn-flutuante">
-                Matéria 
-                <span class="dropdown-icon-flutuante">▼</span>
-            </button>
-            <button class="btn-flutuante-opcao foto-btn-flutuante" aria-label="Adicionar foto">
-                <span class="icon-camera-flutuante">📷</span>
-            </button>
-            <button class="btn-flutuante-opcao anexo-btn-flutuante" aria-label="Adicionar anexo">
-                <span class="icon-anexo-flutuante">📎</span>
-            </button>
-        </section>
+        <h2 class="modal-flutuante-titulo">
+            <%= _tipoConteudo === 'video' ? 'Adicionar vídeo-aula' : 'Adicionar livro' %>
+        </h2>
 
-        <button class="btn-enviar-flutuante">Enviar</button>
+        <form id="form-flutuante" class="form-flutuante" method="POST" action="/professor/conteudos" enctype="multipart/form-data">
+            <input type="hidden" name="tipo" value="<%= _tipoConteudo %>">
+
+            <input type="text" name="titulo" class="modal-flutuante-input" placeholder="Título" required>
+
+            <input type="text" name="autor" class="modal-flutuante-input" placeholder="Autor (opcional)">
+
+            <% if (_tipoConteudo === 'video') { %>
+                <select name="materia_id" class="modal-flutuante-input" required>
+                    <option value="" disabled selected>Selecione a matéria</option>
+                    <% _materias.forEach(function (materia) { %>
+                        <option value="<%= materia.id_materia %>"><%= materia.nome %></option>
+                    <% }) %>
+                </select>
+            <% } else if (_materias[0]) { %>
+                <input type="text" class="modal-flutuante-input modal-flutuante-input-bloqueado" value="Matéria: <%= _materias[0].nome %>" disabled>
+                <input type="hidden" name="materia_id" value="<%= _materias[0].id_materia %>">
+            <% } else { %>
+                <p class="modal-flutuante-aviso">Você ainda não tem uma matéria cadastrada. Fale com o suporte.</p>
+            <% } %>
+
+            <% if (_tipoConteudo === 'video') { %>
+                <input type="url" name="url_video" class="modal-flutuante-input" placeholder="Link do YouTube (não listado)" required>
+            <% } else { %>
+                <label class="modal-flutuante-label-arquivo">
+                    Arquivo do livro (PDF)
+                    <input type="file" name="arquivo" accept="application/pdf" required>
+                </label>
+            <% } %>
+
+            <label class="modal-flutuante-label-arquivo">
+                Capa/imagem
+                <input type="file" name="capa" accept="image/*">
+            </label>
+
+            <section class="modal-flutuante-sinopse">
+                <textarea name="descricao" id="campo-sinopse" class="modal-flutuante-textarea" placeholder="Sinopse"></textarea>
+                <button type="button" id="btn-gerar-sinopse-ia" class="btn-gerar-sinopse-ia">
+                    Gerar sinopse com IA
+                </button>
+                <span id="status-sinopse-ia" class="status-sinopse-ia"></span>
+            </section>
+
+            <section class="modal-flutuante-opcoes">
+                <label class="checkbox-flutuante">
+                    <input type="checkbox" name="is_premium" value="1">
+                    Premium
+                </label>
+                <label class="checkbox-flutuante">
+                    <input type="checkbox" name="destaque" value="1">
+                    Destaque
+                </label>
+            </section>
+
+            <button type="submit" class="btn-enviar-flutuante">Enviar</button>
+        </form>
+
         <button class="btn-fechar-flutuante" id="btn-fechar-flutuante">×</button>
     </section>
 </aside>
+
+<script src="../js/botao.js"></script>

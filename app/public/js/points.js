@@ -16,10 +16,12 @@
         }
 
         function shareBook() {
+            const titulo = typeof LIVRO_TITULO !== 'undefined' ? LIVRO_TITULO : 'este livro';
+
             if (navigator.share) {
                 navigator.share({
-                    title: '360° Matemática',
-                    text: 'Confira este livro: 360° Matemática - Fundamental, Uma Nova Abordagem',
+                    title: titulo,
+                    text: 'Confira este livro: ' + titulo,
                     url: window.location.href
                 }).then(() => {
                     console.log('Compartilhado com sucesso');
@@ -27,7 +29,7 @@
                     console.log('Erro ao compartilhar:', error);
                 });
             } else {
-                alert('Compartilhando: 360° Matemática');
+                alert('Compartilhando: ' + titulo);
             }
             toggleMenu();
         }

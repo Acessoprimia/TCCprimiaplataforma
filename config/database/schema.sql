@@ -235,3 +235,126 @@ CREATE TABLE Denuncia (
 
 
 
+
+CREATE TABLE Conteudo (
+    id INT NOT NULL AUTO_INCREMENT,
+    titulo VARCHAR(150) NOT NULL,
+    autor VARCHAR(150),
+    descricao TEXT,
+    tipo ENUM('livro', 'video') NOT NULL,
+    materia_id INT,
+    professor_id INT,
+    arquivo_url VARCHAR(255),
+    imagem_url VARCHAR(255),
+    is_premium BOOLEAN NOT NULL DEFAULT FALSE,
+    destaque BOOLEAN NOT NULL DEFAULT FALSE,
+    status ENUM('rascunho', 'publicado') NOT NULL DEFAULT 'rascunho',
+    sinopse_gerada_ia BOOLEAN NOT NULL DEFAULT FALSE,
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_conteudo PRIMARY KEY (id),
+
+    CONSTRAINT fk_conteudo_materia
+        FOREIGN KEY (materia_id)
+        REFERENCES Materia(id_materia)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_conteudo_professor
+        FOREIGN KEY (professor_id)
+        REFERENCES Professor(id_professor)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE Assinatura_Premium (
+    id_assinatura INT NOT NULL AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    status ENUM('ativa', 'cancelada', 'expirada') NOT NULL DEFAULT 'ativa',
+    data_inicio DATE NOT NULL,
+    data_fim DATE,
+
+    CONSTRAINT pk_assinatura_premium PRIMARY KEY (id_assinatura),
+
+    CONSTRAINT fk_assinatura_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES Usuario(id_usuario)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE Mensagem_Contato (
+    id INT NOT NULL AUTO_INCREMENT,
+    usuario_id INT,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    assunto VARCHAR(150),
+    mensagem TEXT NOT NULL,
+    origem VARCHAR(45),
+    status ENUM('pendente', 'respondido') NOT NULL DEFAULT 'pendente',
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_mensagem_contato PRIMARY KEY (id),
+
+    CONSTRAINT fk_mensagem_usuario
+        FOREIGN KEY (usuario_id)
+        REFERENCES Usuario(id_usuario)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE Formulario (
+    id_formulario INT NOT NULL AUTO_INCREMENT,
+    id_aluno INT NOT NULL,
+    id_materia INT,
+    titulo VARCHAR(150) NOT NULL,
+    schema_json JSON NOT NULL,
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_formulario PRIMARY KEY (id_formulario),
+
+    CONSTRAINT fk_formulario_aluno
+        FOREIGN KEY (id_aluno)
+        REFERENCES Aluno(id_aluno)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_formulario_materia
+        FOREIGN KEY (id_materia)
+        REFERENCES Materia(id_materia)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE Resposta_Formulario (
+    id_resposta_formulario INT NOT NULL AUTO_INCREMENT,
+    id_formulario INT NOT NULL,
+    pergunta_ref VARCHAR(50) NOT NULL,
+    resposta_aluno TEXT,
+    correta BOOLEAN,
+    respondido_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_resposta_formulario PRIMARY KEY (id_resposta_formulario),
+
+    CONSTRAINT fk_resposta_formulario_formulario
+        FOREIGN KEY (id_formulario)
+        REFERENCES Formulario(id_formulario)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+ALTER TABLE Cronograma
+    ADD COLUMN prioridade ENUM('baixa', 'media', 'alta') NOT NULL DEFAULT 'media',
+    ADD COLUMN concluido BOOLEAN NOT NULL DEFAULT FALSE;
+
+
+ALTER TABLE Plano_de_Aula
+    ADD COLUMN is_premium BOOLEAN NOT NULL DEFAULT FALSE;
+
+
+

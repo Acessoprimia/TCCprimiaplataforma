@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #fbfaff;
+  color: #222;
+  font-family: 'Poppins', sans-serif;
+}
+
+.faq-container {
+  flex-grow: 1;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 130px 20px 60px;
+}
+
+.faq-hero {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.faq-hero h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #A398D1;
+  margin-bottom: 10px;
+}
+
+.faq-hero p {
+  font-size: 1rem;
+  color: #666;
+}
+
+.faq-grupo {
+  margin-bottom: 36px;
+}
+
+.faq-grupo-titulo {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #FF9466;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 14px;
+  padding-left: 2px;
+}
+
+.faq-item {
+  background: #ffffff;
+  border: 1px solid #e8e4f3;
+  border-radius: 14px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.faq-item[open] {
+  border-color: #A398D1;
+}
+
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 16px 50px 16px 20px;
+  font-weight: 600;
+  font-size: 0.98rem;
+  color: #A398D1;
+  position: relative;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: "+";
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: #A398D1;
+  transition: transform 0.25s ease;
+}
+
+.faq-item[open] summary::after {
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.faq-item summary:focus-visible {
+  outline: 2px solid #A398D1;
+  outline-offset: -2px;
+}
+
+.faq-item p {
+  padding: 0 20px 18px;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: #555;
+}
+
+.faq-item p a {
+  color: #A398D1;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.faq-item p a:hover {
+  text-decoration: underline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-item, .faq-item summary::after {
+    transition: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .faq-container {
+    padding: 110px 16px 40px;
+  }
+
+  .faq-hero h1 {
+    font-size: 1.7rem;
+  }
+
+  .faq-item summary {
+    font-size: 0.92rem;
+    padding: 14px 44px 14px 16px;
+  }
+}

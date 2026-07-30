@@ -722,8 +722,169 @@ router.get("/cronograma", function (req, res) {
 
 
 
-router.get("/areadosimulado", function (req, res) {
-  res.render("pages/areadosimulado");
+async function anexarStatusResposta(formularios, idAluno) {
+  const resultado = [];
+
+  for (const formulario of formularios) {
+    const respostas = await Models.formularios.listarRespostas(formulario.id_formulario, idAluno);
+    resultado.push({ ...formulario, respondido: respostas.length > 0 });
+  }
+
+  return resultado;
+}
+
+router.get("/areadosimulado", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const [materias, meusFormulariosBase, publicadosBase] = await Promise.all([
+    Models.materias.listarAtivas(),
+    Models.formularios.listarPorAluno(usuarioBase.id),
+    Models.formularios.listarPublicadosPremium(),
+  ]);
+
+  const meusFormularios = (await anexarStatusResposta(meusFormulariosBase, usuarioBase.id)).map(
+    (formulario) => ({ ...formulario, origem: "Gerado por voce" })
+  );
+  const publicados = (await anexarStatusResposta(publicadosBase, usuarioBase.id)).map(
+    (formulario) => ({ ...formulario, origem: `Professor ${formulario.professor || ""}`.trim() })
+  );
+
+  const todos = [...meusFormularios, ...publicados];
+
+  res.render("pages/areadosimulado", {
+    materias,
+    emAndamento: todos.filter((formulario) => !formulario.respondido),
+    finalizados: todos.filter((formulario) => formulario.respondido),
+    msgErro: null,
+  });
+});
+
+router.post(
+  "/areadosimulado/gerar",
+  body("tema").trim().notEmpty().withMessage("Descreva o tema do simulado."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const { tema, materia_id, quantidade, dificuldade } = req.body;
+
+    try {
+      const materia = materia_id ? await Models.materias.buscarPorId(materia_id) : null;
+
+      const formularioGerado = await IaService.gerarSimulado({
+        tema,
+        materia: materia?.nome,
+        quantidade,
+        dificuldade,
+      });
+
+      const idFormulario = await Models.formularios.criar({
+        idAluno: usuarioBase.id,
+        idMateria: materia_id || null,
+        titulo: tema,
+        schemaJson: formularioGerado,
+        geradoPorIa: true,
+      });
+
+      return res.redirect(`/simulado/${idFormulario}`);
+    } catch (erro) {
+      console.error("Erro ao gerar simulado:", erro);
+      return res.redirect("/areadosimulado");
+    }
+  }
+);
+
+router.get("/simulado/:id", async function (req, res) {
+  const usuarioAluno = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+  const usuarioProfessor = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioAluno && !usuarioProfessor) {
+    return res.redirect("/login");
+  }
+
+  const formulario = await Models.formularios.buscarPorId(req.params.id);
+
+  if (!formulario) {
+    return res.redirect(usuarioProfessor ? "/simuladoprofessor" : "/areadosimulado");
+  }
+
+  if (usuarioProfessor) {
+    return res.render("pages/simulado", {
+      formulario,
+      modoPreview: true,
+      respostas: null,
+    });
+  }
+
+  const respostas = await Models.formularios.listarRespostas(formulario.id_formulario, usuarioAluno.id);
+  const respostasPorPergunta = Object.fromEntries(respostas.map((r) => [r.pergunta_ref, r]));
+
+  res.render("pages/simulado", {
+    formulario,
+    modoPreview: false,
+    respostas: respostas.length > 0 ? respostasPorPergunta : null,
+  });
+});
+
+router.post("/simulado/:id/responder", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const formulario = await Models.formularios.buscarPorId(req.params.id);
+
+  if (!formulario) {
+    return res.redirect("/areadosimulado");
+  }
+
+  const jaRespondeu = await Models.formularios.listarRespostas(formulario.id_formulario, usuarioBase.id);
+  if (jaRespondeu.length > 0) {
+    return res.redirect(`/simulado/${formulario.id_formulario}`);
+  }
+
+  const perguntas = formulario.schema_json?.perguntas || [];
+  let acertos = 0;
+
+  for (const pergunta of perguntas) {
+    const indiceEscolhido = Number(req.body[`resposta_${pergunta.id}`]);
+    const respostaTexto = pergunta.alternativas[indiceEscolhido] ?? null;
+    const correta = indiceEscolhido === pergunta.correta;
+    if (correta) acertos += 1;
+
+    await Models.formularios.salvarResposta({
+      idFormulario: formulario.id_formulario,
+      idAluno: usuarioBase.id,
+      perguntaRef: pergunta.id,
+      respostaAluno: respostaTexto,
+      correta,
+    });
+  }
+
+  if (formulario.id_professor) {
+    try {
+      const aluno = await Models.alunos.buscarPerfilCompleto(usuarioBase.id);
+      await Models.notificacoes.criar({
+        idUsuario: formulario.id_professor,
+        tipo: "sistema",
+        titulo: "Aluno respondeu seu simulado",
+        mensagem: `${aluno?.nome || "Um aluno"} respondeu ao simulado "${formulario.titulo}" (${acertos}/${perguntas.length} corretas).`,
+        link: `/simulado/${formulario.id_formulario}`,
+      });
+    } catch (erro) {
+      console.error("Erro ao notificar professor sobre resposta de simulado:", erro);
+    }
+  }
+
+  return res.redirect(`/simulado/${formulario.id_formulario}`);
 });
 
 
@@ -755,9 +916,107 @@ router.get("/biblioteca", async function (req, res) {
 });
 
 
-router.get("/simuladoprofessor", function (req, res) {
-  res.render("pages/simuladoprofessor");
+router.get("/simuladoprofessor", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const meusFormularios = await Models.formularios.listarPorProfessor(usuarioBase.id);
+
+  res.render("pages/simuladoprofessor", { meusFormularios });
 });
+
+router.post(
+  "/simuladoprofessor/gerar",
+  body("tema").trim().notEmpty().withMessage("Descreva o tema do simulado."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const { tema, quantidade, dificuldade } = req.body;
+
+    try {
+      const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+      if (!professor?.id_materia) {
+        throw new Error("Professor sem materia cadastrada.");
+      }
+
+      const formularioGerado = await IaService.gerarSimulado({
+        tema,
+        materia: professor.materia,
+        quantidade,
+        dificuldade,
+      });
+
+      const idFormulario = await Models.formularios.criar({
+        idProfessor: usuarioBase.id,
+        idMateria: professor.id_materia,
+        titulo: tema,
+        schemaJson: formularioGerado,
+        geradoPorIa: true,
+      });
+
+      return res.redirect(`/simulado/${idFormulario}`);
+    } catch (erro) {
+      console.error("Erro ao gerar simulado (professor):", erro);
+      return res.redirect("/simuladoprofessor");
+    }
+  }
+);
+
+router.post(
+  "/simuladoprofessor/manual",
+  body("titulo").trim().notEmpty().withMessage("Informe um titulo para o simulado."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const { titulo } = req.body;
+    const perguntasBrutas = Array.isArray(req.body.perguntas) ? req.body.perguntas : [];
+
+    try {
+      const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+      if (!professor?.id_materia) {
+        throw new Error("Professor sem materia cadastrada.");
+      }
+
+      const perguntasNormalizadas = perguntasBrutas.map((pergunta) => ({
+        enunciado: pergunta?.enunciado,
+        alternativas: Array.isArray(pergunta?.alternativas)
+          ? pergunta.alternativas.filter((alternativa) => String(alternativa || "").trim())
+          : [],
+        correta: Number(pergunta?.correta),
+        explicacao: pergunta?.explicacao,
+      }));
+
+      const formularioValidado = IaService.validarFormulario(
+        { perguntas: perguntasNormalizadas },
+        perguntasNormalizadas.length
+      );
+
+      const idFormulario = await Models.formularios.criar({
+        idProfessor: usuarioBase.id,
+        idMateria: professor.id_materia,
+        titulo,
+        schemaJson: formularioValidado,
+        geradoPorIa: false,
+      });
+
+      return res.redirect(`/simulado/${idFormulario}`);
+    } catch (erro) {
+      console.error("Erro ao salvar simulado montado manualmente:", erro);
+      return res.redirect("/simuladoprofessor");
+    }
+  }
+);
 
 router.get("/videoaulaprofessor", async function (req, res) {
   const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);

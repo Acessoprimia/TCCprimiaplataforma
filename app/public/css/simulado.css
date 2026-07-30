@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    color: #000;
+    font-family: 'Poppins', sans-serif;
+}
+
+.simulado-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 100px 20px 40px;
+    flex: 1;
+}
+
+.simulado-container h1 {
+    font-size: 26px;
+    color: #FF9466;
+    margin-bottom: 8px;
+}
+
+.simulado-materia {
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.simulado-aviso {
+    background: #FFF3EE;
+    color: #FF9466;
+    padding: 10px 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.simulado-resultado {
+    font-weight: 600;
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.simulado-pergunta {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+.simulado-pergunta-titulo {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 12px;
+}
+
+.simulado-alternativa {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    cursor: pointer;
+}
+
+.simulado-enviar {
+    width: 100%;
+    padding: 14px;
+    background: #FF9466;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.simulado-enviar:hover {
+    background: #f57f4c;
+}
+
+.simulado-pergunta-resultado {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+.simulado-pergunta-resultado h2 {
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+.simulado-alternativas-resultado {
+    list-style: none;
+}
+
+.simulado-alternativas-resultado li {
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+}
+
+.alternativa-correta {
+    background: #d4f4dd;
+    font-weight: 600;
+}
+
+.alternativa-errada {
+    background: #fbdada;
+}
+
+.simulado-explicacao {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+}

@@ -16,6 +16,31 @@
         <!-- TÍTULO -->
         <h1 class="titulo-simulados">Meus simulados</h1>
 
+        <!-- GERAR NOVO SIMULADO -->
+        <section class="gerar-simulado-container">
+            <h2>Gerar simulado com IA</h2>
+            <form action="/areadosimulado/gerar" method="POST" class="gerar-simulado-form">
+                <input type="text" name="tema" placeholder="Sobre qual tema? Ex: Frações e números racionais" required>
+                <select name="materia_id">
+                    <option value="">Sem matéria específica</option>
+                    <% materias.forEach(function (materia) { %>
+                        <option value="<%= materia.id_materia %>"><%= materia.nome %></option>
+                    <% }) %>
+                </select>
+                <select name="quantidade">
+                    <% for (let i = 1; i <= 10; i++) { %>
+                        <option value="<%= i %>" <%= i === 5 ? 'selected' : '' %>><%= i %> pergunta<%= i > 1 ? 's' : '' %></option>
+                    <% } %>
+                </select>
+                <select name="dificuldade">
+                    <option value="facil">Fácil</option>
+                    <option value="medio" selected>Médio</option>
+                    <option value="dificil">Difícil</option>
+                </select>
+                <button type="submit">Gerar</button>
+            </form>
+        </section>
+
         <!-- ABAS DE FILTRO -->
         <nav class="abas-filtro">
             <button class="aba-botao aba-ativa" data-filtro="andamento">
@@ -40,16 +65,9 @@
                 <button class="fechar-modal">&times;</button>
                 <h3>Selecione A Disciplina:</h3>
                 <form id="formFiltro">
-                    <label><input type="checkbox" name="disciplina" value="Português"> Língua Portuguesa</label>
-                    <label><input type="checkbox" name="disciplina" value="Literatura"> Literatura</label>
-                    <label><input type="checkbox" name="disciplina" value="Inglês"> Língua Estrangeira (inglês)</label>
-                    <label><input type="checkbox" name="disciplina" value="Matemática"> Matemática</label>
-                    <label><input type="checkbox" name="disciplina" value="História"> História</label>
-                    <label><input type="checkbox" name="disciplina" value="Geografia"> Geografia</label>
-                    <label><input type="checkbox" name="disciplina" value="Física"> Física</label>
-                    <label><input type="checkbox" name="disciplina" value="Química"> Química</label>
-                    <label><input type="checkbox" name="disciplina" value="Biologia"> Biologia</label>
-                    <label><input type="checkbox" name="disciplina" value="Arte"> Arte</label>
+                    <% materias.forEach(function (materia) { %>
+                        <label><input type="checkbox" name="disciplina" value="<%= materia.nome %>"> <%= materia.nome %></label>
+                    <% }) %>
                     <button type="submit" class="botao-buscar">Buscar</button>
                 </form>
             </article>
@@ -57,66 +75,30 @@
 
         <!-- SEÇÃO DE SIMULADOS EM ANDAMENTO -->
         <section class="secao-simulados" id="secao-andamento">
-            <article class="card-simulado" data-status="andamento" data-disciplina="Português">
-                <h2 class="titulo-simulado">Simulado (Português)</h2>
-                <time class="data-simulado">
-                    <img src="../image/calendariologo.webp" alt="Data" class="icone-data">
-                    13/11/2025, 07:00 a 17/11/2025, 23:59
-                </time>
-                <a href="#" class="botao-simulado botao-andamento">Faça</a>
-            </article>
-
-            <article class="card-simulado" data-status="andamento" data-disciplina="Matemática">
-                <h2 class="titulo-simulado">Simulado (Matemática)</h2>
-                <time class="data-simulado">
-                    <img src="../image/calendariologo.webp" alt="Data" class="icone-data">
-                    13/11/2025, 07:00 a 17/11/2025, 23:59
-                </time>
-                <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=MBKMTs0dD0myIBPBiUbpeOvHMD_49u1IqgxtSEiJ4ohUOUtaNTZDV1hJNFcwMTVNUlFOQlhCTFEwNS4u" class="botao-simulado botao-andamento">Faça</a>
-            </article>
-
-            <article class="card-simulado" data-status="andamento" data-disciplina="Português">
-                <h2 class="titulo-simulado">Simulado (Português)</h2>
-                <time class="data-simulado">
-                    <img src="../image/calendariologo.webp" alt="Data" class="icone-data">
-                    13/11/2025, 07:00 a 17/11/2025, 23:59
-                </time>
-                <a href="#" class="botao-simulado botao-andamento">Faça</a>
-            </article>
+            <% if (emAndamento.length === 0) { %>
+                <p class="simulados-vazio">Nenhum simulado em andamento. Gere um acima!</p>
+            <% } %>
+            <% emAndamento.forEach(function (formulario) { %>
+                <article class="card-simulado" data-status="andamento" data-disciplina="<%= formulario.materia || '' %>">
+                    <h2 class="titulo-simulado"><%= formulario.titulo %></h2>
+                    <p class="origem-simulado"><%= formulario.origem %><% if (formulario.materia) { %> · <%= formulario.materia %><% } %></p>
+                    <a href="/simulado/<%= formulario.id_formulario %>" class="botao-simulado botao-andamento">Faça</a>
+                </article>
+            <% }) %>
         </section>
 
         <!-- SEÇÃO DE SIMULADOS FINALIZADOS (OCULTA POR PADRÃO) -->
         <section class="secao-simulados oculta" id="secao-finalizados">
-            <article class="card-simulado" data-status="finalizados" data-disciplina="Literatura">
-                <h2 class="titulo-simulado">Simulado (Literatura)</h2>
-                <time class="data-simulado">
-                    <img src="../image/calendariologo.webp"
-                        alt="Data" class="icone-data">
-                    13/11/2025, 07:00 a 17/11/2025, 23:59
-                </time>
-                <a href="#" class="botao-simulado botao-finalizado">Feito</a>
-            </article>
-
-            <article class="card-simulado" data-status="finalizados" data-disciplina="Inglês">
-                <h2 class="titulo-simulado">Simulado (Inglês)</h2>
-                <time class="data-simulado">
-                    <img src="../image/calendariologo.webp"
-                        alt="Data" class="icone-data">
-                    13/11/2025, 07:00 a 17/11/2025, 23:59
-                </time>
-                <a href="#" class="botao-simulado botao-finalizado">Feito</a>
-            </article>
-
-            <article class="card-simulado" data-status="finalizados" data-disciplina="Matemática">
-                <h2 class="titulo-simulado">Simulado (Matemática)</h2>
-                <time class="data-simulado">
-                    <img src="../image/calendariologo.webp"
-                        alt="Data" class="icone-data">
-                    13/11/2025, 07:00 a 17/11/2025, 23:59
-                </time>
-                <a href="https://forms.office.com/Pages/DesignPagev2.aspx"
-                    class="botao-simulado botao-finalizado">Feito</a>
-            </article>
+            <% if (finalizados.length === 0) { %>
+                <p class="simulados-vazio">Nenhum simulado finalizado ainda.</p>
+            <% } %>
+            <% finalizados.forEach(function (formulario) { %>
+                <article class="card-simulado" data-status="finalizados" data-disciplina="<%= formulario.materia || '' %>">
+                    <h2 class="titulo-simulado"><%= formulario.titulo %></h2>
+                    <p class="origem-simulado"><%= formulario.origem %><% if (formulario.materia) { %> · <%= formulario.materia %><% } %></p>
+                    <a href="/simulado/<%= formulario.id_formulario %>" class="botao-simulado botao-finalizado">Ver resultado</a>
+                </article>
+            <% }) %>
         </section>
     </main>
 

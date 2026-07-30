@@ -367,6 +367,74 @@ body {
     }
 }
 
+/* GERAR SIMULADO COM IA */
+.gerar-simulado-container {
+    background: #FFF3EE;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.gerar-simulado-container h2 {
+    font-size: 18px;
+    color: #FF9466;
+    margin-bottom: 12px;
+}
+
+.gerar-simulado-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.gerar-simulado-form input,
+.gerar-simulado-form select {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 14px;
+    border: 2px solid #ffd7c4;
+    border-radius: 50px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.gerar-simulado-form button {
+    padding: 10px 24px;
+    background: #FF9466;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.gerar-simulado-form button:hover {
+    background: #f57f4c;
+}
+
+.simulados-vazio {
+    color: #888;
+    padding: 20px 0;
+}
+
+.origem-simulado {
+    font-size: 13px;
+    color: #777;
+    margin: 6px 0;
+}
+
+.aviso-materia-simulado {
+    font-size: 13px;
+    color: #999;
+    margin-top: 8px;
+}
+
+.subtitulo-simulados {
+    color: #777;
+    margin-bottom: 20px;
+    margin-top: -15px;
+}
+
 /* RESPONSIVO DESKTOP */
 @media (min-width: 1025px) {
     .container-simulados {

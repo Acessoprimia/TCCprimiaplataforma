@@ -7,8 +7,7 @@
     <title>Meus Simulados - Primia</title>
 
     <link href="../css/simuladoprofessor.css" rel="stylesheet">
-    <%- include('../partials/botao.ejs') %>
-        <%- include('../partials/headerprofessorpremium.ejs') %>
+    <%- include('../partials/headerprofessorpremium.ejs') %>
 </head>
 
 <body>
@@ -16,113 +15,89 @@
     <main class="container-simulados">
         <!-- TÍTULO -->
         <h1 class="titulo-simulados">Meus simulados</h1>
+        <p class="subtitulo-simulados">Simulados publicados aqui ficam disponíveis para todos os alunos premium.</p>
 
-        <!-- ABAS DE FILTRO -->
-        <nav class="abas-filtro">
-            <button class="aba-botao aba-ativa" data-filtro="andamento">
-                Em andamento
-            </button>
-            <button class="aba-botao" data-filtro="finalizados">
-                Finalizados
-            </button>
-        </nav>
-
-        <!-- SEÇÃO DE FILTRO -->
-        <section class="secao-filtro">
-            <figure class="icone-filtro">
-                <img src="../image/filtro.webp" alt="Filtro" class="icone">
-            </figure>
-            <span class="texto-filtro">Filtro</span>
+        <!-- GERAR NOVO SIMULADO -->
+        <section class="gerar-simulado-container">
+            <h2>Gerar simulado com IA</h2>
+            <form action="/simuladoprofessor/gerar" method="POST" class="gerar-simulado-form">
+                <input type="text" name="tema" placeholder="Sobre qual tema? Ex: Revolução Francesa" required>
+                <select name="quantidade">
+                    <% for (let i = 1; i <= 10; i++) { %>
+                        <option value="<%= i %>" <%= i === 5 ? 'selected' : '' %>><%= i %> pergunta<%= i > 1 ? 's' : '' %></option>
+                    <% } %>
+                </select>
+                <select name="dificuldade">
+                    <option value="facil">Fácil</option>
+                    <option value="medio" selected>Médio</option>
+                    <option value="dificil">Difícil</option>
+                </select>
+                <button type="submit">Gerar</button>
+            </form>
+            <p class="aviso-materia-simulado">A matéria usada é sempre a sua própria matéria cadastrada.</p>
         </section>
 
-        <!-- MODAL DE FILTRO (com elemento dialog) -->
-        <dialog class="modal-filtro" id="modalFiltro">
-            <article class="modal-conteudo">
-                <button class="fechar-modal">&times;</button>
-                <h3>Selecione A Disciplina:</h3>
-                <form id="formFiltro">
-                    <label><input type="checkbox" name="disciplina" value="Português"> Língua Portuguesa</label>
-                    <label><input type="checkbox" name="disciplina" value="Literatura"> Literatura</label>
-                    <label><input type="checkbox" name="disciplina" value="Inglês"> Língua Estrangeira (inglês)</label>
-                    <label><input type="checkbox" name="disciplina" value="Matemática"> Matemática</label>
-                    <label><input type="checkbox" name="disciplina" value="História"> História</label>
-                    <label><input type="checkbox" name="disciplina" value="Geografia"> Geografia</label>
-                    <label><input type="checkbox" name="disciplina" value="Física"> Física</label>
-                    <label><input type="checkbox" name="disciplina" value="Química"> Química</label>
-                    <label><input type="checkbox" name="disciplina" value="Biologia"> Biologia</label>
-                    <label><input type="checkbox" name="disciplina" value="Arte"> Arte</label>
-                    <button type="submit" class="botao-buscar">Buscar</button>
-                </form>
-            </article>
-        </dialog>
+        <!-- MONTAR SIMULADO NA MAO -->
+        <section class="montar-simulado-container">
+            <h2>Ou monte na mão</h2>
+            <form id="form-simulado-manual" action="/simuladoprofessor/manual" method="POST">
+                <input type="text" name="titulo" placeholder="Título do simulado" required class="input-titulo-manual">
 
-        <!-- SEÇÃO DE SIMULADOS EM ANDAMENTO -->
+                <div id="perguntas-manual-container"></div>
+
+                <div class="acoes-simulado-manual">
+                    <button type="button" id="btn-add-pergunta" class="btn-add-pergunta">+ Adicionar pergunta</button>
+                    <button type="submit" class="btn-salvar-manual">Salvar simulado</button>
+                </div>
+            </form>
+        </section>
+
+        <template id="template-pergunta-manual">
+            <article class="pergunta-manual">
+                <div class="pergunta-manual-header">
+                    <span class="pergunta-manual-numero"></span>
+                    <button type="button" class="btn-remover-pergunta">Remover</button>
+                </div>
+                <input type="text" class="campo-enunciado" placeholder="Enunciado da pergunta" required>
+                <div class="alternativas-manual">
+                    <label class="alternativa-manual-item">
+                        <input type="radio" class="radio-correta" required>
+                        <input type="text" class="campo-alternativa" placeholder="Alternativa 1" required>
+                    </label>
+                    <label class="alternativa-manual-item">
+                        <input type="radio" class="radio-correta" required>
+                        <input type="text" class="campo-alternativa" placeholder="Alternativa 2" required>
+                    </label>
+                    <label class="alternativa-manual-item">
+                        <input type="radio" class="radio-correta" required>
+                        <input type="text" class="campo-alternativa" placeholder="Alternativa 3" required>
+                    </label>
+                    <label class="alternativa-manual-item">
+                        <input type="radio" class="radio-correta" required>
+                        <input type="text" class="campo-alternativa" placeholder="Alternativa 4" required>
+                    </label>
+                </div>
+                <input type="text" class="campo-explicacao" placeholder="Explicação da resposta certa (opcional)">
+            </article>
+        </template>
+
+        <!-- LISTA DE SIMULADOS -->
         <section class="secao-simulados" id="secao-andamento">
-            <article class="card-simulado" data-status="andamento" data-disciplina="Português">
-                <h2 class="titulo-simulado">Simulado (Português)</h2>
-                <time class="data-simulado">
-                    <img src="../image/calendariologo.webp" alt="Data" class="icone-data">
-                    13/11/2025, 07:00 a 17/11/2025, 23:59
-                </time>
-                <a href="#" class="botao-simulado botao-andamento">Faça</a>
-            </article>
-
-            <article class="card-simulado" data-status="andamento" data-disciplina="Matemática">
-                <h2 class="titulo-simulado">Simulado (Matemática)</h2>
-                <time class="data-simulado">
-                    <img src="../image/calendariologo.webp" alt="Data" class="icone-data">
-                    13/11/2025, 07:00 a 17/11/2025, 23:59
-                </time>
-                <a href="#" class="botao-simulado botao-andamento">Faça</a>
-            </article>
-
-            <article class="card-simulado" data-status="andamento" data-disciplina="Português">
-                <h2 class="titulo-simulado">Simulado (Português)</h2>
-                <time class="data-simulado">
-                    <img src="../image/calendariologo.webp" alt="Data" class="icone-data">
-                    13/11/2025, 07:00 a 17/11/2025, 23:59
-                </time>
-                <a href="#" class="botao-simulado botao-andamento">Faça</a>
-            </article>
-        </section>
-
-        <!-- SEÇÃO DE SIMULADOS FINALIZADOS (OCULTA POR PADRÃO) -->
-        <section class="secao-simulados oculta" id="secao-finalizados">
-            <article class="card-simulado" data-status="finalizados" data-disciplina="Literatura">
-                <h2 class="titulo-simulado">Simulado (Literatura)</h2>
-                <time class="data-simulado">
-                    <img src="../image/calendariologo.webp"
-                        alt="Data" class="icone-data">
-                    13/11/2025, 07:00 a 17/11/2025, 23:59
-                </time>
-                <a href="#" class="botao-simulado botao-finalizado">Feito</a>
-            </article>
-
-            <article class="card-simulado" data-status="finalizados" data-disciplina="Inglês">
-                <h2 class="titulo-simulado">Simulado (Inglês)</h2>
-                <time class="data-simulado">
-                    <img src="../image/calendariologo.webp"
-                        alt="Data" class="icone-data">
-                    13/11/2025, 07:00 a 17/11/2025, 23:59
-                </time>
-                <a href="#" class="botao-simulado botao-finalizado">Feito</a>
-            </article>
-
-            <article class="card-simulado" data-status="finalizados" data-disciplina="Matemática">
-                <h2 class="titulo-simulado">Simulado (Matemática)</h2>
-                <time class="data-simulado">
-                    <img src="../image/calendariologo.webp"
-                        alt="Data" class="icone-data">
-                    13/11/2025, 07:00 a 17/11/2025, 23:59
-                </time>
-                <a href="https://forms.office.com/Pages/DesignPagev2.aspx"
-                    class="botao-simulado botao-finalizado">Feito</a>
-            </article>
+            <% if (meusFormularios.length === 0) { %>
+                <p class="simulados-vazio">Nenhum simulado publicado ainda. Gere um acima!</p>
+            <% } %>
+            <% meusFormularios.forEach(function (formulario) { %>
+                <article class="card-simulado" data-status="andamento" data-disciplina="<%= formulario.materia || '' %>">
+                    <h2 class="titulo-simulado"><%= formulario.titulo %></h2>
+                    <p class="origem-simulado"><% if (formulario.materia) { %><%= formulario.materia %><% } %></p>
+                    <a href="/simulado/<%= formulario.id_formulario %>" class="botao-simulado botao-andamento">Ver</a>
+                </article>
+            <% }) %>
         </section>
     </main>
 
-    <script src="../js/areadosimulado.js"></script>
     <%- include('../partials/footer.ejs') %>
+    <script src="../js/simuladomanual.js"></script>
 </body>
 
 </html>

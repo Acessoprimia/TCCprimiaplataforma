@@ -71,6 +71,181 @@ main {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+/* SECOES INSTITUCIONAIS */
+.sobre-secao-titulo {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: #A398D1;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* RECURSOS */
+.sobre-recursos {
+  max-width: 1200px;
+  margin: 100px auto 0;
+  padding: 0 20px;
+}
+
+.sobre-recursos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.sobre-recurso-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  background: #FAF8FF;
+  border: 1px solid #e8e4f3;
+  border-radius: 18px;
+  padding: 30px 20px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.sobre-recurso-card:hover {
+  transform: translateY(-4px);
+  border-color: #A398D1;
+  box-shadow: 0 8px 20px rgba(163, 152, 209, 0.25);
+}
+
+.sobre-recurso-icone {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 16px;
+}
+
+.sobre-recurso-card h3 {
+  font-size: 1.05rem;
+  color: #2b2b2b;
+  margin-bottom: 8px;
+}
+
+.sobre-recurso-card p {
+  font-size: 0.88rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* ALUNO x PROFESSOR */
+.sobre-perfis {
+  max-width: 1200px;
+  margin: 90px auto 0;
+  padding: 0 20px;
+}
+
+.sobre-perfis-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.sobre-perfil-card {
+  background: linear-gradient(135deg, #A398D1 0%, #9B8BC9 100%);
+  color: white;
+  border-radius: 20px;
+  padding: 36px 34px;
+}
+
+.sobre-perfil-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+}
+
+.sobre-perfil-card p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.92);
+  margin-bottom: 18px;
+}
+
+.sobre-perfil-link {
+  color: white;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.sobre-perfil-link:hover {
+  text-decoration: underline;
+}
+
+/* BRILHANDO JUNTO / HISTORIA */
+.sobre-brilhando,
+.sobre-historia {
+  max-width: 800px;
+  margin: 90px auto 0;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.sobre-brilhando p,
+.sobre-historia p {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #555;
+}
+
+/* CTA FINAL */
+.sobre-cta {
+  max-width: 1200px;
+  margin: 90px auto 0;
+  padding: 60px 20px;
+  text-align: center;
+  background: #FAF8FF;
+}
+
+.sobre-cta h2 {
+  font-size: 1.6rem;
+  color: #FF9466;
+  margin-bottom: 10px;
+}
+
+.sobre-cta p {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 28px;
+}
+
+.sobre-cta-botoes {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sobre-cta-btn {
+  padding: 14px 30px;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.sobre-cta-btn-principal {
+  background-color: #FF9466;
+  color: white;
+}
+
+.sobre-cta-btn-principal:hover {
+  background-color: #e67d50;
+  transform: translateY(-2px);
+}
+
+.sobre-cta-btn-secundario {
+  border: 2px solid #A398D1;
+  color: #A398D1;
+}
+
+.sobre-cta-btn-secundario:hover {
+  background-color: #A398D1;
+  color: white;
+}
+
 /* Responsivo */
 @media (max-width: 768px) {
   .sobre-container {
@@ -80,5 +255,23 @@ main {
 
   .texto-sobre, .imagem-sobre {
     max-width: 100%;
+  }
+
+  .imagem-sobre img {
+    width: 100%;
+  }
+
+  .sobre-recursos-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sobre-perfis-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .sobre-recursos-grid {
+    grid-template-columns: 1fr;
   }
 }

@@ -4,47 +4,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Termos de Privacidade - Plataforma Prima</title>
-
+  <title>Política de Privacidade - Primia</title>
 
   <%- include('../partials/header.ejs') %>
-    <link rel="stylesheet" href="../css/sobre.css" />
+    <link rel="stylesheet" href="../css/termopriva.css" />
 </head>
 
-
 <body>
-  <main class="sobre-container">
-    <section class="texto-sobre">
-      <h2>Termos de Privacidade</h2>
-
-      <p>
-
-        Nós respeitamos sua privacidade. Coletamos dados pessoais como nome e e-mail quando fornecidos voluntariamente
-        pelo usuário. <br>
-
-        Respeitamos a sua privacidade e tratamos seus dados pessoais com responsabilidade e transparência. <br>
-
-        Coletamos informações como nome e e-mail apenas quando fornecidas voluntariamente pelo usuário. Esses dados são
-        utilizados exclusivamente para responder mensagens, processar solicitações e aprimorar nossos serviços.<br>
-
-        Não comercializamos dados pessoais com terceiros. Eventualmente, poderemos compartilhar informações com
-        parceiros responsáveis pelo funcionamento e manutenção do site, sempre observando as normas de proteção de
-        dados. <br>
-
-        O usuário poderá, a qualquer momento, solicitar acesso, correção ou exclusão de seus dados pessoais, conforme
-        garantido pela Lei nº 13.709/2018 (Lei Geral de Proteção de Dados – LGPD). <br>
-
-        Para dúvidas ou solicitações relacionadas aos seus dados, entre em contato pelo e-mail: acessoprimia@gmail.com
-
+  <main class="priv-container">
+    <header class="priv-hero">
+      <h1>Política de Privacidade</h1>
+      <p class="priv-atualizacao">Última atualização: 29 de julho de 2026</p>
+      <p class="priv-intro">
+        Aqui explicamos quais dados a Primia coleta, para que eles servem e quais são os
+        seus direitos sobre eles. Se algo não estiver claro, é só nos escrever pelo e-mail
+        no final desta página.
       </p>
+    </header>
 
+    <section class="priv-secao">
+      <h2>Quais dados coletamos</h2>
+      <p>Coletamos apenas os dados necessários para o funcionamento da plataforma:</p>
+      <ul>
+        <li>Nome, e-mail e senha (armazenada de forma criptografada) no cadastro;</li>
+        <li>RA e data de nascimento, no caso de alunos;</li>
+        <li>Diploma e matéria de atuação, no caso de professores;</li>
+        <li>Foto de perfil, quando você opta por enviar uma;</li>
+        <li>Mensagens enviadas pelo formulário de Contato;</li>
+        <li>Dúvidas e respostas publicadas no Fórum de Dúvidas.</li>
+      </ul>
     </section>
 
-    <section class="imagem-sobre">
-      <img src="../image/roxoestudo.webp" alt="Imagem sobre educação" />
+    <section class="priv-secao">
+      <h2>Como usamos seus dados</h2>
+      <p>
+        Usamos essas informações para autenticar seu acesso, personalizar sua experiência
+        como aluno ou professor, responder suas mensagens de contato, enviar notificações
+        sobre atividade na plataforma (como respostas a dúvidas) e gerar as sinopses
+        automáticas de conteúdos da biblioteca. Não vendemos nem comercializamos dados
+        pessoais com terceiros.
+      </p>
+    </section>
+
+    <section class="priv-secao">
+      <h2>Cookies</h2>
+      <p>
+        Usamos um único cookie de sessão (<code>primia_usuario</code>), assinado
+        digitalmente e protegido contra acesso via script (HttpOnly), com a única
+        finalidade de manter você autenticado enquanto navega. Não usamos cookies de
+        rastreamento ou publicidade.
+      </p>
+    </section>
+
+    <section class="priv-secao">
+      <h2>Compartilhamento com terceiros</h2>
+      <p>Para o site funcionar, alguns dados passam por serviços de terceiros contratados por nós:</p>
+      <ul>
+        <li><strong>Cloudinary</strong> — armazena imagens enviadas, como fotos de perfil e capas de conteúdos da biblioteca;</li>
+        <li><strong>Google Gemini (Google Generative AI)</strong> — recebe o texto de livros e vídeos enviados por professores para gerar automaticamente a sinopse exibida na biblioteca;</li>
+        <li><strong>Serviço de e-mail</strong> — usado para enviar notificações e encaminhar as mensagens do formulário de Contato.</li>
+      </ul>
+      <p>Esses serviços têm acesso apenas ao necessário para cumprir sua função e não podem usar seus dados para outros fins.</p>
+    </section>
+
+    <section class="priv-secao">
+      <h2>Seus direitos (LGPD)</h2>
+      <p>
+        Conforme a Lei nº 13.709/2018 (Lei Geral de Proteção de Dados), você pode a
+        qualquer momento solicitar acesso, correção, portabilidade ou exclusão dos seus
+        dados pessoais, além de revogar consentimentos dados anteriormente.
+      </p>
+    </section>
+
+    <section class="priv-secao">
+      <h2>Como falar com a gente</h2>
+      <p>
+        Para dúvidas ou solicitações relacionadas aos seus dados, escreva para
+        <a href="mailto:acessoprimia@gmail.com">acessoprimia@gmail.com</a>.
+        Você também pode usar nossa <a href="/contato">página de Contato</a>.
+      </p>
     </section>
   </main>
-
 
 </body>
 <%- include('../partials/footer.ejs') %>

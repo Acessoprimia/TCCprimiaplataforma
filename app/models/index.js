@@ -9,4 +9,5 @@ module.exports = Object.freeze({
   notificacoes: require("./notificacaoModel"),
   contato: require("./contatoModel"),
   conteudos: require("./conteudoModel"),
+  formularios: require("./formularioModel"),
 });

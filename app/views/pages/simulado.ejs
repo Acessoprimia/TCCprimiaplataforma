@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= formulario.titulo %> - Primia</title>
+    <link href="../css/simulado.css" rel="stylesheet">
+    <%- include('../partials/header.ejs') %>
+</head>
+
+<body>
+    <main class="simulado-container">
+        <h1><%= formulario.titulo %></h1>
+        <% if (formulario.materia) { %>
+            <p class="simulado-materia"><%= formulario.materia %></p>
+        <% } %>
+
+        <% if (modoPreview) { %>
+            <p class="simulado-aviso">Pré-visualização — assim é o simulado que os alunos premium vão ver.</p>
+        <% } %>
+
+        <% if (!modoPreview && respostas) {
+            const perguntas = formulario.schema_json.perguntas;
+            const acertos = perguntas.filter(function (p) { return respostas[p.id] && respostas[p.id].correta; }).length;
+        %>
+            <p class="simulado-resultado">Resultado: <%= acertos %> de <%= perguntas.length %> corretas</p>
+        <% } %>
+
+        <% if (!modoPreview && !respostas) { %>
+            <!-- FORMULARIO PARA RESPONDER -->
+            <form action="/simulado/<%= formulario.id_formulario %>/responder" method="POST" class="simulado-form">
+                <% formulario.schema_json.perguntas.forEach(function (pergunta, indice) { %>
+                    <article class="simulado-pergunta">
+                        <h2 class="simulado-pergunta-titulo"><%= indice + 1 %>. <%= pergunta.enunciado %></h2>
+                        <% pergunta.alternativas.forEach(function (alternativa, indiceAlt) { %>
+                            <label class="simulado-alternativa">
+                                <input type="radio" name="resposta_<%= pergunta.id %>" value="<%= indiceAlt %>" required>
+                                <%= alternativa %>
+                            </label>
+                        <% }) %>
+                    </article>
+                <% }) %>
+                <button type="submit" class="simulado-enviar">Enviar respostas</button>
+            </form>
+        <% } else { %>
+            <!-- RESULTADO / PREVIEW -->
+            <section class="simulado-resultado-lista">
+                <% formulario.schema_json.perguntas.forEach(function (pergunta, indice) {
+                    const resposta = !modoPreview && respostas ? respostas[pergunta.id] : null;
+                %>
+                    <article class="simulado-pergunta-resultado">
+                        <h2><%= indice + 1 %>. <%= pergunta.enunciado %></h2>
+                        <ul class="simulado-alternativas-resultado">
+                            <% pergunta.alternativas.forEach(function (alternativa, indiceAlt) {
+                                const ehCorreta = indiceAlt === pergunta.correta;
+                                const ehEscolhida = resposta && resposta.resposta_aluno === alternativa;
+                            %>
+                                <li class="<%= ehCorreta ? 'alternativa-correta' : '' %> <%= (ehEscolhida && !ehCorreta) ? 'alternativa-errada' : '' %>">
+                                    <%= alternativa %>
+                                    <% if (ehCorreta) { %> ✔<% } %>
+                                    <% if (ehEscolhida && !ehCorreta) { %> (sua resposta)<% } %>
+                                </li>
+                            <% }) %>
+                        </ul>
+                        <% if (pergunta.explicacao) { %>
+                            <p class="simulado-explicacao"><%= pergunta.explicacao %></p>
+                        <% } %>
+                    </article>
+                <% }) %>
+            </section>
+        <% } %>
+    </main>
+    <%- include('../partials/footer.ejs') %>
+</body>
+
+</html>

@@ -360,5 +360,26 @@ ALTER TABLE Plano_de_Aula
 ALTER TABLE Usuario
     ADD COLUMN foto_url VARCHAR(255) NULL;
 
+ALTER TABLE Formulario
+    MODIFY COLUMN id_aluno INT NULL,
+    ADD COLUMN id_professor INT NULL,
+    ADD COLUMN gerado_por_ia BOOLEAN NOT NULL DEFAULT FALSE,
+    ADD CONSTRAINT fk_formulario_professor
+        FOREIGN KEY (id_professor)
+        REFERENCES Professor(id_professor)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE;
+
+-- GERADO AGORA: agora que um Formulario pode ser respondido por varios
+-- alunos diferentes (quando publicado pelo professor pra todo mundo
+-- premium), a resposta precisa dizer de qual aluno ela e.
+ALTER TABLE Resposta_Formulario
+    ADD COLUMN id_aluno INT NOT NULL,
+    ADD CONSTRAINT fk_resposta_formulario_aluno
+        FOREIGN KEY (id_aluno)
+        REFERENCES Aluno(id_aluno)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE;
+
 
 

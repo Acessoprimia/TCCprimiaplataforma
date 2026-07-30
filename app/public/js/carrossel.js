@@ -32,8 +32,18 @@ document.addEventListener('DOMContentLoaded', () => {
   let autoplayId = null;
   let retomarAutoplayId = null;
 
+  // offsetLeft e relativo ao offsetParent do elemento (aqui, o <nav> externo
+  // com position:relative, nao o proprio container de rolagem #carrossel).
+  // Por isso a posicao e sempre medida via getBoundingClientRect(), relativa
+  // ao próprio #carrossel, para nao herdar o padding/gap/botoes do <nav>.
+  function posicaoRelativa(elemento) {
+    const retElemento = elemento.getBoundingClientRect();
+    const retCarrossel = carrossel.getBoundingClientRect();
+    return retElemento.left - retCarrossel.left + carrossel.scrollLeft;
+  }
+
   function centralizar(elemento, comAnimacao) {
-    const centroAlvo = elemento.offsetLeft + elemento.offsetWidth / 2;
+    const centroAlvo = posicaoRelativa(elemento) + elemento.offsetWidth / 2;
     const destino = centroAlvo - carrossel.clientWidth / 2;
 
     // Pulo instantaneo (fim do loop infinito): atribuir scrollLeft direto
@@ -60,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let menorDistancia = Infinity;
 
     Array.from(lista.children).forEach((slide, i) => {
-      const meio = slide.offsetLeft + slide.offsetWidth / 2;
+      const meio = posicaoRelativa(slide) + slide.offsetWidth / 2;
       const distancia = Math.abs(meio - centro);
       if (distancia < menorDistancia) {
         menorDistancia = distancia;
@@ -88,6 +98,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function atualizarDestaque() {
+    // Recalcula a partir da posicao real de rolagem em vez de confiar so na
+    // variavel "indice", que pode dessincronizar entre resize e autoplay.
+    indice = slideMaisProximoDoCentro();
     lista.querySelectorAll('.slide').forEach((slide, i) => {
       slide.classList.toggle('slide-ativo', i === indice);
     });

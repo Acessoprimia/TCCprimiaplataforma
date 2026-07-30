@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Perguntas Frequentes - Primia</title>
+
+  <%- include('../partials/header.ejs') %>
+    <link rel="stylesheet" href="../css/faq.css" />
+</head>
+
+<body>
+  <main class="faq-container">
+    <header class="faq-hero">
+      <h1>Perguntas Frequentes</h1>
+      <p>Tudo que você precisa saber antes de começar a usar a Primia.</p>
+    </header>
+
+    <section class="faq-grupo">
+      <h2 class="faq-grupo-titulo">Sobre a plataforma</h2>
+
+      <details class="faq-item">
+        <summary>O que é a Primia?</summary>
+        <p>É um espaço colaborativo para alunos e professores tirarem dúvidas, compartilharem conhecimento e acompanharem o aprendizado, com biblioteca de conteúdos, vídeo-aulas, cronograma de estudos e um fórum de dúvidas por matéria.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>A Primia é gratuita?</summary>
+        <p>Sim. O plano gratuito já inclui Fórum de Dúvidas, Planos de Estudo, Biblioteca e interação com professores. Também existe uma <a href="/areapremium">área Premium</a>, com uma semana de teste grátis, que libera simulados, vídeo-aulas e planos de estudo especializados.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Qual a diferença entre a conta de aluno e a de professor?</summary>
+        <p>A conta de aluno é voltada para quem estuda: tirar dúvidas, acessar a biblioteca e acompanhar o cronograma. A conta de professor é voltada para quem ensina: responder dúvidas da sua matéria e publicar conteúdos (livros e vídeo-aulas) na biblioteca.</p>
+      </details>
+    </section>
+
+    <section class="faq-grupo">
+      <h2 class="faq-grupo-titulo">Cadastro e conta</h2>
+
+      <details class="faq-item">
+        <summary>Como faço meu cadastro?</summary>
+        <p>Alunos se cadastram em <a href="/cadastro">Cadastro de Aluno</a> e professores em <a href="/cadastroprofessor">Cadastro de Professor</a>. Para alunos é necessário informar o RA; para professores, a matéria de atuação.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Esqueci minha senha, como recupero o acesso?</summary>
+        <p>Ainda não temos recuperação automática de senha. Fale com a nossa <a href="/contato">equipe de contato</a> informando o e-mail cadastrado que ajudamos a restaurar o acesso.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Posso alterar meus dados depois de cadastrado?</summary>
+        <p>Sim. Alunos editam nome, e-mail, série, foto e senha em <a href="/editarperfil">Editar Perfil</a>; professores fazem o mesmo em <a href="/editarprofessor">Editar Perfil do Professor</a>.</p>
+      </details>
+    </section>
+
+    <section class="faq-grupo">
+      <h2 class="faq-grupo-titulo">Uso da plataforma</h2>
+
+      <details class="faq-item">
+        <summary>Como funciona o Fórum de Dúvidas?</summary>
+        <p>O aluno escreve a dúvida escolhendo a matéria, e ela fica visível para os professores daquela matéria responderem. Você recebe uma notificação assim que a dúvida for respondida.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>O que tem na Biblioteca?</summary>
+        <p>Livros e materiais em PDF enviados pelos professores, organizados por matéria, com sinopse gerada automaticamente para ajudar a entender o conteúdo antes de abrir. Acesse em <a href="/biblioteca">Biblioteca</a>.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>O que é a área Premium e o que ela libera?</summary>
+        <p>Além de tudo do plano gratuito, o Premium libera simulados, vídeo-aulas e planos de estudo especializados, incluindo preparatório para o ENEM. Veja os detalhes em <a href="/areapremium">Área Premium</a>.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Como funciona o Cronograma de Estudos?</summary>
+        <p>É uma ferramenta para organizar suas matérias e horários de estudo dentro da plataforma. Acesse em <a href="/cronograma">Cronograma</a>.</p>
+      </details>
+    </section>
+
+    <section class="faq-grupo">
+      <h2 class="faq-grupo-titulo">Para professores</h2>
+
+      <details class="faq-item">
+        <summary>Como envio um conteúdo (livro ou vídeo) para a biblioteca?</summary>
+        <p>Na sua área de professor, use o botão de adicionar conteúdo na Biblioteca ou em Vídeo-aulas. Você pode gerar a sinopse automaticamente antes de publicar.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Como respondo dúvidas dos alunos?</summary>
+        <p>Acesse o Fórum de Dúvidas na sua área de professor. As dúvidas da sua matéria aparecem lá e você responde diretamente.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Posso responder dúvidas de qualquer matéria?</summary>
+        <p>Não. Cada professor responde apenas dúvidas da matéria cadastrada no seu perfil.</p>
+      </details>
+    </section>
+
+    <section class="faq-grupo">
+      <h2 class="faq-grupo-titulo">Suporte e privacidade</h2>
+
+      <details class="faq-item">
+        <summary>Como entro em contato com o suporte?</summary>
+        <p>Pela página de <a href="/contato">Contato</a>. É só preencher o formulário com sua dúvida, sugestão ou problema que nossa equipe responde por e-mail.</p>
+      </details>
+
+      <details class="faq-item">
+        <summary>Onde vejo a política de privacidade e os termos de uso?</summary>
+        <p>Nas páginas de <a href="/termopriva">Política de Privacidade</a> e <a href="/termouso">Termos de Uso</a>, linkadas também no rodapé do site.</p>
+      </details>
+    </section>
+  </main>
+</body>
+<%- include('../partials/footer.ejs') %>
+
+</html>

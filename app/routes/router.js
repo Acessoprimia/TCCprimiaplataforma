@@ -1372,6 +1372,10 @@ router.get("/sobre", function (req, res) {
   res.render("pages/sobre");
 });
 
+router.get("/faq", function (req, res) {
+  res.render("pages/faq");
+});
+
 router.get("/api/notificacoes", async function (req, res) {
   const usuario = lerCookieUsuario(req);
 

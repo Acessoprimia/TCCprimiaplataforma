@@ -711,6 +711,12 @@ router.get("/videoaula/:id", async function (req, res) {
 });
 
 router.get("/cronograma", function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
   res.render("pages/cronograma");
 });
 
@@ -731,6 +737,12 @@ router.get("/partepremium", function (req, res) {
 
 
 router.get("/biblioteca", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
   const [materias, livrosBase] = await Promise.all([
     Models.materias.listarAtivas(),
     Models.conteudos.listarPublicadosPorTipo("livro"),
@@ -772,6 +784,12 @@ router.get("/videoaulaprofessor", async function (req, res) {
 });
 
 router.get("/cronogramaprofessor", function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
   res.render("pages/cronogramaprofessor");
 });
 

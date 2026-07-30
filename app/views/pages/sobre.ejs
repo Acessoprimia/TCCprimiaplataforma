@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sobre - Plataforma Prima</title>
+  <title>Sobre - Plataforma Primia</title>
 
 
   <%- include('../partials/header.ejs') %>
@@ -15,25 +15,18 @@
 <body>
   <main class="sobre-container">
     <section class="texto-sobre">
-      <h2>Sobre a Plataforma Primia</h2>
+      <h2>De alunos <br>
+        para <br>
+        alunos</h2>
       <p>
-        A Plataforma Prima foi criada para facilitar o aprendizado de estudantes,
-        oferecendo conteúdos de qualidade e uma interface intuitiva.
-        Nosso objetivo é transformar a educação em uma experiência acessível e motivadora para todos.
+        A Primia nasceu da vontade de dar a alunos e professores um lugar só deles para
+        aprender, ensinar e crescer juntos, tirando o "estudar" do isolamento e colocando
+        a colaboração no centro do processo.
       </p>
       <p>
-        Desde nosso lançamento, temos investido em tecnologia e didática para garantir que cada aluno encontre na Prima
-        a melhor forma de estudar e crescer academicamente.
-      </p>
-      <p>
-        A Plataforma Prima foi criada para facilitar o aprendizado de estudantes,
-        oferecendo conteúdos de qualidade e uma interface intuitiva.
-        Nosso objetivo é transformar a educação em uma experiência
-      </p>
-      <p>
-        desenvolvido para oferecer cursos de qualidade e acessíveis a todos. Com uma interface intuitiva e conteúdos
-        atualizados, permite que estudantes de diferentes idades e níveis aprendam de maneira prática e interativa,
-        explorando diversas áreas do
+        Aqui você não encontra só conteúdo: encontra um espaço onde dúvidas viram
+        respostas, professores acompanham de perto o progresso de cada aluno e o
+        aprendizado se organiza de um jeito simples e prático, sem depender só da sala de aula.
       </p>
     </section>
 
@@ -41,6 +34,81 @@
       <img src="../image/roxoestudo.webp" alt="Imagem sobre educação" />
     </section>
   </main>
+
+  <section class="sobre-recursos">
+    <h2 class="sobre-secao-titulo">O que você encontra na Primia</h2>
+    <div class="sobre-recursos-grid">
+      <a href="/forumdeduvidas" class="sobre-recurso-card">
+        <img src="../image/interrogacaou.webp" alt="" class="sobre-recurso-icone">
+        <h3>Fórum de Dúvidas</h3>
+        <p>Pergunte por matéria e receba resposta direto de um professor.</p>
+      </a>
+      <a href="/biblioteca" class="sobre-recurso-card">
+        <img src="../image/bibliotecau.webp" alt="" class="sobre-recurso-icone">
+        <h3>Biblioteca</h3>
+        <p>Livros e materiais enviados por professores, com sinopse gerada por IA.</p>
+      </a>
+      <a href="/cronograma" class="sobre-recurso-card">
+        <img src="../image/calendariologo.webp" alt="" class="sobre-recurso-icone">
+        <h3>Cronograma de Estudos</h3>
+        <p>Organize suas matérias e horários de estudo num só lugar.</p>
+      </a>
+      <a href="/areapremium" class="sobre-recurso-card">
+        <img src="../image/premiumu.webp" alt="" class="sobre-recurso-icone">
+        <h3>Área Premium</h3>
+        <p>Simulados, vídeo-aulas e preparatório para o ENEM.</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="sobre-perfis">
+    <h2 class="sobre-secao-titulo">Feita para dois lados da sala de aula</h2>
+    <div class="sobre-perfis-grid">
+      <article class="sobre-perfil-card">
+        <h3>Para quem estuda</h3>
+        <p>
+          Tire dúvidas com professores de verdade, acesse a biblioteca e organize seus
+          estudos com um cronograma pensado pra sua rotina.
+        </p>
+        <a href="/cadastro" class="sobre-perfil-link">Cadastro de Aluno →</a>
+      </article>
+      <article class="sobre-perfil-card">
+        <h3>Para quem ensina</h3>
+        <p>
+          Responda dúvidas da sua matéria, publique conteúdos na biblioteca e acompanhe
+          o que os alunos estão precisando de verdade.
+        </p>
+        <a href="/cadastroprofessor" class="sobre-perfil-link">Cadastro de Professor →</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="sobre-brilhando">
+    <h2 class="sobre-secao-titulo">Brilhando Junto</h2>
+    <p>
+      É o nosso programa voltado para escolas parceiras: apoio estratégico em comunicação
+      e marketing, com foco em captação e retenção de matrículas, tendo a Primia como
+      ferramenta do dia a dia dentro da escola.
+    </p>
+  </section>
+
+  <section class="sobre-historia">
+    <h2 class="sobre-secao-titulo">Por trás da Primia</h2>
+    <p>
+      A Primia começou como um projeto de estudantes incomodados com a falta de um espaço
+      simples para tirar dúvidas fora da sala de aula. Daí veio a ideia: construir uma
+      plataforma que aproxima aluno e professor, em vez de só empilhar conteúdo.
+    </p>
+  </section>
+
+  <section class="sobre-cta">
+    <h2>Pronto para começar?</h2>
+    <p>Crie sua conta gratuita ou tire suas dúvidas antes de entrar.</p>
+    <div class="sobre-cta-botoes">
+      <a href="/logincadastro" class="sobre-cta-btn sobre-cta-btn-principal">Cadastre-se</a>
+      <a href="/faq" class="sobre-cta-btn sobre-cta-btn-secundario">Ver perguntas frequentes</a>
+    </div>
+  </section>
 
 
 </body>

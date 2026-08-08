@@ -1,0 +1,209 @@
+/* Grade semanal do cronograma (dias em colunas, horarios em linhas).
+   Usada em planoestudo.ejs e cronogramaDetalhe.ejs. */
+
+/* As duas paginas tem main estreito (500-600px); com a grade a coluna
+   precisa ser larga o bastante pra semana inteira caber sem rolar no
+   desktop. Este arquivo e carregado depois dos css das paginas. */
+main.com-grade {
+    max-width: 1040px;
+}
+
+.grade-semana-rotulo {
+    font-size: 15px;
+    color: #555;
+    margin: 18px 0 10px;
+}
+
+/* No celular a tabela rola na horizontal e a coluna de horario fica
+   fixa, pra nunca perder a referencia da linha. */
+.grade-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.grade-cronograma {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: inherit;
+}
+
+.grade-cronograma th,
+.grade-cronograma td {
+    border-bottom: 1px solid #eee;
+    border-right: 1px solid #eee;
+    padding: 8px;
+    vertical-align: top;
+}
+
+.grade-cronograma thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #f8f9fa;
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 13px;
+    color: #333;
+}
+
+.grade-dia-abrev {
+    display: block;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.grade-dia-data {
+    display: block;
+    font-weight: 400;
+    font-size: 11px;
+    color: #999;
+    margin-top: 2px;
+}
+
+/* Coluna de horario: fixa na rolagem horizontal */
+.grade-col-hora {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: #f8f9fa;
+    width: 108px;
+    min-width: 108px;
+    text-align: right;
+    font-size: 12px;
+    font-weight: 600;
+    color: #777;
+    white-space: nowrap;
+}
+
+.grade-cronograma thead .grade-col-hora {
+    z-index: 4;
+}
+
+.grade-cronograma tbody td {
+    height: 74px;
+}
+
+.grade-cronograma tbody tr:last-child th,
+.grade-cronograma tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.grade-cronograma th:last-child,
+.grade-cronograma td:last-child {
+    border-right: none;
+}
+
+/* Celula de atividade */
+.grade-atividade {
+    --cor-atividade: #A398D1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    height: 100%;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border-left: 4px solid var(--cor-prioridade, var(--cor-atividade));
+    background: #f5f4fa; /* fallback pra navegador sem color-mix */
+    background: color-mix(in srgb, var(--cor-atividade) 14%, white);
+}
+
+.grade-atividade + .grade-atividade {
+    margin-top: 6px;
+}
+
+.grade-materia {
+    font-size: 12px;
+    font-weight: 700;
+    color: #2b2b2b;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+}
+
+.grade-tipo {
+    font-size: 12px;
+    color: #555;
+    line-height: 1.3;
+}
+
+.grade-hora {
+    font-size: 11px;
+    color: #999;
+    margin-top: auto;
+}
+
+.grade-vazia {
+    color: #888;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 16px;
+}
+
+/* Atividade marcada como concluida (ver .lista-prioridades abaixo) -
+   fica esmaecida e com texto riscado direto na grade, sem precisar
+   procurar o item na lista pra saber o que ja foi feito. */
+.grade-atividade-concluida {
+    opacity: 0.5;
+}
+
+.grade-atividade-concluida .grade-materia,
+.grade-atividade-concluida .grade-tipo {
+    text-decoration: line-through;
+}
+
+.grade-dica {
+    display: none;
+    font-size: 12px;
+    color: #999;
+    margin-top: 8px;
+}
+
+/* Legenda de tipos de atividade */
+.grade-legenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.grade-legenda li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #777;
+}
+
+.grade-legenda span {
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .grade-dica {
+        display: block;
+    }
+
+    .grade-cronograma tbody td {
+        height: 68px;
+    }
+
+    .grade-col-hora {
+        width: 84px;
+        min-width: 84px;
+        font-size: 11px;
+    }
+
+    .grade-cronograma {
+        min-width: 620px;
+    }
+}

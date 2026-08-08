@@ -1,0 +1,30 @@
+<%# Lista de itens com controle de prioridade e conclusao. Recebe "itens"
+    (id_cronograma, materia, descricao, prioridade, concluido) e
+    "voltarPara" (pra onde os forms redirecionam depois de salvar - a
+    lista generica volta pra /planoestudo, um cronograma especifico
+    volta pra /planoestudo/:codigoLote). %>
+<ul class="lista-prioridades">
+    <% if (itens.length === 0) { %>
+        <p class="itens-vazio">Nenhum item aqui ainda.</p>
+    <% } %>
+    <% itens.forEach(function (item) { %>
+        <li class="item-lista">
+            <form action="/planoestudo/<%= item.id_cronograma %>/concluido" method="POST" class="form-concluido">
+                <input type="hidden" name="concluido" value="<%= item.concluido ? '0' : '1' %>">
+                <input type="hidden" name="voltar" value="<%= voltarPara %>">
+                <input type="checkbox" class="checkbox" <%= item.concluido ? 'checked' : '' %> onchange="this.form.submit()">
+            </form>
+            <label class="label-checkbox <%= item.concluido ? 'riscado' : '' %>">
+                <%= item.materia %> — <%= item.descricao %>
+            </label>
+            <form action="/planoestudo/<%= item.id_cronograma %>/prioridade" method="POST" class="form-prioridade">
+                <input type="hidden" name="voltar" value="<%= voltarPara %>">
+                <select name="prioridade" onchange="this.form.submit()">
+                    <option value="baixa" <%= item.prioridade === 'baixa' ? 'selected' : '' %>>🟢 Baixa</option>
+                    <option value="media" <%= item.prioridade === 'media' ? 'selected' : '' %>>🟡 Média</option>
+                    <option value="alta" <%= item.prioridade === 'alta' ? 'selected' : '' %>>🔴 Alta</option>
+                </select>
+            </form>
+        </li>
+    <% }) %>
+</ul>

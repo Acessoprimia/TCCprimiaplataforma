@@ -1,4 +1,4 @@
-USE bkxr6owv8ylp656gwrzu;
+USE DB_NAME;
 
 
 SET FOREIGN_KEY_CHECKS = 1;
@@ -381,5 +381,31 @@ ALTER TABLE Resposta_Formulario
         ON DELETE CASCADE
         ON UPDATE CASCADE;
 
+-- GERADO AGORA: agrupa os eventos de uma mesma geracao de cronograma
+-- do professor (IA ou manual) num cronograma clicavel separado, em vez
+-- de todos os eventos de todos os professores caindo juntos num unico
+-- calendario. titulo_cronograma e codigo_lote sao iguais pra todas as
+-- linhas criadas na mesma chamada de gerar/montar.
+ALTER TABLE Plano_de_Aula
+    ADD COLUMN titulo_cronograma VARCHAR(150) NULL,
+    ADD COLUMN codigo_lote CHAR(36) NULL;
+
+-- GERADO AGORA: mesmo motivo do Plano_de_Aula acima, mas agora pro
+-- ALUNO premium - quando ele gera o proprio cronograma (IA ou manual),
+-- os eventos precisam ficar agrupados num cronograma clicavel separado,
+-- sem se misturar com os itens genericos automaticos (que continuam
+-- com codigo_lote NULL).
+ALTER TABLE Cronograma
+    ADD COLUMN titulo_cronograma VARCHAR(150) NULL,
+    ADD COLUMN codigo_lote CHAR(36) NULL;
+
+-- GERADO AGORA: a hora de fim que a IA gera estava sendo jogada fora
+-- (so a hora de inicio era salva, em Plano_de_Estudo.hora_aula), entao
+-- a grade nao tinha como mostrar "08:00 - 09:00". tipo_atividade guarda
+-- se o bloco e estudo/exercicios/revisao/simulado, pra grade mostrar a
+-- atividade junto da materia. Ambas NULL pras linhas antigas.
+ALTER TABLE Cronograma
+    ADD COLUMN hora_fim TIME NULL,
+    ADD COLUMN tipo_atividade VARCHAR(30) NULL;
 
 

@@ -10,4 +10,7 @@ module.exports = Object.freeze({
   contato: require("./contatoModel"),
   conteudos: require("./conteudoModel"),
   formularios: require("./formularioModel"),
+  planoEstudo: require("./planoEstudoModel"),
+  planoAula: require("./planoAulaModel"),
+  assinaturas: require("./assinaturaModel"),
 });

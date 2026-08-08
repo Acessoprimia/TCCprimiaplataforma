@@ -9,6 +9,7 @@ const AdminDashboardMock = require("../mocks/adminDashboardMock");
 const IaService = require("../services/iaService");
 const UploadService = require("../services/uploadService");
 const MailService = require("../services/mailService");
+const CronogramaService = require("../services/cronogramaService");
 
 const uploadConteudo = multer({
   storage: multer.memoryStorage(),
@@ -185,6 +186,152 @@ function extrairIdYoutube(url) {
 function urlEmbedYoutube(url) {
   const id = extrairIdYoutube(url);
   return id ? `https://www.youtube.com/embed/${id}` : null;
+}
+
+// mysql2 devolve colunas DATE como Date em horario local da meia-noite.
+// Usar toISOString() converte pra UTC e pode "voltar" um dia dependendo
+// do fuso do servidor - por isso lemos ano/mes/dia locais na mao aqui,
+// em vez de deixar o toISOString() reinterpretar o fuso.
+function formatarDataLocal(data) {
+  const dataObj = data instanceof Date ? data : new Date(data);
+  const ano = dataObj.getFullYear();
+  const mes = String(dataObj.getMonth() + 1).padStart(2, "0");
+  const dia = String(dataObj.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
+// A descricao guarda "Titulo - Detalhe" nos cronogramas gerados; na
+// celula da grade so cabe o titulo.
+function tituloDaDescricao(descricao) {
+  return String(descricao || "").split(" - ")[0];
+}
+
+function planoAulaParaGrade(planoAula) {
+  return {
+    data: formatarDataLocal(planoAula.data_atual),
+    horaInicio: planoAula.hora_inicio,
+    horaFim: planoAula.hora_fim,
+    materia: planoAula.materia,
+    atividade: planoAula.objetivos,
+    tipoAtividade: "aula",
+  };
+}
+
+const CORES_PRIORIDADE = Object.freeze({
+  baixa: "#10B981",
+  media: "#F59E0B",
+  alta: "#EF4444",
+});
+
+// Sem sessao/flash no projeto, o retorno das acoes de cronograma vem por
+// query string. Antes toda falha era so console.error + redirect, e o
+// aluno nao tinha como saber se o cronograma foi gerado ou nao.
+const AVISOS_PLANO_ESTUDO = Object.freeze({
+  erro: {
+    premium: "Gerar e regerar cronograma é exclusivo para assinantes premium.",
+    ia: "Não deu pra gerar o cronograma com a IA agora. Tente de novo em alguns instantes.",
+    manual: "Não foi possível salvar o cronograma. Confira se todos os eventos têm título, data e horários.",
+    regerar: "Não foi possível regerar a rotina da semana. Tente de novo.",
+  },
+  ok: {
+    regerar: "Rotina da semana regerada.",
+  },
+});
+
+function avisoDaQuery(query) {
+  if (query.erro && AVISOS_PLANO_ESTUDO.erro[query.erro]) {
+    return { tipo: "erro", texto: AVISOS_PLANO_ESTUDO.erro[query.erro] };
+  }
+  if (query.ok && AVISOS_PLANO_ESTUDO.ok[query.ok]) {
+    return { tipo: "ok", texto: AVISOS_PLANO_ESTUDO.ok[query.ok] };
+  }
+  return null;
+}
+
+// Mesmo problema que o /planoestudo tinha: as rotas do professor so
+// faziam console.error + redirect quando a geracao falhava (cota da IA
+// estourada, professor sem materia, etc), entao a tela ficava igual
+// tivesse dado certo ou nao - o professor nao tinha como saber.
+const AVISOS_CRONOGRAMA_PROFESSOR = Object.freeze({
+  erro: {
+    ia: "Não deu pra gerar o cronograma com a IA agora (a cota diária pode ter estourado). Tente de novo em alguns instantes, ou monte na mão.",
+    manual: "Não foi possível salvar o cronograma. Confira se todos os eventos têm título, data e horários.",
+    materia: "Você precisa ter uma matéria cadastrada no seu perfil para gerar um cronograma.",
+  },
+});
+
+function avisoCronogramaProfessorDaQuery(query) {
+  if (query.erro && AVISOS_CRONOGRAMA_PROFESSOR.erro[query.erro]) {
+    return { tipo: "erro", texto: AVISOS_CRONOGRAMA_PROFESSOR.erro[query.erro] };
+  }
+  return null;
+}
+
+// As acoes de prioridade/concluido sao usadas tanto na lista generica
+// (/planoestudo) quanto dentro de um cronograma gerado especifico
+// (/planoestudo/:codigoLote) - o formulario manda de volta pra onde
+// veio via campo oculto. So aceita caminho comecando com /planoestudo
+// (prefixo fixo, nao vem de fora) pra nunca virar open redirect.
+function voltarSeguro(valor) {
+  return typeof valor === "string" && valor.startsWith("/planoestudo") ? valor : "/planoestudo";
+}
+
+// Detecta rotina generica desatualizada em relacao ao status premium
+// atual do aluno: itens de quem ja foi premium um dia (ou de antes da
+// restricao existir) podem ter ficado com exercicios/simulado mesmo
+// sendo gratuito agora; e o inverso, premium com uma rotina antiga de
+// quando ainda era gratuito nunca ganha exercicios/simulado sozinho. O
+// simulado e sempre gerado 1x (ultimo bloco de sexta) quando premium,
+// entao a presenca/ausencia dele e um jeito confiavel de notar isso sem
+// precisar guardar "versao da rotina" em coluna nenhuma.
+function rotinaDesatualizada(itens, ehPremium) {
+  if (itens.length === 0) return false;
+  const temSimulado = itens.some((item) => item.tipo_atividade === "simulado");
+  return ehPremium ? !temSimulado : temSimulado;
+}
+
+// Rotina padrao do aluno: 6 blocos por dia util (manha 08-11 e tarde
+// 14-17), com as materias rodiziando. Aluno premium tem o tipo de
+// atividade variando entre estudo, exercicios, revisao e um simulado no
+// fim da sexta; exercicios/simulado sao premium, entao o gratuito recebe
+// so estudo/revisao.
+async function semearCronogramaGenerico(idAluno, ehPremium) {
+  const materias = await Models.materias.listarAtivas();
+  const diasUteis = CronogramaService.proximosDiasUteis(5);
+  const rotina = CronogramaService.gerarRotinaGenerica(materias, diasUteis, ehPremium);
+
+  for (const item of rotina) {
+    await Models.planoEstudo.criarItem({
+      idAluno,
+      idMateria: item.idMateria,
+      horaAula: item.horaInicio,
+      horaFim: item.horaFim,
+      dataInicio: item.data,
+      dataFim: item.data,
+      descricao: item.descricao,
+      tipoAtividade: item.tipoAtividade,
+    });
+  }
+
+  return rotina.length;
+}
+
+function planoEstudoParaGrade(item) {
+  const ehGerado = !!item.codigo_lote;
+
+  return {
+    data: formatarDataLocal(item.data_inicio),
+    horaInicio: item.hora_aula,
+    horaFim: item.hora_fim,
+    materia: item.materia,
+    // Item generico mostra so o tipo ("Exercícios"); item gerado por
+    // IA/mao mostra o titulo que veio junto.
+    atividade: ehGerado ? tituloDaDescricao(item.descricao) : null,
+    tipoAtividade: item.tipo_atividade || "estudo",
+    corPrioridade: item.corPrioridade,
+    concluido: !!item.concluido,
+    idCronograma: item.id_cronograma,
+  };
 }
 
 async function determinarOrigemContato(email) {
@@ -689,35 +836,102 @@ router.post(
 
 
 router.get("/video", async function (req, res) {
-  const [materias, videosBase] = await Promise.all([
-    Models.materias.listarAtivas(),
-    Models.conteudos.listarPublicadosPorTipo("video"),
-  ]);
-
-  res.render("pages/video", {
-    materias: materias.map((materia) => ({ ...materia, slug: slugMateria(materia.nome) })),
-    videos: videosBase.map((video) => ({ ...video, materiaSlug: slugMateria(video.materia) })),
-  });
-});
-
-router.get("/videoaula/:id", async function (req, res) {
-  const video = await Models.conteudos.buscarPorId(req.params.id);
-
-  if (!video || video.tipo !== "video") {
-    return res.redirect("/video");
-  }
-
-  res.render("pages/videoaula", { video, urlEmbed: urlEmbedYoutube(video.arquivo_url) });
-});
-
-router.get("/cronograma", function (req, res) {
   const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
 
   if (!usuarioBase) {
     return res.redirect("/login");
   }
 
-  res.render("pages/cronograma");
+  const usuario = await buscarPerfilLogado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuario) {
+    return res.redirect("/login");
+  }
+
+  const [materias, videosBase] = await Promise.all([
+    Models.materias.listarAtivas(),
+    Models.conteudos.listarPublicadosPorTipo("video"),
+  ]);
+
+  res.render("pages/video", {
+    usuario,
+    materias: materias.map((materia) => ({
+      ...materia,
+      slug: slugMateria(materia.nome),
+    })),
+    videos: videosBase.map((video) => ({
+      ...video,
+      materiaSlug: slugMateria(video.materia),
+    })),
+  });
+});
+
+router.get("/videoaula/:id", async function (req, res) {
+  const aluno = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+  const professor = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!aluno && !professor) {
+    return res.redirect("/login");
+  }
+
+  const tipoUsuario = aluno
+    ? TIPOS_USUARIO.aluno
+    : TIPOS_USUARIO.professor;
+
+  const usuario = await buscarPerfilLogado(req, tipoUsuario);
+
+  if (!usuario) {
+    return res.redirect("/login");
+  }
+
+  const video = await Models.conteudos.buscarPorId(req.params.id);
+
+  if (!video || video.tipo !== "video") {
+    return res.redirect("/video");
+  }
+
+  res.render("pages/videoaula", {
+    video,
+    usuario,
+    urlEmbed: urlEmbedYoutube(video.arquivo_url),
+  });
+});
+
+router.get("/cronograma", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const cronogramas = await Models.planoAula.listarCronogramasPublicados();
+
+  res.render("pages/cronograma", { cronogramas });
+});
+
+router.get("/cronograma/:codigoLote", async function (req, res) {
+  const usuarioAluno = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+  const usuarioProfessor = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioAluno && !usuarioProfessor) {
+    return res.redirect("/login");
+  }
+
+  const eventos = await Models.planoAula.listarEventosPorLote(req.params.codigoLote);
+
+  if (eventos.length === 0) {
+    return res.redirect(usuarioProfessor ? "/cronogramaprofessor" : "/cronograma");
+  }
+
+  res.render("pages/cronogramaDetalhe", {
+    titulo: eventos[0].titulo_cronograma,
+    materia: eventos[0].materia,
+    professor: eventos[0].professor,
+    grade: CronogramaService.montarGrade(eventos.map(planoAulaParaGrade)),
+    rotaVolta: usuarioProfessor ? "/cronogramaprofessor" : "/cronograma",
+    ehProfessor: !!usuarioProfessor,
+    ehProprio: false,
+  });
 });
 
 
@@ -892,8 +1106,20 @@ router.get("/cadastroprofessor", function (req, res) {
   renderizarCadastroProfessor(res);
 });
 
-router.get("/partepremium", function (req, res) {
-  res.render("pages/partepremium");
+router.get("/partepremium", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const usuario = await buscarPerfilLogado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuario) {
+    return res.redirect("/login");
+  }
+
+  res.render("pages/partepremium", { usuario });
 });
 
 
@@ -1042,15 +1268,103 @@ router.get("/videoaulaprofessor", async function (req, res) {
   });
 });
 
-router.get("/cronogramaprofessor", function (req, res) {
+router.get("/cronogramaprofessor", async function (req, res) {
   const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
 
   if (!usuarioBase) {
     return res.redirect("/login");
   }
 
-  res.render("pages/cronogramaprofessor");
+  const meusCronogramas = await Models.planoAula.listarCronogramasPorProfessor(usuarioBase.id);
+
+  res.render("pages/cronogramaprofessor", {
+    meusCronogramas,
+    aviso: avisoCronogramaProfessorDaQuery(req.query),
+  });
 });
+
+router.post(
+  "/cronogramaprofessor/gerar",
+  body("tema").trim().notEmpty().withMessage("Descreva o tema do cronograma."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const { tema, tipo, data_inicio, quantidade } = req.body;
+
+    try {
+      const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+      if (!professor?.id_materia) {
+        return res.redirect("/cronogramaprofessor?erro=materia");
+      }
+
+      const cronogramaGerado = await IaService.gerarCronograma({
+        materia: professor.materia,
+        tema,
+        tipo,
+        dataInicio: data_inicio,
+        quantidade,
+      });
+
+      const { codigoLote } = await Models.planoAula.criarEventos(cronogramaGerado.eventos, {
+        idProfessor: usuarioBase.id,
+        idMateria: professor.id_materia,
+        tituloCronograma: tema,
+      });
+
+      return res.redirect(`/cronograma/${codigoLote}`);
+    } catch (erro) {
+      console.error("Erro ao gerar cronograma com IA (professor):", erro);
+      return res.redirect("/cronogramaprofessor?erro=ia");
+    }
+  }
+);
+
+router.post(
+  "/cronogramaprofessor/gerar-manual",
+  body("titulo").trim().notEmpty().withMessage("De um titulo para o cronograma."),
+  async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const { titulo } = req.body;
+  const eventosBrutos = Array.isArray(req.body.eventos) ? req.body.eventos : [];
+
+  try {
+    const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+    if (!professor?.id_materia) {
+      return res.redirect("/cronogramaprofessor?erro=materia");
+    }
+
+    const eventosNormalizados = eventosBrutos.map((evento) => ({
+      titulo: evento?.titulo,
+      descricao: evento?.descricao,
+      data: evento?.data,
+      hora_inicio: evento?.hora_inicio,
+      hora_fim: evento?.hora_fim,
+    }));
+
+    const cronogramaValidado = IaService.validarCronograma({ eventos: eventosNormalizados });
+
+    const { codigoLote } = await Models.planoAula.criarEventos(cronogramaValidado.eventos, {
+      idProfessor: usuarioBase.id,
+      idMateria: professor.id_materia,
+      tituloCronograma: titulo,
+    });
+
+    return res.redirect(`/cronograma/${codigoLote}`);
+  } catch (erro) {
+    console.error("Erro ao salvar cronograma manual (professor):", erro);
+    return res.redirect("/cronogramaprofessor?erro=manual");
+  }
+  }
+);
 
 
 
@@ -1196,13 +1510,33 @@ router.post(
 
 
 router.get("/livro/:id", async function (req, res) {
+  const aluno = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+  const professor = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!aluno && !professor) {
+    return res.redirect("/login");
+  }
+
+  const tipoUsuario = aluno
+    ? TIPOS_USUARIO.aluno
+    : TIPOS_USUARIO.professor;
+
+  const usuario = await buscarPerfilLogado(req, tipoUsuario);
+
+  if (!usuario) {
+    return res.redirect("/login");
+  }
+
   const livro = await Models.conteudos.buscarPorId(req.params.id);
 
   if (!livro || livro.tipo !== "livro") {
     return res.redirect("/biblioteca");
   }
 
-  res.render("pages/livro", { livro });
+  res.render("pages/livro", {
+    livro,
+    usuario,
+  });
 });
 
 router.get("/forumdeduvidas", async function (req, res) {
@@ -1561,9 +1895,254 @@ router.get("/entradaprofessor", async function (req, res) {
   res.render("pages/entradaprofessor", { usuario });
 });
 
-router.get("/planoestudo", function (req, res) {
-  res.render("pages/planoestudo");
+router.get("/planoestudo", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const ehPremium = await Models.assinaturas.estaAtiva(usuarioBase.id);
+  let itens = await Models.planoEstudo.listarPorAluno(usuarioBase.id);
+
+  if (itens.length === 0 || rotinaDesatualizada(itens, ehPremium)) {
+    // So apaga se ja existiam itens (senao apagarGenericosDoAluno seria
+    // uma query a toa) - e nunca mexe nos cronogramas com codigo_lote,
+    // aqueles sao gerados a parte e intocados por essa limpeza.
+    if (itens.length > 0) {
+      await Models.planoEstudo.apagarGenericosDoAluno(usuarioBase.id);
+    }
+    await semearCronogramaGenerico(usuarioBase.id, ehPremium);
+    itens = await Models.planoEstudo.listarPorAluno(usuarioBase.id);
+  }
+
+  const itensComEvento = itens.map((item) => ({
+    ...item,
+    corPrioridade: CORES_PRIORIDADE[item.prioridade] || CORES_PRIORIDADE.media,
+  }));
+
+  const meusCronogramasGerados = ehPremium
+    ? await Models.planoEstudo.listarCronogramasGerados(usuarioBase.id)
+    : [];
+
+  res.render("pages/planoestudo", {
+    itens: itensComEvento,
+    grade: CronogramaService.montarGrade(itensComEvento.map(planoEstudoParaGrade)),
+    materias: await Models.materias.listarAtivas(),
+    ehPremium,
+    meusCronogramasGerados,
+    aviso: avisoDaQuery(req.query),
+  });
 });
+
+// Regera a rotina padrao. Apaga so os itens genericos do proprio aluno
+// (os cronogramas gerados por IA/mao tem codigo_lote e nao sao tocados).
+router.post("/planoestudo/regerar", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  if (!(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
+    return res.redirect("/planoestudo?erro=premium");
+  }
+
+  try {
+    await Models.planoEstudo.apagarGenericosDoAluno(usuarioBase.id);
+    await semearCronogramaGenerico(usuarioBase.id, true);
+  } catch (erro) {
+    console.error("Erro ao regerar cronograma generico:", erro);
+    return res.redirect("/planoestudo?erro=regerar");
+  }
+
+  return res.redirect("/planoestudo?ok=regerar");
+});
+
+router.get("/planoestudo/:codigoLote", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const eventos = await Models.planoEstudo.listarEventosPorLote(
+    req.params.codigoLote,
+    usuarioBase.id
+  );
+
+  if (eventos.length === 0) {
+    return res.redirect("/planoestudo");
+  }
+
+  const itensComEvento = eventos.map((item) => ({
+    ...item,
+    corPrioridade: CORES_PRIORIDADE[item.prioridade] || CORES_PRIORIDADE.media,
+  }));
+
+  res.render("pages/cronogramaDetalhe", {
+    titulo: eventos[0].titulo_cronograma,
+    materia: eventos[0].materia,
+    professor: null,
+    grade: CronogramaService.montarGrade(itensComEvento.map(planoEstudoParaGrade)),
+    rotaVolta: "/planoestudo",
+    ehProfessor: false,
+    ehProprio: true,
+    itens: itensComEvento,
+    voltarPara: `/planoestudo/${req.params.codigoLote}`,
+  });
+});
+
+router.post("/planoestudo/:id/prioridade", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  await Models.planoEstudo.atualizarPrioridade({
+    idCronograma: req.params.id,
+    idAluno: usuarioBase.id,
+    prioridade: req.body.prioridade,
+  });
+
+  return res.redirect(voltarSeguro(req.body.voltar));
+});
+
+router.post("/planoestudo/:id/concluido", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  await Models.planoEstudo.atualizarConcluido({
+    idCronograma: req.params.id,
+    idAluno: usuarioBase.id,
+    concluido: req.body.concluido === "1",
+  });
+
+  return res.redirect(voltarSeguro(req.body.voltar));
+});
+
+router.post(
+  "/planoestudo/criar",
+  body("materia_id").notEmpty().withMessage("Escolha uma materia."),
+  body("descricao").trim().notEmpty().withMessage("Descreva o item."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const { materia_id, descricao, data_inicio, data_fim } = req.body;
+
+    try {
+      await Models.planoEstudo.criarItem({
+        idAluno: usuarioBase.id,
+        idMateria: materia_id,
+        horaAula: "08:00:00",
+        dataInicio: data_inicio || new Date(),
+        dataFim: data_fim || new Date(),
+        descricao,
+      });
+    } catch (erro) {
+      console.error("Erro ao criar item de plano de estudo:", erro);
+    }
+
+    return res.redirect("/planoestudo");
+  }
+);
+
+router.post(
+  "/planoestudo/gerar",
+  body("tema").trim().notEmpty().withMessage("Descreva o tema do cronograma."),
+  body("materia_id").notEmpty().withMessage("Escolha uma materia."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const ehPremium = await Models.assinaturas.estaAtiva(usuarioBase.id);
+    if (!ehPremium) {
+      return res.redirect("/planoestudo?erro=premium");
+    }
+
+    const { tema, materia_id, tipo, data_inicio, quantidade } = req.body;
+
+    try {
+      const materia = await Models.materias.buscarPorId(materia_id);
+
+      const cronogramaGerado = await IaService.gerarCronograma({
+        materia: materia?.nome,
+        tema,
+        tipo,
+        dataInicio: data_inicio,
+        quantidade,
+      });
+
+      const { codigoLote } = await Models.planoEstudo.criarEventos(cronogramaGerado.eventos, {
+        idAluno: usuarioBase.id,
+        idMateria: materia_id,
+        tituloCronograma: tema,
+      });
+
+      // Abre direto o cronograma recem-criado, em vez de voltar pra
+      // lista e deixar o aluno procurando se deu certo ou nao.
+      return res.redirect(`/planoestudo/${codigoLote}`);
+    } catch (erro) {
+      console.error("Erro ao gerar cronograma com IA (aluno):", erro);
+      return res.redirect("/planoestudo?erro=ia");
+    }
+  }
+);
+
+router.post(
+  "/planoestudo/gerar-manual",
+  body("materia_id").notEmpty().withMessage("Escolha uma materia."),
+  body("titulo").trim().notEmpty().withMessage("De um titulo para o cronograma."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const ehPremium = await Models.assinaturas.estaAtiva(usuarioBase.id);
+    if (!ehPremium) {
+      return res.redirect("/planoestudo?erro=premium");
+    }
+
+    const { materia_id, titulo } = req.body;
+    const eventosBrutos = Array.isArray(req.body.eventos) ? req.body.eventos : [];
+
+    try {
+      const eventosNormalizados = eventosBrutos.map((evento) => ({
+        titulo: evento?.titulo,
+        descricao: evento?.descricao,
+        data: evento?.data,
+        hora_inicio: evento?.hora_inicio,
+        hora_fim: evento?.hora_fim,
+      }));
+
+      const cronogramaValidado = IaService.validarCronograma({ eventos: eventosNormalizados });
+
+      const { codigoLote } = await Models.planoEstudo.criarEventos(cronogramaValidado.eventos, {
+        idAluno: usuarioBase.id,
+        idMateria: materia_id,
+        tituloCronograma: titulo,
+      });
+
+      return res.redirect(`/planoestudo/${codigoLote}`);
+    } catch (erro) {
+      console.error("Erro ao salvar cronograma manual (aluno):", erro);
+      return res.redirect("/planoestudo?erro=manual");
+    }
+  }
+);
 
 router.get("/termouso", function (req, res) {
   res.render("pages/termouso");

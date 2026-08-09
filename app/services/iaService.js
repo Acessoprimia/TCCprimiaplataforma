@@ -2,9 +2,7 @@ const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const { PDFParse } = require("pdf-parse");
 const CronogramaService = require("./cronogramaService");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const nomeModelo = process.env.GEMINI_MODEL || "gemini-flash-latest";
-const modelo = genAI.getGenerativeModel({ model: nomeModelo });
 
 const LIMITE_CARACTERES_PDF = 40000;
 const QUANTIDADE_PADRAO_PERGUNTAS = 5;
@@ -16,61 +14,136 @@ const QUANTIDADE_MAXIMA_EVENTOS = 30;
 const REGEX_DATA = /^\d{4}-\d{2}-\d{2}$/;
 const REGEX_HORA = /^([01]\d|2[0-3]):[0-5]\d$/;
 
-const modeloSimulado = genAI.getGenerativeModel({
-  model: nomeModelo,
-  generationConfig: {
-    responseMimeType: "application/json",
-    responseSchema: {
-      type: SchemaType.OBJECT,
-      properties: {
-        perguntas: {
-          type: SchemaType.ARRAY,
-          items: {
-            type: SchemaType.OBJECT,
-            properties: {
-              enunciado: { type: SchemaType.STRING },
-              alternativas: {
-                type: SchemaType.ARRAY,
-                items: { type: SchemaType.STRING },
-              },
-              correta: { type: SchemaType.INTEGER },
-              explicacao: { type: SchemaType.STRING },
+// Le GEMINI_API_KEY (compatibilidade com o formato antigo, usado ainda
+// no deploy) mais GEMINI_API_KEY_1, _2, _3... A cota diaria do free
+// tier e por PROJETO do Google Cloud, entao cada chave de um projeto
+// diferente da direito a cota propria - e isso que permite rotacionar
+// quando uma estoura.
+function coletarChavesGemini() {
+  const chaves = [];
+
+  if (process.env.GEMINI_API_KEY) {
+    chaves.push(process.env.GEMINI_API_KEY);
+  }
+
+  for (let indice = 1; process.env[`GEMINI_API_KEY_${indice}`]; indice++) {
+    chaves.push(process.env[`GEMINI_API_KEY_${indice}`]);
+  }
+
+  const chavesUnicas = [...new Set(chaves)];
+
+  if (chavesUnicas.length === 0) {
+    throw new Error(
+      "Nenhuma chave Gemini configurada. Defina GEMINI_API_KEY ou GEMINI_API_KEY_1/_2/... no .env."
+    );
+  }
+
+  return chavesUnicas;
+}
+
+const SCHEMA_SIMULADO = {
+  responseMimeType: "application/json",
+  responseSchema: {
+    type: SchemaType.OBJECT,
+    properties: {
+      perguntas: {
+        type: SchemaType.ARRAY,
+        items: {
+          type: SchemaType.OBJECT,
+          properties: {
+            enunciado: { type: SchemaType.STRING },
+            alternativas: {
+              type: SchemaType.ARRAY,
+              items: { type: SchemaType.STRING },
             },
-            required: ["enunciado", "alternativas", "correta"],
+            correta: { type: SchemaType.INTEGER },
+            explicacao: { type: SchemaType.STRING },
           },
+          required: ["enunciado", "alternativas", "correta"],
         },
       },
-      required: ["perguntas"],
     },
+    required: ["perguntas"],
   },
+};
+
+const SCHEMA_CRONOGRAMA = {
+  responseMimeType: "application/json",
+  responseSchema: {
+    type: SchemaType.OBJECT,
+    properties: {
+      eventos: {
+        type: SchemaType.ARRAY,
+        items: {
+          type: SchemaType.OBJECT,
+          properties: {
+            titulo: { type: SchemaType.STRING },
+            descricao: { type: SchemaType.STRING },
+            data: { type: SchemaType.STRING },
+            hora_inicio: { type: SchemaType.STRING },
+            hora_fim: { type: SchemaType.STRING },
+          },
+          required: ["titulo", "data", "hora_inicio", "hora_fim"],
+        },
+      },
+    },
+    required: ["eventos"],
+  },
+};
+
+// Um "cliente" por chave, cada um com os 3 modelos que o servico usa.
+// getGenerativeModel(...) so monta a config, nao faz nenhuma chamada de
+// rede, entao criar N clientes de uma vez e barato.
+const clientesGemini = coletarChavesGemini().map((chave) => {
+  const genAI = new GoogleGenerativeAI(chave);
+  return {
+    modelo: genAI.getGenerativeModel({ model: nomeModelo }),
+    modeloSimulado: genAI.getGenerativeModel({ model: nomeModelo, generationConfig: SCHEMA_SIMULADO }),
+    modeloCronograma: genAI.getGenerativeModel({ model: nomeModelo, generationConfig: SCHEMA_CRONOGRAMA }),
+  };
 });
 
-const modeloCronograma = genAI.getGenerativeModel({
-  model: nomeModelo,
-  generationConfig: {
-    responseMimeType: "application/json",
-    responseSchema: {
-      type: SchemaType.OBJECT,
-      properties: {
-        eventos: {
-          type: SchemaType.ARRAY,
-          items: {
-            type: SchemaType.OBJECT,
-            properties: {
-              titulo: { type: SchemaType.STRING },
-              descricao: { type: SchemaType.STRING },
-              data: { type: SchemaType.STRING },
-              hora_inicio: { type: SchemaType.STRING },
-              hora_fim: { type: SchemaType.STRING },
-            },
-            required: ["titulo", "data", "hora_inicio", "hora_fim"],
-          },
-        },
-      },
-      required: ["eventos"],
-    },
-  },
-});
+// Indice da chave em uso agora. Fica "grudado" na proxima chave depois
+// que uma estoura, pra nao ficar testando de novo uma chave ja sabida
+// como esgotada a cada chamada - so volta pra primeira quando o
+// processo reinicia (deploy novo, nodemon, etc), que e quando a cota
+// diaria tende a ja ter resetado de qualquer forma.
+let indiceChaveAtual = 0;
+
+function ehErroDeCota(erro) {
+  const mensagem = String(erro?.message || "");
+  return /429|quota|Too Many Requests/i.test(mensagem);
+}
+
+// Chama generateContent no modelo indicado (por nome: "modelo",
+// "modeloSimulado" ou "modeloCronograma"), tentando as chaves
+// disponiveis em sequencia quando uma delas estoura a cota. So
+// rotaciona em erro de cota - qualquer outro erro (chave invalida,
+// rede, etc) sobe na hora, sem mascarar o problema real.
+async function gerarComRotacaoDeChave(nomeModeloLogico, args) {
+  let ultimoErro;
+
+  for (let tentativa = 0; tentativa < clientesGemini.length; tentativa++) {
+    const cliente = clientesGemini[indiceChaveAtual];
+
+    try {
+      return await cliente[nomeModeloLogico].generateContent(args);
+    } catch (erro) {
+      ultimoErro = erro;
+
+      if (!ehErroDeCota(erro) || clientesGemini.length === 1) {
+        throw erro;
+      }
+
+      console.error(
+        `Chave Gemini #${indiceChaveAtual + 1} sem cota, tentando a proxima (${indiceChaveAtual + 2}/${clientesGemini.length})...`
+      );
+      indiceChaveAtual = (indiceChaveAtual + 1) % clientesGemini.length;
+    }
+  }
+
+  throw ultimoErro;
+}
 
 // Mesma logica de nunca confiar direto no JSON: valida formato de data
 // (YYYY-MM-DD) e hora (HH:MM), limita tamanho de texto e quantidade de
@@ -218,7 +291,7 @@ const IaService = Object.freeze({
 
   async gerarSinopse({ titulo, autor, materia, textoConteudo }) {
     const prompt = montarPrompt({ titulo, autor, materia, textoConteudo });
-    const resultado = await modelo.generateContent(prompt);
+    const resultado = await gerarComRotacaoDeChave("modelo", prompt);
     return resultado.response.text().trim();
   },
 
@@ -232,7 +305,7 @@ const IaService = Object.freeze({
     ].join(" ");
 
     try {
-      const resultado = await modelo.generateContent([
+      const resultado = await gerarComRotacaoDeChave("modelo", [
         { fileData: { mimeType: "video/*", fileUri: urlYoutube } },
         { text: promptTexto },
       ]);
@@ -267,7 +340,7 @@ const IaService = Object.freeze({
       `Inclua uma breve explicacao da resposta correta em "explicacao".`,
     ].join(" ");
 
-    const resultado = await modeloSimulado.generateContent(prompt);
+    const resultado = await gerarComRotacaoDeChave("modeloSimulado", prompt);
 
     let json;
     try {
@@ -334,7 +407,7 @@ const IaService = Object.freeze({
       `"data" no formato YYYY-MM-DD, "hora_inicio" e "hora_fim" no formato HH:MM.`,
     ].join(" ");
 
-    const resultado = await modeloCronograma.generateContent(prompt);
+    const resultado = await gerarComRotacaoDeChave("modeloCronograma", prompt);
 
     let json;
     try {

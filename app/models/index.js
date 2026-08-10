@@ -13,4 +13,6 @@ module.exports = Object.freeze({
   planoEstudo: require("./planoEstudoModel"),
   planoAula: require("./planoAulaModel"),
   assinaturas: require("./assinaturaModel"),
+  admin: require("./adminModel"),
+  denuncias: require("./denunciaModel"),
 });

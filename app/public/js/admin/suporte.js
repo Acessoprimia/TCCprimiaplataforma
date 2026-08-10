@@ -1,6 +1,9 @@
-// Interacoes da pagina /admin/suporte (denuncias do forum + mensagens de contato).
-// DENUNCIAS_MOCK e CONTATOS_MOCK vem de suporteMock.js (carregado antes deste arquivo).
+// Interacoes da pagina /admin/suporte (denuncias + mensagens de contato).
+// DENUNCIAS_MOCK e CONTATOS_MOCK vem dos dados reais embutidos pelo
+// servidor (ver suporte.ejs) - nomes mantidos, conteudo real agora.
 // Depende das funcoes compartilhadas definidas em common.js.
+const DENUNCIAS_MOCK = JSON.parse(document.getElementById("dados-denuncias").textContent);
+const CONTATOS_MOCK = JSON.parse(document.getElementById("dados-contatos").textContent);
 
 const TAMANHO_PAGINA_DESKTOP_SUPORTE = 10;
 const TAMANHO_PAGINA_MOBILE_SUPORTE = 5;
@@ -60,7 +63,7 @@ function ehMesmoDiaSuporte(isoString) {
         return false;
     }
 
-    return new Date(isoString).toDateString() === DATA_REFERENCIA_SUPORTE.toDateString();
+    return new Date(isoString).toDateString() === new Date().toDateString();
 }
 
 function calcularResumoSuporte() {
@@ -413,13 +416,15 @@ function textoDenuncia(denuncia) {
         `Conteudo denunciado: ${denuncia.conteudoDenunciado}`,
         "",
         `Motivo da denuncia: ${denuncia.motivo}`,
+        denuncia.descricao ? `\nDetalhes enviados: ${denuncia.descricao}` : null,
+        denuncia.resposta ? `\nResposta do admin: ${denuncia.resposta}` : null,
     ];
 
     return linhas.filter((linha) => linha !== null).join("\n");
 }
 
 function textoContato(contato) {
-    return [
+    const linhas = [
         `Nome: ${contato.nome}`,
         `Email: ${contato.email}`,
         `Assunto: ${contato.assunto}`,
@@ -427,7 +432,10 @@ function textoContato(contato) {
         `Data: ${formatarDataSuporte(contato.criadoEm)}`,
         "",
         `Mensagem: ${contato.mensagem}`,
-    ].join("\n");
+        contato.resposta ? `\nResposta do admin: ${contato.resposta}` : null,
+    ];
+
+    return linhas.filter((linha) => linha !== null).join("\n");
 }
 
 // ---- Acoes administrativas (menu de tres pontos) ----
@@ -481,34 +489,44 @@ function abrirModalRespostaDenuncia(denuncia) {
         "Responder denuncia",
         "resposta-denuncia",
         campoLeitura("Denuncia recebida", textoDenuncia(denuncia)) +
-        campoTextarea("resposta", "Resposta do administrador"),
+        campoTextarea("resposta", "Resposta do administrador", denuncia.resposta || ""),
         denuncia
     );
 }
 
 function confirmarDesfechoDenuncia(denuncia, resolucao, titulo, texto, mensagem) {
-    abrirConfirmacao(titulo, texto, () => {
-        // Futuramente PUT /api/admin/denuncias/:id/status com status = "resolvido" e a resolucao escolhida.
-        denuncia.status = "resolvido";
-        denuncia.resolucao = resolucao;
-        denuncia.resolvidoEm = new Date().toISOString();
-        atualizarTabelaDenuncias();
-        renderizarResumoSuporte();
-        mostrarAvisoAdmin(mensagem);
+    abrirConfirmacao(titulo, texto, async () => {
+        try {
+            await chamarApiAdmin(`/admin/denuncias/${denuncia.id}/resolver`, { resolucao });
+            denuncia.status = "resolvido";
+            denuncia.resolucao = resolucao;
+            denuncia.resolvidoEm = new Date().toISOString();
+            atualizarTabelaDenuncias();
+            renderizarResumoSuporte();
+            mostrarAvisoAdmin(mensagem);
+        } catch (erro) {
+            mostrarAvisoAdmin(erro.message);
+        }
     });
 }
 
-adminModalHandlers["resposta-denuncia"] = function registrarRespostaDenuncia() {
+adminModalHandlers["resposta-denuncia"] = async function registrarRespostaDenuncia(dados) {
     const denuncia = modalOrigem;
 
-    // Futuramente salvar a resposta em respostas_denuncia; responder move a denuncia para analise.
-    if (denuncia.status === "aberto") {
-        denuncia.status = "em_analise";
-    }
+    try {
+        await chamarApiAdmin(`/admin/denuncias/${denuncia.id}/responder`, { resposta: dados.resposta });
+        denuncia.resposta = dados.resposta;
 
-    atualizarTabelaDenuncias();
-    renderizarResumoSuporte();
-    mostrarAvisoAdmin("Denuncia respondida visualmente.");
+        if (denuncia.status === "aberto") {
+            denuncia.status = "em_analise";
+        }
+
+        atualizarTabelaDenuncias();
+        renderizarResumoSuporte();
+        mostrarAvisoAdmin("Denuncia respondida.");
+    } catch (erro) {
+        mostrarAvisoAdmin(erro.message);
+    }
 };
 
 function tratarAcaoContato(botao, linha) {
@@ -541,43 +559,57 @@ function abrirModalRespostaContato(contato) {
         "Responder contato",
         "resposta-contato",
         campoLeitura("Mensagem recebida", textoContato(contato)) +
-        campoTextarea("resposta", "Resposta do administrador"),
+        campoTextarea("resposta", "Resposta do administrador", contato.resposta || ""),
         contato
     );
 }
 
 function confirmarResolucaoContato(contato) {
-    abrirConfirmacao("Marcar como resolvido", "Tem certeza que deseja marcar esta mensagem como resolvida?", () => {
-        // Futuramente PUT /api/admin/contatos/:id/status com status = "resolvido".
-        contato.status = "resolvido";
-        contato.resolvidoEm = new Date().toISOString();
-        atualizarTabelaContato();
-        renderizarResumoSuporte();
-        mostrarAvisoAdmin("Contato marcado como resolvido.");
+    abrirConfirmacao("Marcar como resolvido", "Tem certeza que deseja marcar esta mensagem como resolvida?", async () => {
+        try {
+            await chamarApiAdmin(`/admin/contatos/${contato.id}/resolver`, {});
+            contato.status = "resolvido";
+            contato.resolvidoEm = new Date().toISOString();
+            atualizarTabelaContato();
+            renderizarResumoSuporte();
+            mostrarAvisoAdmin("Contato marcado como resolvido.");
+        } catch (erro) {
+            mostrarAvisoAdmin(erro.message);
+        }
     });
 }
 
 function confirmarExclusaoContato(contato) {
-    abrirConfirmacao("Excluir mensagem", "Tem certeza que deseja excluir esta mensagem de contato?", () => {
-        // Futuramente DELETE /api/admin/contatos/:id (soft delete + auditoria).
-        removerContatoPorId(contato.id);
-        atualizarTabelaContato();
-        renderizarResumoSuporte();
-        mostrarAvisoAdmin("Mensagem removida visualmente.");
+    abrirConfirmacao("Excluir mensagem", "Tem certeza que deseja excluir esta mensagem de contato?", async () => {
+        try {
+            await chamarApiAdmin(`/admin/contatos/${contato.id}/excluir`, {});
+            removerContatoPorId(contato.id);
+            atualizarTabelaContato();
+            renderizarResumoSuporte();
+            mostrarAvisoAdmin("Mensagem removida.");
+        } catch (erro) {
+            mostrarAvisoAdmin(erro.message);
+        }
     });
 }
 
-adminModalHandlers["resposta-contato"] = function registrarRespostaContato() {
+adminModalHandlers["resposta-contato"] = async function registrarRespostaContato(dados) {
     const contato = modalOrigem;
 
-    // Futuramente salvar resposta em respostas_contato e atualizar status para "respondido" no banco.
-    if (contato.status === "aberto") {
-        contato.status = "respondido";
-    }
+    try {
+        await chamarApiAdmin(`/admin/contatos/${contato.id}/responder`, { resposta: dados.resposta });
+        contato.resposta = dados.resposta;
 
-    atualizarTabelaContato();
-    renderizarResumoSuporte();
-    mostrarAvisoAdmin("Contato respondido visualmente.");
+        if (contato.status === "aberto") {
+            contato.status = "respondido";
+        }
+
+        atualizarTabelaContato();
+        renderizarResumoSuporte();
+        mostrarAvisoAdmin("Contato respondido.");
+    } catch (erro) {
+        mostrarAvisoAdmin(erro.message);
+    }
 };
 
 // ---- Inicializacao ----

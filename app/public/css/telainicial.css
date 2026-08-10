@@ -350,6 +350,18 @@ span {
     height: 32px;
 }
 
+.slide a img.materia-icone-upload {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    /* Aproxima a cor da imagem enviada da roxa do site (#7b74a0) - valor
+       calculado rodando o motor de filtro real do navegador (canvas),
+       nao chutado. So fica bom em icone simples (linha/preto sobre
+       transparente); imagem colorida ou foto fica distorcida - e uma
+       limitacao inerente de recolorir raster via filtro CSS. */
+    filter: invert(50%) sepia(29%) saturate(400%) hue-rotate(208deg) brightness(90%) contrast(96%);
+}
+
 .slide a:focus-visible {
     outline: 2px solid #A398D1;
     outline-offset: 3px;
@@ -573,6 +585,11 @@ h3 {
     }
 
     .slide a svg {
+        width: 26px;
+        height: 26px;
+    }
+
+    .slide a img.materia-icone-upload {
         width: 26px;
         height: 26px;
     }

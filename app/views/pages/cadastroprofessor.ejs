@@ -104,18 +104,9 @@
         </span>
         <select id="materia" name="materia" class="input-campo select-campo" required aria-label="Matéria que leciona">
           <option value="">Matéria que leciona</option>
-          <option>Português</option>
-          <option>Matemática</option>
-          <option>História</option>
-          <option>Geografia</option>
-          <option>Biologia</option>
-          <option>Física</option>
-          <option>Química</option>
-          <option>Inglês</option>
-          <option>Educação Física</option>
-          <option>Filosofia</option>
-          <option>Sociologia</option>
-          <option>Artes</option>
+          <% materias.forEach(function (materia) { %>
+            <option><%= materia.nome %></option>
+          <% }) %>
         </select>
       </fieldset>
 

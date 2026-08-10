@@ -8,6 +8,7 @@
     <%- include('../partials/header.ejs') %>
         <link rel="stylesheet" href="../css/livro.css">
         <script>
+            const LIVRO_ID = <%- JSON.stringify(livro.id) %>;
             const LIVRO_TITULO = <%- JSON.stringify(livro.titulo) %>;
         </script>
 
@@ -48,7 +49,7 @@
     </main>
 
     <!-- Overlay do modal -->
-    <aside class="modal-overlay" id="modalOverlay" onclick="toggleMenu()"></aside>
+    <aside class="modal-overlay" id="modalOverlay" onclick="fecharModaisLivro()"></aside>
 
     <!-- Modal de opções -->
     <aside class="options-modal" id="optionsModal">
@@ -65,6 +66,34 @@
                 <button class="report" onclick="reportBook()">Denunciar</button>
             </li>
         </ul>
+    </aside>
+
+    <!-- Modal de denuncia -->
+    <aside class="options-modal report-modal" id="reportModal">
+        <header>
+            <h3>Denunciar livro</h3>
+            <button class="close-modal" onclick="toggleReportModal()" aria-label="Fechar">✕</button>
+        </header>
+
+        <form id="reportForm">
+            <label class="report-field">
+                Motivo
+                <select name="motivo" required>
+                    <option value="" disabled selected>Selecione um motivo</option>
+                    <option value="Conteudo incorreto">Conteudo incorreto</option>
+                    <option value="Direitos autorais">Direitos autorais</option>
+                    <option value="Material desatualizado">Material desatualizado</option>
+                    <option value="Outro motivo">Outro motivo</option>
+                </select>
+            </label>
+
+            <label class="report-field">
+                Detalhes (opcional)
+                <textarea name="descricao" rows="4" placeholder="Descreva o problema encontrado..."></textarea>
+            </label>
+
+            <button type="submit" class="report-submit">Enviar denuncia</button>
+        </form>
     </aside>
 
     <script src="../js/points.js"></script>

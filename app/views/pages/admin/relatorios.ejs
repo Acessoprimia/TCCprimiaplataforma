@@ -56,8 +56,8 @@
 
                 <% // Os cards abaixo sao calculados a partir de REGISTROS_DIARIOS_RELATORIOS_MOCK em %>
                 <% // tempo de execucao, comparando o periodo selecionado com o periodo anterior de %>
-                <% // mesma duracao. Futuramente REGISTROS_DIARIOS_RELATORIOS_MOCK vira a resposta de %>
-                <% // uma API (ex.: GET /api/admin/relatorios) sem precisar alterar este template. %>
+                <% // mesma duracao. O array agora vem pronto do banco (registrosDiarios abaixo), so %>
+                <% // o nome da variavel client-side ficou igual pra nao mudar a logica de agregacao. %>
                 <div class="resumo-cards" id="relatoriosResumo"></div>
 
                 <section class="charts-grid">
@@ -97,8 +97,8 @@
                     <article class="admin-panel">
                         <header class="panel-header">
                             <article>
-                                <h2>Acessos por materia</h2>
-                                <p>Materias mais acessadas no periodo selecionado.</p>
+                                <h2>Conteudos publicados por materia</h2>
+                                <p>Nao existe rastreamento de acesso no banco ainda - isto mostra volume de material publicado por materia no periodo, uma medida indireta de popularidade.</p>
                             </article>
                         </header>
                         <div id="graficoMateriasFrame"></div>
@@ -132,7 +132,8 @@
         </section>
     </main>
 
-    <script src="/js/admin/relatoriosMock.js"></script>
+    <script id="dados-relatorios" type="application/json"><%- JSON.stringify(registrosDiarios) %></script>
+    <script id="dados-materias-relatorio" type="application/json"><%- JSON.stringify(materias) %></script>
     <script src="/js/admin/relatorios.js"></script>
     <%- include('../../partials/footer.ejs') %>
 </body>

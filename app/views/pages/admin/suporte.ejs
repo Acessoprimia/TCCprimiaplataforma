@@ -28,8 +28,9 @@
                     </article>
                 </header>
 
-                <% // Os cards abaixo sao calculados a partir de DENUNCIAS_MOCK e CONTATOS_MOCK em %>
-                <% // tempo de execucao, para refletir mudancas de status feitas nas tabelas abaixo. %>
+                <% // Os cards abaixo sao calculados a partir de DENUNCIAS_MOCK e CONTATOS_MOCK (dados %>
+                <% // reais embutidos pelo servidor abaixo) em tempo de execucao, para refletir %>
+                <% // mudancas de status feitas nas tabelas abaixo. %>
                 <div class="resumo-cards" id="suporteResumo"></div>
 
                 <nav class="admin-abas" aria-label="Tipo de ticket" role="tablist">
@@ -42,10 +43,9 @@
                 </nav>
 
                 <% // As tabelas abaixo sao populadas em tempo de execucao por suporte.js a partir de %>
-                <% // DENUNCIAS_MOCK e CONTATOS_MOCK (app/public/js/admin/suporteMock.js). Busca, %>
-                <% // filtros, paginacao e o menu de acoes operam sobre esses arrays. Futuramente eles %>
-                <% // serao substituidos pela resposta de uma API (ex.: GET /api/admin/denuncias e %>
-                <% // GET /api/admin/contatos) sem precisar alterar este template. %>
+                <% // DENUNCIAS_MOCK e CONTATOS_MOCK, que agora vem dos dados reais embutidos pelo %>
+                <% // servidor logo abaixo (nomes mantidos, conteudo real). Busca, filtros, paginacao %>
+                <% // e o menu de acoes operam sobre esses arrays. %>
 
                 <section class="aba-conteudo" id="painelDenuncias" role="tabpanel" aria-labelledby="abaDenunciasBotao" data-aba-painel="denuncias">
                     <div class="admin-search-bar">
@@ -151,8 +151,9 @@
 
     <%- include('../../partials/adminModals.ejs') %>
 
+    <script id="dados-denuncias" type="application/json"><%- JSON.stringify(denuncias) %></script>
+    <script id="dados-contatos" type="application/json"><%- JSON.stringify(contatos) %></script>
     <script src="/js/admin/common.js"></script>
-    <script src="/js/admin/suporteMock.js"></script>
     <script src="/js/admin/suporte.js"></script>
     <%- include('../../partials/footer.ejs') %>
 </body>

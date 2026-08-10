@@ -14,7 +14,7 @@
         <section class="admin-mobile-intro">
             <p class="admin-kicker">Painel Administrativo</p>
             <h1>Conteudos</h1>
-            <p>Materias, livros, videoaulas, simulados, cronogramas e planos de estudo.</p>
+            <p>Materias, livros e videoaulas da biblioteca.</p>
         </section>
 
         <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'conteudos' }) %>
@@ -29,9 +29,9 @@
                     <button class="admin-button primary" type="button" data-admin-action="adicionar-materia">Adicionar materia</button>
                 </header>
 
-                <% // A lista abaixo e populada por conteudos.js a partir de MATERIAS_MOCK, com a %>
-                <% // contagem de conteudos vinculados calculada a partir de CONTEUDOS_MOCK. %>
-                <% // Futuramente buscar materias da tabela Materia e impedir exclusao se houver conteudos vinculados. %>
+                <% // A lista abaixo e populada por conteudos.js a partir de MATERIAS_MOCK (agora os %>
+                <% // nomes reais da tabela Materia). Remover so e permitido se nao houver professor %>
+                <% // vinculado - o servidor recusa e explica o motivo quando bloqueado. %>
                 <p class="materias-resumo" id="materiasContagem"></p>
                 <section class="materias-lista" id="materiasLista"></section>
             </section>
@@ -40,13 +40,12 @@
                 <header class="panel-header panel-header-actions">
                     <article>
                         <h2>Gerenciamento de conteudos</h2>
-                        <p>Biblioteca, livros, videoaulas, simulados, cronogramas e planos de estudo.</p>
+                        <p>Livros e videoaulas publicados pelos professores na biblioteca. Simulados e cronogramas sao gerenciados nas telas proprias de cada professor.</p>
                     </article>
-                    <button class="admin-button primary" type="button" data-admin-action="adicionar-conteudo">Adicionar conteudo</button>
                 </header>
 
-                <% // Os cards abaixo sao calculados a partir de CONTEUDOS_MOCK em tempo de execucao, %>
-                <% // para refletir edicoes, exclusoes e mudancas de acesso feitas na tabela. %>
+                <% // Os cards abaixo sao calculados a partir de CONTEUDOS_MOCK (dados reais) em tempo %>
+                <% // de execucao, pra refletir edicoes/exclusoes/mudancas de acesso feitas na tabela. %>
                 <div class="resumo-cards" id="conteudosResumo"></div>
 
                 <div class="admin-search-bar">
@@ -61,9 +60,6 @@
                     <button type="button" class="filtro-btn ativo" data-filtro-conteudos="todos">Todos</button>
                     <button type="button" class="filtro-btn" data-filtro-conteudos="livro">Livros</button>
                     <button type="button" class="filtro-btn" data-filtro-conteudos="videoaula">Videoaulas</button>
-                    <button type="button" class="filtro-btn" data-filtro-conteudos="simulado">Simulados</button>
-                    <button type="button" class="filtro-btn" data-filtro-conteudos="cronograma">Cronogramas</button>
-                    <button type="button" class="filtro-btn" data-filtro-conteudos="plano-de-estudo">Planos de estudo</button>
                 </nav>
 
                 <div class="admin-filtros-painel">
@@ -80,7 +76,6 @@
                             <button type="button" class="filtro-btn ativo" data-filtro-status-conteudo="todos">Todos</button>
                             <button type="button" class="filtro-btn" data-filtro-status-conteudo="publicado">Publicado</button>
                             <button type="button" class="filtro-btn" data-filtro-status-conteudo="rascunho">Rascunho</button>
-                            <button type="button" class="filtro-btn" data-filtro-status-conteudo="agendado">Agendado</button>
                             <button type="button" class="filtro-btn" data-filtro-status-conteudo="arquivado">Arquivado</button>
                         </nav>
                     </div>
@@ -96,9 +91,8 @@
                 </div>
 
                 <% // A tabela abaixo e populada em tempo de execucao por conteudos.js a partir de %>
-                <% // CONTEUDOS_MOCK (app/public/js/admin/conteudosMock.js). Busca, filtros e paginacao %>
-                <% // operam sobre esse array. Futuramente CONTEUDOS_MOCK sera substituido pela resposta %>
-                <% // de uma API (ex.: GET /api/admin/conteudos) sem precisar alterar este template. %>
+                <% // CONTEUDOS_MOCK, que agora vem dos dados reais embutidos abaixo em vez do %>
+                <% // gerador de fake data. Busca, filtros e paginacao continuam client-side. %>
                 <section class="table-scroll">
                     <table class="admin-table">
                         <thead>
@@ -127,8 +121,9 @@
 
     <%- include('../../partials/adminModals.ejs') %>
 
+    <script id="dados-conteudos" type="application/json"><%- JSON.stringify(conteudos) %></script>
+    <script id="dados-materias" type="application/json"><%- JSON.stringify(materias) %></script>
     <script src="/js/admin/common.js"></script>
-    <script src="/js/admin/conteudosMock.js"></script>
     <script src="/js/admin/conteudos.js"></script>
     <%- include('../../partials/footer.ejs') %>
 </body>

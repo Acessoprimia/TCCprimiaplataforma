@@ -370,9 +370,7 @@ ALTER TABLE Formulario
         ON DELETE CASCADE
         ON UPDATE CASCADE;
 
--- GERADO AGORA: agora que um Formulario pode ser respondido por varios
--- alunos diferentes (quando publicado pelo professor pra todo mundo
--- premium), a resposta precisa dizer de qual aluno ela e.
+
 ALTER TABLE Resposta_Formulario
     ADD COLUMN id_aluno INT NOT NULL,
     ADD CONSTRAINT fk_resposta_formulario_aluno
@@ -381,31 +379,52 @@ ALTER TABLE Resposta_Formulario
         ON DELETE CASCADE
         ON UPDATE CASCADE;
 
--- GERADO AGORA: agrupa os eventos de uma mesma geracao de cronograma
--- do professor (IA ou manual) num cronograma clicavel separado, em vez
--- de todos os eventos de todos os professores caindo juntos num unico
--- calendario. titulo_cronograma e codigo_lote sao iguais pra todas as
--- linhas criadas na mesma chamada de gerar/montar.
+
 ALTER TABLE Plano_de_Aula
     ADD COLUMN titulo_cronograma VARCHAR(150) NULL,
     ADD COLUMN codigo_lote CHAR(36) NULL;
 
--- GERADO AGORA: mesmo motivo do Plano_de_Aula acima, mas agora pro
--- ALUNO premium - quando ele gera o proprio cronograma (IA ou manual),
--- os eventos precisam ficar agrupados num cronograma clicavel separado,
--- sem se misturar com os itens genericos automaticos (que continuam
--- com codigo_lote NULL).
+
 ALTER TABLE Cronograma
     ADD COLUMN titulo_cronograma VARCHAR(150) NULL,
     ADD COLUMN codigo_lote CHAR(36) NULL;
 
--- GERADO AGORA: a hora de fim que a IA gera estava sendo jogada fora
--- (so a hora de inicio era salva, em Plano_de_Estudo.hora_aula), entao
--- a grade nao tinha como mostrar "08:00 - 09:00". tipo_atividade guarda
--- se o bloco e estudo/exercicios/revisao/simulado, pra grade mostrar a
--- atividade junto da materia. Ambas NULL pras linhas antigas.
+
 ALTER TABLE Cronograma
     ADD COLUMN hora_fim TIME NULL,
     ADD COLUMN tipo_atividade VARCHAR(30) NULL;
+
+
+ALTER TABLE Usuario
+    ADD COLUMN criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    ADD COLUMN ultimo_login DATETIME NULL;
+
+
+ALTER TABLE Conteudo
+    ADD COLUMN arquivado BOOLEAN NOT NULL DEFAULT FALSE;
+
+
+ALTER TABLE Materia
+    ADD COLUMN icone_url VARCHAR(255) NULL;
+
+
+ALTER TABLE Materia
+    ADD COLUMN icone_svg TEXT NULL;
+
+
+ALTER TABLE Denuncia
+    MODIFY COLUMN id_duvida INT NULL,
+    MODIFY COLUMN status ENUM('aberto', 'em_analise', 'resolvido') NOT NULL DEFAULT 'aberto',
+    ADD COLUMN tipo_conteudo ENUM('duvida', 'conteudo', 'formulario', 'outro') NOT NULL DEFAULT 'duvida',
+    ADD COLUMN id_conteudo_alvo INT NULL,
+    ADD COLUMN prioridade ENUM('baixa', 'media', 'alta') NOT NULL DEFAULT 'media',
+    ADD COLUMN resolucao ENUM('resolvido', 'ignorado', 'conteudo_removido') NULL,
+    ADD COLUMN resposta_admin TEXT NULL;
+
+
+ALTER TABLE Mensagem_Contato
+    MODIFY COLUMN status ENUM('pendente', 'respondido', 'resolvido') NOT NULL DEFAULT 'pendente',
+    ADD COLUMN resposta_admin TEXT NULL,
+    ADD COLUMN resolvido_em DATETIME NULL;
 
 

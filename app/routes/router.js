@@ -5,7 +5,6 @@ const pool = require("../../db");
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
 const Models = require("../models");
-const AdminDashboardMock = require("../mocks/adminDashboardMock");
 const IaService = require("../services/iaService");
 const UploadService = require("../services/uploadService");
 const MailService = require("../services/mailService");
@@ -353,13 +352,16 @@ function renderizarCadastroAluno(res, valores = VALORES_INICIAIS_CADASTRO_ALUNO,
   });
 }
 
-function renderizarCadastroProfessor(res, valores = VALORES_INICIAIS_CADASTRO_PROFESSOR, msgErro = {}) {
+async function renderizarCadastroProfessor(res, valores = VALORES_INICIAIS_CADASTRO_PROFESSOR, msgErro = {}) {
+  const materias = await Models.materias.listarAtivas();
+
   return res.render(VIEWS.cadastroProfessor, {
     erros: null,
     valores,
     retorno: null,
     erroValidacao: {},
     msgErro,
+    materias,
   });
 }
 
@@ -667,8 +669,13 @@ async function carregarNotificacoes(req, res, next) {
 
 router.use(carregarNotificacoes);
 
-router.get("/", function (req, res) {
-  res.render("pages/telainicial");
+async function renderizarTelaInicial(res) {
+  const materias = await Models.materias.listarAtivas();
+  res.render("pages/telainicial", { materias });
+}
+
+router.get("/", async function (req, res) {
+  await renderizarTelaInicial(res);
 });
 
 router.get("/areapremium", function (req, res) {
@@ -676,12 +683,10 @@ router.get("/areapremium", function (req, res) {
 });
 
 router.get("/admin", somenteAdmin, async function (req, res) {
-  // Futuramente trocar AdminDashboardMock por Models.admin (adminModel.js),
-  // que ja expoe buscarMetricasDashboard com os mesmos nomes de campo.
   const [metricas, grafico, pendencias] = await Promise.all([
-    AdminDashboardMock.buscarMetricas(),
-    AdminDashboardMock.buscarGraficoCrescimento(),
-    AdminDashboardMock.buscarPendencias(),
+    Models.admin.buscarMetricasDashboard(),
+    Models.admin.buscarGraficoCrescimento(),
+    Models.admin.buscarPendencias(),
   ]);
 
   res.render("pages/admin/dashboard", {
@@ -696,20 +701,500 @@ router.get("/admin/dashboard", somenteAdmin, function (req, res) {
   res.redirect("/admin");
 });
 
-router.get("/admin/usuarios", somenteAdmin, function (req, res) {
-  res.render("pages/admin/usuarios", { activeAdminPage: "usuarios" });
+const PREFIXO_TIPO_USUARIO = Object.freeze({ aluno: "ALU", professor: "PROF", admin: "ADM" });
+
+// Traduz a linha que vem do banco (adminModel.listarUsuarios) pro
+// mesmo formato de objeto que app/public/js/admin/usuarios.js ja sabe
+// filtrar/paginar/renderizar (era o formato de USUARIOS_MOCK).
+function usuarioParaAdminJson(usuario) {
+  return {
+    id: usuario.id_usuario,
+    idAcesso: `${PREFIXO_TIPO_USUARIO[usuario.tipo_usuario]}-${String(usuario.id_usuario).padStart(4, "0")}`,
+    nome: usuario.nome,
+    email: usuario.email,
+    tipoUsuario: usuario.tipo_usuario,
+    status: usuario.status,
+    materia: usuario.materia || null,
+    premium: {
+      ativo: !!usuario.premium_ativo,
+      ate: usuario.premium_ate ? formatarDataLocal(usuario.premium_ate) : null,
+    },
+    // Fica null pra quem nunca logou depois que essa coluna passou a
+    // existir - o front trata null mostrando "-" em vez de quebrar.
+    ultimoAcesso: usuario.ultimo_login ? new Date(usuario.ultimo_login).toISOString() : null,
+  };
+}
+
+router.get("/admin/usuarios", somenteAdmin, async function (req, res) {
+  const usuarios = await Models.admin.listarUsuarios();
+
+  res.render("pages/admin/usuarios", {
+    activeAdminPage: "usuarios",
+    usuarios: usuarios.map(usuarioParaAdminJson),
+  });
 });
 
-router.get("/admin/conteudos", somenteAdmin, function (req, res) {
-  res.render("pages/admin/conteudos", { activeAdminPage: "conteudos" });
+router.post("/admin/usuarios/:id/editar", somenteAdmin, async function (req, res) {
+  const idUsuario = Number(req.params.id);
+  const nome = String(req.body.nome || "").trim();
+  const email = String(req.body.email || "").trim();
+
+  if (!nome || !email) {
+    return res.status(400).json({ erro: "Nome e email sao obrigatorios." });
+  }
+
+  try {
+    const emailEmUso = await Models.usuarios.emailPertenceAOutroUsuario(email, idUsuario);
+    if (emailEmUso) {
+      return res.status(400).json({ erro: "Esse email ja esta em uso por outra conta." });
+    }
+
+    await Models.usuarios.atualizarPerfilBasico({ nome, email, idUsuario });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao editar usuario (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel salvar as alteracoes." });
+  }
 });
 
-router.get("/admin/suporte", somenteAdmin, function (req, res) {
-  res.render("pages/admin/suporte", { activeAdminPage: "suporte" });
+router.post("/admin/usuarios/:id/status", somenteAdmin, async function (req, res) {
+  const idUsuario = Number(req.params.id);
+  const { status } = req.body;
+
+  if (!Object.values(STATUS_CONTA).includes(status)) {
+    return res.status(400).json({ erro: "Status invalido." });
+  }
+
+  try {
+    await Models.usuarios.alterarStatusConta({ status, idUsuario });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao alterar status de usuario (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel alterar o status." });
+  }
 });
 
-router.get("/admin/relatorios", somenteAdmin, function (req, res) {
-  res.render("pages/admin/relatorios", { activeAdminPage: "relatorios" });
+router.post("/admin/usuarios/:id/premium/conceder", somenteAdmin, async function (req, res) {
+  const idUsuario = Number(req.params.id);
+
+  try {
+    await Models.assinaturas.conceder(idUsuario);
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao conceder premium (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel conceder premium." });
+  }
+});
+
+router.post("/admin/usuarios/:id/premium/remover", somenteAdmin, async function (req, res) {
+  const idUsuario = Number(req.params.id);
+
+  try {
+    await Models.assinaturas.revogar(idUsuario);
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao remover premium (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel remover o premium." });
+  }
+});
+
+router.post("/admin/usuarios/:id/excluir", somenteAdmin, async function (req, res) {
+  const idUsuario = Number(req.params.id);
+  const usuarioLogado = lerCookieUsuario(req);
+
+  if (usuarioLogado && Number(usuarioLogado.id) === idUsuario) {
+    return res.status(400).json({ erro: "Voce nao pode excluir a propria conta." });
+  }
+
+  try {
+    await Models.usuarios.excluirConta(idUsuario);
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao excluir usuario (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel excluir a conta." });
+  }
+});
+
+// Traduz uma linha de Conteudo (adminModel/conteudoModel) pro formato
+// que conteudos.js ja sabe filtrar/paginar/renderizar (era o formato de
+// CONTEUDOS_MOCK). "arquivado" vira um status sintetico "arquivado" no
+// campo status (escondendo o rascunho/publicado real em statusAnterior)
+// porque e assim que a tabela/acoes do front ja esperam receber.
+function conteudoParaAdminJson(conteudo) {
+  const arquivado = !!conteudo.arquivado;
+
+  return {
+    id: conteudo.id,
+    titulo: conteudo.titulo,
+    tipo: conteudo.tipo === "video" ? "videoaula" : conteudo.tipo,
+    materia: conteudo.materia || "Sem matéria",
+    status: arquivado ? "arquivado" : conteudo.status,
+    statusAnterior: arquivado ? conteudo.status : null,
+    acesso: conteudo.is_premium ? "premium" : "gratuito",
+    autor: conteudo.autor || "",
+    data: new Date(conteudo.criado_em).toISOString(),
+    destaque: !!conteudo.destaque,
+    arquivado,
+  };
+}
+
+router.get("/admin/conteudos", somenteAdmin, async function (req, res) {
+  const [conteudos, materias] = await Promise.all([
+    Models.conteudos.listarTodosAdmin(),
+    Models.materias.listarAtivas(),
+  ]);
+
+  res.render("pages/admin/conteudos", {
+    activeAdminPage: "conteudos",
+    conteudos: conteudos.map(conteudoParaAdminJson),
+    materias: materias.map((m) => m.nome),
+  });
+});
+
+router.post("/admin/conteudos/:id/editar", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+  const titulo = String(req.body.titulo || "").trim();
+  const autor = String(req.body.autor || "").trim();
+  const nomeMateria = String(req.body.materia || "").trim();
+  const { status, premium } = req.body;
+
+  if (!titulo || !["rascunho", "publicado"].includes(status)) {
+    return res.status(400).json({ erro: "Titulo e status sao obrigatorios." });
+  }
+
+  try {
+    const materia = await Models.materias.buscarPorNome(nomeMateria);
+    await Models.conteudos.atualizarMetadados({
+      id,
+      titulo,
+      autor,
+      materiaId: materia?.id_materia || null,
+      status,
+    });
+    await Models.conteudos.atualizarPremium({ id, isPremium: !!premium });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao editar conteudo (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel salvar as alteracoes." });
+  }
+});
+
+router.post("/admin/conteudos/:id/destaque", somenteAdmin, async function (req, res) {
+  try {
+    await Models.conteudos.atualizarDestaque({ id: Number(req.params.id), destaque: !!req.body.destaque });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao alternar destaque (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel atualizar o destaque." });
+  }
+});
+
+router.post("/admin/conteudos/:id/premium", somenteAdmin, async function (req, res) {
+  try {
+    await Models.conteudos.atualizarPremium({ id: Number(req.params.id), isPremium: !!req.body.premium });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao alternar premium do conteudo (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel atualizar o acesso." });
+  }
+});
+
+router.post("/admin/conteudos/:id/arquivar", somenteAdmin, async function (req, res) {
+  try {
+    await Models.conteudos.atualizarArquivado({ id: Number(req.params.id), arquivado: !!req.body.arquivado });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao arquivar conteudo (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel atualizar o arquivamento." });
+  }
+});
+
+router.post("/admin/conteudos/:id/duplicar", somenteAdmin, async function (req, res) {
+  try {
+    const novoId = await Models.conteudos.duplicar(Number(req.params.id));
+    if (!novoId) {
+      return res.status(404).json({ erro: "Conteudo original nao encontrado." });
+    }
+    return res.json({ ok: true, id: novoId });
+  } catch (erro) {
+    console.error("Erro ao duplicar conteudo (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel duplicar o conteudo." });
+  }
+});
+
+router.post("/admin/conteudos/:id/excluir", somenteAdmin, async function (req, res) {
+  try {
+    await Models.conteudos.remover(Number(req.params.id));
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao excluir conteudo (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel excluir o conteudo." });
+  }
+});
+
+// Se o arquivo enviado for SVG, processa e recoloriza pra embutir
+// inline (herda a cor do site de verdade); senao sobe pro Cloudinary
+// como antes e recebe so a aproximacao via filtro CSS. Lanca erro com
+// mensagem amigavel se o SVG estiver mal formado.
+async function processarArquivoDeIcone(file) {
+  if (!file) {
+    return { iconeUrl: null, iconeSvg: null };
+  }
+
+  if (UploadService.ehSvg(file.mimetype, file.buffer)) {
+    const iconeSvg = UploadService.processarIconeSvg(file.buffer);
+    if (!iconeSvg) {
+      const erro = new Error("O arquivo SVG parece invalido.");
+      erro.ehErroDeValidacao = true;
+      throw erro;
+    }
+    return { iconeUrl: null, iconeSvg };
+  }
+
+  const iconeUrl = await UploadService.enviarImagem(file.buffer, "primia/materias");
+  return { iconeUrl, iconeSvg: null };
+}
+
+router.post(
+  "/admin/materias",
+  somenteAdmin,
+  uploadConteudo.single("icone"),
+  async function (req, res) {
+    const nome = String(req.body.nome || "").trim();
+
+    if (!nome) {
+      return res.status(400).json({ erro: "Informe o nome da materia." });
+    }
+
+    try {
+      const existente = await Models.materias.buscarPorNome(nome);
+      if (existente) {
+        return res.status(400).json({ erro: "Ja existe uma materia com esse nome." });
+      }
+
+      const { iconeUrl, iconeSvg } = await processarArquivoDeIcone(req.file);
+      const id = await Models.materias.criar({ nome, descricao: null, iconeUrl, iconeSvg });
+      return res.json({ ok: true, id, iconeUrl });
+    } catch (erro) {
+      if (erro.ehErroDeValidacao) {
+        return res.status(400).json({ erro: erro.message });
+      }
+      console.error("Erro ao criar materia (admin):", erro);
+      return res.status(500).json({ erro: "Nao foi possivel criar a materia." });
+    }
+  }
+);
+
+router.post("/admin/materias/excluir", somenteAdmin, async function (req, res) {
+  const nome = String(req.body.nome || "").trim();
+
+  try {
+    const materia = await Models.materias.buscarPorNome(nome);
+    if (!materia) {
+      return res.status(404).json({ erro: "Materia nao encontrada." });
+    }
+
+    const professoresVinculados = await Models.materias.contarProfessoresVinculados(materia.id_materia);
+    if (professoresVinculados > 0) {
+      return res.status(400).json({
+        erro: `Essa materia esta vinculada a ${professoresVinculados} professor${professoresVinculados > 1 ? "es" : ""} e nao pode ser removida.`,
+      });
+    }
+
+    await Models.materias.remover(materia.id_materia);
+    return res.json({ ok: true });
+  } catch (erro) {
+    // Ainda pode cair aqui por causa de Plano_de_Estudo/Plano_de_Aula/Forum
+    // (ON DELETE RESTRICT) mesmo sem professor vinculado.
+    if (erro?.code === "ER_ROW_IS_REFERENCED_2" || erro?.code === "ER_ROW_IS_REFERENCED") {
+      return res.status(400).json({ erro: "Essa materia esta em uso e nao pode ser removida." });
+    }
+    console.error("Erro ao remover materia (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel remover a materia." });
+  }
+});
+
+router.post(
+  "/admin/materias/icone",
+  somenteAdmin,
+  uploadConteudo.single("icone"),
+  async function (req, res) {
+    const nome = String(req.body.nome || "").trim();
+
+    if (!req.file) {
+      return res.status(400).json({ erro: "Selecione uma imagem." });
+    }
+
+    try {
+      const materia = await Models.materias.buscarPorNome(nome);
+      if (!materia) {
+        return res.status(404).json({ erro: "Materia nao encontrada." });
+      }
+
+      const { iconeUrl, iconeSvg } = await processarArquivoDeIcone(req.file);
+      await Models.materias.atualizarIcone({ idMateria: materia.id_materia, iconeUrl, iconeSvg });
+      return res.json({ ok: true, iconeUrl });
+    } catch (erro) {
+      if (erro.ehErroDeValidacao) {
+        return res.status(400).json({ erro: erro.message });
+      }
+      console.error("Erro ao atualizar icone da materia (admin):", erro);
+      return res.status(500).json({ erro: "Nao foi possivel atualizar o icone." });
+    }
+  }
+);
+
+// Traduz uma linha de Denuncia (denunciaModel.listarTodas) pro mesmo
+// formato que suporte.js ja sabe filtrar/paginar/renderizar (era o
+// formato de DENUNCIAS_MOCK). "conteudo" vira "livro"/"videoaula"
+// dependendo de Conteudo.tipo; "formulario" vira "simulado"; "duvida"
+// vira "forum".
+function denunciaParaAdminJson(denuncia) {
+  const tipo =
+    denuncia.tipo_conteudo === "duvida"
+      ? "forum"
+      : denuncia.tipo_conteudo === "conteudo"
+      ? denuncia.conteudo_tipo === "video"
+        ? "videoaula"
+        : "livro"
+      : denuncia.tipo_conteudo === "formulario"
+      ? "simulado"
+      : "outros";
+
+  return {
+    id: denuncia.id_denuncia,
+    codigo: `DEN-${String(denuncia.id_denuncia).padStart(4, "0")}`,
+    usuario: {
+      nome: denuncia.usuario_nome,
+      idAcesso: `${PREFIXO_TIPO_USUARIO[denuncia.usuario_tipo] || "USR"}-${String(denuncia.id_usuario).padStart(4, "0")}`,
+    },
+    tipo,
+    materia: denuncia.materia || "-",
+    conteudoDenunciado: denuncia.resumo_conteudo || "Conteudo nao encontrado (pode ter sido removido).",
+    motivo: denuncia.motivo,
+    descricao: denuncia.descricao,
+    prioridade: denuncia.prioridade,
+    status: denuncia.status,
+    resolucao: denuncia.resolucao,
+    resposta: denuncia.resposta_admin,
+    criadoEm: new Date(denuncia.data_denuncia).toISOString(),
+    resolvidoEm: denuncia.data_resolucao ? new Date(denuncia.data_resolucao).toISOString() : null,
+  };
+}
+
+// Mesma ideia pra Mensagem_Contato: "pendente" vira "aberto" pra bater
+// com o vocabulario que a tela ja usa (CONTATOS_MOCK).
+function contatoParaAdminJson(contato) {
+  return {
+    id: contato.id,
+    codigo: `CT-${String(contato.id).padStart(4, "0")}`,
+    nome: contato.nome,
+    email: contato.email,
+    assunto: contato.assunto,
+    mensagem: contato.mensagem,
+    status: contato.status === "pendente" ? "aberto" : contato.status,
+    resposta: contato.resposta_admin,
+    criadoEm: new Date(contato.criado_em).toISOString(),
+    resolvidoEm: contato.resolvido_em ? new Date(contato.resolvido_em).toISOString() : null,
+  };
+}
+
+router.get("/admin/suporte", somenteAdmin, async function (req, res) {
+  const [denuncias, contatos] = await Promise.all([
+    Models.denuncias.listarTodas(),
+    Models.contato.listar(),
+  ]);
+
+  res.render("pages/admin/suporte", {
+    activeAdminPage: "suporte",
+    denuncias: denuncias.map(denunciaParaAdminJson),
+    contatos: contatos.map(contatoParaAdminJson),
+  });
+});
+
+router.post("/admin/denuncias/:id/responder", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+  const resposta = String(req.body.resposta || "").trim();
+
+  if (!resposta) {
+    return res.status(400).json({ erro: "Escreva uma resposta antes de salvar." });
+  }
+
+  try {
+    await Models.denuncias.responder({ id, resposta });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao responder denuncia (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel salvar a resposta." });
+  }
+});
+
+router.post("/admin/denuncias/:id/resolver", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+  const { resolucao } = req.body;
+
+  if (!["resolvido", "ignorado", "conteudo_removido"].includes(resolucao)) {
+    return res.status(400).json({ erro: "Desfecho invalido." });
+  }
+
+  try {
+    await Models.denuncias.resolver({ id, resolucao });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao resolver denuncia (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel atualizar a denuncia." });
+  }
+});
+
+router.post("/admin/contatos/:id/responder", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+  const resposta = String(req.body.resposta || "").trim();
+
+  if (!resposta) {
+    return res.status(400).json({ erro: "Escreva uma resposta antes de salvar." });
+  }
+
+  try {
+    await Models.contato.responder({ id, resposta });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao responder contato (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel salvar a resposta." });
+  }
+});
+
+router.post("/admin/contatos/:id/resolver", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+
+  try {
+    await Models.contato.resolver(id);
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao resolver contato (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel marcar a mensagem como resolvida." });
+  }
+});
+
+router.post("/admin/contatos/:id/excluir", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+
+  try {
+    await Models.contato.remover(id);
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao excluir contato (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel excluir a mensagem." });
+  }
+});
+
+router.get("/admin/relatorios", somenteAdmin, async function (req, res) {
+  const { registros, materias } = await Models.admin.buscarRelatorioDiario();
+
+  res.render("pages/admin/relatorios", {
+    activeAdminPage: "relatorios",
+    registrosDiarios: registros,
+    materias,
+  });
 });
 
 router.get("/admin/configuracoes", somenteAdmin, function (req, res) {
@@ -717,8 +1202,8 @@ router.get("/admin/configuracoes", somenteAdmin, function (req, res) {
 });
 
 
-router.get("/telainicial", function (req, res) {
-  res.render("pages/telainicial");
+router.get("/telainicial", async function (req, res) {
+  await renderizarTelaInicial(res);
 });
 
 router.get("/logout", function (req, res) {
@@ -1102,8 +1587,8 @@ router.post("/simulado/:id/responder", async function (req, res) {
 });
 
 
-router.get("/cadastroprofessor", function (req, res) {
-  renderizarCadastroProfessor(res);
+router.get("/cadastroprofessor", async function (req, res) {
+  return renderizarCadastroProfessor(res);
 });
 
 router.get("/partepremium", async function (req, res) {
@@ -1537,6 +2022,41 @@ router.get("/livro/:id", async function (req, res) {
     livro,
     usuario,
   });
+});
+
+router.post("/livro/:id/denunciar", async function (req, res) {
+  const usuarioCookie = lerCookieUsuario(req);
+
+  if (!usuarioCookie) {
+    return res.status(401).json({ erro: "Faca login para denunciar um conteudo." });
+  }
+
+  const motivo = String(req.body.motivo || "").trim();
+  const descricao = String(req.body.descricao || "").trim();
+
+  if (!motivo) {
+    return res.status(400).json({ erro: "Selecione um motivo para a denuncia." });
+  }
+
+  const livro = await Models.conteudos.buscarPorId(req.params.id);
+
+  if (!livro || livro.tipo !== "livro") {
+    return res.status(404).json({ erro: "Livro nao encontrado." });
+  }
+
+  try {
+    await Models.denuncias.criar({
+      idUsuario: usuarioCookie.id,
+      tipoConteudo: "conteudo",
+      idConteudoAlvo: livro.id,
+      motivo,
+      descricao,
+    });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao registrar denuncia de livro:", erro);
+    return res.status(500).json({ erro: "Nao foi possivel enviar a denuncia agora." });
+  }
 });
 
 router.get("/forumdeduvidas", async function (req, res) {
@@ -2638,6 +3158,10 @@ router.post(
         tipo_usuario: usuario.tipo_usuario,
       };
       criarCookieUsuario(res, usuarioLogadoSimulado);
+
+      Models.usuarios.atualizarUltimoLogin(usuario.id_usuario).catch((erro) => {
+        console.error("Erro ao atualizar ultimo_login:", erro);
+      });
 
       return res.redirect(rotaInicialPorTipoUsuario(usuario.tipo_usuario));
     } catch (erro) {

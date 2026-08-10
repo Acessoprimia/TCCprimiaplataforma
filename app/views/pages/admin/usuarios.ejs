@@ -54,9 +54,8 @@
                 </div>
 
                 <% // A tabela abaixo e populada em tempo de execucao por usuarios.js a partir de %>
-                <% // USUARIOS_MOCK (app/public/js/admin/usuariosMock.js). Busca, filtros e paginacao %>
-                <% // operam sobre esse array. Futuramente USUARIOS_MOCK sera substituido pela resposta %>
-                <% // de uma API (ex.: GET /api/admin/usuarios) sem precisar alterar este template. %>
+                <% // USUARIOS_MOCK, que agora vem dos dados reais embutidos no script abaixo em %>
+                <% // vez do gerador de fake data. Busca, filtros e paginacao continuam client-side. %>
                 <section class="table-scroll">
                     <table class="admin-table">
                         <thead>
@@ -85,8 +84,8 @@
 
     <%- include('../../partials/adminModals.ejs') %>
 
+    <script id="dados-usuarios" type="application/json"><%- JSON.stringify(usuarios) %></script>
     <script src="/js/admin/common.js"></script>
-    <script src="/js/admin/usuariosMock.js"></script>
     <script src="/js/admin/usuarios.js"></script>
     <%- include('../../partials/footer.ejs') %>
 </body>

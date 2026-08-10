@@ -1,5 +1,4 @@
 // Funcoes e estado compartilhados entre as paginas do painel administrativo.
-// Toda a persistencia aqui e simulada; a integracao com o banco entra depois.
 // Cada pagina define sua propria tratarAcaoAdmin(botao) e registra handlers em adminModalHandlers.
 
 let modalModo = "";
@@ -19,6 +18,39 @@ const confirmTexto = document.getElementById("confirmTexto");
 const confirmFechar = document.getElementById("confirmFechar");
 const confirmCancelar = document.getElementById("confirmCancelar");
 const confirmExecutar = document.getElementById("confirmExecutar");
+
+// Chamada generica pras rotas /admin/... que ja persistem no banco.
+// Lanca erro com a mensagem que o servidor mandou (pra virar toast),
+// em vez de um "Failed to fetch" generico.
+async function chamarApiAdmin(url, corpo) {
+    const resposta = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(corpo || {}),
+    });
+
+    const dados = await resposta.json().catch(() => ({}));
+
+    if (!resposta.ok) {
+        throw new Error(dados.erro || "Nao foi possivel completar a acao.");
+    }
+
+    return dados;
+}
+
+// Mesma coisa, mas pra quando o formulario tem upload de arquivo -
+// FormData em vez de JSON, sem "Content-Type" manual (o browser define
+// o boundary do multipart sozinho).
+async function chamarApiAdminArquivo(url, formData) {
+    const resposta = await fetch(url, { method: "POST", body: formData });
+    const dados = await resposta.json().catch(() => ({}));
+
+    if (!resposta.ok) {
+        throw new Error(dados.erro || "Nao foi possivel completar a acao.");
+    }
+
+    return dados;
+}
 
 function mostrarAvisoAdmin(texto) {
     const toast = document.getElementById("adminToast");

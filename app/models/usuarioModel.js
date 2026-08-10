@@ -48,6 +48,11 @@ const queries = Object.freeze({
     DELETE FROM ${TABELAS.usuarios}
     WHERE id_usuario = ?
   `,
+  atualizarUltimoLogin: `
+    UPDATE ${TABELAS.usuarios}
+    SET ultimo_login = NOW()
+    WHERE id_usuario = ?
+  `,
 });
 
 function banco(conexao) {
@@ -125,6 +130,11 @@ const UsuarioModel = Object.freeze({
 
   async excluirConta(idUsuario, conexao) {
     const [resultado] = await banco(conexao).query(queries.excluirConta, [idUsuario]);
+    return resultado;
+  },
+
+  async atualizarUltimoLogin(idUsuario, conexao) {
+    const [resultado] = await banco(conexao).query(queries.atualizarUltimoLogin, [idUsuario]);
     return resultado;
   },
 });

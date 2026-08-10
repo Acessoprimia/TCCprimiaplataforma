@@ -1,6 +1,9 @@
 // Interacoes da pagina /admin/usuarios (alunos, professores, admins e premium).
-// USUARIOS_MOCK vem de usuariosMock.js (carregado antes deste arquivo).
+// USUARIOS_MOCK vem dos dados reais embutidos pelo servidor no script
+// #dados-usuarios (ver usuarios.ejs) - o nome ficou o mesmo de quando
+// era gerado fake, mas o conteudo agora e o retorno real do banco.
 // Depende das funcoes compartilhadas definidas em common.js.
+const USUARIOS_MOCK = JSON.parse(document.getElementById("dados-usuarios").textContent);
 
 const TAMANHO_PAGINA_DESKTOP = 20;
 const TAMANHO_PAGINA_MOBILE = 10;
@@ -73,6 +76,10 @@ function removerUsuarioPorId(id) {
 // ---- Formatacao ----
 
 function formatarDataHora(isoString) {
+    if (!isoString) {
+        return "-";
+    }
+
     return new Date(isoString).toLocaleString("pt-BR", {
         day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
     });
@@ -298,64 +305,99 @@ function abrirModalEditarUsuario(usuario) {
 }
 
 function abrirModalAlterarTipo(usuario) {
+    // So visual por enquanto: mudar tipo_usuario de verdade tambem
+    // precisaria criar/apagar a linha correspondente em Aluno ou
+    // Professor (que tem campos obrigatorios proprios, tipo RA/serie ou
+    // diploma/materia) - sem isso o resto do sistema quebra pra esse
+    // usuario. Precisa de um fluxo proprio, nao so um select.
     abrirModal(
         "Alterar tipo de conta",
         "alterar-tipo-conta",
         campoLeitura("Conta selecionada", textoPerfilUsuario(usuario)) +
-        campoSelect("tipo", "Novo tipo de conta", ["Aluno", "Professor", "Admin"], ROTULOS_TIPO_USUARIO[usuario.tipoUsuario]),
+        campoSelect("tipo", "Novo tipo de conta", ["Aluno", "Professor", "Admin"], ROTULOS_TIPO_USUARIO[usuario.tipoUsuario]) +
+        campoLeitura("Aviso", "Essa acao ainda nao esta disponivel de verdade - mudar o tipo de conta exige recriar o cadastro de aluno/professor correspondente."),
         usuario
     );
 }
 
 function confirmarBloqueio(usuario) {
-    abrirConfirmacao("Bloquear conta", "Tem certeza que deseja bloquear esta conta? O usuario perdera acesso ate ser reativado.", () => {
-        // Futuramente PUT /api/admin/usuarios/:id/status com status = "bloqueado".
-        usuario.status = "bloqueado";
-        atualizarTabelaUsuarios();
-        mostrarAvisoAdmin("Conta bloqueada visualmente.");
+    abrirConfirmacao("Bloquear conta", "Tem certeza que deseja bloquear esta conta? O usuario perdera acesso ate ser reativado.", async () => {
+        try {
+            await chamarApiAdmin(`/admin/usuarios/${usuario.id}/status`, { status: "bloqueado" });
+            usuario.status = "bloqueado";
+            atualizarTabelaUsuarios();
+            mostrarAvisoAdmin("Conta bloqueada.");
+        } catch (erro) {
+            mostrarAvisoAdmin(erro.message);
+        }
     });
 }
 
 function confirmarAtivacao(usuario) {
-    abrirConfirmacao("Ativar conta", "Tem certeza que deseja ativar esta conta novamente?", () => {
-        // Futuramente PUT /api/admin/usuarios/:id/status com status = "ativo".
-        usuario.status = "ativo";
-        atualizarTabelaUsuarios();
-        mostrarAvisoAdmin("Conta ativada visualmente.");
+    abrirConfirmacao("Ativar conta", "Tem certeza que deseja ativar esta conta novamente?", async () => {
+        try {
+            await chamarApiAdmin(`/admin/usuarios/${usuario.id}/status`, { status: "ativo" });
+            usuario.status = "ativo";
+            atualizarTabelaUsuarios();
+            mostrarAvisoAdmin("Conta ativada.");
+        } catch (erro) {
+            mostrarAvisoAdmin(erro.message);
+        }
     });
 }
 
-function liberarPremium(usuario) {
-    // Futuramente criar assinatura manual ou liberar periodo promocional no banco.
-    usuario.premium = { ativo: true, ate: "2026-12-31" };
-    atualizarTabelaUsuarios();
-    mostrarAvisoAdmin("Premium liberado visualmente.");
+async function liberarPremium(usuario) {
+    try {
+        await chamarApiAdmin(`/admin/usuarios/${usuario.id}/premium/conceder`, {});
+        // Sem conceito de data de expiracao no banco (assinatura fica
+        // ativa ate ser cancelada) - "ate" sempre null quando concedida.
+        usuario.premium = { ativo: true, ate: null };
+        atualizarTabelaUsuarios();
+        mostrarAvisoAdmin("Premium concedido.");
+    } catch (erro) {
+        mostrarAvisoAdmin(erro.message);
+    }
 }
 
 function confirmarRemocaoPremium(usuario) {
-    abrirConfirmacao("Remover premium", "Tem certeza que deseja remover o acesso premium deste usuario?", () => {
-        // Futuramente atualizar assinatura premium e cancelar acesso no banco/pagamento.
-        usuario.premium = { ativo: false, ate: null };
-        atualizarTabelaUsuarios();
-        mostrarAvisoAdmin("Premium removido visualmente.");
+    abrirConfirmacao("Remover premium", "Tem certeza que deseja remover o acesso premium deste usuario?", async () => {
+        try {
+            await chamarApiAdmin(`/admin/usuarios/${usuario.id}/premium/remover`, {});
+            usuario.premium = { ativo: false, ate: null };
+            atualizarTabelaUsuarios();
+            mostrarAvisoAdmin("Premium removido.");
+        } catch (erro) {
+            mostrarAvisoAdmin(erro.message);
+        }
     });
 }
 
 function confirmarExclusao(usuario) {
-    abrirConfirmacao("Excluir conta", "Tem certeza que deseja excluir esta conta? Esta acao deve ser auditada futuramente no banco.", () => {
-        // Futuramente DELETE /api/admin/usuarios/:id (soft delete + auditoria).
-        removerUsuarioPorId(usuario.id);
-        atualizarTabelaUsuarios();
-        mostrarAvisoAdmin("Conta excluida visualmente.");
+    abrirConfirmacao("Excluir conta", "Tem certeza que deseja excluir esta conta? Essa acao apaga tudo relacionado a ela (cronogramas, respostas, etc) e nao pode ser desfeita.", async () => {
+        try {
+            await chamarApiAdmin(`/admin/usuarios/${usuario.id}/excluir`, {});
+            removerUsuarioPorId(usuario.id);
+            atualizarTabelaUsuarios();
+            mostrarAvisoAdmin("Conta excluida.");
+        } catch (erro) {
+            mostrarAvisoAdmin(erro.message);
+        }
     });
 }
 
-adminModalHandlers["editar-usuario"] = function salvarEdicaoUsuario(dados) {
-    // Futuramente PUT /api/admin/usuarios/:id com validacao de email unico.
-    modalOrigem.nome = dados.nome;
-    modalOrigem.email = dados.email;
-    atualizarTabelaUsuarios();
-    mostrarAvisoAdmin("Usuario atualizado visualmente.");
+adminModalHandlers["editar-usuario"] = async function salvarEdicaoUsuario(dados) {
+    try {
+        await chamarApiAdmin(`/admin/usuarios/${modalOrigem.id}/editar`, {
+            nome: dados.nome,
+            email: dados.email,
+        });
+        modalOrigem.nome = dados.nome;
+        modalOrigem.email = dados.email;
+        atualizarTabelaUsuarios();
+        mostrarAvisoAdmin("Usuario atualizado.");
+    } catch (erro) {
+        mostrarAvisoAdmin(erro.message);
+    }
 };
 
 adminModalHandlers["alterar-tipo-conta"] = function salvarTipoConta(dados) {

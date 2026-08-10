@@ -171,3 +171,113 @@ p {
     display: block;
     border-radius: 8px;
 }
+
+.cronogramas-vazio {
+    color: #888;
+    padding: 20px;
+}
+
+.grade-container {
+    max-width: 900px;
+    margin: 20px auto;
+}
+
+.subtitulo-cronograma {
+    color: #667eea;
+    margin-bottom: 1.5rem;
+}
+
+.cronograma-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.cronograma-card {
+    padding: 1.25rem;
+}
+
+.cronograma-card-info {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.voltar-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.voltar-link:hover {
+    text-decoration: underline;
+}
+
+/* Lista "Meus itens" (checkbox de concluido + select de prioridade) do
+   cronograma proprio do aluno - mesmos valores de planoestudo.css, pra
+   ficar visualmente igual nas duas telas. */
+.prioridades {
+    margin: 0 auto 1.5rem;
+    max-width: 900px;
+}
+
+.lista-prioridades {
+    list-style: none;
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.item-lista {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.item-lista:last-child {
+    border-bottom: none;
+}
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+    margin-right: 0.75rem;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+.label-checkbox {
+    display: block;
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+    flex: 1;
+}
+
+.label-checkbox.riscado {
+    text-decoration: line-through;
+    color: #aaa;
+}
+
+.itens-vazio {
+    color: #888;
+    padding: 12px 0;
+}
+
+.form-concluido,
+.form-prioridade {
+    display: inline;
+    margin: 0;
+}
+
+.form-prioridade select {
+    width: auto;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    font-size: 0.85rem;
+    margin-top: 0;
+}

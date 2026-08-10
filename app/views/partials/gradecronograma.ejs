@@ -1,0 +1,50 @@
+<%# Grade semanal: dias nas colunas, horarios nas linhas.
+    Recebe "grade" (saida de cronogramaService.montarGrade). Todas as
+    celulas vem dos dados reais do cronograma. %>
+<% if (grade.vazia) { %>
+    <p class="grade-vazia">Nenhuma atividade neste cronograma.</p>
+<% } else { %>
+    <% grade.semanas.forEach(function (semana) { %>
+        <% if (grade.mostrarRotuloSemana) { %>
+            <h3 class="grade-semana-rotulo"><%= semana.rotulo %></h3>
+        <% } %>
+
+        <div class="grade-scroll">
+            <table class="grade-cronograma">
+                <thead>
+                    <tr>
+                        <th class="grade-col-hora">Horário</th>
+                        <% semana.dias.forEach(function (dia) { %>
+                            <th scope="col">
+                                <span class="grade-dia-abrev"><%= dia.abrev %></span>
+                                <span class="grade-dia-data"><%= dia.dataCurta %></span>
+                            </th>
+                        <% }) %>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% grade.horarios.forEach(function (horario) { %>
+                        <tr>
+                            <th scope="row" class="grade-col-hora"><%= horario.rotulo %></th>
+                            <% semana.dias.forEach(function (dia) { %>
+                                <% const atividades = semana.celulas[dia.iso + '|' + horario.inicio]; %>
+                                <td>
+                                    <% (atividades || []).forEach(function (item) { %>
+                                        <article class="grade-atividade<%= item.concluido ? ' grade-atividade-concluida' : '' %>"
+                                                 style="--cor-atividade: <%= item.cor %><%= item.corPrioridade ? '; --cor-prioridade: ' + item.corPrioridade : '' %>">
+                                            <span class="grade-materia"><%= item.materia %></span>
+                                            <span class="grade-tipo"><%= item.rotuloAtividade %></span>
+                                            <span class="grade-hora"><%= item.horaInicio %> – <%= item.horaFim %></span>
+                                        </article>
+                                    <% }) %>
+                                </td>
+                            <% }) %>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    <% }) %>
+
+    <p class="grade-dica">Arraste a tabela para o lado para ver os outros dias.</p>
+<% } %>

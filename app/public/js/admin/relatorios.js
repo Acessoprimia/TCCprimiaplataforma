@@ -1,7 +1,11 @@
 // Interacoes da pagina /admin/relatorios (cards, graficos, resumo mensal e filtro de periodo).
-// REGISTROS_DIARIOS_RELATORIOS_MOCK e DATA_REFERENCIA_RELATORIOS vem de relatoriosMock.js
-// (carregado antes deste arquivo). Esta pagina nao depende de common.js: nao usa modais nem
-// menus de acao, entao mantem apenas o pequeno utilitario de escape usado nas outras paginas.
+// REGISTROS_DIARIOS_RELATORIOS_MOCK e MATERIAS_RELATORIO_MOCK vem dos dados reais embutidos
+// pelo servidor (ver relatorios.ejs) - nomes mantidos, conteudo real agora. DATA_REFERENCIA_
+// RELATORIOS agora e "hoje" de verdade, nao mais uma data fixa de mock. Esta pagina nao
+// depende de common.js: nao usa modais nem menus de acao, so o utilitario de escape.
+const REGISTROS_DIARIOS_RELATORIOS_MOCK = JSON.parse(document.getElementById("dados-relatorios").textContent);
+const MATERIAS_RELATORIO_MOCK = JSON.parse(document.getElementById("dados-materias-relatorio").textContent);
+const DATA_REFERENCIA_RELATORIOS = new Date();
 
 function escapeHtmlRelatorios(valor) {
     return String(valor ?? "").replace(/[&<>"']/g, (caractere) => ({
@@ -49,6 +53,13 @@ const ESTADO_PERIODO_RELATORIOS = {
 };
 
 // ---- Utilitarios de data ----
+
+function formatarChaveDia(data) {
+    const ano = data.getFullYear();
+    const mes = String(data.getMonth() + 1).padStart(2, "0");
+    const dia = String(data.getDate()).padStart(2, "0");
+    return `${ano}-${mes}-${dia}`;
+}
 
 function iniciarDoDia(data) {
     const copia = new Date(data);

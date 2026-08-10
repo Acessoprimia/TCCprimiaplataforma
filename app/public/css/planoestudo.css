@@ -134,3 +134,351 @@ section {
 .btn-editar {
     color: #FF9466;
 }
+
+/* ADICIONAR ITEM */
+.adicionar-item-container {
+    background: #FFF3EE;
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    margin: 0 auto 1.5rem;
+    max-width: 600px;
+}
+
+.form-adicionar-item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.form-adicionar-item select,
+.form-adicionar-item input {
+    flex: 1;
+    min-width: 160px;
+    padding: 10px 14px;
+    border: 2px solid #ffd7c4;
+    border-radius: 50px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.form-adicionar-item button {
+    padding: 10px 24px;
+    background: #FF9466;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.itens-vazio {
+    color: #888;
+    padding: 12px 0;
+}
+
+.form-concluido,
+.form-prioridade {
+    display: inline;
+    margin: 0;
+}
+
+.form-prioridade select {
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    font-size: 0.85rem;
+}
+
+/* GERAR COM IA */
+.gerar-simulado-container {
+    background: #FFF3EE;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 0 auto 1.5rem;
+    max-width: 900px;
+}
+
+.gerar-simulado-container h2 {
+    font-size: 18px;
+    color: #FF9466;
+    margin-bottom: 12px;
+}
+
+.gerar-simulado-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.gerar-simulado-form input,
+.gerar-simulado-form select {
+    flex: 1;
+    min-width: 150px;
+    padding: 10px 14px;
+    border: 2px solid #ffd7c4;
+    border-radius: 50px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.gerar-simulado-form button {
+    padding: 10px 24px;
+    background: #FF9466;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.aviso-materia-simulado {
+    font-size: 12px;
+    color: #999;
+    margin-top: 8px;
+    width: 100%;
+}
+
+/* MONTAR NA MAO */
+.montar-simulado-container {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 0 auto 1.5rem;
+    max-width: 900px;
+}
+
+.montar-simulado-container h2 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.input-titulo-manual {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 50px;
+    font-family: inherit;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.pergunta-manual {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.pergunta-manual-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.pergunta-manual-numero {
+    font-weight: 600;
+    color: #FF9466;
+}
+
+.btn-remover-pergunta {
+    background: none;
+    border: none;
+    color: #c0392b;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.campo-titulo-evento,
+.campo-descricao-evento {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.campos-data-hora {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.campos-data-hora input {
+    flex: 1;
+    min-width: 110px;
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.acoes-simulado-manual {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-add-pergunta {
+    padding: 10px 20px;
+    background: #f0f0f0;
+    color: #333;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-salvar-manual {
+    padding: 10px 24px;
+    background: #FF9466;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.aviso-plano {
+    max-width: 900px;
+    margin: 0 auto 1.25rem;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    border-left: 4px solid;
+}
+
+.aviso-plano-erro {
+    background: #FDECEA;
+    border-color: #EF4444;
+    color: #8a2b22;
+}
+
+.aviso-plano-ok {
+    background: #E8F7F1;
+    border-color: #10B981;
+    color: #1c6b52;
+}
+
+.grade-container,
+.prioridades {
+    margin: 0 auto 1.5rem;
+    max-width: 900px;
+}
+
+.grade-nota {
+    font-size: 12px;
+    color: #999;
+    margin-top: 8px;
+}
+
+.form-regerar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.btn-regerar {
+    padding: 8px 18px;
+    background: #f0f0f0;
+    color: #333;
+    border: none;
+    border-radius: 50px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-regerar:hover {
+    background: #e4e4e4;
+}
+
+.aviso-regerar {
+    flex: 1;
+    min-width: 220px;
+    font-size: 11px;
+    color: #aaa;
+    line-height: 1.4;
+}
+
+.cards-container {
+    margin: 0 auto 1.5rem;
+    max-width: 900px;
+}
+
+.cards-container h2 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.cronogramas-vazio {
+    color: #888;
+}
+
+.cronograma-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.cronograma-card {
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 16px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cronograma-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.cronograma-card-info {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.upsell-premium-cronograma {
+    background: #FFF3EE;
+    border-radius: 16px;
+    padding: 20px;
+    margin: 0 auto 1.5rem;
+    max-width: 900px;
+    text-align: center;
+}
+
+.upsell-premium-cronograma p {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.upsell-premium-cronograma a {
+    display: inline-block;
+    padding: 8px 20px;
+    background: #FF9466;
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* CALENDARIO VISUAL */
+.calendario-container {
+    max-width: 900px;
+    margin: 0 auto 1.5rem;
+    background: white;
+    border-radius: 16px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}

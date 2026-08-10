@@ -6,89 +6,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cronogramas</title>
     <link href="../css/cronogramaprofessor.css" rel="stylesheet">
-    <%- include('../partials/botao.ejs') %>
-        <%- include("../partials/headerprofessorpremium.ejs") %>
+    <%- include("../partials/headerprofessorpremium.ejs") %>
 </head>
 
 <body>
     <main>
         <h1>Cronogramas</h1>
+        <p class="subtitulo-cronograma">Cronogramas publicados aqui ficam disponíveis para todos os alunos premium.</p>
 
-        <section class="filter-section">
-            <label for="materia-filter">
-                <svg class="filter-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" />
-                </svg>
-            </label>
-            <select id="materia-filter">
-                <option value="">Todas as matérias</option>
-                <option value="matematica">Matemática</option>
-                <option value="fisica">Física</option>
-                <option value="quimica">Química</option>
-                <option value="biologia">Biologia</option>
-                <option value="portugues">Português</option>
-                <option value="literatura">Literatura</option>
-                <option value="ingles">Inglês</option>
-                <option value="espanhol">Espanhol</option>
-                <option value="historia">História</option>
-                <option value="geografia">Geografia</option>
-                <option value="filosofia">Filosofia</option>
-                <option value="sociologia">Sociologia</option>
-                <option value="artes">Artes</option>
-                <option value="educacao-fisica">Educação Física</option>
-            </select>
+        <% if (aviso) { %>
+            <p class="aviso-plano aviso-plano-<%= aviso.tipo %>" role="status"><%= aviso.texto %></p>
+        <% } %>
+
+        <!-- GERAR COM IA -->
+        <section class="criar-cronograma-container">
+            <h2>Gerar cronograma com IA</h2>
+            <form action="/cronogramaprofessor/gerar" method="POST" class="form-criar-cronograma">
+                <label>Tema
+                    <input type="text" name="tema" placeholder="Ex: Revolução Francesa" required>
+                </label>
+                <label>Tipo
+                    <select name="tipo">
+                        <option value="diario">Diário (horários de estudo)</option>
+                        <option value="semanal" selected>Semanal</option>
+                    </select>
+                </label>
+                <label>Quantos eventos
+                    <select name="quantidade">
+                        <% [5, 10, 15, 20, 25, 30].forEach(function (n) { %>
+                            <option value="<%= n %>" <%= n === 10 ? 'selected' : '' %>><%= n %></option>
+                        <% }) %>
+                    </select>
+                </label>
+                <label>Data início
+                    <input type="date" name="data_inicio" required>
+                </label>
+                <button type="submit">Gerar</button>
+            </form>
+            <p class="aviso-materia-simulado">A matéria usada é sempre a sua própria matéria cadastrada. Fica disponível só para alunos premium. No tipo diário, o máximo é 8 eventos.</p>
         </section>
 
+        <!-- MONTAR NA MAO -->
+        <section class="montar-simulado-container">
+            <h2>Ou monte na mão</h2>
+            <form id="form-cronograma-manual" action="/cronogramaprofessor/gerar-manual" method="POST">
+                <input type="text" name="titulo" placeholder="Título do cronograma" class="input-titulo-manual" required>
+
+                <div id="eventos-manual-container"></div>
+                <div class="acoes-simulado-manual">
+                    <button type="button" id="btn-add-evento" class="btn-add-pergunta">+ Adicionar evento</button>
+                    <button type="submit" class="btn-salvar-manual">Publicar cronograma</button>
+                </div>
+            </form>
+        </section>
+
+        <template id="template-evento-manual">
+            <article class="pergunta-manual">
+                <div class="pergunta-manual-header">
+                    <span class="pergunta-manual-numero"></span>
+                    <button type="button" class="btn-remover-pergunta">Remover</button>
+                </div>
+                <input type="text" class="campo-titulo-evento" placeholder="Objetivo da aula" required>
+                <input type="text" class="campo-descricao-evento" placeholder="Conteúdo abordado">
+                <div class="campos-data-hora">
+                    <input type="date" class="campo-data-evento" required>
+                    <input type="time" class="campo-hora-inicio-evento" required>
+                    <input type="time" class="campo-hora-fim-evento" required>
+                </div>
+            </article>
+        </template>
+
+        <!-- LISTA DE CRONOGRAMAS PUBLICADOS -->
         <section class="cards-container">
-            <article data-materia="matematica">
-                <button class="card-button" data-image="../image/calendariohard.webp">
-                    <img src="../image/calendarioeasy.webp" alt="Cronograma Matemática" class="card-image">
-                    <section class="card-content">
-                        <h2>Matemática – Álgebra e Geometria</h2>
-                        <p>Este cronograma organiza os principais tópicos de álgebra e geometria que serão trabalhados
-                            durante o semestre. Nele, você encontrará as datas das aulas, exercícios práticos, provas e
-                            revisões para facilitar seu planejamento e garantir o domínio dos conceitos.</p>
-                    </section>
-                </button>
-            </article>
-
-            <article data-materia="biologia">
-                <button class="card-button" data-image="../image/calendariohard.webp">
-                    <img src="../image/calendarioeasy.webp" alt="Cronograma Biologia" class="card-image">
-                    <section class="card-content">
-                        <h2>Biologia – Genética e Evolução</h2>
-                        <p>Confira o cronograma com o planejamento das aulas sobre genética, hereditariedade e teoria da
-                            evolução. Com ele, você pode acompanhar os conteúdos, as atividades em grupo e as
-                            avaliações, para aprofundar seu conhecimento e se preparar para as provas.</p>
-                    </section>
-                </button>
-            </article>
-
-            <article data-materia="historia">
-                <button class="card-button" data-image="../image/calendariohard.webp">
-                    <img src="../image/calendarioeasy.webp" alt="Cronograma História" class="card-image">
-                    <section class="card-content">
-                        <h2>História – Era Moderna e Contemporânea</h2>
-                        <p>Este cronograma apresenta o desenvolvimento das aulas e estudos sobre os principais
-                            acontecimentos da Era Moderna e Contemporânea. Nele estão indicados os prazos para
-                            trabalhos, debates e avaliações, ajudando você a organizar os estudos e refletir sobre os
-                            impactos históricos</p>
-                    </section>
-                </button>
-            </article>
+            <h2>Meus cronogramas publicados</h2>
+            <% if (meusCronogramas.length === 0) { %>
+                <p class="cronogramas-vazio">Nenhum cronograma publicado ainda. Gere um acima!</p>
+            <% } %>
+            <% meusCronogramas.forEach(function (cronograma) { %>
+                <a href="/cronograma/<%= cronograma.codigo_lote %>" class="cronograma-link">
+                    <article class="cronograma-card">
+                        <h3><%= cronograma.titulo_cronograma %></h3>
+                        <p class="cronograma-card-info"><%= cronograma.materia %></p>
+                        <p class="cronograma-card-info"><%= cronograma.total_eventos %> evento<%= cronograma.total_eventos > 1 ? 's' : '' %></p>
+                    </article>
+                </a>
+            <% }) %>
         </section>
     </main>
 
-    <aside id="modal" class="modal">
-        <button class="modal-close" aria-label="Fechar">×</button>
-        <figure class="modal-content">
-            <img id="modal-image" src="../image/calendariohard.webp" alt="Cronograma ampliado">
-        </figure>
-    </aside>
-
     <%- include("../partials/footer.ejs") %>
 
-        <script src="../js/cronograma.js"></script>
+        <script src="../js/cronogramamanual.js"></script>
 </body>
 
 </html>

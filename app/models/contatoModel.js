@@ -8,13 +8,27 @@ const queries = Object.freeze({
     VALUES (?, ?, ?, ?, ?, ?, 'pendente')
   `,
   listarMensagens: `
-    SELECT id, nome, email, assunto, mensagem, origem, status, criado_em
+    SELECT id, nome, email, assunto, mensagem, origem, status, resposta_admin, criado_em, resolvido_em
     FROM ${TABELAS.mensagensContato}
     ORDER BY criado_em DESC
   `,
   marcarRespondido: `
     UPDATE ${TABELAS.mensagensContato}
     SET status = 'respondido'
+    WHERE id = ?
+  `,
+  responder: `
+    UPDATE ${TABELAS.mensagensContato}
+    SET resposta_admin = ?, status = 'respondido'
+    WHERE id = ?
+  `,
+  resolver: `
+    UPDATE ${TABELAS.mensagensContato}
+    SET status = 'resolvido', resolvido_em = NOW()
+    WHERE id = ?
+  `,
+  remover: `
+    DELETE FROM ${TABELAS.mensagensContato}
     WHERE id = ?
   `,
 });
@@ -43,6 +57,21 @@ const ContatoModel = Object.freeze({
 
   async marcarRespondido(idMensagem, conexao) {
     const [resultado] = await banco(conexao).query(queries.marcarRespondido, [idMensagem]);
+    return resultado;
+  },
+
+  async responder({ id, resposta }, conexao) {
+    const [resultado] = await banco(conexao).query(queries.responder, [resposta, id]);
+    return resultado;
+  },
+
+  async resolver(id, conexao) {
+    const [resultado] = await banco(conexao).query(queries.resolver, [id]);
+    return resultado;
+  },
+
+  async remover(id, conexao) {
+    const [resultado] = await banco(conexao).query(queries.remover, [id]);
     return resultado;
   },
 });

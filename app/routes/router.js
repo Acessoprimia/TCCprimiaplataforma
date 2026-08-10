@@ -5,10 +5,10 @@ const pool = require("../../db");
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
 const Models = require("../models");
-const AdminDashboardMock = require("../mocks/adminDashboardMock");
 const IaService = require("../services/iaService");
 const UploadService = require("../services/uploadService");
 const MailService = require("../services/mailService");
+const CronogramaService = require("../services/cronogramaService");
 
 const uploadConteudo = multer({
   storage: multer.memoryStorage(),
@@ -187,6 +187,152 @@ function urlEmbedYoutube(url) {
   return id ? `https://www.youtube.com/embed/${id}` : null;
 }
 
+// mysql2 devolve colunas DATE como Date em horario local da meia-noite.
+// Usar toISOString() converte pra UTC e pode "voltar" um dia dependendo
+// do fuso do servidor - por isso lemos ano/mes/dia locais na mao aqui,
+// em vez de deixar o toISOString() reinterpretar o fuso.
+function formatarDataLocal(data) {
+  const dataObj = data instanceof Date ? data : new Date(data);
+  const ano = dataObj.getFullYear();
+  const mes = String(dataObj.getMonth() + 1).padStart(2, "0");
+  const dia = String(dataObj.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
+// A descricao guarda "Titulo - Detalhe" nos cronogramas gerados; na
+// celula da grade so cabe o titulo.
+function tituloDaDescricao(descricao) {
+  return String(descricao || "").split(" - ")[0];
+}
+
+function planoAulaParaGrade(planoAula) {
+  return {
+    data: formatarDataLocal(planoAula.data_atual),
+    horaInicio: planoAula.hora_inicio,
+    horaFim: planoAula.hora_fim,
+    materia: planoAula.materia,
+    atividade: planoAula.objetivos,
+    tipoAtividade: "aula",
+  };
+}
+
+const CORES_PRIORIDADE = Object.freeze({
+  baixa: "#10B981",
+  media: "#F59E0B",
+  alta: "#EF4444",
+});
+
+// Sem sessao/flash no projeto, o retorno das acoes de cronograma vem por
+// query string. Antes toda falha era so console.error + redirect, e o
+// aluno nao tinha como saber se o cronograma foi gerado ou nao.
+const AVISOS_PLANO_ESTUDO = Object.freeze({
+  erro: {
+    premium: "Gerar e regerar cronograma é exclusivo para assinantes premium.",
+    ia: "Não deu pra gerar o cronograma com a IA agora. Tente de novo em alguns instantes.",
+    manual: "Não foi possível salvar o cronograma. Confira se todos os eventos têm título, data e horários.",
+    regerar: "Não foi possível regerar a rotina da semana. Tente de novo.",
+  },
+  ok: {
+    regerar: "Rotina da semana regerada.",
+  },
+});
+
+function avisoDaQuery(query) {
+  if (query.erro && AVISOS_PLANO_ESTUDO.erro[query.erro]) {
+    return { tipo: "erro", texto: AVISOS_PLANO_ESTUDO.erro[query.erro] };
+  }
+  if (query.ok && AVISOS_PLANO_ESTUDO.ok[query.ok]) {
+    return { tipo: "ok", texto: AVISOS_PLANO_ESTUDO.ok[query.ok] };
+  }
+  return null;
+}
+
+// Mesmo problema que o /planoestudo tinha: as rotas do professor so
+// faziam console.error + redirect quando a geracao falhava (cota da IA
+// estourada, professor sem materia, etc), entao a tela ficava igual
+// tivesse dado certo ou nao - o professor nao tinha como saber.
+const AVISOS_CRONOGRAMA_PROFESSOR = Object.freeze({
+  erro: {
+    ia: "Não deu pra gerar o cronograma com a IA agora (a cota diária pode ter estourado). Tente de novo em alguns instantes, ou monte na mão.",
+    manual: "Não foi possível salvar o cronograma. Confira se todos os eventos têm título, data e horários.",
+    materia: "Você precisa ter uma matéria cadastrada no seu perfil para gerar um cronograma.",
+  },
+});
+
+function avisoCronogramaProfessorDaQuery(query) {
+  if (query.erro && AVISOS_CRONOGRAMA_PROFESSOR.erro[query.erro]) {
+    return { tipo: "erro", texto: AVISOS_CRONOGRAMA_PROFESSOR.erro[query.erro] };
+  }
+  return null;
+}
+
+// As acoes de prioridade/concluido sao usadas tanto na lista generica
+// (/planoestudo) quanto dentro de um cronograma gerado especifico
+// (/planoestudo/:codigoLote) - o formulario manda de volta pra onde
+// veio via campo oculto. So aceita caminho comecando com /planoestudo
+// (prefixo fixo, nao vem de fora) pra nunca virar open redirect.
+function voltarSeguro(valor) {
+  return typeof valor === "string" && valor.startsWith("/planoestudo") ? valor : "/planoestudo";
+}
+
+// Detecta rotina generica desatualizada em relacao ao status premium
+// atual do aluno: itens de quem ja foi premium um dia (ou de antes da
+// restricao existir) podem ter ficado com exercicios/simulado mesmo
+// sendo gratuito agora; e o inverso, premium com uma rotina antiga de
+// quando ainda era gratuito nunca ganha exercicios/simulado sozinho. O
+// simulado e sempre gerado 1x (ultimo bloco de sexta) quando premium,
+// entao a presenca/ausencia dele e um jeito confiavel de notar isso sem
+// precisar guardar "versao da rotina" em coluna nenhuma.
+function rotinaDesatualizada(itens, ehPremium) {
+  if (itens.length === 0) return false;
+  const temSimulado = itens.some((item) => item.tipo_atividade === "simulado");
+  return ehPremium ? !temSimulado : temSimulado;
+}
+
+// Rotina padrao do aluno: 6 blocos por dia util (manha 08-11 e tarde
+// 14-17), com as materias rodiziando. Aluno premium tem o tipo de
+// atividade variando entre estudo, exercicios, revisao e um simulado no
+// fim da sexta; exercicios/simulado sao premium, entao o gratuito recebe
+// so estudo/revisao.
+async function semearCronogramaGenerico(idAluno, ehPremium) {
+  const materias = await Models.materias.listarAtivas();
+  const diasUteis = CronogramaService.proximosDiasUteis(5);
+  const rotina = CronogramaService.gerarRotinaGenerica(materias, diasUteis, ehPremium);
+
+  for (const item of rotina) {
+    await Models.planoEstudo.criarItem({
+      idAluno,
+      idMateria: item.idMateria,
+      horaAula: item.horaInicio,
+      horaFim: item.horaFim,
+      dataInicio: item.data,
+      dataFim: item.data,
+      descricao: item.descricao,
+      tipoAtividade: item.tipoAtividade,
+    });
+  }
+
+  return rotina.length;
+}
+
+function planoEstudoParaGrade(item) {
+  const ehGerado = !!item.codigo_lote;
+
+  return {
+    data: formatarDataLocal(item.data_inicio),
+    horaInicio: item.hora_aula,
+    horaFim: item.hora_fim,
+    materia: item.materia,
+    // Item generico mostra so o tipo ("Exercícios"); item gerado por
+    // IA/mao mostra o titulo que veio junto.
+    atividade: ehGerado ? tituloDaDescricao(item.descricao) : null,
+    tipoAtividade: item.tipo_atividade || "estudo",
+    corPrioridade: item.corPrioridade,
+    concluido: !!item.concluido,
+    idCronograma: item.id_cronograma,
+  };
+}
+
 async function determinarOrigemContato(email) {
   const usuario = await Models.usuarios.buscarPorEmail(email);
 
@@ -206,13 +352,16 @@ function renderizarCadastroAluno(res, valores = VALORES_INICIAIS_CADASTRO_ALUNO,
   });
 }
 
-function renderizarCadastroProfessor(res, valores = VALORES_INICIAIS_CADASTRO_PROFESSOR, msgErro = {}) {
+async function renderizarCadastroProfessor(res, valores = VALORES_INICIAIS_CADASTRO_PROFESSOR, msgErro = {}) {
+  const materias = await Models.materias.listarAtivas();
+
   return res.render(VIEWS.cadastroProfessor, {
     erros: null,
     valores,
     retorno: null,
     erroValidacao: {},
     msgErro,
+    materias,
   });
 }
 
@@ -520,8 +669,13 @@ async function carregarNotificacoes(req, res, next) {
 
 router.use(carregarNotificacoes);
 
-router.get("/", function (req, res) {
-  res.render("pages/telainicial");
+async function renderizarTelaInicial(res) {
+  const materias = await Models.materias.listarAtivas();
+  res.render("pages/telainicial", { materias });
+}
+
+router.get("/", async function (req, res) {
+  await renderizarTelaInicial(res);
 });
 
 router.get("/areapremium", function (req, res) {
@@ -529,12 +683,10 @@ router.get("/areapremium", function (req, res) {
 });
 
 router.get("/admin", somenteAdmin, async function (req, res) {
-  // Futuramente trocar AdminDashboardMock por Models.admin (adminModel.js),
-  // que ja expoe buscarMetricasDashboard com os mesmos nomes de campo.
   const [metricas, grafico, pendencias] = await Promise.all([
-    AdminDashboardMock.buscarMetricas(),
-    AdminDashboardMock.buscarGraficoCrescimento(),
-    AdminDashboardMock.buscarPendencias(),
+    Models.admin.buscarMetricasDashboard(),
+    Models.admin.buscarGraficoCrescimento(),
+    Models.admin.buscarPendencias(),
   ]);
 
   res.render("pages/admin/dashboard", {
@@ -549,20 +701,500 @@ router.get("/admin/dashboard", somenteAdmin, function (req, res) {
   res.redirect("/admin");
 });
 
-router.get("/admin/usuarios", somenteAdmin, function (req, res) {
-  res.render("pages/admin/usuarios", { activeAdminPage: "usuarios" });
+const PREFIXO_TIPO_USUARIO = Object.freeze({ aluno: "ALU", professor: "PROF", admin: "ADM" });
+
+// Traduz a linha que vem do banco (adminModel.listarUsuarios) pro
+// mesmo formato de objeto que app/public/js/admin/usuarios.js ja sabe
+// filtrar/paginar/renderizar (era o formato de USUARIOS_MOCK).
+function usuarioParaAdminJson(usuario) {
+  return {
+    id: usuario.id_usuario,
+    idAcesso: `${PREFIXO_TIPO_USUARIO[usuario.tipo_usuario]}-${String(usuario.id_usuario).padStart(4, "0")}`,
+    nome: usuario.nome,
+    email: usuario.email,
+    tipoUsuario: usuario.tipo_usuario,
+    status: usuario.status,
+    materia: usuario.materia || null,
+    premium: {
+      ativo: !!usuario.premium_ativo,
+      ate: usuario.premium_ate ? formatarDataLocal(usuario.premium_ate) : null,
+    },
+    // Fica null pra quem nunca logou depois que essa coluna passou a
+    // existir - o front trata null mostrando "-" em vez de quebrar.
+    ultimoAcesso: usuario.ultimo_login ? new Date(usuario.ultimo_login).toISOString() : null,
+  };
+}
+
+router.get("/admin/usuarios", somenteAdmin, async function (req, res) {
+  const usuarios = await Models.admin.listarUsuarios();
+
+  res.render("pages/admin/usuarios", {
+    activeAdminPage: "usuarios",
+    usuarios: usuarios.map(usuarioParaAdminJson),
+  });
 });
 
-router.get("/admin/conteudos", somenteAdmin, function (req, res) {
-  res.render("pages/admin/conteudos", { activeAdminPage: "conteudos" });
+router.post("/admin/usuarios/:id/editar", somenteAdmin, async function (req, res) {
+  const idUsuario = Number(req.params.id);
+  const nome = String(req.body.nome || "").trim();
+  const email = String(req.body.email || "").trim();
+
+  if (!nome || !email) {
+    return res.status(400).json({ erro: "Nome e email sao obrigatorios." });
+  }
+
+  try {
+    const emailEmUso = await Models.usuarios.emailPertenceAOutroUsuario(email, idUsuario);
+    if (emailEmUso) {
+      return res.status(400).json({ erro: "Esse email ja esta em uso por outra conta." });
+    }
+
+    await Models.usuarios.atualizarPerfilBasico({ nome, email, idUsuario });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao editar usuario (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel salvar as alteracoes." });
+  }
 });
 
-router.get("/admin/suporte", somenteAdmin, function (req, res) {
-  res.render("pages/admin/suporte", { activeAdminPage: "suporte" });
+router.post("/admin/usuarios/:id/status", somenteAdmin, async function (req, res) {
+  const idUsuario = Number(req.params.id);
+  const { status } = req.body;
+
+  if (!Object.values(STATUS_CONTA).includes(status)) {
+    return res.status(400).json({ erro: "Status invalido." });
+  }
+
+  try {
+    await Models.usuarios.alterarStatusConta({ status, idUsuario });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao alterar status de usuario (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel alterar o status." });
+  }
 });
 
-router.get("/admin/relatorios", somenteAdmin, function (req, res) {
-  res.render("pages/admin/relatorios", { activeAdminPage: "relatorios" });
+router.post("/admin/usuarios/:id/premium/conceder", somenteAdmin, async function (req, res) {
+  const idUsuario = Number(req.params.id);
+
+  try {
+    await Models.assinaturas.conceder(idUsuario);
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao conceder premium (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel conceder premium." });
+  }
+});
+
+router.post("/admin/usuarios/:id/premium/remover", somenteAdmin, async function (req, res) {
+  const idUsuario = Number(req.params.id);
+
+  try {
+    await Models.assinaturas.revogar(idUsuario);
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao remover premium (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel remover o premium." });
+  }
+});
+
+router.post("/admin/usuarios/:id/excluir", somenteAdmin, async function (req, res) {
+  const idUsuario = Number(req.params.id);
+  const usuarioLogado = lerCookieUsuario(req);
+
+  if (usuarioLogado && Number(usuarioLogado.id) === idUsuario) {
+    return res.status(400).json({ erro: "Voce nao pode excluir a propria conta." });
+  }
+
+  try {
+    await Models.usuarios.excluirConta(idUsuario);
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao excluir usuario (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel excluir a conta." });
+  }
+});
+
+// Traduz uma linha de Conteudo (adminModel/conteudoModel) pro formato
+// que conteudos.js ja sabe filtrar/paginar/renderizar (era o formato de
+// CONTEUDOS_MOCK). "arquivado" vira um status sintetico "arquivado" no
+// campo status (escondendo o rascunho/publicado real em statusAnterior)
+// porque e assim que a tabela/acoes do front ja esperam receber.
+function conteudoParaAdminJson(conteudo) {
+  const arquivado = !!conteudo.arquivado;
+
+  return {
+    id: conteudo.id,
+    titulo: conteudo.titulo,
+    tipo: conteudo.tipo === "video" ? "videoaula" : conteudo.tipo,
+    materia: conteudo.materia || "Sem matéria",
+    status: arquivado ? "arquivado" : conteudo.status,
+    statusAnterior: arquivado ? conteudo.status : null,
+    acesso: conteudo.is_premium ? "premium" : "gratuito",
+    autor: conteudo.autor || "",
+    data: new Date(conteudo.criado_em).toISOString(),
+    destaque: !!conteudo.destaque,
+    arquivado,
+  };
+}
+
+router.get("/admin/conteudos", somenteAdmin, async function (req, res) {
+  const [conteudos, materias] = await Promise.all([
+    Models.conteudos.listarTodosAdmin(),
+    Models.materias.listarAtivas(),
+  ]);
+
+  res.render("pages/admin/conteudos", {
+    activeAdminPage: "conteudos",
+    conteudos: conteudos.map(conteudoParaAdminJson),
+    materias: materias.map((m) => m.nome),
+  });
+});
+
+router.post("/admin/conteudos/:id/editar", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+  const titulo = String(req.body.titulo || "").trim();
+  const autor = String(req.body.autor || "").trim();
+  const nomeMateria = String(req.body.materia || "").trim();
+  const { status, premium } = req.body;
+
+  if (!titulo || !["rascunho", "publicado"].includes(status)) {
+    return res.status(400).json({ erro: "Titulo e status sao obrigatorios." });
+  }
+
+  try {
+    const materia = await Models.materias.buscarPorNome(nomeMateria);
+    await Models.conteudos.atualizarMetadados({
+      id,
+      titulo,
+      autor,
+      materiaId: materia?.id_materia || null,
+      status,
+    });
+    await Models.conteudos.atualizarPremium({ id, isPremium: !!premium });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao editar conteudo (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel salvar as alteracoes." });
+  }
+});
+
+router.post("/admin/conteudos/:id/destaque", somenteAdmin, async function (req, res) {
+  try {
+    await Models.conteudos.atualizarDestaque({ id: Number(req.params.id), destaque: !!req.body.destaque });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao alternar destaque (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel atualizar o destaque." });
+  }
+});
+
+router.post("/admin/conteudos/:id/premium", somenteAdmin, async function (req, res) {
+  try {
+    await Models.conteudos.atualizarPremium({ id: Number(req.params.id), isPremium: !!req.body.premium });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao alternar premium do conteudo (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel atualizar o acesso." });
+  }
+});
+
+router.post("/admin/conteudos/:id/arquivar", somenteAdmin, async function (req, res) {
+  try {
+    await Models.conteudos.atualizarArquivado({ id: Number(req.params.id), arquivado: !!req.body.arquivado });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao arquivar conteudo (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel atualizar o arquivamento." });
+  }
+});
+
+router.post("/admin/conteudos/:id/duplicar", somenteAdmin, async function (req, res) {
+  try {
+    const novoId = await Models.conteudos.duplicar(Number(req.params.id));
+    if (!novoId) {
+      return res.status(404).json({ erro: "Conteudo original nao encontrado." });
+    }
+    return res.json({ ok: true, id: novoId });
+  } catch (erro) {
+    console.error("Erro ao duplicar conteudo (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel duplicar o conteudo." });
+  }
+});
+
+router.post("/admin/conteudos/:id/excluir", somenteAdmin, async function (req, res) {
+  try {
+    await Models.conteudos.remover(Number(req.params.id));
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao excluir conteudo (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel excluir o conteudo." });
+  }
+});
+
+// Se o arquivo enviado for SVG, processa e recoloriza pra embutir
+// inline (herda a cor do site de verdade); senao sobe pro Cloudinary
+// como antes e recebe so a aproximacao via filtro CSS. Lanca erro com
+// mensagem amigavel se o SVG estiver mal formado.
+async function processarArquivoDeIcone(file) {
+  if (!file) {
+    return { iconeUrl: null, iconeSvg: null };
+  }
+
+  if (UploadService.ehSvg(file.mimetype, file.buffer)) {
+    const iconeSvg = UploadService.processarIconeSvg(file.buffer);
+    if (!iconeSvg) {
+      const erro = new Error("O arquivo SVG parece invalido.");
+      erro.ehErroDeValidacao = true;
+      throw erro;
+    }
+    return { iconeUrl: null, iconeSvg };
+  }
+
+  const iconeUrl = await UploadService.enviarImagem(file.buffer, "primia/materias");
+  return { iconeUrl, iconeSvg: null };
+}
+
+router.post(
+  "/admin/materias",
+  somenteAdmin,
+  uploadConteudo.single("icone"),
+  async function (req, res) {
+    const nome = String(req.body.nome || "").trim();
+
+    if (!nome) {
+      return res.status(400).json({ erro: "Informe o nome da materia." });
+    }
+
+    try {
+      const existente = await Models.materias.buscarPorNome(nome);
+      if (existente) {
+        return res.status(400).json({ erro: "Ja existe uma materia com esse nome." });
+      }
+
+      const { iconeUrl, iconeSvg } = await processarArquivoDeIcone(req.file);
+      const id = await Models.materias.criar({ nome, descricao: null, iconeUrl, iconeSvg });
+      return res.json({ ok: true, id, iconeUrl });
+    } catch (erro) {
+      if (erro.ehErroDeValidacao) {
+        return res.status(400).json({ erro: erro.message });
+      }
+      console.error("Erro ao criar materia (admin):", erro);
+      return res.status(500).json({ erro: "Nao foi possivel criar a materia." });
+    }
+  }
+);
+
+router.post("/admin/materias/excluir", somenteAdmin, async function (req, res) {
+  const nome = String(req.body.nome || "").trim();
+
+  try {
+    const materia = await Models.materias.buscarPorNome(nome);
+    if (!materia) {
+      return res.status(404).json({ erro: "Materia nao encontrada." });
+    }
+
+    const professoresVinculados = await Models.materias.contarProfessoresVinculados(materia.id_materia);
+    if (professoresVinculados > 0) {
+      return res.status(400).json({
+        erro: `Essa materia esta vinculada a ${professoresVinculados} professor${professoresVinculados > 1 ? "es" : ""} e nao pode ser removida.`,
+      });
+    }
+
+    await Models.materias.remover(materia.id_materia);
+    return res.json({ ok: true });
+  } catch (erro) {
+    // Ainda pode cair aqui por causa de Plano_de_Estudo/Plano_de_Aula/Forum
+    // (ON DELETE RESTRICT) mesmo sem professor vinculado.
+    if (erro?.code === "ER_ROW_IS_REFERENCED_2" || erro?.code === "ER_ROW_IS_REFERENCED") {
+      return res.status(400).json({ erro: "Essa materia esta em uso e nao pode ser removida." });
+    }
+    console.error("Erro ao remover materia (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel remover a materia." });
+  }
+});
+
+router.post(
+  "/admin/materias/icone",
+  somenteAdmin,
+  uploadConteudo.single("icone"),
+  async function (req, res) {
+    const nome = String(req.body.nome || "").trim();
+
+    if (!req.file) {
+      return res.status(400).json({ erro: "Selecione uma imagem." });
+    }
+
+    try {
+      const materia = await Models.materias.buscarPorNome(nome);
+      if (!materia) {
+        return res.status(404).json({ erro: "Materia nao encontrada." });
+      }
+
+      const { iconeUrl, iconeSvg } = await processarArquivoDeIcone(req.file);
+      await Models.materias.atualizarIcone({ idMateria: materia.id_materia, iconeUrl, iconeSvg });
+      return res.json({ ok: true, iconeUrl });
+    } catch (erro) {
+      if (erro.ehErroDeValidacao) {
+        return res.status(400).json({ erro: erro.message });
+      }
+      console.error("Erro ao atualizar icone da materia (admin):", erro);
+      return res.status(500).json({ erro: "Nao foi possivel atualizar o icone." });
+    }
+  }
+);
+
+// Traduz uma linha de Denuncia (denunciaModel.listarTodas) pro mesmo
+// formato que suporte.js ja sabe filtrar/paginar/renderizar (era o
+// formato de DENUNCIAS_MOCK). "conteudo" vira "livro"/"videoaula"
+// dependendo de Conteudo.tipo; "formulario" vira "simulado"; "duvida"
+// vira "forum".
+function denunciaParaAdminJson(denuncia) {
+  const tipo =
+    denuncia.tipo_conteudo === "duvida"
+      ? "forum"
+      : denuncia.tipo_conteudo === "conteudo"
+      ? denuncia.conteudo_tipo === "video"
+        ? "videoaula"
+        : "livro"
+      : denuncia.tipo_conteudo === "formulario"
+      ? "simulado"
+      : "outros";
+
+  return {
+    id: denuncia.id_denuncia,
+    codigo: `DEN-${String(denuncia.id_denuncia).padStart(4, "0")}`,
+    usuario: {
+      nome: denuncia.usuario_nome,
+      idAcesso: `${PREFIXO_TIPO_USUARIO[denuncia.usuario_tipo] || "USR"}-${String(denuncia.id_usuario).padStart(4, "0")}`,
+    },
+    tipo,
+    materia: denuncia.materia || "-",
+    conteudoDenunciado: denuncia.resumo_conteudo || "Conteudo nao encontrado (pode ter sido removido).",
+    motivo: denuncia.motivo,
+    descricao: denuncia.descricao,
+    prioridade: denuncia.prioridade,
+    status: denuncia.status,
+    resolucao: denuncia.resolucao,
+    resposta: denuncia.resposta_admin,
+    criadoEm: new Date(denuncia.data_denuncia).toISOString(),
+    resolvidoEm: denuncia.data_resolucao ? new Date(denuncia.data_resolucao).toISOString() : null,
+  };
+}
+
+// Mesma ideia pra Mensagem_Contato: "pendente" vira "aberto" pra bater
+// com o vocabulario que a tela ja usa (CONTATOS_MOCK).
+function contatoParaAdminJson(contato) {
+  return {
+    id: contato.id,
+    codigo: `CT-${String(contato.id).padStart(4, "0")}`,
+    nome: contato.nome,
+    email: contato.email,
+    assunto: contato.assunto,
+    mensagem: contato.mensagem,
+    status: contato.status === "pendente" ? "aberto" : contato.status,
+    resposta: contato.resposta_admin,
+    criadoEm: new Date(contato.criado_em).toISOString(),
+    resolvidoEm: contato.resolvido_em ? new Date(contato.resolvido_em).toISOString() : null,
+  };
+}
+
+router.get("/admin/suporte", somenteAdmin, async function (req, res) {
+  const [denuncias, contatos] = await Promise.all([
+    Models.denuncias.listarTodas(),
+    Models.contato.listar(),
+  ]);
+
+  res.render("pages/admin/suporte", {
+    activeAdminPage: "suporte",
+    denuncias: denuncias.map(denunciaParaAdminJson),
+    contatos: contatos.map(contatoParaAdminJson),
+  });
+});
+
+router.post("/admin/denuncias/:id/responder", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+  const resposta = String(req.body.resposta || "").trim();
+
+  if (!resposta) {
+    return res.status(400).json({ erro: "Escreva uma resposta antes de salvar." });
+  }
+
+  try {
+    await Models.denuncias.responder({ id, resposta });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao responder denuncia (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel salvar a resposta." });
+  }
+});
+
+router.post("/admin/denuncias/:id/resolver", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+  const { resolucao } = req.body;
+
+  if (!["resolvido", "ignorado", "conteudo_removido"].includes(resolucao)) {
+    return res.status(400).json({ erro: "Desfecho invalido." });
+  }
+
+  try {
+    await Models.denuncias.resolver({ id, resolucao });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao resolver denuncia (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel atualizar a denuncia." });
+  }
+});
+
+router.post("/admin/contatos/:id/responder", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+  const resposta = String(req.body.resposta || "").trim();
+
+  if (!resposta) {
+    return res.status(400).json({ erro: "Escreva uma resposta antes de salvar." });
+  }
+
+  try {
+    await Models.contato.responder({ id, resposta });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao responder contato (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel salvar a resposta." });
+  }
+});
+
+router.post("/admin/contatos/:id/resolver", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+
+  try {
+    await Models.contato.resolver(id);
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao resolver contato (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel marcar a mensagem como resolvida." });
+  }
+});
+
+router.post("/admin/contatos/:id/excluir", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+
+  try {
+    await Models.contato.remover(id);
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao excluir contato (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel excluir a mensagem." });
+  }
+});
+
+router.get("/admin/relatorios", somenteAdmin, async function (req, res) {
+  const { registros, materias } = await Models.admin.buscarRelatorioDiario();
+
+  res.render("pages/admin/relatorios", {
+    activeAdminPage: "relatorios",
+    registrosDiarios: registros,
+    materias,
+  });
 });
 
 router.get("/admin/configuracoes", somenteAdmin, function (req, res) {
@@ -570,8 +1202,8 @@ router.get("/admin/configuracoes", somenteAdmin, function (req, res) {
 });
 
 
-router.get("/telainicial", function (req, res) {
-  res.render("pages/telainicial");
+router.get("/telainicial", async function (req, res) {
+  await renderizarTelaInicial(res);
 });
 
 router.get("/logout", function (req, res) {
@@ -689,35 +1321,102 @@ router.post(
 
 
 router.get("/video", async function (req, res) {
-  const [materias, videosBase] = await Promise.all([
-    Models.materias.listarAtivas(),
-    Models.conteudos.listarPublicadosPorTipo("video"),
-  ]);
-
-  res.render("pages/video", {
-    materias: materias.map((materia) => ({ ...materia, slug: slugMateria(materia.nome) })),
-    videos: videosBase.map((video) => ({ ...video, materiaSlug: slugMateria(video.materia) })),
-  });
-});
-
-router.get("/videoaula/:id", async function (req, res) {
-  const video = await Models.conteudos.buscarPorId(req.params.id);
-
-  if (!video || video.tipo !== "video") {
-    return res.redirect("/video");
-  }
-
-  res.render("pages/videoaula", { video, urlEmbed: urlEmbedYoutube(video.arquivo_url) });
-});
-
-router.get("/cronograma", function (req, res) {
   const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
 
   if (!usuarioBase) {
     return res.redirect("/login");
   }
 
-  res.render("pages/cronograma");
+  const usuario = await buscarPerfilLogado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuario) {
+    return res.redirect("/login");
+  }
+
+  const [materias, videosBase] = await Promise.all([
+    Models.materias.listarAtivas(),
+    Models.conteudos.listarPublicadosPorTipo("video"),
+  ]);
+
+  res.render("pages/video", {
+    usuario,
+    materias: materias.map((materia) => ({
+      ...materia,
+      slug: slugMateria(materia.nome),
+    })),
+    videos: videosBase.map((video) => ({
+      ...video,
+      materiaSlug: slugMateria(video.materia),
+    })),
+  });
+});
+
+router.get("/videoaula/:id", async function (req, res) {
+  const aluno = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+  const professor = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!aluno && !professor) {
+    return res.redirect("/login");
+  }
+
+  const tipoUsuario = aluno
+    ? TIPOS_USUARIO.aluno
+    : TIPOS_USUARIO.professor;
+
+  const usuario = await buscarPerfilLogado(req, tipoUsuario);
+
+  if (!usuario) {
+    return res.redirect("/login");
+  }
+
+  const video = await Models.conteudos.buscarPorId(req.params.id);
+
+  if (!video || video.tipo !== "video") {
+    return res.redirect("/video");
+  }
+
+  res.render("pages/videoaula", {
+    video,
+    usuario,
+    urlEmbed: urlEmbedYoutube(video.arquivo_url),
+  });
+});
+
+router.get("/cronograma", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const cronogramas = await Models.planoAula.listarCronogramasPublicados();
+
+  res.render("pages/cronograma", { cronogramas });
+});
+
+router.get("/cronograma/:codigoLote", async function (req, res) {
+  const usuarioAluno = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+  const usuarioProfessor = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioAluno && !usuarioProfessor) {
+    return res.redirect("/login");
+  }
+
+  const eventos = await Models.planoAula.listarEventosPorLote(req.params.codigoLote);
+
+  if (eventos.length === 0) {
+    return res.redirect(usuarioProfessor ? "/cronogramaprofessor" : "/cronograma");
+  }
+
+  res.render("pages/cronogramaDetalhe", {
+    titulo: eventos[0].titulo_cronograma,
+    materia: eventos[0].materia,
+    professor: eventos[0].professor,
+    grade: CronogramaService.montarGrade(eventos.map(planoAulaParaGrade)),
+    rotaVolta: usuarioProfessor ? "/cronogramaprofessor" : "/cronograma",
+    ehProfessor: !!usuarioProfessor,
+    ehProprio: false,
+  });
 });
 
 
@@ -888,12 +1587,24 @@ router.post("/simulado/:id/responder", async function (req, res) {
 });
 
 
-router.get("/cadastroprofessor", function (req, res) {
-  renderizarCadastroProfessor(res);
+router.get("/cadastroprofessor", async function (req, res) {
+  return renderizarCadastroProfessor(res);
 });
 
-router.get("/partepremium", function (req, res) {
-  res.render("pages/partepremium");
+router.get("/partepremium", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const usuario = await buscarPerfilLogado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuario) {
+    return res.redirect("/login");
+  }
+
+  res.render("pages/partepremium", { usuario });
 });
 
 
@@ -1042,15 +1753,103 @@ router.get("/videoaulaprofessor", async function (req, res) {
   });
 });
 
-router.get("/cronogramaprofessor", function (req, res) {
+router.get("/cronogramaprofessor", async function (req, res) {
   const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
 
   if (!usuarioBase) {
     return res.redirect("/login");
   }
 
-  res.render("pages/cronogramaprofessor");
+  const meusCronogramas = await Models.planoAula.listarCronogramasPorProfessor(usuarioBase.id);
+
+  res.render("pages/cronogramaprofessor", {
+    meusCronogramas,
+    aviso: avisoCronogramaProfessorDaQuery(req.query),
+  });
 });
+
+router.post(
+  "/cronogramaprofessor/gerar",
+  body("tema").trim().notEmpty().withMessage("Descreva o tema do cronograma."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const { tema, tipo, data_inicio, quantidade } = req.body;
+
+    try {
+      const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+      if (!professor?.id_materia) {
+        return res.redirect("/cronogramaprofessor?erro=materia");
+      }
+
+      const cronogramaGerado = await IaService.gerarCronograma({
+        materia: professor.materia,
+        tema,
+        tipo,
+        dataInicio: data_inicio,
+        quantidade,
+      });
+
+      const { codigoLote } = await Models.planoAula.criarEventos(cronogramaGerado.eventos, {
+        idProfessor: usuarioBase.id,
+        idMateria: professor.id_materia,
+        tituloCronograma: tema,
+      });
+
+      return res.redirect(`/cronograma/${codigoLote}`);
+    } catch (erro) {
+      console.error("Erro ao gerar cronograma com IA (professor):", erro);
+      return res.redirect("/cronogramaprofessor?erro=ia");
+    }
+  }
+);
+
+router.post(
+  "/cronogramaprofessor/gerar-manual",
+  body("titulo").trim().notEmpty().withMessage("De um titulo para o cronograma."),
+  async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const { titulo } = req.body;
+  const eventosBrutos = Array.isArray(req.body.eventos) ? req.body.eventos : [];
+
+  try {
+    const professor = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+    if (!professor?.id_materia) {
+      return res.redirect("/cronogramaprofessor?erro=materia");
+    }
+
+    const eventosNormalizados = eventosBrutos.map((evento) => ({
+      titulo: evento?.titulo,
+      descricao: evento?.descricao,
+      data: evento?.data,
+      hora_inicio: evento?.hora_inicio,
+      hora_fim: evento?.hora_fim,
+    }));
+
+    const cronogramaValidado = IaService.validarCronograma({ eventos: eventosNormalizados });
+
+    const { codigoLote } = await Models.planoAula.criarEventos(cronogramaValidado.eventos, {
+      idProfessor: usuarioBase.id,
+      idMateria: professor.id_materia,
+      tituloCronograma: titulo,
+    });
+
+    return res.redirect(`/cronograma/${codigoLote}`);
+  } catch (erro) {
+    console.error("Erro ao salvar cronograma manual (professor):", erro);
+    return res.redirect("/cronogramaprofessor?erro=manual");
+  }
+  }
+);
 
 
 
@@ -1196,13 +1995,68 @@ router.post(
 
 
 router.get("/livro/:id", async function (req, res) {
+  const aluno = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+  const professor = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!aluno && !professor) {
+    return res.redirect("/login");
+  }
+
+  const tipoUsuario = aluno
+    ? TIPOS_USUARIO.aluno
+    : TIPOS_USUARIO.professor;
+
+  const usuario = await buscarPerfilLogado(req, tipoUsuario);
+
+  if (!usuario) {
+    return res.redirect("/login");
+  }
+
   const livro = await Models.conteudos.buscarPorId(req.params.id);
 
   if (!livro || livro.tipo !== "livro") {
     return res.redirect("/biblioteca");
   }
 
-  res.render("pages/livro", { livro });
+  res.render("pages/livro", {
+    livro,
+    usuario,
+  });
+});
+
+router.post("/livro/:id/denunciar", async function (req, res) {
+  const usuarioCookie = lerCookieUsuario(req);
+
+  if (!usuarioCookie) {
+    return res.status(401).json({ erro: "Faca login para denunciar um conteudo." });
+  }
+
+  const motivo = String(req.body.motivo || "").trim();
+  const descricao = String(req.body.descricao || "").trim();
+
+  if (!motivo) {
+    return res.status(400).json({ erro: "Selecione um motivo para a denuncia." });
+  }
+
+  const livro = await Models.conteudos.buscarPorId(req.params.id);
+
+  if (!livro || livro.tipo !== "livro") {
+    return res.status(404).json({ erro: "Livro nao encontrado." });
+  }
+
+  try {
+    await Models.denuncias.criar({
+      idUsuario: usuarioCookie.id,
+      tipoConteudo: "conteudo",
+      idConteudoAlvo: livro.id,
+      motivo,
+      descricao,
+    });
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao registrar denuncia de livro:", erro);
+    return res.status(500).json({ erro: "Nao foi possivel enviar a denuncia agora." });
+  }
 });
 
 router.get("/forumdeduvidas", async function (req, res) {
@@ -1561,9 +2415,254 @@ router.get("/entradaprofessor", async function (req, res) {
   res.render("pages/entradaprofessor", { usuario });
 });
 
-router.get("/planoestudo", function (req, res) {
-  res.render("pages/planoestudo");
+router.get("/planoestudo", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const ehPremium = await Models.assinaturas.estaAtiva(usuarioBase.id);
+  let itens = await Models.planoEstudo.listarPorAluno(usuarioBase.id);
+
+  if (itens.length === 0 || rotinaDesatualizada(itens, ehPremium)) {
+    // So apaga se ja existiam itens (senao apagarGenericosDoAluno seria
+    // uma query a toa) - e nunca mexe nos cronogramas com codigo_lote,
+    // aqueles sao gerados a parte e intocados por essa limpeza.
+    if (itens.length > 0) {
+      await Models.planoEstudo.apagarGenericosDoAluno(usuarioBase.id);
+    }
+    await semearCronogramaGenerico(usuarioBase.id, ehPremium);
+    itens = await Models.planoEstudo.listarPorAluno(usuarioBase.id);
+  }
+
+  const itensComEvento = itens.map((item) => ({
+    ...item,
+    corPrioridade: CORES_PRIORIDADE[item.prioridade] || CORES_PRIORIDADE.media,
+  }));
+
+  const meusCronogramasGerados = ehPremium
+    ? await Models.planoEstudo.listarCronogramasGerados(usuarioBase.id)
+    : [];
+
+  res.render("pages/planoestudo", {
+    itens: itensComEvento,
+    grade: CronogramaService.montarGrade(itensComEvento.map(planoEstudoParaGrade)),
+    materias: await Models.materias.listarAtivas(),
+    ehPremium,
+    meusCronogramasGerados,
+    aviso: avisoDaQuery(req.query),
+  });
 });
+
+// Regera a rotina padrao. Apaga so os itens genericos do proprio aluno
+// (os cronogramas gerados por IA/mao tem codigo_lote e nao sao tocados).
+router.post("/planoestudo/regerar", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  if (!(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
+    return res.redirect("/planoestudo?erro=premium");
+  }
+
+  try {
+    await Models.planoEstudo.apagarGenericosDoAluno(usuarioBase.id);
+    await semearCronogramaGenerico(usuarioBase.id, true);
+  } catch (erro) {
+    console.error("Erro ao regerar cronograma generico:", erro);
+    return res.redirect("/planoestudo?erro=regerar");
+  }
+
+  return res.redirect("/planoestudo?ok=regerar");
+});
+
+router.get("/planoestudo/:codigoLote", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const eventos = await Models.planoEstudo.listarEventosPorLote(
+    req.params.codigoLote,
+    usuarioBase.id
+  );
+
+  if (eventos.length === 0) {
+    return res.redirect("/planoestudo");
+  }
+
+  const itensComEvento = eventos.map((item) => ({
+    ...item,
+    corPrioridade: CORES_PRIORIDADE[item.prioridade] || CORES_PRIORIDADE.media,
+  }));
+
+  res.render("pages/cronogramaDetalhe", {
+    titulo: eventos[0].titulo_cronograma,
+    materia: eventos[0].materia,
+    professor: null,
+    grade: CronogramaService.montarGrade(itensComEvento.map(planoEstudoParaGrade)),
+    rotaVolta: "/planoestudo",
+    ehProfessor: false,
+    ehProprio: true,
+    itens: itensComEvento,
+    voltarPara: `/planoestudo/${req.params.codigoLote}`,
+  });
+});
+
+router.post("/planoestudo/:id/prioridade", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  await Models.planoEstudo.atualizarPrioridade({
+    idCronograma: req.params.id,
+    idAluno: usuarioBase.id,
+    prioridade: req.body.prioridade,
+  });
+
+  return res.redirect(voltarSeguro(req.body.voltar));
+});
+
+router.post("/planoestudo/:id/concluido", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  await Models.planoEstudo.atualizarConcluido({
+    idCronograma: req.params.id,
+    idAluno: usuarioBase.id,
+    concluido: req.body.concluido === "1",
+  });
+
+  return res.redirect(voltarSeguro(req.body.voltar));
+});
+
+router.post(
+  "/planoestudo/criar",
+  body("materia_id").notEmpty().withMessage("Escolha uma materia."),
+  body("descricao").trim().notEmpty().withMessage("Descreva o item."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const { materia_id, descricao, data_inicio, data_fim } = req.body;
+
+    try {
+      await Models.planoEstudo.criarItem({
+        idAluno: usuarioBase.id,
+        idMateria: materia_id,
+        horaAula: "08:00:00",
+        dataInicio: data_inicio || new Date(),
+        dataFim: data_fim || new Date(),
+        descricao,
+      });
+    } catch (erro) {
+      console.error("Erro ao criar item de plano de estudo:", erro);
+    }
+
+    return res.redirect("/planoestudo");
+  }
+);
+
+router.post(
+  "/planoestudo/gerar",
+  body("tema").trim().notEmpty().withMessage("Descreva o tema do cronograma."),
+  body("materia_id").notEmpty().withMessage("Escolha uma materia."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const ehPremium = await Models.assinaturas.estaAtiva(usuarioBase.id);
+    if (!ehPremium) {
+      return res.redirect("/planoestudo?erro=premium");
+    }
+
+    const { tema, materia_id, tipo, data_inicio, quantidade } = req.body;
+
+    try {
+      const materia = await Models.materias.buscarPorId(materia_id);
+
+      const cronogramaGerado = await IaService.gerarCronograma({
+        materia: materia?.nome,
+        tema,
+        tipo,
+        dataInicio: data_inicio,
+        quantidade,
+      });
+
+      const { codigoLote } = await Models.planoEstudo.criarEventos(cronogramaGerado.eventos, {
+        idAluno: usuarioBase.id,
+        idMateria: materia_id,
+        tituloCronograma: tema,
+      });
+
+      // Abre direto o cronograma recem-criado, em vez de voltar pra
+      // lista e deixar o aluno procurando se deu certo ou nao.
+      return res.redirect(`/planoestudo/${codigoLote}`);
+    } catch (erro) {
+      console.error("Erro ao gerar cronograma com IA (aluno):", erro);
+      return res.redirect("/planoestudo?erro=ia");
+    }
+  }
+);
+
+router.post(
+  "/planoestudo/gerar-manual",
+  body("materia_id").notEmpty().withMessage("Escolha uma materia."),
+  body("titulo").trim().notEmpty().withMessage("De um titulo para o cronograma."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const ehPremium = await Models.assinaturas.estaAtiva(usuarioBase.id);
+    if (!ehPremium) {
+      return res.redirect("/planoestudo?erro=premium");
+    }
+
+    const { materia_id, titulo } = req.body;
+    const eventosBrutos = Array.isArray(req.body.eventos) ? req.body.eventos : [];
+
+    try {
+      const eventosNormalizados = eventosBrutos.map((evento) => ({
+        titulo: evento?.titulo,
+        descricao: evento?.descricao,
+        data: evento?.data,
+        hora_inicio: evento?.hora_inicio,
+        hora_fim: evento?.hora_fim,
+      }));
+
+      const cronogramaValidado = IaService.validarCronograma({ eventos: eventosNormalizados });
+
+      const { codigoLote } = await Models.planoEstudo.criarEventos(cronogramaValidado.eventos, {
+        idAluno: usuarioBase.id,
+        idMateria: materia_id,
+        tituloCronograma: titulo,
+      });
+
+      return res.redirect(`/planoestudo/${codigoLote}`);
+    } catch (erro) {
+      console.error("Erro ao salvar cronograma manual (aluno):", erro);
+      return res.redirect("/planoestudo?erro=manual");
+    }
+  }
+);
 
 router.get("/termouso", function (req, res) {
   res.render("pages/termouso");
@@ -2059,6 +3158,10 @@ router.post(
         tipo_usuario: usuario.tipo_usuario,
       };
       criarCookieUsuario(res, usuarioLogadoSimulado);
+
+      Models.usuarios.atualizarUltimoLogin(usuario.id_usuario).catch((erro) => {
+        console.error("Erro ao atualizar ultimo_login:", erro);
+      });
 
       return res.redirect(rotaInicialPorTipoUsuario(usuario.tipo_usuario));
     } catch (erro) {

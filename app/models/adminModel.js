@@ -9,13 +9,40 @@ const queries = Object.freeze({
     conteudosCadastrados: `SELECT COUNT(*) AS total FROM ${TABELAS.conteudos}`,
     usuariosPremium: `SELECT COUNT(*) AS total FROM ${TABELAS.assinaturasPremium} WHERE status = 'ativa'`,
     mensagensContato: `SELECT COUNT(*) AS total FROM ${TABELAS.mensagensContato} WHERE status = 'pendente'`,
-    denunciasAbertas: `SELECT COUNT(*) AS total FROM Denuncia WHERE status = 'pendente'`,
+    // Denuncia.status era ('pendente','analisada','resolvida','ignorada')
+    // e virou ('aberto','em_analise','resolvido') na reestruturacao pra
+    // suportar denuncia de livro/video/simulado, nao so forum - filtro
+    // atualizado pra bater com o enum novo (estava zerando essa metrica).
+    denunciasAbertas: `SELECT COUNT(*) AS total FROM Denuncia WHERE status = 'aberto'`,
   },
   pendencias: {
     conteudosRascunho: `SELECT COUNT(*) AS total FROM ${TABELAS.conteudos} WHERE status = 'rascunho'`,
-    denunciasPendentes: `SELECT COUNT(*) AS total FROM Denuncia WHERE status = 'pendente'`,
+    denunciasPendentes: `SELECT COUNT(*) AS total FROM Denuncia WHERE status = 'aberto'`,
     mensagensPendentes: `SELECT COUNT(*) AS total FROM ${TABELAS.mensagensContato} WHERE status = 'pendente'`,
     totalProfessores: `SELECT COUNT(*) AS total FROM ${TABELAS.usuarios} WHERE tipo_usuario = 'professor'`,
+  },
+  notificacoesAdmin: {
+    denunciasAbertas: `
+      SELECT id_denuncia AS id, motivo, data_denuncia AS data
+      FROM Denuncia
+      WHERE status = 'aberto'
+      ORDER BY data_denuncia DESC
+      LIMIT 5
+    `,
+    contatosPendentes: `
+      SELECT id, assunto, criado_em AS data
+      FROM ${TABELAS.mensagensContato}
+      WHERE status = 'pendente'
+      ORDER BY criado_em DESC
+      LIMIT 5
+    `,
+    conteudosRascunho: `
+      SELECT id, titulo, criado_em AS data
+      FROM ${TABELAS.conteudos}
+      WHERE status = 'rascunho'
+      ORDER BY criado_em DESC
+      LIMIT 5
+    `,
   },
   crescimentoCadastros: `
     SELECT DATE_FORMAT(criado_em, '%Y-%m') AS mes, COUNT(*) AS total
@@ -178,6 +205,47 @@ const AdminModel = Object.freeze({
       { titulo: `${conteudos} conteudos`, descricao: "Materiais esperando publicação", prioridade: "media" },
       { titulo: `${mensagens} mensagens`, descricao: "Contato aguardando resposta", prioridade: "media" },
     ];
+  },
+
+  // Junta os itens mais recentes de 3 fontes diferentes de pendencia
+  // administrativa (denuncia aberta, contato sem resposta, conteudo em
+  // rascunho) num unico feed pro sino do admin - "total" conta tudo,
+  // "itens" e so os 8 mais recentes pro dropdown nao ficar gigante.
+  async buscarNotificacoes(conexao) {
+    const bancoUsado = banco(conexao);
+    const q = queries.notificacoesAdmin;
+
+    const [denuncias, contatos, conteudos, totalDenuncias, totalContatos, totalConteudos] = await Promise.all([
+      bancoUsado.query(q.denunciasAbertas).then(([linhas]) => linhas),
+      bancoUsado.query(q.contatosPendentes).then(([linhas]) => linhas),
+      bancoUsado.query(q.conteudosRascunho).then(([linhas]) => linhas),
+      contar(queries.pendencias.denunciasPendentes, conexao),
+      contar(queries.pendencias.mensagensPendentes, conexao),
+      contar(queries.pendencias.conteudosRascunho, conexao),
+    ]);
+
+    const itens = [
+      ...denuncias.map((d) => ({
+        texto: `Nova denuncia: ${d.motivo}`,
+        data: d.data,
+        link: "/admin/suporte",
+      })),
+      ...contatos.map((c) => ({
+        texto: `Mensagem de contato: ${c.assunto || "Sem assunto"}`,
+        data: c.data,
+        link: "/admin/suporte",
+      })),
+      ...conteudos.map((c) => ({
+        texto: `Conteudo aguardando publicacao: ${c.titulo}`,
+        data: c.data,
+        link: "/admin/conteudos",
+      })),
+    ].sort((a, b) => new Date(b.data) - new Date(a.data));
+
+    return {
+      itens: itens.slice(0, 8),
+      total: totalDenuncias + totalContatos + totalConteudos,
+    };
   },
 
   async listarUsuarios(conexao) {

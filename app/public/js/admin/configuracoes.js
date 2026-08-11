@@ -1,16 +1,44 @@
 // Interacoes da pagina /admin/configuracoes.
 // Depende das funcoes compartilhadas definidas em common.js.
 
-function tratarAcaoAdmin(botao) {
-    const acao = botao.dataset.adminAction;
+const formConfiguracoes = document.getElementById("formConfiguracoes");
+const formBannerConfiguracoes = document.getElementById("formBannerConfiguracoes");
 
-    switch (acao) {
-        case "salvar-configuracoes":
-            // Futuramente salvar configuracoes no banco com PUT /api/admin/configuracoes,
-            // guardando chave, valor, data_alteracao e id do admin responsavel pela mudanca.
-            mostrarAvisoAdmin("Configuracoes salvas visualmente. A persistencia entrara com o banco.");
-            break;
-        default:
-            mostrarAvisoAdmin("Acao administrativa preparada.");
+formConfiguracoes.addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+    const botao = formConfiguracoes.querySelector('button[type="submit"]');
+    botao.disabled = true;
+
+    try {
+        const dados = Object.fromEntries(new FormData(formConfiguracoes).entries());
+        await chamarApiAdmin("/admin/configuracoes", dados);
+        mostrarAvisoAdmin("Configuracoes salvas.");
+    } catch (erro) {
+        mostrarAvisoAdmin(erro.message);
+    } finally {
+        botao.disabled = false;
     }
-}
+});
+
+formBannerConfiguracoes.addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+    const campoArquivo = formBannerConfiguracoes.querySelector('input[name="banner"]');
+
+    if (!campoArquivo.files.length) {
+        mostrarAvisoAdmin("Selecione uma imagem antes de atualizar o banner.");
+        return;
+    }
+
+    const botao = formBannerConfiguracoes.querySelector('button[type="submit"]');
+    botao.disabled = true;
+
+    try {
+        const formData = new FormData(formBannerConfiguracoes);
+        await chamarApiAdminArquivo("/admin/configuracoes/banner", formData);
+        mostrarAvisoAdmin("Banner atualizado.");
+    } catch (erro) {
+        mostrarAvisoAdmin(erro.message);
+    } finally {
+        botao.disabled = false;
+    }
+});

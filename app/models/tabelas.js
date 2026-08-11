@@ -16,6 +16,8 @@ const TABELAS = Object.freeze({
   assinaturasPremium: "Assinatura_Premium",
   formularios: "Formulario",
   respostasFormulario: "Resposta_Formulario",
+  redacoes: "Redacao",
+  configuracoes: "Configuracao_Plataforma",
 });
 
 module.exports = TABELAS;

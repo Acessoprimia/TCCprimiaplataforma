@@ -143,6 +143,10 @@ body {
     opacity: 0.65;
 }
 
+.icone-svg {
+    color: #A398D1;
+}
+
 .texto-menu {
     flex: 1;
     font-size: 14px;

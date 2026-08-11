@@ -32,6 +32,12 @@ const queries = Object.freeze({
     LEFT JOIN ${TABELAS.materias} mform ON mform.id_materia = f.id_materia
     ORDER BY d.data_denuncia DESC
   `,
+  buscarPorId: `
+    SELECT id_denuncia, tipo_conteudo, id_duvida, id_conteudo_alvo, status
+    FROM ${TABELAS.denuncias}
+    WHERE id_denuncia = ?
+    LIMIT 1
+  `,
   responder: `
     UPDATE ${TABELAS.denuncias}
     SET resposta_admin = ?, status = IF(status = 'aberto', 'em_analise', status)
@@ -68,6 +74,11 @@ const DenunciaModel = Object.freeze({
   async listarTodas(conexao) {
     const [denuncias] = await banco(conexao).query(queries.listarTodas);
     return denuncias;
+  },
+
+  async buscarPorId(id, conexao) {
+    const [linhas] = await banco(conexao).query(queries.buscarPorId, [id]);
+    return linhas[0] || null;
   },
 
   async responder({ id, resposta }, conexao) {

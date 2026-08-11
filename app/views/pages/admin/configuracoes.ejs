@@ -24,33 +24,48 @@
                 <header class="panel-header">
                     <article>
                         <h2>Configuracoes gerais</h2>
-                        <p>Campos visuais para preparar ajustes de textos, banners e recursos premium.</p>
+                        <p>Esses valores aparecem em paginas publicas do site (aviso no topo, texto e imagem da home, area premium) e no e-mail de "Fale conosco".</p>
                     </article>
                 </header>
 
-                <% // Futuramente salvar configuracoes em tabela configuracoes_plataforma com chave, valor e usuario_admin_alteracao. %>
-                <form class="settings-form">
-                    <label>
-                        Aviso do site
-                        <input type="text" value="Novos simulados disponiveis esta semana">
-                    </label>
+                <form class="settings-form" id="formConfiguracoes">
                     <label>
                         Texto institucional
-                        <textarea>Estude de forma colaborativa com a Primia.</textarea>
+                        <textarea name="texto_institucional" rows="4" placeholder="Texto exibido na pagina inicial"><%= config.texto_institucional %></textarea>
                     </label>
                     <label>
-                        Banner principal
-                        <input type="file" accept="image/*">
+                        Aviso do site
+                        <input type="text" name="aviso_site" value="<%= config.aviso_site %>" placeholder="Ex: Novos simulados disponiveis esta semana">
                     </label>
                     <label>
                         Recurso premium em destaque
-                        <select>
-                            <option>Simulados exclusivos</option>
-                            <option>Videoaulas premium</option>
-                            <option>Planos personalizados</option>
+                        <select name="recurso_premium_destaque">
+                            <option value="">Nenhum</option>
+                            <option value="Simulados exclusivos" <%= config.recurso_premium_destaque === 'Simulados exclusivos' ? 'selected' : '' %>>Simulados exclusivos</option>
+                            <option value="Videoaulas premium" <%= config.recurso_premium_destaque === 'Videoaulas premium' ? 'selected' : '' %>>Videoaulas premium</option>
+                            <option value="Planos personalizados" <%= config.recurso_premium_destaque === 'Planos personalizados' ? 'selected' : '' %>>Planos personalizados</option>
                         </select>
                     </label>
-                    <button class="admin-button primary" type="button" data-admin-action="salvar-configuracoes">Salvar configuracoes</button>
+                    <label>
+                        Periodo de teste premium
+                        <input type="text" name="periodo_teste_premium" value="<%= config.periodo_teste_premium %>" placeholder="Ex: Teste uma semana gratis">
+                    </label>
+                    <label>
+                        E-mail de contato
+                        <input type="email" name="email_contato_destino" value="<%= config.email_contato_destino %>" placeholder="Recebe as mensagens de Fale conosco">
+                    </label>
+                    <button class="admin-button primary" type="submit">Salvar configuracoes</button>
+                </form>
+
+                <form class="settings-form" id="formBannerConfiguracoes" style="margin-top: 24px;">
+                    <label>
+                        Banner principal
+                        <% if (config.banner_principal_url) { %>
+                            <img src="<%= config.banner_principal_url %>" alt="Banner principal atual" style="max-width: 240px; border-radius: 12px; margin-bottom: 8px;">
+                        <% } %>
+                        <input type="file" name="banner" accept="image/*">
+                    </label>
+                    <button class="admin-button primary" type="submit">Atualizar banner</button>
                 </form>
             </section>
         </section>

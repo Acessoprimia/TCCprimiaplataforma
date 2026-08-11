@@ -52,6 +52,9 @@
         <% livros.forEach(function (livro) { %>
             <a href="/livro/<%= livro.id %>" class="livro-link">
                 <article class="livro-card" data-disciplina="<%= livro.materiaSlug %>">
+                    <% if (livro.is_premium) { %>
+                        <span class="badge-premium">Premium</span>
+                    <% } %>
                     <img class="livro-cover" src="<%= livro.imagem_url || '../image/escolab.webp' %>" alt="<%= livro.titulo %>">
                     <section class="livro-info">
                         <p class="livro-titulo"><%= livro.titulo %></p>

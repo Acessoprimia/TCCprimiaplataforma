@@ -22,7 +22,11 @@ const queries = Object.freeze({
     WHERE f.id_aluno = ?
     ORDER BY f.criado_em DESC
   `,
-  listarPublicadosPremium: `
+  // Formulario nao tem coluna de premium (so Conteudo tem) - isso so
+  // lista todo simulado publicado por professor, sem filtro nenhum de
+  // acesso. O nome antigo (listarPublicadosPremium) dava a entender que
+  // filtrava premium quando na verdade nunca filtrou nada.
+  listarPublicadosPorProfessor: `
     SELECT f.id_formulario, f.titulo, f.criado_em, m.nome AS materia, u.nome AS professor
     FROM ${TABELAS.formularios} f
     LEFT JOIN ${TABELAS.materias} m ON m.id_materia = f.id_materia
@@ -46,6 +50,11 @@ const queries = Object.freeze({
     SELECT pergunta_ref, resposta_aluno, correta
     FROM ${TABELAS.respostasFormulario}
     WHERE id_formulario = ? AND id_aluno = ?
+  `,
+  // Resposta_Formulario tem ON DELETE CASCADE pra Formulario, entao
+  // apagar aqui ja limpa as respostas junto sem precisar de outro DELETE.
+  excluir: `
+    DELETE FROM ${TABELAS.formularios} WHERE id_formulario = ?
   `,
 });
 
@@ -76,8 +85,8 @@ const FormularioModel = Object.freeze({
     return formularios;
   },
 
-  async listarPublicadosPremium(conexao) {
-    const [formularios] = await banco(conexao).query(queries.listarPublicadosPremium);
+  async listarPublicadosPorProfessor(conexao) {
+    const [formularios] = await banco(conexao).query(queries.listarPublicadosPorProfessor);
     return formularios;
   },
 
@@ -100,6 +109,11 @@ const FormularioModel = Object.freeze({
   async listarRespostas(idFormulario, idAluno, conexao) {
     const [respostas] = await banco(conexao).query(queries.listarRespostas, [idFormulario, idAluno]);
     return respostas;
+  },
+
+  async excluir(id, conexao) {
+    const [resultado] = await banco(conexao).query(queries.excluir, [id]);
+    return resultado;
   },
 });
 

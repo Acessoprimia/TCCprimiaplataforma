@@ -15,4 +15,6 @@ module.exports = Object.freeze({
   assinaturas: require("./assinaturaModel"),
   admin: require("./adminModel"),
   denuncias: require("./denunciaModel"),
+  redacoes: require("./redacaoModel"),
+  configuracoes: require("./configuracaoModel"),
 });

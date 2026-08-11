@@ -477,7 +477,7 @@ function tratarAcaoDenuncia(botao, linha) {
             confirmarDesfechoDenuncia(denuncia, "ignorado", "Ignorar denuncia", "Tem certeza que deseja ignorar esta denuncia? O conteudo permanece publicado.", "Denuncia ignorada visualmente.");
             break;
         case "remover-conteudo-denuncia":
-            confirmarDesfechoDenuncia(denuncia, "conteudo_removido", "Remover conteudo denunciado", "Tem certeza que deseja remover o conteudo denunciado?", "Conteudo denunciado removido visualmente.");
+            confirmarRemocaoConteudoDenuncia(denuncia);
             break;
         default:
             mostrarAvisoAdmin("Acao administrativa preparada.");
@@ -508,6 +508,29 @@ function confirmarDesfechoDenuncia(denuncia, resolucao, titulo, texto, mensagem)
             mostrarAvisoAdmin(erro.message);
         }
     });
+}
+
+// Diferente de confirmarDesfechoDenuncia: essa apaga o conteudo
+// denunciado de verdade (Conteudo/Formulario/Duvida), nao so troca um
+// rotulo. Por isso o texto de confirmacao avisa que nao da pra desfazer.
+function confirmarRemocaoConteudoDenuncia(denuncia) {
+    abrirConfirmacao(
+        "Remover conteudo denunciado",
+        "Tem certeza que deseja remover o conteudo denunciado? Essa acao apaga o conteudo permanentemente (nao so a denuncia) e nao pode ser desfeita.",
+        async () => {
+            try {
+                await chamarApiAdmin(`/admin/denuncias/${denuncia.id}/remover-conteudo`, {});
+                denuncia.status = "resolvido";
+                denuncia.resolucao = "conteudo_removido";
+                denuncia.resolvidoEm = new Date().toISOString();
+                atualizarTabelaDenuncias();
+                renderizarResumoSuporte();
+                mostrarAvisoAdmin("Conteudo denunciado removido.");
+            } catch (erro) {
+                mostrarAvisoAdmin(erro.message);
+            }
+        }
+    );
 }
 
 adminModalHandlers["resposta-denuncia"] = async function registrarRespostaDenuncia(dados) {

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= redacao.tema %> - Correção - Primia</title>
+
+    <link href="../css/redacao.css" rel="stylesheet">
+    <%- include('../partials/headerpremium.ejs') %>
+</head>
+
+<body>
+    <main class="container-redacao-visualizacao">
+        <a href="/redacao" class="link-voltar-redacao">‹ Voltar para minhas redações</a>
+
+        <p class="badge-tipo-redacao-visualizacao"><%= perfil.rotulo %></p>
+        <h1 class="titulo-redacao-visualizacao"><%= redacao.tema %></h1>
+        <p class="nota-total-grande"><%= redacao.nota_total %> <span>/ 1000</span></p>
+
+        <section class="competencias-grid">
+            <% perfil.competencias.forEach(function (titulo, indice) {
+                const chave = "c" + (indice + 1);
+            %>
+                <article class="card-competencia">
+                    <h2><%= titulo %></h2>
+                    <p class="nota-competencia"><%= redacao["nota_" + chave] %> <span>/ 200</span></p>
+                    <p><%= redacao["comentario_" + chave] %></p>
+                </article>
+            <% }) %>
+        </section>
+
+        <section class="comentario-geral">
+            <h2>Comentário geral</h2>
+            <p><%= redacao.comentario_geral %></p>
+        </section>
+
+        <section class="texto-original">
+            <h2>Sua redação</h2>
+            <p><%= redacao.texto %></p>
+        </section>
+    </main>
+
+    <%- include('../partials/footer.ejs') %>
+</body>
+
+</html>

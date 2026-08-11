@@ -651,15 +651,42 @@ async function carregarNotificacoes(req, res, next) {
 
   res.locals.notificacoes = [];
   res.locals.totalNotificacoesNaoLidas = 0;
+  res.locals.notificacoesAdmin = [];
+  res.locals.totalNotificacoesAdmin = 0;
+
+  // Precisa rodar pra QUALQUER visitante (logado ou nao) - o aviso do
+  // site e o texto institucional aparecem em paginas publicas tambem,
+  // entao fica antes do "if (!usuario)" abaixo. O .catch garante que
+  // uma falha de banco aqui nunca derruba a pagina inteira.
+  res.locals.configuracoesSite = await Models.configuracoes.buscarMapa().catch((erro) => {
+    console.error("Erro ao carregar configuracoes da plataforma:", erro);
+    return {
+      aviso_site: "",
+      texto_institucional: "",
+      banner_principal_url: "",
+      recurso_premium_destaque: "",
+      periodo_teste_premium: "",
+      email_contato_destino: "",
+    };
+  });
 
   if (!usuario) return next();
 
   try {
-    const notificacoes = await Models.notificacoes.listarPorUsuario(usuario.id, 5);
-    const total = await Models.notificacoes.contarNaoLidas(usuario.id);
+    if (usuario.tipo_usuario === TIPOS_USUARIO.admin) {
+      const { itens, total } = await Models.admin.buscarNotificacoes();
+      res.locals.notificacoesAdmin = itens.map((item) => ({
+        ...item,
+        tempo: textoTempoRelativo(item.data),
+      }));
+      res.locals.totalNotificacoesAdmin = total;
+    } else {
+      const notificacoes = await Models.notificacoes.listarPorUsuario(usuario.id, 5);
+      const total = await Models.notificacoes.contarNaoLidas(usuario.id);
 
-    res.locals.notificacoes = notificacoes.map(formatarNotificacao);
-    res.locals.totalNotificacoesNaoLidas = total;
+      res.locals.notificacoes = notificacoes.map(formatarNotificacao);
+      res.locals.totalNotificacoesNaoLidas = total;
+    }
   } catch (erro) {
     console.error("Erro ao carregar notificacoes:", erro);
   }
@@ -1133,7 +1160,11 @@ router.post("/admin/denuncias/:id/resolver", somenteAdmin, async function (req, 
   const id = Number(req.params.id);
   const { resolucao } = req.body;
 
-  if (!["resolvido", "ignorado", "conteudo_removido"].includes(resolucao)) {
+  // "conteudo_removido" fica de fora de proposito - so a rota
+  // /remover-conteudo pode chegar nesse desfecho, porque ela de fato
+  // apaga o conteudo junto. Deixar entrar por aqui deixaria a denuncia
+  // dizendo "conteudo removido" com o conteudo ainda no ar.
+  if (!["resolvido", "ignorado"].includes(resolucao)) {
     return res.status(400).json({ erro: "Desfecho invalido." });
   }
 
@@ -1143,6 +1174,46 @@ router.post("/admin/denuncias/:id/resolver", somenteAdmin, async function (req, 
   } catch (erro) {
     console.error("Erro ao resolver denuncia (admin):", erro);
     return res.status(500).json({ erro: "Nao foi possivel atualizar a denuncia." });
+  }
+});
+
+// Diferente do /resolver acima: essa rota de fato apaga o conteudo
+// denunciado (Conteudo/Formulario/Duvida, dependendo do tipo) antes de
+// marcar a denuncia como resolvida com resolucao='conteudo_removido'.
+// Tudo numa transacao so - se o delete falhar, a denuncia nao fica
+// marcada como removida sem o conteudo ter sido removido de verdade.
+router.post("/admin/denuncias/:id/remover-conteudo", somenteAdmin, async function (req, res) {
+  const id = Number(req.params.id);
+  const conexao = await pool.getConnection();
+
+  try {
+    await conexao.beginTransaction();
+
+    const denuncia = await Models.denuncias.buscarPorId(id, conexao);
+
+    if (!denuncia) {
+      await conexao.rollback();
+      return res.status(404).json({ erro: "Denuncia nao encontrada." });
+    }
+
+    if (denuncia.tipo_conteudo === "conteudo" && denuncia.id_conteudo_alvo) {
+      await Models.conteudos.remover(denuncia.id_conteudo_alvo, conexao);
+    } else if (denuncia.tipo_conteudo === "formulario" && denuncia.id_conteudo_alvo) {
+      await Models.formularios.excluir(denuncia.id_conteudo_alvo, conexao);
+    } else if (denuncia.tipo_conteudo === "duvida" && denuncia.id_duvida) {
+      await Models.duvidas.excluirPorId(denuncia.id_duvida, conexao);
+    }
+
+    await Models.denuncias.resolver({ id, resolucao: "conteudo_removido" }, conexao);
+
+    await conexao.commit();
+    return res.json({ ok: true });
+  } catch (erro) {
+    await conexao.rollback();
+    console.error("Erro ao remover conteudo denunciado (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel remover o conteudo." });
+  } finally {
+    conexao.release();
   }
 });
 
@@ -1197,9 +1268,74 @@ router.get("/admin/relatorios", somenteAdmin, async function (req, res) {
   });
 });
 
-router.get("/admin/configuracoes", somenteAdmin, function (req, res) {
-  res.render("pages/admin/configuracoes", { activeAdminPage: "configuracoes" });
+router.get("/admin/configuracoes", somenteAdmin, async function (req, res) {
+  const config = await Models.configuracoes.buscarMapa();
+  res.render("pages/admin/configuracoes", { activeAdminPage: "configuracoes", config });
 });
+
+router.post(
+  "/admin/configuracoes",
+  somenteAdmin,
+  body("email_contato_destino")
+    .optional({ checkFalsy: true })
+    .isEmail()
+    .withMessage("E-mail de contato invalido."),
+  async function (req, res) {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ erro: errors.array()[0].msg });
+    }
+
+    const usuarioLogado = lerCookieUsuario(req);
+    const campos = [
+      "aviso_site",
+      "texto_institucional",
+      "recurso_premium_destaque",
+      "periodo_teste_premium",
+      "email_contato_destino",
+    ];
+
+    try {
+      for (const chave of campos) {
+        await Models.configuracoes.salvar({
+          chave,
+          valor: String(req.body[chave] || "").trim(),
+          idAdmin: usuarioLogado.id,
+        });
+      }
+      return res.json({ ok: true });
+    } catch (erro) {
+      console.error("Erro ao salvar configuracoes (admin):", erro);
+      return res.status(500).json({ erro: "Nao foi possivel salvar as configuracoes." });
+    }
+  }
+);
+
+router.post(
+  "/admin/configuracoes/banner",
+  somenteAdmin,
+  uploadConteudo.single("banner"),
+  async function (req, res) {
+    if (!req.file) {
+      return res.status(400).json({ erro: "Selecione uma imagem." });
+    }
+
+    try {
+      const bannerUrl = await UploadService.enviarImagem(req.file.buffer, "primia/configuracoes");
+      const usuarioLogado = lerCookieUsuario(req);
+      await Models.configuracoes.salvar({
+        chave: "banner_principal_url",
+        valor: bannerUrl,
+        idAdmin: usuarioLogado.id,
+      });
+      return res.json({ ok: true, bannerUrl });
+    } catch (erro) {
+      console.error("Erro ao atualizar banner principal (admin):", erro);
+      return res.status(500).json({ erro: "Nao foi possivel atualizar o banner." });
+    }
+  }
+);
 
 
 router.get("/telainicial", async function (req, res) {
@@ -1252,7 +1388,10 @@ router.post(
     }
 
     try {
-      await MailService.enviarNotificacaoContato({ nome, email, assunto, mensagem, origem });
+      await MailService.enviarNotificacaoContato({
+        nome, email, assunto, mensagem, origem,
+        destinatario: res.locals.configuracoesSite?.email_contato_destino,
+      });
     } catch (erro) {
       console.error("Mensagem de contato salva, mas o e-mail de notificacao falhou:", erro);
     }
@@ -1305,7 +1444,10 @@ router.post(
     }
 
     try {
-      await MailService.enviarNotificacaoContato({ nome, email, assunto, mensagem, origem });
+      await MailService.enviarNotificacaoContato({
+        nome, email, assunto, mensagem, origem,
+        destinatario: res.locals.configuracoesSite?.email_contato_destino,
+      });
     } catch (erro) {
       console.error("Mensagem de contato salva, mas o e-mail de notificacao falhou:", erro);
     }
@@ -1375,6 +1517,10 @@ router.get("/videoaula/:id", async function (req, res) {
     return res.redirect("/video");
   }
 
+  if (aluno && video.is_premium && !(await Models.assinaturas.estaAtiva(aluno.id))) {
+    return res.redirect("/areapremium");
+  }
+
   res.render("pages/videoaula", {
     video,
     usuario,
@@ -1442,7 +1588,7 @@ router.get("/areadosimulado", async function (req, res) {
   const [materias, meusFormulariosBase, publicadosBase] = await Promise.all([
     Models.materias.listarAtivas(),
     Models.formularios.listarPorAluno(usuarioBase.id),
-    Models.formularios.listarPublicadosPremium(),
+    Models.formularios.listarPublicadosPorProfessor(),
   ]);
 
   const meusFormularios = (await anexarStatusResposta(meusFormulariosBase, usuarioBase.id)).map(
@@ -1584,6 +1730,97 @@ router.post("/simulado/:id/responder", async function (req, res) {
   }
 
   return res.redirect(`/simulado/${formulario.id_formulario}`);
+});
+
+router.get("/redacao", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  if (!(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
+    return res.redirect("/areapremium");
+  }
+
+  const historico = await Models.redacoes.listarPorAluno(usuarioBase.id);
+  res.render("pages/redacao", {
+    historico, msgErro: null, valores: {},
+    perfis: IaService.listarPerfisRedacao(),
+  });
+});
+
+router.post(
+  "/redacao",
+  body("tema").trim().notEmpty().withMessage("Descreva o tema da redacao."),
+  body("texto").trim().notEmpty().withMessage("Escreva sua redacao antes de enviar."),
+  async function (req, res) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    if (!(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
+      return res.redirect("/areapremium");
+    }
+
+    const errors = validationResult(req);
+    const { tema, texto } = req.body;
+    const perfis = IaService.listarPerfisRedacao();
+
+    if (!errors.isEmpty()) {
+      const { msgErro } = montarErrosValidacao(errors);
+      const historico = await Models.redacoes.listarPorAluno(usuarioBase.id);
+      return res.render("pages/redacao", { historico, msgErro, valores: req.body, perfis });
+    }
+
+    // Resolvido UMA vez e reaproveitado tanto pra corrigir quanto pra
+    // salvar - senao, se o aluno mandar um tipo_redacao invalido, a
+    // correcao cairia no fallback ENEM mas o banco ficaria com o valor
+    // invalido gravado (redacao dizendo "genero X" mas corrigida como ENEM).
+    const tipoRedacao = IaService.resolverTipoRedacao(req.body.tipo_redacao);
+
+    try {
+      const correcao = await IaService.corrigirRedacao({ tema, texto, tipoRedacao });
+      const idRedacao = await Models.redacoes.criar({
+        idAluno: usuarioBase.id,
+        tema,
+        texto,
+        tipoRedacao,
+        correcao,
+      });
+      return res.redirect(`/redacao/${idRedacao}`);
+    } catch (erro) {
+      console.error("Erro ao corrigir redacao:", erro);
+      const historico = await Models.redacoes.listarPorAluno(usuarioBase.id);
+      return res.render("pages/redacao", {
+        historico,
+        msgErro: { geral: erro.message || "Nao foi possivel corrigir sua redacao agora. Tente novamente." },
+        valores: req.body,
+        perfis,
+      });
+    }
+  }
+);
+
+router.get("/redacao/:id", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const redacao = await Models.redacoes.buscarPorId(req.params.id);
+
+  if (!redacao || redacao.id_aluno !== usuarioBase.id) {
+    return res.redirect("/redacao");
+  }
+
+  res.render("pages/redacaovisualizacao", {
+    redacao,
+    perfil: IaService.buscarPerfilRedacao(redacao.tipo_redacao),
+  });
 });
 
 
@@ -2016,6 +2253,10 @@ router.get("/livro/:id", async function (req, res) {
 
   if (!livro || livro.tipo !== "livro") {
     return res.redirect("/biblioteca");
+  }
+
+  if (aluno && livro.is_premium && !(await Models.assinaturas.estaAtiva(aluno.id))) {
+    return res.redirect("/areapremium");
   }
 
   res.render("pages/livro", {
@@ -2770,6 +3011,20 @@ router.get("/api/notificacoes", async function (req, res) {
   } catch (erro) {
     console.error("Erro na API de notificacoes:", erro);
     return res.status(500).json({ notificacoes: [], totalNaoLidas: 0 });
+  }
+});
+
+router.get("/api/admin/notificacoes", somenteAdmin, async function (req, res) {
+  try {
+    const { itens, total } = await Models.admin.buscarNotificacoes();
+
+    return res.json({
+      itens: itens.map((item) => ({ ...item, tempo: textoTempoRelativo(item.data) })),
+      total,
+    });
+  } catch (erro) {
+    console.error("Erro na API de notificacoes admin:", erro);
+    return res.status(500).json({ itens: [], total: 0 });
   }
 });
 

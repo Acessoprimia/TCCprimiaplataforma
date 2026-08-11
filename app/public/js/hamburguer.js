@@ -49,6 +49,53 @@ function atualizarContador(total) {
   }
 }
 
+const ehPaginaAdmin = !!document.querySelector(".admin-page");
+
+// Itens do sino admin sao agregados de 3 tabelas diferentes (denuncia,
+// contato, conteudo em rascunho) - nao tem id_notificacao nem conceito
+// de "lida" como as notificacoes normais, entao o item so navega.
+function montarItemNotificacaoAdmin(item) {
+  const li = document.createElement("li");
+  li.className = "notif-item nova";
+
+  const link = document.createElement("a");
+  link.className = "notif-link";
+  link.href = item.link || "/admin/suporte";
+
+  const texto = document.createElement("p");
+  texto.className = "notif-texto";
+  texto.textContent = item.texto;
+
+  const tempo = document.createElement("time");
+  tempo.className = "notif-tempo";
+  tempo.textContent = item.tempo || "agora";
+
+  link.appendChild(texto);
+  link.appendChild(tempo);
+  li.appendChild(link);
+
+  return li;
+}
+
+function renderizarNotificacoesAdmin(itens) {
+  const lista = document.getElementById("notif-lista");
+  if (!lista) return;
+
+  lista.innerHTML = "";
+
+  if (!itens.length) {
+    const li = document.createElement("li");
+    li.className = "notif-item";
+    li.innerHTML = '<p class="notif-texto">Nenhuma pendencia no momento.</p><time class="notif-tempo">agora</time>';
+    lista.appendChild(li);
+    return;
+  }
+
+  itens.forEach((item) => {
+    lista.appendChild(montarItemNotificacaoAdmin(item));
+  });
+}
+
 function montarItemNotificacao(notificacao) {
   const li = document.createElement("li");
   li.className = `notif-item ${notificacao.lida ? "" : "nova"}`;
@@ -106,6 +153,16 @@ function renderizarNotificacoes(notificacoes) {
 
 async function carregarNotificacoes() {
   try {
+    if (ehPaginaAdmin) {
+      const resposta = await fetch("/api/admin/notificacoes");
+      if (!resposta.ok) return;
+
+      const dados = await resposta.json();
+      renderizarNotificacoesAdmin(dados.itens || []);
+      atualizarContador(dados.total || 0);
+      return;
+    }
+
     const resposta = await fetch("/api/notificacoes");
     if (!resposta.ok) return;
 

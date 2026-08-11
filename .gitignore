@@ -2,3 +2,5 @@
 package-lock.json
 .env
 .claude
+.INTEGRACAO_BANCO.md
+

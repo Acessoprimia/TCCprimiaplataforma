@@ -35,6 +35,9 @@
 
             <% videos.forEach(function (video) { %>
                 <article data-materia="<%= video.materiaSlug %>">
+                    <% if (video.is_premium) { %>
+                        <span class="badge-premium">Premium</span>
+                    <% } %>
                     <a href="/videoaula/<%= video.id %>">
                         <img src="<%= video.imagem_url || '../image/lousa.webp' %>" alt="<%= video.titulo %>" class="card-image">
                         <section class="card-content">

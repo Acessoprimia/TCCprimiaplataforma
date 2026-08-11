@@ -8,9 +8,15 @@
 </head>
 <body>
 
+  <% const temAvisoSite = typeof configuracoesSite !== 'undefined' && configuracoesSite && configuracoesSite.aviso_site; %>
+
+  <% if (temAvisoSite) { %>
+    <div class="aviso-site-banner"><%= configuracoesSite.aviso_site %></div>
+  <% } %>
+
   <aside class="overlay" id="overlay" aria-hidden="true"></aside>
 
-  <header class="site-header">
+  <header class="site-header" style="<%= temAvisoSite ? 'top: 36px;' : '' %>">
     <section class="header-inner">
 
       <a href="<%= rotaInicioHeader || '/telainicial' %>" class="logo">

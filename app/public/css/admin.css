@@ -1067,6 +1067,7 @@ textarea {
 .settings-form {
     display: grid;
     grid-template-columns: 1fr;
+    align-items: start;
     gap: 14px;
 }
 
@@ -1077,6 +1078,20 @@ textarea {
     color: #555;
     font-size: 13px;
     font-weight: 600;
+}
+
+.settings-form label:has(textarea) {
+    grid-column: 1 / -1;
+}
+
+.settings-form button[type="submit"] {
+    grid-column: 1 / -1;
+    justify-self: start;
+    align-self: start;
+}
+
+#formBannerConfiguracoes {
+    grid-template-columns: 1fr;
 }
 
 .settings-form input,

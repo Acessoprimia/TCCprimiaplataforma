@@ -428,3 +428,69 @@ ALTER TABLE Mensagem_Contato
     ADD COLUMN resolvido_em DATETIME NULL;
 
 
+-- GERADO AGORA: area de Redacao (premium) - aluno escreve, IA corrige na
+-- hora seguindo as 5 competencias do ENEM. Notas ficam em colunas
+-- separadas (nao JSON) pra permitir agregacao direta depois (futura
+-- tela de "resultados do aluno"). nota_total e sempre recalculada em
+-- codigo a partir das 5 notas, nunca confiando na soma que a IA disser.
+CREATE TABLE Redacao (
+    id_redacao INT NOT NULL AUTO_INCREMENT,
+    id_aluno INT NOT NULL,
+    tema VARCHAR(200) NOT NULL,
+    texto TEXT NOT NULL,
+    nota_c1 SMALLINT NOT NULL,
+    nota_c2 SMALLINT NOT NULL,
+    nota_c3 SMALLINT NOT NULL,
+    nota_c4 SMALLINT NOT NULL,
+    nota_c5 SMALLINT NOT NULL,
+    nota_total SMALLINT NOT NULL,
+    comentario_c1 TEXT NOT NULL,
+    comentario_c2 TEXT NOT NULL,
+    comentario_c3 TEXT NOT NULL,
+    comentario_c4 TEXT NOT NULL,
+    comentario_c5 TEXT NOT NULL,
+    comentario_geral TEXT NOT NULL,
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_redacao PRIMARY KEY (id_redacao),
+
+    CONSTRAINT fk_redacao_aluno
+        FOREIGN KEY (id_aluno)
+        REFERENCES Aluno(id_aluno)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+-- GERADO AGORA: tabela generica chave/valor pra Admin - Configuracoes
+-- (aviso do site, texto institucional, banner principal, recurso premium
+-- em destaque, periodo de teste premium, email de contato). "chave" e a
+-- propria PK, permite upsert direto via ON DUPLICATE KEY UPDATE sem
+-- precisar de id surrogate.
+CREATE TABLE Configuracao_Plataforma (
+    chave VARCHAR(60) NOT NULL,
+    valor TEXT NULL,
+    atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    id_admin_alteracao INT NULL,
+
+    CONSTRAINT pk_configuracao_plataforma PRIMARY KEY (chave),
+
+    CONSTRAINT fk_configuracao_admin
+        FOREIGN KEY (id_admin_alteracao)
+        REFERENCES Usuario(id_usuario)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
+
+-- GERADO AGORA: Redacao ganha tipo_redacao - aluno agora escolhe entre 6
+-- generos de texto (ENEM, artigo de opiniao, narrativa, resenha critica,
+-- cronica, carta argumentativa), nao so ENEM. VARCHAR em vez de ENUM
+-- porque a lista de generos vive so no codigo (PERFIS_REDACAO em
+-- app/services/iaService.js) - o valor default abaixo tem que bater
+-- exatamente com a chave SLUG_ENEM de la. Default cobre as redacoes ja
+-- existentes (todas eram ENEM antes desta mudanca).
+ALTER TABLE Redacao
+    ADD COLUMN tipo_redacao VARCHAR(40) NOT NULL DEFAULT 'enem_dissertativo_argumentativo';
+
+

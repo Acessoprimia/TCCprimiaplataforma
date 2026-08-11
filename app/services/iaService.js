@@ -13,6 +13,9 @@ const TIPOS_CRONOGRAMA_VALIDOS = ["diario", "semanal"];
 const QUANTIDADE_MAXIMA_EVENTOS = 30;
 const REGEX_DATA = /^\d{4}-\d{2}-\d{2}$/;
 const REGEX_HORA = /^([01]\d|2[0-3]):[0-5]\d$/;
+const NOTA_MAXIMA_COMPETENCIA = 200;
+const TAMANHO_MINIMO_REDACAO = 50; // caracteres - evita gastar cota da IA com texto vazio/lixo
+const TAMANHO_MAXIMO_REDACAO = 6000; // ~800-1000 palavras, folga generosa sobre o limite do ENEM
 
 // Le GEMINI_API_KEY (compatibilidade com o formato antigo, usado ainda
 // no deploy) mais GEMINI_API_KEY_1, _2, _3... A cota diaria do free
@@ -91,7 +94,52 @@ const SCHEMA_CRONOGRAMA = {
   },
 };
 
-// Um "cliente" por chave, cada um com os 3 modelos que o servico usa.
+const SCHEMA_REDACAO = {
+  responseMimeType: "application/json",
+  responseSchema: {
+    type: SchemaType.OBJECT,
+    properties: {
+      competencia1: {
+        type: SchemaType.OBJECT,
+        properties: {
+          nota: { type: SchemaType.INTEGER },
+          comentario: { type: SchemaType.STRING },
+        },
+      },
+      competencia2: {
+        type: SchemaType.OBJECT,
+        properties: {
+          nota: { type: SchemaType.INTEGER },
+          comentario: { type: SchemaType.STRING },
+        },
+      },
+      competencia3: {
+        type: SchemaType.OBJECT,
+        properties: {
+          nota: { type: SchemaType.INTEGER },
+          comentario: { type: SchemaType.STRING },
+        },
+      },
+      competencia4: {
+        type: SchemaType.OBJECT,
+        properties: {
+          nota: { type: SchemaType.INTEGER },
+          comentario: { type: SchemaType.STRING },
+        },
+      },
+      competencia5: {
+        type: SchemaType.OBJECT,
+        properties: {
+          nota: { type: SchemaType.INTEGER },
+          comentario: { type: SchemaType.STRING },
+        },
+      },
+      comentarioGeral: { type: SchemaType.STRING },
+    },
+  },
+};
+
+// Um "cliente" por chave, cada um com os 4 modelos que o servico usa.
 // getGenerativeModel(...) so monta a config, nao faz nenhuma chamada de
 // rede, entao criar N clientes de uma vez e barato.
 const clientesGemini = coletarChavesGemini().map((chave) => {
@@ -100,6 +148,7 @@ const clientesGemini = coletarChavesGemini().map((chave) => {
     modelo: genAI.getGenerativeModel({ model: nomeModelo }),
     modeloSimulado: genAI.getGenerativeModel({ model: nomeModelo, generationConfig: SCHEMA_SIMULADO }),
     modeloCronograma: genAI.getGenerativeModel({ model: nomeModelo, generationConfig: SCHEMA_CRONOGRAMA }),
+    modeloRedacao: genAI.getGenerativeModel({ model: nomeModelo, generationConfig: SCHEMA_REDACAO }),
   };
 });
 
@@ -219,6 +268,192 @@ function validarFormularioGerado(json, quantidadeEsperada) {
   }
 
   return { perguntas };
+}
+
+const SLUG_ENEM = "enem_dissertativo_argumentativo";
+
+// Catalogo dos generos de redacao suportados. As 5 colunas nota_c1..c5/
+// comentario_c1..c5 no banco sao genericas (servem pra qualquer genero)
+// - so o CONTEUDO de cada slot (nome do criterio + instrucao de prompt)
+// muda por genero aqui. VARCHAR no banco em vez de ENUM porque essa
+// lista vive so aqui - manter um enum sincronizado no banco seria uma
+// segunda fonte de verdade (ver comentario em schema.sql).
+const PERFIS_REDACAO = Object.freeze({
+  [SLUG_ENEM]: {
+    rotulo: "📝 ENEM — Dissertativo-argumentativa",
+    competencias: [
+      "Domínio da norma culta da língua escrita",
+      "Compreensão da proposta e aplicação de conceitos das áreas de conhecimento",
+      "Seleção e organização de argumentos e informações",
+      "Conhecimento dos mecanismos linguísticos para argumentação",
+      "Proposta de intervenção que respeite os direitos humanos",
+    ],
+    instrucoes:
+      `Você é um corretor de redações do ENEM. Avalie a redação abaixo sobre o tema ` +
+      `"\${tema}", seguindo estritamente as 5 competências oficiais do ENEM, cada uma ` +
+      `valendo de 0 a 200 pontos, em múltiplos de 20. Competência 1: domínio da norma ` +
+      `culta. Competência 2: compreensão da proposta e aplicação de conceitos de várias ` +
+      `áreas. Competência 3: seleção e organização de argumentos. Competência 4: ` +
+      `conhecimento dos mecanismos linguísticos para argumentação. Competência 5: ` +
+      `proposta de intervenção que respeite os direitos humanos.`,
+  },
+  artigo_opiniao: {
+    rotulo: "💬 Artigo de opinião",
+    competencias: [
+      "Domínio da norma culta e adequação da linguagem",
+      "Clareza e defesa do ponto de vista",
+      "Qualidade e articulação dos argumentos",
+      "Coesão e organização textual",
+      "Força persuasiva da conclusão",
+    ],
+    instrucoes:
+      `Você é um corretor de artigos de opinião. Avalie o texto abaixo sobre o tema ` +
+      `"\${tema}" considerando 5 critérios, cada um valendo de 0 a 200 pontos em ` +
+      `múltiplos de 20: (1) domínio da norma culta e adequação da linguagem ao gênero; ` +
+      `(2) clareza e sustentação do ponto de vista defendido; (3) qualidade e ` +
+      `articulação dos argumentos, incluindo uso de exemplos, dados ou contra-` +
+      `argumentação; (4) coesão e organização textual, com conectivos adequados e ` +
+      `progressão lógica das ideias; (5) força persuasiva da conclusão, retomando a ` +
+      `tese e convencendo o leitor.`,
+  },
+  narrativa: {
+    rotulo: "📖 Narrativa",
+    competencias: [
+      "Domínio da norma culta",
+      "Enredo e desenvolvimento da história",
+      "Construção de personagens",
+      "Ambientação (espaço e tempo)",
+      "Recursos linguísticos, coesão e fechamento",
+    ],
+    instrucoes:
+      `Você é um corretor de textos narrativos. Avalie a narrativa abaixo com tema/mote ` +
+      `"\${tema}" considerando 5 critérios, cada um valendo de 0 a 200 pontos em ` +
+      `múltiplos de 20: (1) domínio da norma culta; (2) enredo e desenvolvimento da ` +
+      `história, incluindo conflito e progressão; (3) construção de personagens, ` +
+      `consistência e verossimilhança; (4) ambientação, construção do espaço e do ` +
+      `tempo narrativo; (5) recursos linguísticos, coesão entre as partes e fechamento ` +
+      `satisfatório da história.`,
+  },
+  resenha_critica: {
+    rotulo: "🔎 Resenha crítica",
+    competencias: [
+      "Domínio da norma culta",
+      "Apresentação e contextualização do objeto resenhado",
+      "Capacidade de análise crítica",
+      "Uso de argumentos e evidências",
+      "Coesão, coerência e posicionamento final",
+    ],
+    instrucoes:
+      `Você é um corretor de resenhas críticas. Avalie a resenha abaixo sobre ` +
+      `"\${tema}" considerando 5 critérios, cada um valendo de 0 a 200 pontos em ` +
+      `múltiplos de 20: (1) domínio da norma culta; (2) apresentação e contextualização ` +
+      `adequada da obra ou objeto resenhado; (3) capacidade de análise crítica, indo ` +
+      `além do resumo e avaliando pontos fortes e fracos; (4) uso de argumentos e ` +
+      `evidências concretas do próprio objeto pra sustentar o julgamento; (5) coesão, ` +
+      `coerência e posicionamento final claro.`,
+  },
+  cronica: {
+    rotulo: "📰 Crônica",
+    competencias: [
+      "Domínio da norma culta e recursos de estilo",
+      "Observação do cotidiano e originalidade",
+      "Construção da narrativa (fluidez e ritmo)",
+      "Uso de recursos literários (ironia, humor etc.)",
+      "Coesão, coerência e fechamento reflexivo",
+    ],
+    instrucoes:
+      `Você é um corretor de crônicas. Avalie o texto abaixo com tema/mote "\${tema}" ` +
+      `considerando 5 critérios, cada um valendo de 0 a 200 pontos em múltiplos de 20: ` +
+      `(1) domínio da norma culta e uso adequado de recursos de estilo; (2) observação ` +
+      `do cotidiano e originalidade do olhar sobre o tema; (3) construção da narrativa, ` +
+      `com fluidez e bom ritmo; (4) uso de recursos literários típicos do gênero, como ` +
+      `ironia, humor ou coloquialidade controlada; (5) coesão, coerência e um ` +
+      `fechamento reflexivo que arremate o texto.`,
+  },
+  carta_argumentativa: {
+    rotulo: "✉️ Carta argumentativa",
+    competencias: [
+      "Domínio da norma culta e estrutura da carta",
+      "Compreensão da proposta e do destinatário",
+      "Seleção e organização dos argumentos",
+      "Mecanismos linguísticos e tom adequado ao destinatário",
+      "Proposta de ação ou solicitação concreta",
+    ],
+    instrucoes:
+      `Você é um corretor de cartas argumentativas. Avalie a carta abaixo sobre ` +
+      `"\${tema}" considerando 5 critérios, cada um valendo de 0 a 200 pontos em ` +
+      `múltiplos de 20: (1) domínio da norma culta e adequação à estrutura do gênero ` +
+      `carta; (2) compreensão da proposta e clareza sobre quem é o destinatário e qual ` +
+      `o propósito da carta; (3) seleção e organização dos argumentos voltados a ` +
+      `persuadir o destinatário específico; (4) mecanismos linguísticos de ` +
+      `argumentação e adequação do tom e registro ao destinatário; (5) proposta de ` +
+      `ação ou solicitação concreta ao final da carta.`,
+  },
+});
+
+function resolverTipoRedacao(tipoRedacao) {
+  return PERFIS_REDACAO[tipoRedacao] ? tipoRedacao : SLUG_ENEM;
+}
+
+// Fallback pro ENEM cobre tanto slug ausente/invalido quanto um slug
+// orfao (redacao antiga referenciando um genero que um dia deixe de
+// existir no catalogo) - nunca deixa a tela de resultado quebrar.
+function buscarPerfilRedacao(tipoRedacao) {
+  const slug = resolverTipoRedacao(tipoRedacao);
+  return { slug, ...PERFIS_REDACAO[slug] };
+}
+
+function listarPerfisRedacao() {
+  return Object.entries(PERFIS_REDACAO).map(([slug, perfil]) => ({ slug, rotulo: perfil.rotulo }));
+}
+
+function validarCompetencia(json, chave, indice, competencias) {
+  const bloco = json?.[chave];
+  const notaBruta = Number(bloco?.nota);
+
+  if (!bloco || !Number.isFinite(notaBruta)) {
+    throw new Error(`Competencia ${indice + 1} sem nota valida retornada pela IA.`);
+  }
+
+  // Clampa em vez de rejeitar: a IA as vezes extrapola por 1-2 pontos, e
+  // o formato so aceita multiplos de 20 (0,20,40...200) - arredonda pro
+  // multiplo de 20 mais proximo dentro do range.
+  const notaClampada = Math.min(
+    Math.max(Math.round(notaBruta / 20) * 20, 0),
+    NOTA_MAXIMA_COMPETENCIA
+  );
+
+  return {
+    nota: notaClampada,
+    comentario:
+      typeof bloco.comentario === "string" && bloco.comentario.trim()
+        ? bloco.comentario.slice(0, 800)
+        : `Sem comentário específico para ${competencias[indice]}.`,
+  };
+}
+
+// Nunca confia na soma que a IA disser (nem existe campo pra isso no
+// schema, de proposito) - a nota total e sempre recalculada aqui a
+// partir das 5 notas ja validadas/clampadas.
+function validarCorrecaoGerada(json, competencias) {
+  const c1 = validarCompetencia(json, "competencia1", 0, competencias);
+  const c2 = validarCompetencia(json, "competencia2", 1, competencias);
+  const c3 = validarCompetencia(json, "competencia3", 2, competencias);
+  const c4 = validarCompetencia(json, "competencia4", 3, competencias);
+  const c5 = validarCompetencia(json, "competencia5", 4, competencias);
+
+  return {
+    c1,
+    c2,
+    c3,
+    c4,
+    c5,
+    notaTotal: c1.nota + c2.nota + c3.nota + c4.nota + c5.nota,
+    comentarioGeral:
+      typeof json.comentarioGeral === "string" && json.comentarioGeral.trim()
+        ? json.comentarioGeral.slice(0, 1500)
+        : "Correcao gerada sem comentario geral.",
+  };
 }
 
 // Calcula datas de verdade em vez de deixar a IA fazer conta de dia da
@@ -358,6 +593,50 @@ const IaService = Object.freeze({
   validarFormulario(json, quantidadeMaxima) {
     return validarFormularioGerado(json, quantidadeMaxima ?? QUANTIDADE_MAXIMA_PERGUNTAS);
   },
+
+  async corrigirRedacao({ tema, texto, tipoRedacao }) {
+    const temaLimpo = String(tema || "").trim().slice(0, 200);
+    const textoLimpo = String(texto || "").trim();
+
+    if (textoLimpo.length < TAMANHO_MINIMO_REDACAO) {
+      throw new Error(`A redacao precisa ter pelo menos ${TAMANHO_MINIMO_REDACAO} caracteres.`);
+    }
+    if (textoLimpo.length > TAMANHO_MAXIMO_REDACAO) {
+      throw new Error(`A redacao passou do limite de ${TAMANHO_MAXIMO_REDACAO} caracteres.`);
+    }
+
+    const perfil = buscarPerfilRedacao(tipoRedacao);
+    // As instrucoes de cada perfil guardam "${tema}" como texto literal
+    // (nao interpolado - o tema so existe aqui, em tempo de chamada),
+    // substituido na mao pra nao precisar transformar cada entrada do
+    // catalogo numa funcao.
+    const instrucoesComTema = perfil.instrucoes.replace(/\$\{tema\}/g, temaLimpo);
+
+    const prompt = [
+      instrucoesComTema,
+      `Para cada critério dê uma nota e um comentário construtivo e específico em`,
+      `português do Brasil, apontando acertos e o que melhorar. Dê também um`,
+      `comentário geral sobre o texto.\n\nRedação do aluno:\n${textoLimpo}`,
+    ].join(" ");
+
+    const resultado = await gerarComRotacaoDeChave("modeloRedacao", prompt);
+
+    let json;
+    try {
+      json = JSON.parse(resultado.response.text());
+    } catch (erro) {
+      throw new Error("A IA retornou um formato invalido de correcao.");
+    }
+
+    return validarCorrecaoGerada(json, perfil.competencias);
+  },
+
+  // Expostas pro router/views montarem o seletor de genero e resolverem
+  // o rotulo/competencias de uma redacao ja salva, sem duplicar o
+  // catalogo PERFIS_REDACAO em outro arquivo.
+  resolverTipoRedacao,
+  buscarPerfilRedacao,
+  listarPerfisRedacao,
 
   async gerarCronograma({ materia, tema, tipo, dataInicio, quantidade }) {
     const tipoValido = TIPOS_CRONOGRAMA_VALIDOS.includes(tipo) ? tipo : "semanal";

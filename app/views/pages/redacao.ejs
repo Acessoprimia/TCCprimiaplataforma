@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redação - Primia</title>
+
+    <link href="../css/redacao.css" rel="stylesheet">
+    <%- include('../partials/headerpremium.ejs') %>
+</head>
+
+<body>
+    <main class="container-redacao">
+        <h1 class="titulo-redacao">Redação</h1>
+
+        <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.geral) { %>
+            <p class="redacao-erro"><%= msgErro.geral %></p>
+        <% } %>
+
+        <section class="escrever-redacao-container">
+            <h2>Escreva sua redação</h2>
+            <form action="/redacao" method="POST" class="escrever-redacao-form">
+                <label class="campo-tipo-redacao">
+                    Tipo de redação
+                    <select name="tipo_redacao">
+                        <% perfis.forEach(function (perfil) { %>
+                            <option value="<%= perfil.slug %>"
+                                <%= ((typeof valores !== 'undefined' && valores.tipo_redacao) || 'enem_dissertativo_argumentativo') === perfil.slug ? 'selected' : '' %>>
+                                <%= perfil.rotulo %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </label>
+
+                <input type="text" name="tema" placeholder="Tema da redação"
+                       value="<%= (typeof valores !== 'undefined' && valores.tema) || '' %>" required>
+                <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.tema) { %>
+                    <span class="campo-erro"><%= msgErro.tema %></span>
+                <% } %>
+
+                <textarea name="texto" placeholder="Escreva sua redação aqui..."
+                          required><%= (typeof valores !== 'undefined' && valores.texto) || '' %></textarea>
+                <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.texto) { %>
+                    <span class="campo-erro"><%= msgErro.texto %></span>
+                <% } %>
+
+                <button type="submit">Enviar para correção</button>
+            </form>
+        </section>
+
+        <section class="secao-historico-redacao">
+            <h2>Minhas redações</h2>
+
+            <% if (historico.length === 0) { %>
+                <p class="redacoes-vazio">Nenhuma redação enviada ainda.</p>
+            <% } %>
+
+            <div class="grade-historico-redacao">
+                <% historico.forEach(function (r) { %>
+                    <article class="card-redacao">
+                        <span class="badge-tipo-redacao">
+                            <%= (perfis.find(function (p) { return p.slug === r.tipo_redacao; }) || {}).rotulo || '' %>
+                        </span>
+                        <h3><%= r.tema %></h3>
+                        <p class="nota-redacao"><%= r.nota_total %> / 1000</p>
+                        <time class="data-redacao"><%= new Date(r.criado_em).toLocaleDateString('pt-BR') %></time>
+                        <a href="/redacao/<%= r.id_redacao %>" class="botao-redacao">Ver correção</a>
+                    </article>
+                <% }) %>
+            </div>
+        </section>
+    </main>
+
+    <%- include('../partials/footer.ejs') %>
+</body>
+
+</html>

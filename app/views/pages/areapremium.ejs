@@ -14,7 +14,7 @@
         <main>
             <header class="titulo-area">
                 <h1>Área Premium</h1>
-                <p>Teste uma semana grátis</p>
+                <p><%= (typeof configuracoesSite !== 'undefined' && configuracoesSite.periodo_teste_premium) || 'Teste uma semana grátis' %></p>
             </header>
 
             <section class="plano gratuito">
@@ -35,11 +35,14 @@
                         <h2>Premium</h2>
                     </header>
                 </a>
+                <% if (typeof configuracoesSite !== 'undefined' && configuracoesSite.recurso_premium_destaque) { %>
+                    <p class="destaque-premium">Destaque: <%= configuracoesSite.recurso_premium_destaque %></p>
+                <% } %>
                 <ul>
                     <li><a href="/areadosimulado">Simulados</a></li>
                     <li><a href="/video">Videoaulas</a></li>
                     <li><a href="/planoestudo">Planos de Estudo Especializados</a></li>
-                    <li><a href="#">Preparatório para o ENEM</a></li>
+                    <li><a href="/redacao">Preparatório para o ENEM</a></li>
                 </ul>
             </section>
         </main>

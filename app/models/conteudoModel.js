@@ -61,6 +61,21 @@ const queries = Object.freeze({
   remover: `
     DELETE FROM ${TABELAS.conteudos} WHERE id = ?
   `,
+  listarRecomendadosPorMateria: `
+    SELECT id, titulo, tipo
+    FROM ${TABELAS.conteudos}
+    WHERE materia_id = ? AND status = 'publicado' AND arquivado = 0
+    ORDER BY destaque DESC, criado_em DESC
+    LIMIT ?
+  `,
+  // Re-checagem pro snapshot salvo em Analise_Desempenho: quais IDs
+  // recomendados ainda estao publicados/nao-arquivados (evita link
+  // morto sem precisar rechamar a IA se um admin arquivar algo depois
+  // da analise ter sido gerada).
+  filtrarAindaPublicados: `
+    SELECT id FROM ${TABELAS.conteudos}
+    WHERE id IN (?) AND status = 'publicado' AND arquivado = 0
+  `,
 });
 
 function banco(conexao) {
@@ -175,6 +190,17 @@ const ConteudoModel = Object.freeze({
   async remover(id, conexao) {
     const [resultado] = await banco(conexao).query(queries.remover, [id]);
     return resultado;
+  },
+
+  async listarRecomendadosPorMateria(idMateria, limite, conexao) {
+    const [linhas] = await banco(conexao).query(queries.listarRecomendadosPorMateria, [idMateria, limite]);
+    return linhas;
+  },
+
+  async filtrarAindaPublicados(ids, conexao) {
+    if (!ids.length) return [];
+    const [linhas] = await banco(conexao).query(queries.filtrarAindaPublicados, [ids]);
+    return linhas.map((linha) => linha.id);
   },
 });
 

@@ -494,3 +494,28 @@ ALTER TABLE Redacao
     ADD COLUMN tipo_redacao VARCHAR(40) NOT NULL DEFAULT 'enem_dissertativo_argumentativo';
 
 
+-- GERADO AGORA: Analise_Desempenho - cache da analise de desempenho gerada
+-- sob demanda pela IA (tela "Resultados"). Uma linha por aluno (nao
+-- historico - upsert via ON DUPLICATE KEY UPDATE). materias_fracas e
+-- recomendacoes ja vem filtrados/resolvidos pelo codigo antes de salvar
+-- (nunca gravado direto do JSON da IA - ver validarAnaliseGerada em
+-- iaService.js), entao nunca ha titulo de conteudo inventado aqui.
+CREATE TABLE Analise_Desempenho (
+    id_aluno INT NOT NULL,
+    diagnostico TEXT NOT NULL,
+    pontos_fortes TEXT NOT NULL,
+    recomendacao_geral TEXT NOT NULL,
+    materias_fracas JSON NOT NULL,
+    recomendacoes JSON NOT NULL,
+    gerado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_analise_desempenho PRIMARY KEY (id_aluno),
+
+    CONSTRAINT fk_analise_desempenho_aluno
+        FOREIGN KEY (id_aluno)
+        REFERENCES Aluno(id_aluno)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+

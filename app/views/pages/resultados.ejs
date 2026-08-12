@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados - Primia</title>
+
+    <link href="../css/resultados.css" rel="stylesheet">
+    <%- include('../partials/headerpremium.ejs') %>
+</head>
+
+<body>
+    <main class="container-resultados">
+        <h1 class="titulo-resultados">Resultados</h1>
+
+        <% if (msgErro && msgErro.geral) { %>
+            <p class="resultados-erro"><%= msgErro.geral %></p>
+        <% } %>
+
+        <section class="secao-numeros">
+            <h2>Seus números</h2>
+
+            <div class="grade-stats-resultados">
+                <article class="card-stat">
+                    <span class="stat-valor"><%= numeros.totalFormularios %></span>
+                    <span class="stat-label">Simulados gerados</span>
+                </article>
+                <article class="card-stat">
+                    <span class="stat-valor"><%= numeros.totalSimuladosRespondidos %></span>
+                    <span class="stat-label">Simulados respondidos</span>
+                </article>
+                <article class="card-stat">
+                    <span class="stat-valor"><%= numeros.totalPerguntasRespondidas %></span>
+                    <span class="stat-label">Perguntas respondidas</span>
+                </article>
+                <article class="card-stat">
+                    <span class="stat-valor"><%= numeros.taxaAcertoGeral !== null ? numeros.taxaAcertoGeral + '%' : '—' %></span>
+                    <span class="stat-label">Taxa de acerto geral</span>
+                </article>
+                <article class="card-stat">
+                    <span class="stat-valor"><%= numeros.totalRedacoes %></span>
+                    <span class="stat-label">Redações enviadas</span>
+                </article>
+            </div>
+
+            <% if (numeros.porMateria.length > 0) { %>
+                <h3>Acerto por matéria</h3>
+                <ul class="lista-materia-taxa">
+                    <% numeros.porMateria.forEach(function (m) { %>
+                        <li><span><%= m.materia %></span><span><%= m.taxa %>% (<%= m.total %> perguntas)</span></li>
+                    <% }) %>
+                </ul>
+            <% } %>
+
+            <% if (numeros.porGenero.length > 0) { %>
+                <h3>Nota média por gênero de redação</h3>
+                <ul class="lista-redacao-genero">
+                    <% numeros.porGenero.forEach(function (g) { %>
+                        <li><span><%= g.rotulo %> (<%= g.total %>x)</span><span><%= g.mediaTotal %>/1000</span></li>
+                    <% }) %>
+                </ul>
+            <% } %>
+        </section>
+
+        <section class="secao-analise-ia">
+            <h2>Análise da IA</h2>
+
+            <% if (analise) { %>
+                <p class="analise-atualizada-em">
+                    Gerada em <%= new Date(analise.gerado_em).toLocaleDateString('pt-BR') %>
+                </p>
+                <p class="analise-diagnostico"><%= analise.diagnostico %></p>
+
+                <h3>Pontos fortes</h3>
+                <p><%= analise.pontos_fortes %></p>
+
+                <h3>Recomendação geral</h3>
+                <p><%= analise.recomendacao_geral %></p>
+
+                <% if (analise.recomendacoes.length > 0) { %>
+                    <h3>Conteúdo recomendado</h3>
+                    <% analise.recomendacoes.forEach(function (grupo) { %>
+                        <div class="grupo-recomendacao">
+                            <h4><%= grupo.materia %></h4>
+                            <ul>
+                                <% grupo.conteudos.forEach(function (c) { %>
+                                    <li><a href="/<%= c.tipo === 'video' ? 'videoaula' : 'livro' %>/<%= c.id %>"><%= c.titulo %></a></li>
+                                <% }) %>
+                            </ul>
+                        </div>
+                    <% }) %>
+                <% } %>
+            <% } else { %>
+                <p class="analise-vazia">Você ainda não gerou sua análise de desempenho.</p>
+            <% } %>
+
+            <form action="/resultados/analisar" method="POST">
+                <button type="submit"><%= analise ? 'Atualizar análise' : 'Gerar minha análise' %></button>
+            </form>
+        </section>
+    </main>
+
+    <%- include('../partials/footer.ejs') %>
+</body>
+
+</html>

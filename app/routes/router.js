@@ -1823,6 +1823,116 @@ router.get("/redacao/:id", async function (req, res) {
   });
 });
 
+// buscarResumoAgregado devolve porGenero so com o slug (tipo_redacao) -
+// a tela precisa do rotulo pra mostrar qual estilo cada linha e (ex:
+// "📖 Narrativa"), entao resolve aqui em vez de fazer o model depender
+// do catalogo de generos do iaService.js.
+async function buscarNumerosResultados(idAluno) {
+  const numeros = await Models.resultados.buscarResumoAgregado(idAluno);
+  return {
+    ...numeros,
+    porGenero: numeros.porGenero.map((g) => ({
+      ...g,
+      rotulo: IaService.buscarPerfilRedacao(g.tipoRedacao).rotulo,
+    })),
+  };
+}
+
+// Re-checa, so na leitura, se os conteudos recomendados no snapshot
+// salvo ainda estao publicados/nao-arquivados - evita link morto sem
+// precisar rechamar a IA se um admin arquivar algo depois da analise
+// ter sido gerada.
+async function carregarAnaliseComLinksValidos(idAluno) {
+  const analise = await Models.resultados.buscarAnalise(idAluno);
+  if (!analise) return null;
+
+  const todosIds = analise.recomendacoes.flatMap((grupo) => grupo.conteudos.map((c) => c.id));
+  const idsValidos = new Set(await Models.conteudos.filtrarAindaPublicados(todosIds));
+
+  analise.recomendacoes = analise.recomendacoes
+    .map((grupo) => ({ ...grupo, conteudos: grupo.conteudos.filter((c) => idsValidos.has(c.id)) }))
+    .filter((grupo) => grupo.conteudos.length > 0);
+
+  return analise;
+}
+
+router.get("/resultados", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  if (!(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
+    return res.redirect("/areapremium");
+  }
+
+  const numeros = await buscarNumerosResultados(usuarioBase.id);
+  const analise = await carregarAnaliseComLinksValidos(usuarioBase.id);
+
+  res.render("pages/resultados", { numeros, analise, msgErro: null });
+});
+
+router.post("/resultados/analisar", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  if (!(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
+    return res.redirect("/areapremium");
+  }
+
+  const numeros = await buscarNumerosResultados(usuarioBase.id);
+
+  // Nao gasta cota da IA sem dado real pra analisar - mesma cautela de
+  // TAMANHO_MINIMO_REDACAO em iaService.js.
+  if (numeros.totalPerguntasRespondidas === 0 && numeros.totalRedacoes === 0) {
+    const analise = await carregarAnaliseComLinksValidos(usuarioBase.id);
+    return res.render("pages/resultados", {
+      numeros,
+      analise,
+      msgErro: { geral: "Responda um simulado ou envie uma redação antes de gerar sua análise." },
+    });
+  }
+
+  try {
+    const materiasDisponiveis = await Models.materias.listarAtivas();
+    const resultado = await IaService.analisarDesempenho({ resumo: numeros, materiasDisponiveis });
+
+    const recomendacoes = [];
+    for (const materia of resultado.materiasFracas) {
+      const conteudos = await Models.conteudos.listarRecomendadosPorMateria(materia.id_materia, 3);
+      if (conteudos.length) {
+        recomendacoes.push({ materia: materia.nome, conteudos });
+      }
+    }
+
+    await Models.resultados.salvarAnalise({
+      idAluno: usuarioBase.id,
+      diagnostico: resultado.diagnostico,
+      pontosFortes: resultado.pontosFortes,
+      recomendacaoGeral: resultado.recomendacaoGeral,
+      materiasFracas: resultado.materiasFracas.map((m) => m.nome),
+      recomendacoes,
+    });
+
+    return res.redirect("/resultados");
+  } catch (erro) {
+    // Nunca perde o estado da tela: numeros continuam reais/atualizados,
+    // e a analise ANTIGA (se existir) continua visivel - so aparece um
+    // aviso de que a atualizacao falhou.
+    console.error("Erro ao gerar analise de desempenho:", erro);
+    const analise = await carregarAnaliseComLinksValidos(usuarioBase.id);
+    return res.render("pages/resultados", {
+      numeros,
+      analise,
+      msgErro: { geral: erro.message || "Nao foi possivel gerar sua analise agora. Tente novamente." },
+    });
+  }
+});
+
 
 router.get("/cadastroprofessor", async function (req, res) {
   return renderizarCadastroProfessor(res);

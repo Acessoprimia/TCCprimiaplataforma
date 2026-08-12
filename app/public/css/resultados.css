@@ -1,0 +1,214 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    color: rgb(0, 0, 0);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* CONTAINER PRINCIPAL */
+.container-resultados {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    flex: 1;
+    width: 100%;
+}
+
+/* TÍTULO */
+.titulo-resultados {
+    font-size: 28px;
+    font-weight: 700;
+    color: #B5A9D8;
+    margin-bottom: 25px;
+    margin-top: 80px;
+}
+
+/* AVISO DE ERRO */
+.resultados-erro {
+    background: #fdecea;
+    color: #b3261e;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+/* SEÇÃO "SEUS NÚMEROS" */
+.secao-numeros {
+    margin-bottom: 40px;
+}
+
+.secao-numeros h2,
+.secao-analise-ia h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.secao-numeros h3,
+.secao-analise-ia h3 {
+    font-size: 15px;
+    color: #7c6ea8;
+    margin: 20px 0 10px;
+}
+
+.grade-stats-resultados {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+}
+
+.card-stat {
+    background: #F3F0FA;
+    border-radius: 15px;
+    padding: 18px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat-valor {
+    font-size: 26px;
+    font-weight: 700;
+    color: #B5A9D8;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #666;
+}
+
+.lista-materia-taxa,
+.lista-redacao-genero {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.lista-materia-taxa li,
+.lista-redacao-genero li {
+    display: flex;
+    justify-content: space-between;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #444;
+}
+
+/* SEÇÃO "ANÁLISE DA IA" */
+.secao-analise-ia {
+    background: #F3F0FA;
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.analise-atualizada-em {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.analise-diagnostico {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.secao-analise-ia p {
+    color: #555;
+    line-height: 1.6;
+}
+
+.analise-vazia {
+    color: #888;
+    margin-bottom: 16px;
+}
+
+.grupo-recomendacao {
+    background: white;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 12px;
+}
+
+.grupo-recomendacao h4 {
+    font-size: 14px;
+    color: #7c6ea8;
+    margin-bottom: 8px;
+}
+
+.grupo-recomendacao ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.grupo-recomendacao a {
+    color: #B5A9D8;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.grupo-recomendacao a:hover {
+    text-decoration: underline;
+}
+
+.secao-analise-ia form {
+    margin-top: 20px;
+}
+
+.secao-analise-ia button {
+    padding: 12px 28px;
+    background: #B5A9D8;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.secao-analise-ia button:hover {
+    background: #a399c8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(181, 169, 216, 0.3);
+}
+
+/* RESPONSIVO MOBILE */
+@media (max-width: 768px) {
+    .container-resultados {
+        padding: 20px 15px;
+    }
+
+    .titulo-resultados {
+        font-size: 24px;
+    }
+
+    .grade-stats-resultados {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

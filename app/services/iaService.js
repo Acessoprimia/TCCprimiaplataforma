@@ -139,7 +139,25 @@ const SCHEMA_REDACAO = {
   },
 };
 
-// Um "cliente" por chave, cada um com os 4 modelos que o servico usa.
+const SCHEMA_ANALISE_DESEMPENHO = {
+  responseMimeType: "application/json",
+  responseSchema: {
+    type: SchemaType.OBJECT,
+    properties: {
+      diagnostico: { type: SchemaType.STRING },
+      pontosFortes: { type: SchemaType.STRING },
+      recomendacaoGeral: { type: SchemaType.STRING },
+      materiasFracas: {
+        type: SchemaType.ARRAY,
+        items: { type: SchemaType.STRING },
+      },
+    },
+  },
+};
+
+const LIMITE_MATERIAS_FRACAS = 3;
+
+// Um "cliente" por chave, cada um com os 5 modelos que o servico usa.
 // getGenerativeModel(...) so monta a config, nao faz nenhuma chamada de
 // rede, entao criar N clientes de uma vez e barato.
 const clientesGemini = coletarChavesGemini().map((chave) => {
@@ -149,6 +167,7 @@ const clientesGemini = coletarChavesGemini().map((chave) => {
     modeloSimulado: genAI.getGenerativeModel({ model: nomeModelo, generationConfig: SCHEMA_SIMULADO }),
     modeloCronograma: genAI.getGenerativeModel({ model: nomeModelo, generationConfig: SCHEMA_CRONOGRAMA }),
     modeloRedacao: genAI.getGenerativeModel({ model: nomeModelo, generationConfig: SCHEMA_REDACAO }),
+    modeloAnaliseDesempenho: genAI.getGenerativeModel({ model: nomeModelo, generationConfig: SCHEMA_ANALISE_DESEMPENHO }),
   };
 });
 
@@ -456,6 +475,75 @@ function validarCorrecaoGerada(json, competencias) {
   };
 }
 
+function montarPromptAnaliseDesempenho(resumo, materiasDisponiveis) {
+  const linhasMateria = resumo.porMateria.length
+    ? resumo.porMateria
+        .map((m) => `- ${m.materia}: ${m.taxa}% de acerto (${m.total} perguntas respondidas)`)
+        .join("\n")
+    : "- Nenhum simulado respondido com matéria definida ainda.";
+
+  const linhasRedacao = resumo.porGenero.length
+    ? resumo.porGenero
+        .map((g) => `- ${buscarPerfilRedacao(g.tipoRedacao).rotulo}: ${g.total} redação(ões), nota média ${g.mediaTotal}/1000`)
+        .join("\n")
+    : "- Nenhuma redação enviada ainda.";
+
+  return [
+    `Você é um orientador educacional analisando o desempenho de um aluno do ensino médio`,
+    `com base SOMENTE nos números abaixo (não invente nenhum dado que não esteja aqui).\n`,
+    `Simulados: ${resumo.totalSimuladosRespondidos} respondidos, ${resumo.totalPerguntasRespondidas} perguntas,`,
+    `taxa de acerto geral ${resumo.taxaAcertoGeral ?? "sem dados"}%.`,
+    `Por matéria:\n${linhasMateria}\n`,
+    `Redações: ${resumo.totalRedacoes} enviada(s).`,
+    `Por gênero:\n${linhasRedacao}\n`,
+    `Escreva em português do Brasil, tom construtivo e direto: "diagnostico" (visão geral,`,
+    `2-4 frases), "pontosFortes" (o que vai bem, 2-3 frases), "recomendacaoGeral" (próximo`,
+    `passo prático, 2-3 frases).\n`,
+    `Em "materiasFracas", liste APENAS nomes escolhidos EXATAMENTE (mesma grafia) desta lista`,
+    `de matérias que existem no site — nunca cite matéria fora desta lista, e nunca cite título`,
+    `de livro ou vídeo, só o nome da matéria: ${materiasDisponiveis.map((m) => m.nome).join(", ")}.`,
+  ].join(" ");
+}
+
+// Nunca confia direto no JSON: filtra materiasFracas mantendo SO o que
+// bate (case-insensitive/trim) com materiasDisponiveis - nome inventado
+// pela IA e descartado em silencio (nunca vira erro visivel, so reduz a
+// lista). Devolve os OBJETOS {id_materia, nome} casados, nao a string
+// crua da IA - o codigo que usa o resultado precisa do id pra buscar
+// Conteudo de verdade (nunca a IA cita titulo de conteudo).
+function validarAnaliseGerada(json, materiasDisponiveis) {
+  if (!json || typeof json !== "object") {
+    throw new Error("Formato invalido retornado pela IA.");
+  }
+
+  const textoOuFallback = (valor, fallback, tamanhoMaximo) =>
+    typeof valor === "string" && valor.trim() ? valor.trim().slice(0, tamanhoMaximo) : fallback;
+
+  const porNomeNormalizado = new Map(
+    materiasDisponiveis.map((materia) => [materia.nome.trim().toLowerCase(), materia])
+  );
+
+  const brutas = Array.isArray(json.materiasFracas) ? json.materiasFracas : [];
+  const materiasFracas = [];
+  const vistos = new Set();
+
+  for (const nomeCru of brutas) {
+    if (typeof nomeCru !== "string") continue;
+    const materia = porNomeNormalizado.get(nomeCru.trim().toLowerCase());
+    if (!materia || vistos.has(materia.id_materia)) continue;
+    vistos.add(materia.id_materia);
+    materiasFracas.push(materia);
+    if (materiasFracas.length >= LIMITE_MATERIAS_FRACAS) break;
+  }
+
+  return {
+    diagnostico: textoOuFallback(json.diagnostico, "Análise gerada sem diagnóstico detalhado.", 1500),
+    pontosFortes: textoOuFallback(json.pontosFortes, "Análise gerada sem pontos fortes detalhados.", 1000),
+    recomendacaoGeral: textoOuFallback(json.recomendacaoGeral, "Continue praticando simulados e redações.", 1000),
+    materiasFracas, // [{id_materia, nome}]
+  };
+}
+
 // Calcula datas de verdade em vez de deixar a IA fazer conta de dia da
 // semana (erra com frequencia) - comeca em dataBase e pula sabado/domingo.
 function calcularProximosDiasUteis(dataBase, quantidade) {
@@ -630,6 +718,25 @@ const IaService = Object.freeze({
 
     return validarCorrecaoGerada(json, perfil.competencias);
   },
+
+  async analisarDesempenho({ resumo, materiasDisponiveis }) {
+    const prompt = montarPromptAnaliseDesempenho(resumo, materiasDisponiveis);
+    const resultado = await gerarComRotacaoDeChave("modeloAnaliseDesempenho", prompt);
+
+    let json;
+    try {
+      json = JSON.parse(resultado.response.text());
+    } catch (erro) {
+      throw new Error("A IA retornou um formato invalido de analise.");
+    }
+
+    return validarAnaliseGerada(json, materiasDisponiveis);
+  },
+
+  // Exposta pro teste isolado da defesa anti-alucinacao (mesmo padrao
+  // de validarFormulario/validarCronograma, ja expostas justamente pra
+  // permitir reuso/teste).
+  validarAnaliseGerada,
 
   // Expostas pro router/views montarem o seletor de genero e resolverem
   // o rotulo/competencias de uma redacao ja salva, sem duplicar o

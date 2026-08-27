@@ -1,0 +1,140 @@
+/* Cookie Consent Banner */
+.cookie-banner {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #18142a;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 24px;
+  z-index: 1000;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.cookie-banner.visible {
+  transform: translateY(0);
+}
+
+.cookie-banner-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.cookie-banner-text {
+  flex: 1;
+  margin: 0;
+}
+
+.cookie-banner-text figcaption {
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.cookie-banner-text p {
+  margin: 0;
+  color: #8b83ac;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cookie-banner-link {
+  color: #FF9C7D;
+  text-decoration: none;
+}
+
+.cookie-banner-link:hover {
+  text-decoration: underline;
+}
+
+.cookie-banner-actions {
+  display: flex;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cookie-banner-actions li {
+  margin: 0;
+  padding: 0;
+}
+
+.cookie-banner-btn {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.cookie-btn-acept {
+  background: #FF9C7D;
+  color: #18142a;
+}
+
+.cookie-btn-acept:hover {
+  background: #ffaf96;
+}
+
+.cookie-btn-acept:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cookie-banner {
+    transition: none;
+  }
+
+  .cookie-banner-btn {
+    transition: none;
+  }
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .cookie-banner-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cookie-banner-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .cookie-banner-actions li {
+    width: 100%;
+  }
+
+  .cookie-banner-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+  .cookie-banner {
+    padding: 14px 16px;
+  }
+
+  .cookie-banner-text strong {
+    font-size: 13px;
+  }
+
+  .cookie-banner-text p {
+    font-size: 12px;
+  }
+}

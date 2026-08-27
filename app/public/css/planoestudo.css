@@ -164,7 +164,7 @@ section {
 .form-adicionar-item button {
     padding: 10px 24px;
     background: #FF9466;
-    color: white;
+    color: #1A1A1A;
     border: none;
     border-radius: 50px;
     font-weight: 600;
@@ -224,7 +224,7 @@ section {
 .gerar-simulado-form button {
     padding: 10px 24px;
     background: #FF9466;
-    color: white;
+    color: #1A1A1A;
     border: none;
     border-radius: 50px;
     font-weight: 600;
@@ -337,7 +337,7 @@ section {
 .btn-salvar-manual {
     padding: 10px 24px;
     background: #FF9466;
-    color: white;
+    color: #1A1A1A;
     border: none;
     border-radius: 50px;
     font-weight: 600;
@@ -467,7 +467,7 @@ section {
     display: inline-block;
     padding: 8px 20px;
     background: #FF9466;
-    color: white;
+    color: #1A1A1A;
     border-radius: 50px;
     text-decoration: none;
     font-weight: 600;

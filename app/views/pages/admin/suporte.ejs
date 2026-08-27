@@ -151,8 +151,8 @@
 
     <%- include('../../partials/adminModals.ejs') %>
 
-    <script id="dados-denuncias" type="application/json"><%- JSON.stringify(denuncias) %></script>
-    <script id="dados-contatos" type="application/json"><%- JSON.stringify(contatos) %></script>
+    <script id="dados-denuncias" type="application/json"><%- jsonParaScript(denuncias) %></script>
+    <script id="dados-contatos" type="application/json"><%- jsonParaScript(contatos) %></script>
     <script src="/js/admin/common.js"></script>
     <script src="/js/admin/suporte.js"></script>
     <%- include('../../partials/footer.ejs') %>

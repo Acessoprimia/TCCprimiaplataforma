@@ -9,6 +9,7 @@ const IaService = require("../services/iaService");
 const UploadService = require("../services/uploadService");
 const MailService = require("../services/mailService");
 const CronogramaService = require("../services/cronogramaService");
+const PagamentoService = require("../services/pagamentoService");
 
 const uploadConteudo = multer({
   storage: multer.memoryStorage(),
@@ -18,7 +19,15 @@ const uploadConteudo = multer({
 const TIPOS_USUARIO = Object.freeze({
   aluno: "aluno",
   professor: "professor",
-  admin: "admin", 
+  admin: "admin",
+});
+
+const ROTULOS_STATUS_PAGAMENTO = Object.freeze({
+  pendente: { texto: "Pendente", classe: "pendente" },
+  aprovado: { texto: "Aprovado", classe: "sucesso" },
+  recusado: { texto: "Recusado", classe: "erro" },
+  cancelado: { texto: "Cancelado", classe: "erro" },
+  estornado: { texto: "Estornado", classe: "erro" },
 });
 
 const STATUS_CONTA = Object.freeze({
@@ -73,7 +82,6 @@ const VALORES_INICIAIS_EDITAR_PERFIL = Object.freeze({
 
 // Variaveis de apoio para integrar banco, sessoes e seguranca depois.
 // Hoje ainda podem ficar sem uso em algumas rotas porque parte do sistema continua estatica.
-var usuarioLogadoSimulado = null;
 var dadosDashboardAdmin = {};
 var materiasDisponiveis = [];
 var conteudosDisponiveis = [];
@@ -474,9 +482,16 @@ function lerCookieUsuario(req) {
 }
 
 
+// Quem ja teve premium alguma vez (comprou e expirou, ou teve concedido
+// e revogado) vai direto pro checkout de renovacao; quem nunca assinou
+// ve a pagina geral de planos primeiro.
+async function redirecionarFaltaPremium(idUsuario, res) {
+  const jaTevePremium = await Models.assinaturas.jaTevePremium(idUsuario);
+  return res.redirect(jaTevePremium ? "/premium/assinar?motivo=expirado" : "/areapremium");
+}
+
 function usuarioAutenticado(req, tipoUsuario) {
-  const usuarioCookie = lerCookieUsuario(req);
-  const usuarioBase = usuarioCookie || usuarioLogadoSimulado;
+  const usuarioBase = lerCookieUsuario(req);
 
   if (!usuarioBase || usuarioBase.tipo_usuario !== tipoUsuario) {
     return null;
@@ -585,8 +600,7 @@ async function buscarUltimoPerfil(tipoUsuario) {
 }
 
 async function buscarPerfilLogado(req, tipoUsuario) {
-  const usuarioCookie = lerCookieUsuario(req);
-  const usuarioBase = usuarioCookie || usuarioLogadoSimulado;
+  const usuarioBase = lerCookieUsuario(req);
 
   if (!usuarioBase || usuarioBase.tipo_usuario !== tipoUsuario) {
     return null;
@@ -705,7 +719,13 @@ router.get("/", async function (req, res) {
   await renderizarTelaInicial(res);
 });
 
-router.get("/areapremium", function (req, res) {
+router.get("/areapremium", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (usuarioBase && (await Models.assinaturas.estaAtiva(usuarioBase.id))) {
+    return res.redirect("/partepremium");
+  }
+
   res.render("pages/areapremium");
 });
 
@@ -1343,7 +1363,6 @@ router.get("/telainicial", async function (req, res) {
 });
 
 router.get("/logout", function (req, res) {
-  usuarioLogadoSimulado = null;
   limparCookieUsuario(res);
   res.redirect("/telainicial");
 });
@@ -1518,7 +1537,7 @@ router.get("/videoaula/:id", async function (req, res) {
   }
 
   if (aluno && video.is_premium && !(await Models.assinaturas.estaAtiva(aluno.id))) {
-    return res.redirect("/areapremium");
+    return redirecionarFaltaPremium(aluno.id, res);
   }
 
   res.render("pages/videoaula", {
@@ -1740,7 +1759,7 @@ router.get("/redacao", async function (req, res) {
   }
 
   if (!(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
-    return res.redirect("/areapremium");
+    return redirecionarFaltaPremium(usuarioBase.id, res);
   }
 
   const historico = await Models.redacoes.listarPorAluno(usuarioBase.id);
@@ -1762,7 +1781,7 @@ router.post(
     }
 
     if (!(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
-      return res.redirect("/areapremium");
+      return redirecionarFaltaPremium(usuarioBase.id, res);
     }
 
     const errors = validationResult(req);
@@ -1864,7 +1883,7 @@ router.get("/resultados", async function (req, res) {
   }
 
   if (!(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
-    return res.redirect("/areapremium");
+    return redirecionarFaltaPremium(usuarioBase.id, res);
   }
 
   const numeros = await buscarNumerosResultados(usuarioBase.id);
@@ -1881,7 +1900,7 @@ router.post("/resultados/analisar", async function (req, res) {
   }
 
   if (!(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
-    return res.redirect("/areapremium");
+    return redirecionarFaltaPremium(usuarioBase.id, res);
   }
 
   const numeros = await buscarNumerosResultados(usuarioBase.id);
@@ -1933,6 +1952,173 @@ router.post("/resultados/analisar", async function (req, res) {
   }
 });
 
+router.get("/premium/assinar", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const msgAviso = req.query.motivo === "expirado"
+    ? "Seu premium expirou. Renove para continuar aproveitando os recursos premium."
+    : null;
+
+  res.render("pages/premiumAssinar", { planos: PagamentoService.listarPlanos(), msgErro: null, msgAviso });
+});
+
+router.post("/premium/checkout", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const urlBase = `${req.protocol}://${req.get("host")}`;
+    const { urlCheckout } = await PagamentoService.criarCheckout({
+      idUsuario: usuarioBase.id,
+      planoSlug: req.body.plano,
+      urlBase,
+    });
+    return res.redirect(urlCheckout);
+  } catch (erro) {
+    console.error("Erro ao criar checkout Mercado Pago:", erro);
+    return res.render("pages/premiumAssinar", {
+      planos: PagamentoService.listarPlanos(),
+      msgErro: { geral: "Nao foi possivel iniciar o pagamento agora. Tente novamente." },
+      msgAviso: null,
+    });
+  }
+});
+
+// So mostra uma mensagem - NUNCA concede premium aqui. E so o navegador
+// voltando do Mercado Pago, sem garantia nenhuma de pagamento aprovado
+// de verdade (aba pode ser fechada, redirect pode ser manipulado). Quem
+// concede premium de verdade e o webhook abaixo.
+// Nao exige login de proposito. O aluno chega aqui vindo do dominio do
+// Mercado Pago, e o cookie de sessao usa SameSite=Strict - ou seja, o
+// navegador NAO o envia em navegacao vinda de outro site. Exigir
+// autenticacao aqui jogaria pro /login justamente quem acabou de pagar.
+// Nao ha risco: a pagina so mostra uma mensagem a partir da query,
+// nao expoe dado nenhum do aluno e nao concede premium (quem concede e
+// o webhook).
+router.get("/premium/retorno", async function (req, res) {
+  res.render("pages/premiumRetorno", { status: req.query.status || "pending" });
+});
+
+router.get("/premium/historico", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  const pagamentos = await Models.pagamentos.listarPorAluno(usuarioBase.id);
+  const historico = pagamentos.map((pagamento) => ({
+    ...pagamento,
+    dataFormatada: formatarDataLocal(pagamento.criado_em),
+    valorFormatado: (pagamento.valor_centavos / 100).toFixed(2).replace(".", ","),
+    podeCancelar: pagamento.status === "pendente",
+    status: ROTULOS_STATUS_PAGAMENTO[pagamento.status] || { texto: pagamento.status, classe: "pendente" },
+  }));
+
+  res.render("pages/premiumHistorico", { historico });
+});
+
+router.post("/premium/historico/:id/cancelar", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  await Models.pagamentos.cancelarPendente({
+    idPagamento: Number(req.params.id),
+    idUsuario: usuarioBase.id,
+  });
+
+  return res.redirect("/premium/historico");
+});
+
+// Rota publica de proposito (quem chama e o servidor do Mercado Pago,
+// nao um navegador de aluno com cookie de sessao) - a seguranca vem da
+// validacao de assinatura, nao de autenticacao de sessao.
+router.post("/webhooks/mercadopago", async function (req, res) {
+  try {
+    const assinaturaValida = PagamentoService.validarAssinaturaWebhook({
+      xSignature: req.headers["x-signature"],
+      xRequestId: req.headers["x-request-id"],
+      dataId: req.query["data.id"],
+    });
+
+    if (!assinaturaValida) {
+      console.error("Webhook Mercado Pago com assinatura invalida ou ausente.");
+      return res.status(401).end();
+    }
+
+    if (req.body.type !== "payment") {
+      return res.status(200).end();
+    }
+
+    const { referenciaExterna, status, idTransacaoGateway } =
+      await PagamentoService.confirmarPagamento(req.body.data.id);
+    const pagamento = await Models.pagamentos.buscarPorReferenciaExterna(referenciaExterna);
+
+    if (!pagamento) {
+      console.error("Webhook Mercado Pago: referencia externa desconhecida:", referenciaExterna);
+      return res.status(200).end();
+    }
+
+    // Idempotencia: o Mercado Pago pode reenviar a mesma notificacao -
+    // so concede premium na PRIMEIRA vez que o status vira aprovado.
+    if (status === "approved" && pagamento.status !== "aprovado") {
+      const conexao = await pool.getConnection();
+      try {
+        await conexao.beginTransaction();
+        await Models.pagamentos.atualizarStatus(
+          { referenciaExterna, status: "aprovado", idTransacaoGateway },
+          conexao
+        );
+        await Models.assinaturas.concederPorPeriodo(pagamento.id_usuario, pagamento.dias_premium, conexao);
+        await conexao.commit();
+      } catch (erroTransacao) {
+        await conexao.rollback();
+        throw erroTransacao;
+      } finally {
+        conexao.release();
+      }
+
+      // Fora da transacao de proposito: o premium ja foi concedido e
+      // confirmado nesse ponto, entao uma falha aqui (ex: enum de tipo
+      // desatualizado) nao pode derrubar o pagamento nem disparar um
+      // reenvio do webhook pelo Mercado Pago.
+      try {
+        await Models.notificacoes.criar({
+          idUsuario: pagamento.id_usuario,
+          tipo: "sistema",
+          titulo: "Pagamento aprovado",
+          mensagem: `Seu pagamento foi aprovado! Você ganhou ${pagamento.dias_premium} dias de acesso premium.`,
+          link: "/premium/historico",
+        });
+      } catch (erroNotificacao) {
+        console.error("Erro ao criar notificacao de pagamento aprovado:", erroNotificacao);
+      }
+    } else if (status !== "approved" && pagamento.status === "pendente") {
+      const mapa = { rejected: "recusado", cancelled: "cancelado", refunded: "estornado" };
+      await Models.pagamentos.atualizarStatus({
+        referenciaExterna,
+        status: mapa[status] || "pendente",
+        idTransacaoGateway,
+      });
+    }
+
+    return res.status(200).end();
+  } catch (erro) {
+    console.error("Erro ao processar webhook Mercado Pago:", erro);
+    return res.status(500).end(); // Mercado Pago tenta de novo depois
+  }
+});
+
 
 router.get("/cadastroprofessor", async function (req, res) {
   return renderizarCadastroProfessor(res);
@@ -1943,6 +2129,10 @@ router.get("/partepremium", async function (req, res) {
 
   if (!usuarioBase) {
     return res.redirect("/login");
+  }
+
+  if (!(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
+    return res.redirect("/premium/assinar");
   }
 
   const usuario = await buscarPerfilLogado(req, TIPOS_USUARIO.aluno);
@@ -2366,7 +2556,7 @@ router.get("/livro/:id", async function (req, res) {
   }
 
   if (aluno && livro.is_premium && !(await Models.assinaturas.estaAtiva(aluno.id))) {
-    return res.redirect("/areapremium");
+    return redirecionarFaltaPremium(aluno.id, res);
   }
 
   res.render("pages/livro", {
@@ -3293,7 +3483,7 @@ router.post(
       );
       await conexao.commit();
 
-      usuarioLogadoSimulado = {
+      criarCookieUsuario(res, {
         id: idUsuario,
         nome,
         email,
@@ -3301,8 +3491,7 @@ router.post(
         ra,
         serie,
         data_nascimento,
-      };
-      criarCookieUsuario(res, usuarioLogadoSimulado);
+      });
 
       return res.redirect(rotaInicialPorTipoUsuario(TIPOS_USUARIO.aluno));
     } catch (erro) {
@@ -3416,15 +3605,14 @@ router.post(
       );
       await conexao.commit();
 
-      usuarioLogadoSimulado = {
+      criarCookieUsuario(res, {
         id: idUsuario,
         nome: nomeCompleto,
         email,
         tipo_usuario: TIPOS_USUARIO.professor,
         materia: materia ? `Materia: ${materia}` : "Materia: Exemplo",
         data_nascimento: dataNascimento,
-      };
-      criarCookieUsuario(res, usuarioLogadoSimulado);
+      });
 
       return res.redirect(rotaInicialPorTipoUsuario(TIPOS_USUARIO.professor));
     } catch (erro) {
@@ -3509,20 +3697,12 @@ router.post(
         });
       }
 
-      // Futuramente trocar esta variavel temporaria por uma sessao real:
-      // req.session.usuario = {
-      //   id: usuario.id_usuario,
-      //   nome: usuario.nome,
-      //   email: usuario.email,
-      //   tipo_usuario: usuario.tipo_usuario,
-      // };
-      usuarioLogadoSimulado = {
+      criarCookieUsuario(res, {
         id: usuario.id_usuario,
         nome: usuario.nome,
         email: usuario.email,
         tipo_usuario: usuario.tipo_usuario,
-      };
-      criarCookieUsuario(res, usuarioLogadoSimulado);
+      });
 
       Models.usuarios.atualizarUltimoLogin(usuario.id_usuario).catch((erro) => {
         console.error("Erro ao atualizar ultimo_login:", erro);
@@ -3630,13 +3810,12 @@ router.post(
 
       await conexao.commit();
 
-      usuarioLogadoSimulado = {
+      criarCookieUsuario(res, {
         ...usuarioBase,
         nome,
         email,
         tipo_usuario: TIPOS_USUARIO.aluno,
-      };
-      criarCookieUsuario(res, usuarioLogadoSimulado);
+      });
 
       return res.redirect("/entrada");
     } catch (erro) {
@@ -3736,13 +3915,12 @@ router.post(
 
       await conexao.commit();
 
-      usuarioLogadoSimulado = {
+      criarCookieUsuario(res, {
         ...usuarioBase,
         nome,
         email,
         tipo_usuario: TIPOS_USUARIO.professor,
-      };
-      criarCookieUsuario(res, usuarioLogadoSimulado);
+      });
 
       return res.redirect("/entradaprofessor");
     } catch (erro) {

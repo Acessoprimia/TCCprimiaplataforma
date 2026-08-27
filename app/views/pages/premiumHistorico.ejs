@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de Pagamentos - Primia</title>
+
+    <link rel="stylesheet" href="../css/premium.css">
+</head>
+
+<body>
+    <%- include('../partials/header.ejs') %>
+
+    <main class="container-premium-historico">
+        <header>
+            <h1 class="titulo-premium-assinar">Histórico de Pagamentos</h1>
+
+            <p class="subtitulo-premium-assinar">
+                Acompanhe suas compras de premium.
+            </p>
+        </header>
+
+        <% if (historico.length === 0) { %>
+            <article class="card-plano historico-vazio">
+                <p>Você ainda não fez nenhum pagamento.</p>
+                <a href="/premium/assinar" class="botao-voltar-retorno">Assinar premium</a>
+            </article>
+        <% } else { %>
+            <section class="tabela-historico-wrap" aria-label="Pagamentos realizados">
+                <table class="tabela-historico">
+                    <thead>
+                        <tr>
+                            <th scope="col">Data</th>
+                            <th scope="col">Dias de premium</th>
+                            <th scope="col">Valor</th>
+                            <th scope="col">Status</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% historico.forEach(function (pagamento) { %>
+                            <tr>
+                                <td><%= pagamento.dataFormatada %></td>
+                                <td><%= pagamento.dias_premium %> dias</td>
+                                <td>R$ <%= pagamento.valorFormatado %></td>
+                                <td>
+                                    <span class="badge-status badge-<%= pagamento.status.classe %>">
+                                        <%= pagamento.status.texto %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <% if (pagamento.podeCancelar) { %>
+                                        <form action="/premium/historico/<%= pagamento.id_pagamento %>/cancelar" method="POST" onsubmit="return confirm('Cancelar este pagamento pendente?');">
+                                            <button type="submit" class="botao-cancelar-pagamento">Cancelar</button>
+                                        </form>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </section>
+        <% } %>
+    </main>
+
+    <%- include('../partials/footer.ejs') %>
+</body>
+
+</html>

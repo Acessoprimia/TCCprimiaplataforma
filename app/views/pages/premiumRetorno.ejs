@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pagamento - Primia</title>
+
+    <link href="../css/premium.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <%- include('../partials/header.ejs') %>
+
+    <main class="container-premium-retorno">
+
+        <% if (status === 'approved') { %>
+
+            <section class="card-retorno sucesso">
+
+                <h1>Pagamento em confirmação</h1>
+
+                <p>
+                    Recebemos seu pagamento! Seu premium é liberado automaticamente
+                    assim que a confirmação chegar do Mercado Pago — geralmente leva
+                    só alguns instantes.
+                </p>
+
+            </section>
+
+        <% } else if (status === 'failure') { %>
+
+            <section class="card-retorno erro">
+
+                <h1>Pagamento não aprovado</h1>
+
+                <p>
+                    Não conseguimos confirmar seu pagamento. Nenhuma cobrança foi
+                    concluída — você pode tentar novamente quando quiser.
+                </p>
+
+            </section>
+
+        <% } else { %>
+
+            <section class="card-retorno pendente">
+
+                <h1>Aguardando confirmação</h1>
+
+                <p>
+                    Seu pagamento está sendo processado. Para Pix costuma ser rápido;
+                    para boleto pode levar até alguns dias úteis. Seu premium é
+                    liberado automaticamente assim que for confirmado.
+                </p>
+
+            </section>
+
+        <% } %>
+
+        <a href="/entrada" class="botao-voltar-retorno">
+            Voltar para o início
+        </a>
+
+    </main>
+
+    <%- include('../partials/footer.ejs') %>
+
+</body>
+
+</html>

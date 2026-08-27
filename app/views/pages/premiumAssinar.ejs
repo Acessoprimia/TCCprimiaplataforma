@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assinar Premium - Primia</title>
+
+    <link rel="stylesheet" href="../css/premium.css">
+</head>
+
+<body>
+    <%- include('../partials/header.ejs') %>
+
+    <main class="container-premium-assinar">
+        <header>
+            <h1 class="titulo-premium-assinar">Assinar Premium</h1>
+
+            <p class="subtitulo-premium-assinar">
+                Escolha um plano e pague com segurança pelo Mercado Pago.
+            </p>
+        </header>
+
+        <% if (msgErro && msgErro.geral) { %>
+            <aside class="premium-erro" role="alert" aria-live="assertive">
+                <p><%= msgErro.geral %></p>
+            </aside>
+        <% } %>
+
+        <% if (msgAviso) { %>
+            <aside class="premium-aviso" role="status">
+                <p><%= msgAviso %></p>
+            </aside>
+        <% } %>
+
+        <section class="secao-planos" aria-labelledby="titulo-planos">
+            <header>
+                <h2 id="titulo-planos" class="titulo-planos">Planos Premium</h2>
+            </header>
+
+            <section class="grade-planos" aria-label="Planos Premium disponíveis">
+                <% planos.forEach(function (plano) { %>
+                    <article class="card-plano">
+                        <header>
+                            <h3><%= plano.rotulo %></h3>
+                        </header>
+
+                        <p class="preco-plano">
+                            <data value="<%= (plano.valorCentavos / 100).toFixed(2) %>">
+                                R$ <%= (plano.valorCentavos / 100).toFixed(2).replace('.', ',') %>
+                            </data>
+                        </p>
+
+                        <p class="duracao-plano">
+                            <%= plano.diasPremium %> dias de acesso premium
+                        </p>
+
+                        <form action="/premium/checkout" method="POST">
+                            <input type="hidden" name="plano" value="<%= plano.slug %>">
+
+                            <button type="submit">
+                                Pagar com Mercado Pago
+                            </button>
+                        </form>
+                    </article>
+                <% }) %>
+            </section>
+        </section>
+    </main>
+
+    <%- include('../partials/footer.ejs') %>
+</body>
+
+</html>

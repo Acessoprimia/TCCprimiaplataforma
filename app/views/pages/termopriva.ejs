@@ -7,7 +7,8 @@
   <title>Política de Privacidade - Primia</title>
 
   <%- include('../partials/header.ejs') %>
-    <link rel="stylesheet" href="../css/termopriva.css" />
+  <link rel="stylesheet" href="../css/termopriva.css" />
+  <link rel="stylesheet" href="../css/cookiebanner.css" />
 </head>
 
 <body>
@@ -49,10 +50,28 @@
     <section class="priv-secao">
       <h2>Cookies</h2>
       <p>
-        Usamos um único cookie de sessão (<code>primia_usuario</code>), assinado
-        digitalmente e protegido contra acesso via script (HttpOnly), com a única
-        finalidade de manter você autenticado enquanto navega. Não usamos cookies de
-        rastreamento ou publicidade.
+        Usamos apenas dois cookies, ambos estritamente necessários para o
+        funcionamento do site. Não usamos cookies de rastreamento, publicidade,
+        analytics ou de terceiros.
+      </p>
+      <ul>
+        <li>
+          <code>primia_usuario</code> — mantém você autenticado enquanto navega.
+          É assinado digitalmente, protegido contra acesso via script (HttpOnly),
+          restrito ao próprio site (SameSite=Strict) e expira em 24 horas.
+        </li>
+        <li>
+          <code>primia_cookie_consent</code> — registra que você já viu o aviso de
+          cookies, para que ele não apareça novamente a cada página. Guarda apenas
+          essa informação, e expira em 1 ano.
+        </li>
+      </ul>
+      <p>
+        Por serem estritamente necessários, esses cookies não dependem de
+        consentimento prévio: sem eles, você não conseguiria permanecer autenticado
+        e o aviso reapareceria indefinidamente. Por isso o aviso exibido no site é
+        informativo. Caso algum cookie não essencial venha a ser adotado no futuro,
+        ele passará a exigir consentimento explícito.
       </p>
     </section>
 
@@ -87,6 +106,8 @@
   </main>
 
 </body>
+
+<%- include('../partials/cookiebanner.ejs') %>
 <%- include('../partials/footer.ejs') %>
 
 </html>

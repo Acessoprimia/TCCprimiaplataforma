@@ -155,7 +155,7 @@ body {
 /* BOTÃO LOGIN */
 .botao-login {
     background-color: #FF9C7D;
-    color: white;
+    color: #1A1A1A;
     border: none;
     border-radius: 12px;
     padding: 16px;
@@ -309,4 +309,22 @@ body {
     .link-recuperar {
         font-size: 14px;
     }
+}
+
+/* .mostrar-senha passou de <span> para <button> (WCAG 2.1.1). */
+.mostrar-senha {
+  margin-left: auto;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mostrar-senha:focus-visible {
+  outline: 3px solid #8b83ac;
+  outline-offset: 2px;
+  border-radius: 4px;
 }

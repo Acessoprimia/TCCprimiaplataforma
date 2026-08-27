@@ -121,8 +121,8 @@
 
     <%- include('../../partials/adminModals.ejs') %>
 
-    <script id="dados-conteudos" type="application/json"><%- JSON.stringify(conteudos) %></script>
-    <script id="dados-materias" type="application/json"><%- JSON.stringify(materias) %></script>
+    <script id="dados-conteudos" type="application/json"><%- jsonParaScript(conteudos) %></script>
+    <script id="dados-materias" type="application/json"><%- jsonParaScript(materias) %></script>
     <script src="/js/admin/common.js"></script>
     <script src="/js/admin/conteudos.js"></script>
     <%- include('../../partials/footer.ejs') %>

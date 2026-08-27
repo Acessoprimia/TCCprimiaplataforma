@@ -4,9 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title></title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link href="../css/header.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/cookiebanner.css" />
 </head>
 <body>
+  <a class="skip-link" href="#conteudo-principal">Pular para o conteudo</a>
 
   <% const temAvisoSite = typeof configuracoesSite !== 'undefined' && configuracoesSite && configuracoesSite.aviso_site; %>
 
@@ -16,7 +22,7 @@
 
   <aside class="overlay" id="overlay" aria-hidden="true"></aside>
 
-  <header class="site-header" style="<%= temAvisoSite ? 'top: 36px;' : '' %>">
+  <header class="site-header" style "<%= temAvisoSite ? 'top: 36px;' : '' %>">
     <section class="header-inner">
 
       <a href="<%= rotaInicioHeader || '/telainicial' %>" class="logo">
@@ -39,7 +45,7 @@
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
                     <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                 </svg>
-                <span class="sino-contador" id="sino-contador" style="<%= totalNotificacoesNaoLidas ? '' : 'display:none;' %>"><%= totalNotificacoesNaoLidas || 0 %></span>
+                <span class="sino-contador" id="sino-contador" style"<%= totalNotificacoesNaoLidas ? '' : 'display:none;' %>"><%= totalNotificacoesNaoLidas || 0 %></span>
             </a>
             <%- include('./notificacoes.ejs') %>
         </span>
@@ -74,5 +80,7 @@
 
   <script src="../js/hamburguer.js"></script>
 
+<!-- Alvo do skip link: primeiro ponto depois do cabecalho repetido -->
+  <span id="conteudo-principal" tabindex="-1"></span>
 </body>
 </html>

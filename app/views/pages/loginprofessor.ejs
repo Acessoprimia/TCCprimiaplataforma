@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <h1 class="sr-only">Entrar como professor</h1>
     <!-- SEÇÃO ROXA DE FUNDO -->
     <section class="secao-roxa">
         <!-- LOGO CENTRALIZADA -->
@@ -35,7 +36,7 @@
                         <img src="../image/cadeado.webp" alt="Senha" class="icone">
                     </figure>
                     <input type="password" id="senha" name="senha" placeholder="Senha" class="input-campo">
-                    <span class="mostrar-senha" onclick="toggleSenha('senha')">&#128065;</span>
+                    <button type="button" class="mostrar-senha" onclick="toggleSenha('senha')" aria-label="Mostrar ou ocultar senha">&#128065;</button>
                 </label>
                 <p id="erro-senha" class="erro-msg"></p>
 
@@ -70,7 +71,10 @@
         </article>
     </section>
 
+    <%- include('../partials/cookiebanner.ejs') %>
+
     <script src="../js/login.js"></script>
+    <script src="/js/cookiebanner.js"></script>
 </body>
 
 </html>

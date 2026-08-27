@@ -8,8 +8,8 @@
     <%- include('../partials/header.ejs') %>
         <link rel="stylesheet" href="../css/livro.css">
         <script>
-            const LIVRO_ID = <%- JSON.stringify(livro.id) %>;
-            const LIVRO_TITULO = <%- JSON.stringify(livro.titulo) %>;
+            const LIVRO_ID = <%- jsonParaScript(livro.id) %>;
+            const LIVRO_TITULO = <%- jsonParaScript(livro.titulo) %>;
         </script>
 
 </head>

@@ -126,7 +126,7 @@ body {
 /* BOTÃO SUBMIT */
 .botao-submit {
     background-color: #FF9C7D;
-    color: white;
+    color: #1A1A1A;
     border: none;
     border-radius: 10px;
     padding: 14px;
@@ -263,4 +263,21 @@ body {
 
 .erro-msg.correto {
     color: #28a745; /* verde = correto */
+}
+
+/* .mostrar-senha passou de <span> para <button> (WCAG 2.1.1: precisa
+   ser acionavel por teclado). Remove o cromo padrao de botao para
+   preservar a aparencia de icone que ja existia. */
+.mostrar-senha {
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.mostrar-senha:focus-visible {
+  outline: 3px solid #8b83ac;
+  outline-offset: 2px;
+  border-radius: 4px;
 }

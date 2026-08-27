@@ -1,0 +1,15 @@
+User-agent: *
+Disallow: /admin
+Disallow: /login
+Disallow: /loginprofessor
+Disallow: /logincadastro
+Disallow: /naotemumaconta
+Disallow: /cadastro
+Disallow: /cadastroprofessor
+Disallow: /recuperar-senha
+Disallow: /premium/checkout
+Disallow: /premium/retorno
+Disallow: /webhooks
+Disallow: /api
+Disallow: /editarperfil
+Disallow: /editarprofessor

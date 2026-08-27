@@ -1,0 +1,349 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    color: #000000;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ---- PÁGINA DE ASSINATURA ---- */
+.container-premium-assinar,
+.container-premium-retorno {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    flex: 1;
+}
+
+.container-premium-assinar > header {
+    margin-top: 80px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.titulo-premium-assinar {
+    margin-bottom: 8px;
+    color: #b5a9d8;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.subtitulo-premium-assinar {
+    color: #666666;
+}
+
+.premium-erro {
+    margin-bottom: 20px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    background-color: #fdecea;
+    color: #b3261e;
+    font-size: 14px;
+}
+
+.premium-aviso {
+    margin-bottom: 20px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    background-color: #fff8e6;
+    color: #a17400;
+    font-size: 14px;
+}
+
+.grade-planos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
+
+.titulo-planos {
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+    color: #333333;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.card-plano {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    padding: 24px;
+    border-radius: 16px;
+    background-color: #f3f0fa;
+    text-align: center;
+}
+
+.card-plano > header {
+    min-height: 28px;
+}
+
+.card-plano h3 {
+    color: #333333;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.preco-plano {
+    color: #b5a9d8;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.duracao-plano {
+    margin-bottom: 8px;
+    color: #666666;
+    font-size: 13px;
+}
+
+.card-plano form {
+    width: 100%;
+    margin-top: auto;
+}
+
+.card-plano button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 50px;
+    background-color: #b5a9d8;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card-plano button:hover {
+    background-color: #a399c8;
+    box-shadow: 0 4px 10px rgba(181, 169, 216, 0.3);
+    transform: translateY(-1px);
+}
+
+.card-plano button:focus-visible,
+.botao-voltar-retorno:focus-visible {
+    outline: 3px solid #7d6eaf;
+    outline-offset: 3px;
+}
+
+/* ---- PÁGINA DE RETORNO ---- */
+.container-premium-retorno {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 100px;
+    text-align: center;
+}
+
+.card-retorno {
+    max-width: 480px;
+    margin-bottom: 24px;
+    padding: 32px;
+    border-radius: 16px;
+    background-color: #f3f0fa;
+}
+
+.card-retorno h1 {
+    margin-bottom: 12px;
+    color: #333333;
+    font-size: 22px;
+}
+
+.card-retorno p {
+    color: #555555;
+    line-height: 1.6;
+}
+
+.card-retorno.sucesso {
+    background-color: #eafaf0;
+}
+
+.card-retorno.sucesso h1 {
+    color: #1e8e4f;
+}
+
+.card-retorno.erro {
+    background-color: #fdecea;
+}
+
+.card-retorno.erro h1 {
+    color: #b3261e;
+}
+
+.card-retorno.pendente {
+    background-color: #fff8e6;
+}
+
+.card-retorno.pendente h1 {
+    color: #a17400;
+}
+
+.botao-voltar-retorno {
+    display: inline-block;
+    padding: 12px 28px;
+    border-radius: 50px;
+    background-color: #b5a9d8;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.botao-voltar-retorno:hover {
+    background-color: #a399c8;
+}
+
+/* ---- HISTÓRICO DE PAGAMENTOS ---- */
+.container-premium-historico {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    flex: 1;
+}
+
+.container-premium-historico > header {
+    margin-top: 80px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.historico-vazio {
+    align-items: center;
+    gap: 16px;
+    margin: 0 auto;
+    max-width: 400px;
+    text-align: center;
+}
+
+.tabela-historico-wrap {
+    overflow-x: auto;
+    padding: 8px;
+    border-radius: 16px;
+    background-color: #f3f0fa;
+}
+
+.tabela-historico {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.tabela-historico th,
+.tabela-historico td {
+    padding: 14px 16px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.tabela-historico thead th {
+    border-bottom: 2px solid #e2dcf5;
+    color: #666666;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.tabela-historico tbody tr:not(:last-child) td {
+    border-bottom: 1px solid #e2dcf5;
+}
+
+.badge-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-status.badge-sucesso {
+    background-color: #eafaf0;
+    color: #1e8e4f;
+}
+
+.badge-status.badge-erro {
+    background-color: #fdecea;
+    color: #b3261e;
+}
+
+.badge-status.badge-pendente {
+    background-color: #fff8e6;
+    color: #a17400;
+}
+
+.botao-cancelar-pagamento {
+    padding: 6px 14px;
+    border: 1px solid #b3261e;
+    border-radius: 50px;
+    background-color: transparent;
+    color: #b3261e;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.botao-cancelar-pagamento:hover {
+    background-color: #b3261e;
+    color: #ffffff;
+}
+
+/* ---- RESPONSIVIDADE ---- */
+@media (max-width: 768px) {
+    .container-premium-assinar,
+    .container-premium-retorno {
+        padding: 20px 15px;
+    }
+
+    .container-premium-assinar > header {
+        margin-top: 70px;
+    }
+
+    .titulo-premium-assinar {
+        font-size: 24px;
+    }
+
+    .grade-planos {
+        grid-template-columns: 1fr;
+    }
+
+    .container-premium-historico > header {
+        margin-top: 70px;
+    }
+
+    .tabela-historico th,
+    .tabela-historico td {
+        padding: 10px 12px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

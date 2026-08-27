@@ -245,7 +245,7 @@ p {
 .form-criar-cronograma button {
     padding: 10px 24px;
     background: #FF9466;
-    color: white;
+    color: #1A1A1A;
     border: none;
     border-radius: 50px;
     font-weight: 600;
@@ -361,7 +361,7 @@ p {
 .btn-salvar-manual {
     padding: 10px 24px;
     background: #FF9466;
-    color: white;
+    color: #1A1A1A;
     border: none;
     border-radius: 50px;
     font-weight: 600;

@@ -11,6 +11,7 @@
 </head>
 
 <body>
+    <h1 class="sr-only">Cadastro de aluno</h1>
     <section class="secao-roxa">
         <article class="card-cadastro">
             <form class="form-cadastro" action="/cadastro" method="POST">
@@ -46,7 +47,7 @@
                         <img src="../image/cadeado.webp" alt="Senha" class="icone">
                     </figure>
                     <input type="password" id="senha" name="senha" placeholder="Senha" class="input-campo">
-                    <span class="mostrar-senha" onclick="toggleSenha('senha')">&#128065;</span>
+                    <button type="button" class="mostrar-senha" onclick="toggleSenha('senha')" aria-label="Mostrar ou ocultar senha">&#128065;</button>
                 </label>
                 <ul id="regras-senha" class="regras-senha-modern">
                     <li id="tamanho">8 a 15 caracteres</li>
@@ -63,7 +64,7 @@
                     </figure>
                     <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Repetir a senha"
                         class="input-campo">
-                    <span class="mostrar-senha" onclick="toggleSenha('confirmar_senha')">&#128065;</span>
+                    <button type="button" class="mostrar-senha" onclick="toggleSenha('confirmar_senha')" aria-label="Mostrar ou ocultar senha">&#128065;</button>
                 </label>
                 <p id="erro-confirmar" class="erro-msg"></p>
 
@@ -106,7 +107,10 @@
         </article>
     </section>
 
+    <%- include('../partials/cookiebanner.ejs') %>
+
     <script src="../js/cadastroaluno.js"></script>
+    <script src="/js/cookiebanner.js"></script>
 </body>
 
 </html>

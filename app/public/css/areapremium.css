@@ -4,8 +4,18 @@
   --roxo: #7c68c1;
   --roxo-claro: #ede9fb;
   --roxo-escuro: #6c54b4;
+  --roxo-hover: #5b44a3;
   --branco: #fff;
   --texto: #333;
+  --texto-secundario: #555;
+}
+
+/* =========================================================
+   RESET / BASE
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
 }
 
 body {
@@ -16,115 +26,254 @@ body {
   padding: 0;
 }
 
+/* =========================================================
+   CONTEÚDO PRINCIPAL
+   ========================================================= */
+
 main {
-  padding: 6rem 1.2rem 2rem; /* espaço no topo pro header fixo */
+  padding: 6rem 1.2rem 2rem;
   text-align: center;
 }
 
-/* --- Título principal --- */
+/* =========================================================
+   TÍTULO DA ÁREA
+   ========================================================= */
+
 .titulo-area h1 {
   color: var(--roxo-escuro);
   font-weight: 700;
   font-size: 1.8rem;
-  margin-bottom: 0.3rem;
+  margin: 0 0 0.3rem;
 }
 
 .titulo-area p {
-  color: #555;
+  color: var(--texto-secundario);
   font-size: 0.95rem;
-  margin-bottom: 2rem;
+  margin: 0 0 2rem;
 }
 
-/* --- Blocos dos planos --- */
+/* =========================================================
+   PLANOS
+   ========================================================= */
+
 .plano {
   background-color: var(--roxo-claro);
   border-radius: 1.2rem;
   margin: 1.5rem auto;
   padding: 1rem;
   max-width: 400px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .plano:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* --- Cabeçalho do plano --- */
+/* =========================================================
+   CABEÇALHO DOS PLANOS
+   ========================================================= */
+
 .plano header {
   background-color: var(--roxo);
   color: var(--branco);
+
   border-radius: 1rem 1rem 0 0;
+
   padding: 0.8rem;
+
   font-style: italic;
   font-weight: 600;
+}
+
+.plano header h2 {
+  margin: 0;
+  color: inherit;
+}
+
+/* Cabeçalho do Premium */
+
+.plano.premium > .link-plano {
+  display: block;
+  color: inherit;
+  text-decoration: none;
 }
 
 .premium header {
   background-color: var(--roxo-escuro);
 }
 
+.link-plano header {
+  transition: background-color 0.2s ease;
+}
+
+.link-plano header:hover {
+  background-color: var(--roxo-hover);
+}
+
+/* =========================================================
+   DESTAQUE PREMIUM
+   ========================================================= */
+
 .destaque-premium {
   margin: 0.8rem 1.2rem 0;
   padding: 0.4rem 0.7rem;
+
   background-color: var(--roxo-claro);
   color: var(--roxo-escuro);
+
   border-radius: 0.6rem;
+
   font-size: 0.85rem;
   font-weight: 600;
+
   text-align: left;
 }
 
-/* --- Listas --- */
+/* =========================================================
+   LISTAS DOS PLANOS
+   ========================================================= */
+
 .plano ul {
   list-style: none;
+
   margin: 1rem 0;
   padding: 0;
+
   text-align: left;
 }
 
 .plano li {
   margin: 0.5rem 1.2rem;
+
   font-size: 0.95rem;
+
   display: flex;
   align-items: center;
 }
 
 .plano li::before {
   content: "☑";
+
   margin-right: 0.6rem;
+
   font-size: 0.9rem;
+
   color: var(--roxo-escuro);
 }
 
-.plano a {
+/* =========================================================
+   LINKS DENTRO DOS PLANOS
+   ========================================================= */
+
+.plano ul a {
   color: inherit;
   text-decoration: none;
+
   transition: color 0.2s ease;
 }
 
-.plano a:hover {
+.plano ul a:hover {
   color: var(--roxo-escuro);
 }
 
-/* --- Link da seção Premium --- */
-.link-plano {
+/* =========================================================
+   BOTÃO ASSINAR PREMIUM
+   ========================================================= */
+
+.plano a.botao-assinar-premium {
+  display: inline-block;
+
+  margin: 1rem 1.2rem 0.4rem;
+  padding: 0.7rem 1.4rem;
+
+  background-color: var(--roxo);
+
+  /* CORRIGIDO: texto branco */
+  color: var(--branco);
+
+  border-radius: 50px;
+
+  font-weight: 600;
+  font-size: 0.9rem;
+
   text-decoration: none;
-  display: block;
+
+  box-shadow: 0 3px 8px rgba(108, 84, 180, 0.25);
+
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.3s ease;
 }
 
-.link-plano header:hover {
-  background-color: #5b44a3;
+.plano a.botao-assinar-premium:hover {
+  background-color: var(--roxo-escuro);
+
+  /* Garante que o texto continue branco */
+  color: var(--branco);
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 5px 12px rgba(108, 84, 180, 0.35);
 }
 
-/* --- Responsivo --- */
+.plano a.botao-assinar-premium:focus-visible {
+  outline: 3px solid rgba(124, 104, 193, 0.35);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+  width: 100%;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+   ========================================================= */
+
 @media (min-width: 768px) {
+
   main {
     padding-top: 8rem;
   }
 
   .plano {
     max-width: 500px;
+  }
+}
+
+/* =========================================================
+   CELULARES PEQUENOS
+   ========================================================= */
+
+@media (max-width: 400px) {
+
+  main {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .plano {
+    padding: 0.8rem;
+  }
+
+  .plano li {
+    margin-left: 0.8rem;
+    margin-right: 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  .plano a.botao-assinar-premium {
+    margin-left: 0.8rem;
+    margin-right: 0.8rem;
   }
 }

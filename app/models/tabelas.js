@@ -19,6 +19,7 @@ const TABELAS = Object.freeze({
   redacoes: "Redacao",
   configuracoes: "Configuracao_Plataforma",
   resultados: "Analise_Desempenho",
+  pagamentos: "Pagamento",
 });
 
 module.exports = TABELAS;

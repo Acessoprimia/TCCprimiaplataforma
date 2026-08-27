@@ -132,8 +132,8 @@
         </section>
     </main>
 
-    <script id="dados-relatorios" type="application/json"><%- JSON.stringify(registrosDiarios) %></script>
-    <script id="dados-materias-relatorio" type="application/json"><%- JSON.stringify(materias) %></script>
+    <script id="dados-relatorios" type="application/json"><%- jsonParaScript(registrosDiarios) %></script>
+    <script id="dados-materias-relatorio" type="application/json"><%- jsonParaScript(materias) %></script>
     <script src="/js/admin/relatorios.js"></script>
     <%- include('../../partials/footer.ejs') %>
 </body>

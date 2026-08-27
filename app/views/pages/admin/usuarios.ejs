@@ -84,7 +84,7 @@
 
     <%- include('../../partials/adminModals.ejs') %>
 
-    <script id="dados-usuarios" type="application/json"><%- JSON.stringify(usuarios) %></script>
+    <script id="dados-usuarios" type="application/json"><%- jsonParaScript(usuarios) %></script>
     <script src="/js/admin/common.js"></script>
     <script src="/js/admin/usuarios.js"></script>
     <%- include('../../partials/footer.ejs') %>

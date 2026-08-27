@@ -535,3 +535,40 @@
     transition: none !important;
   }
 }
+
+/* ── SKIP LINK (WCAG 2.4.1 Bypass Blocks) ──────────────────
+   Fica fora da tela ate receber foco pelo teclado. Permite
+   pular o cabecalho/menu repetido e ir direto ao conteudo. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10000;
+  padding: 12px 20px;
+  border-radius: 0 0 8px 0;
+  background-color: #18142a;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  left: 0;
+  outline: 3px solid #FF9C7D;
+  outline-offset: 2px;
+}
+
+/* Conteudo apenas para leitores de tela (WCAG 1.3.1 / 2.4.6).
+   Usado nos <h1> de paginas cujo design nao exibe titulo visivel. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

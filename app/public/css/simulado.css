@@ -10,8 +10,8 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: #000;
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, #000);
     font-family: 'Poppins', sans-serif;
 }
 
@@ -23,41 +23,41 @@ body {
 }
 
 .simulado-container h1 {
-    font-size: 26px;
-    color: #FF9466;
+    font-size: 1.625rem;
+    color: var(--warm, #FF9466);
     margin-bottom: 8px;
 }
 
 .simulado-materia {
-    color: #777;
+    color: var(--c-777, #777);
     margin-bottom: 20px;
 }
 
 .simulado-aviso {
-    background: #FFF3EE;
-    color: #FF9466;
+    background: var(--c-fff3ee, #FFF3EE);
+    color: var(--warm, #FF9466);
     padding: 10px 16px;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
 .simulado-resultado {
     font-weight: 600;
-    font-size: 18px;
-    color: #333;
+    font-size: 1.125rem;
+    color: var(--cor-texto, #333);
     margin-bottom: 20px;
 }
 
 .simulado-pergunta {
-    background: #f8f9fa;
+    background: var(--c-f8f9fa, #f8f9fa);
     border-radius: 16px;
     padding: 18px;
     margin-bottom: 16px;
 }
 
 .simulado-pergunta-titulo {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
     margin: 0 0 12px;
 }
@@ -73,28 +73,28 @@ body {
 .simulado-enviar {
     width: 100%;
     padding: 14px;
-    background: #FF9466;
-    color: #1A1A1A;
+    background: var(--warm, #FF9466);
+    color: var(--on-warm, #1A1A1A);
     border: none;
     border-radius: 50px;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
 }
 
 .simulado-enviar:hover {
-    background: #f57f4c;
+    background: var(--warm, #f57f4c);
 }
 
 .simulado-pergunta-resultado {
-    background: #f8f9fa;
+    background: var(--c-f8f9fa, #f8f9fa);
     border-radius: 16px;
     padding: 18px;
     margin-bottom: 16px;
 }
 
 .simulado-pergunta-resultado h2 {
-    font-size: 16px;
+    font-size: 1rem;
     margin-bottom: 12px;
 }
 
@@ -109,17 +109,17 @@ body {
 }
 
 .alternativa-correta {
-    background: #d4f4dd;
+    background: var(--c-d4f4dd, #d4f4dd);
     font-weight: 600;
 }
 
 .alternativa-errada {
-    background: #fbdada;
+    background: var(--c-fbdada, #fbdada);
 }
 
 .simulado-explicacao {
     margin-top: 10px;
-    font-size: 14px;
-    color: #666;
+    font-size: 0.875rem;
+    color: var(--c-666, #666);
     font-style: italic;
 }

@@ -16,8 +16,8 @@ body {
     margin: 0; /* Remove margens padrão */
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: rgb(0, 0, 0);
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, rgb(0, 0, 0));
     font-family: 'Poppins', sans-serif;
 }
 
@@ -31,7 +31,7 @@ main {
 h1 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
-    color: #1a1a1a;
+    color: var(--cor-texto, #1a1a1a);
 }
 
 .filter-section {
@@ -42,7 +42,7 @@ label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #667eea;
+    color: var(--info, #667eea);
     font-size: 0.95rem;
     cursor: pointer;
 }
@@ -50,18 +50,18 @@ label {
 select {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--c-e0e0e0, #e0e0e0);
     border-radius: 8px;
     font-size: 1rem;
-    background: white;
-    color: #333;
+    background: var(--cor-fundo-cartao, white);
+    color: var(--cor-texto, #333);
     cursor: pointer;
     margin-top: 0.5rem;
 }
 
 select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--info, #667eea);
 }
 
 .cards-container {
@@ -71,7 +71,7 @@ select:focus {
 }
 
 article {
-    background: white;
+    background: var(--cor-fundo-cartao, white);
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -106,11 +106,11 @@ article:hover {
 h2 {
     font-size: 1.1rem;
     margin-bottom: 0.75rem;
-    color: #1a1a1a;
+    color: var(--cor-texto, #1a1a1a);
 }
 
 p {
-    color: #555;
+    color: var(--c-555, #555);
     font-size: 0.9rem;
     line-height: 1.6;
 }
@@ -142,7 +142,7 @@ p {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    background: white;
+    background: var(--cor-fundo-cartao, white);
     border: none;
     width: 40px;
     height: 40px;
@@ -156,7 +156,7 @@ p {
 }
 
 .modal-close:hover {
-    background: #f0f0f0;
+    background: var(--c-f0f0f0, #f0f0f0);
 }
 
 .modal-content {
@@ -173,7 +173,7 @@ p {
 }
 
 .cronogramas-vazio {
-    color: #888;
+    color: var(--c-888, #888);
     padding: 20px;
 }
 
@@ -183,7 +183,7 @@ p {
 }
 
 .subtitulo-cronograma {
-    color: #667eea;
+    color: var(--info, #667eea);
     margin-bottom: 1.5rem;
 }
 
@@ -199,13 +199,13 @@ p {
 
 .cronograma-card-info {
     font-size: 0.85rem;
-    color: #888;
+    color: var(--c-888, #888);
 }
 
 .voltar-link {
     display: inline-block;
     margin-bottom: 1rem;
-    color: #667eea;
+    color: var(--info, #667eea);
     text-decoration: none;
     font-size: 0.9rem;
 }
@@ -224,7 +224,7 @@ p {
 
 .lista-prioridades {
     list-style: none;
-    background: white;
+    background: var(--cor-fundo-cartao, white);
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -234,7 +234,7 @@ p {
     display: flex;
     align-items: center;
     padding: 0.75rem 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--c-f0f0f0, #f0f0f0);
 }
 
 .item-lista:last-child {
@@ -246,24 +246,24 @@ p {
     height: 18px;
     margin-right: 0.75rem;
     cursor: pointer;
-    accent-color: #667eea;
+    accent-color: var(--info, #667eea);
 }
 
 .label-checkbox {
     display: block;
     font-size: 1rem;
-    color: #333;
+    color: var(--cor-texto, #333);
     cursor: pointer;
     flex: 1;
 }
 
 .label-checkbox.riscado {
     text-decoration: line-through;
-    color: #aaa;
+    color: var(--c-aaa, #aaa);
 }
 
 .itens-vazio {
-    color: #888;
+    color: var(--c-888, #888);
     padding: 12px 0;
 }
 
@@ -277,7 +277,7 @@ p {
     width: auto;
     padding: 4px 10px;
     border-radius: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--c-ddd, #ddd);
     font-size: 0.85rem;
     margin-top: 0;
 }

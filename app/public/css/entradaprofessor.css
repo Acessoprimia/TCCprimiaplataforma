@@ -8,7 +8,7 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #f5f5f5;
+    background-color: var(--c-f5f5f5, #f5f5f5);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -26,7 +26,7 @@ body {
 
 /* CARD DE PERFIL */
 .perfil-card {
-    background-color: white;
+    background-color: var(--cor-fundo-cartao, white);
     border-radius: 20px;
     padding: 0;
     width: 100%;
@@ -42,8 +42,8 @@ body {
     flex-direction: column;
     align-items: center;
     padding: 35px 25px 30px;
-    background-color: white;
-    border-bottom: 1px solid #f0f0f0;
+    background-color: var(--cor-fundo-cartao, white);
+    border-bottom: 1px solid var(--c-f0f0f0, #f0f0f0);
 }
 
 .avatar-container {
@@ -52,7 +52,7 @@ body {
     border-radius: 50%;
     overflow: hidden;
     margin-bottom: 18px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--c-e0e0e0, #e0e0e0);
 }
 
 .avatar {
@@ -67,37 +67,37 @@ body {
 }
 
 .nome-usuario {
-    font-size: 17px;
+    font-size: 1.0625rem;
     font-weight: 600;
-    color: #FF9466;
+    color: var(--warm, #FF9466);
     margin-bottom: 6px;
 }
 
 .email-usuario {
-    font-size: 13px;
-    color: #666;
+    font-size: 0.8125rem;
+    color: var(--c-666, #666);
     margin-bottom: 4px;
 }
 
 .matricula-usuario {
-    font-size: 12px;
-    color: #999;
+    font-size: 0.75rem;
+    color: var(--c-999, #999);
 }
 
 .btn-editar {
-    background-color: #A398D1;
-    color: white;
+    background-color: var(--accent, #A398D1);
+    color: var(--cor-fundo-cartao, white);
     text-decoration: none;
     padding: 9px 22px;
     border-radius: 18px;
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 500;
     transition: all 0.3s ease;
     display: inline-block;
 }
 
 .btn-editar:hover {
-    background-color: #8b83ac;
+    background-color: var(--accent-forte, #8b83ac);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(163, 152, 209, 0.3);
 }
@@ -114,9 +114,9 @@ body {
     align-items: center;
     padding: 16px 20px;
     text-decoration: none;
-    color: #333;
+    color: var(--cor-texto, #333);
     transition: all 0.3s ease;
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid var(--c-f5f5f5, #f5f5f5);
 }
 
 .menu-item:last-child {
@@ -124,7 +124,7 @@ body {
 }
 
 .menu-item:hover {
-    background-color: #fafafa;
+    background-color: var(--c-fafafa, #fafafa);
 }
 
 .icone-menu {
@@ -145,14 +145,14 @@ body {
 
 .texto-menu {
     flex: 1;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 400;
-    color: #555;
+    color: var(--c-555, #555);
 }
 
 .seta-menu {
-    font-size: 22px;
-    color: #aaa;
+    font-size: 1.375rem;
+    color: var(--c-aaa, #aaa);
     font-weight: 300;
 }
 
@@ -177,19 +177,19 @@ body {
     }
 
     .nome-usuario {
-        font-size: 16px;
+        font-size: 1rem;
     }
 
     .email-usuario {
-        font-size: 12px;
+        font-size: 0.75rem;
     }
 
     .matricula-usuario {
-        font-size: 11px;
+        font-size: 0.6875rem;
     }
 
     .btn-editar {
-        font-size: 12px;
+        font-size: 0.75rem;
         padding: 8px 18px;
     }
 
@@ -198,7 +198,7 @@ body {
     }
 
     .texto-menu {
-        font-size: 13px;
+        font-size: 0.8125rem;
     }
 }
 
@@ -223,15 +223,15 @@ body {
     }
 
     .nome-usuario {
-        font-size: 18px;
+        font-size: 1.125rem;
     }
 
     .email-usuario {
-        font-size: 14px;
+        font-size: 0.875rem;
     }
 
     .btn-editar {
-        font-size: 14px;
+        font-size: 0.875rem;
         padding: 10px 24px;
     }
 
@@ -240,6 +240,6 @@ body {
     }
 
     .texto-menu {
-        font-size: 15px;
+        font-size: 0.9375rem;
     }
 }

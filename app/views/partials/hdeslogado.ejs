@@ -7,11 +7,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Aplica o tema salvo (Configuracoes > Aparencia) antes da 1a pintura,
+       pra pagina nao "piscar" clara e depois trocar pra escura. -->
+  <script>
+    (function () {
+      try {
+        var tema = localStorage.getItem("primia-tema");
+        if (tema === "light" || tema === "dark") {
+          document.documentElement.setAttribute("data-theme", tema);
+        }
+        var fonte = localStorage.getItem("primia-fonte");
+        if (fonte === "grande" || fonte === "extra") {
+          document.documentElement.setAttribute("data-fonte", fonte);
+        }
+      } catch (e) {}
+    })();
+  </script>
   <title></title>
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link href="../css/theme.css" rel="stylesheet">
   <link rel="stylesheet" href="header-semantico.css">
 </head>
 <body>

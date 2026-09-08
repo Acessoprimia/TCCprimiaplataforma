@@ -16,8 +16,8 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: rgb(0, 0, 0);
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, rgb(0, 0, 0));
     font-family: 'Poppins', sans-serif;
 }
 
@@ -33,42 +33,42 @@ body {
 
 /* TÍTULO */
 .titulo-redacao {
-    font-size: 28px;
+    font-size: 1.75rem;
     font-weight: 700;
-    color: #B5A9D8;
+    color: var(--accent-suave, #B5A9D8);
     margin-bottom: 25px;
     margin-top: 80px;
 }
 
 /* AVISO DE ERRO */
 .redacao-erro {
-    background: #fdecea;
-    color: #b3261e;
+    background: var(--c-fdecea, #fdecea);
+    color: var(--perigo, #b3261e);
     border-radius: 10px;
     padding: 14px 18px;
     margin-bottom: 20px;
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
 .campo-erro {
     display: block;
-    color: #b3261e;
-    font-size: 12px;
+    color: var(--perigo, #b3261e);
+    font-size: 0.75rem;
     margin-top: -6px;
     margin-bottom: 4px;
 }
 
 /* ESCREVER REDAÇÃO */
 .escrever-redacao-container {
-    background: #F3F0FA;
+    background: var(--c-f3f0fa, #F3F0FA);
     border-radius: 16px;
     padding: 20px;
     margin-bottom: 30px;
 }
 
 .escrever-redacao-container h2 {
-    font-size: 18px;
-    color: #7c6ea8;
+    font-size: 1.125rem;
+    color: var(--accent-forte, #7c6ea8);
     margin-bottom: 12px;
 }
 
@@ -81,28 +81,28 @@ body {
 .escrever-redacao-form input[type="text"],
 .escrever-redacao-form select {
     padding: 10px 14px;
-    border: 2px solid #d9d0ef;
+    border: 2px solid var(--c-d9d0ef, #d9d0ef);
     border-radius: 50px;
     font-family: inherit;
-    font-size: 14px;
-    background-color: white;
+    font-size: 0.875rem;
+    background-color: var(--cor-fundo-cartao, white);
 }
 
 .campo-tipo-redacao {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 600;
-    color: #555;
+    color: var(--c-555, #555);
 }
 
 .escrever-redacao-form textarea {
     padding: 14px;
-    border: 2px solid #d9d0ef;
+    border: 2px solid var(--c-d9d0ef, #d9d0ef);
     border-radius: 16px;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 0.875rem;
     resize: vertical;
     min-height: 260px;
     line-height: 1.6;
@@ -112,30 +112,30 @@ body {
 .escrever-redacao-form textarea:focus,
 .escrever-redacao-form select:focus {
     outline: none;
-    border-color: #B5A9D8;
+    border-color: var(--accent-suave, #B5A9D8);
 }
 
 .contador-caracteres {
-    font-size: 12px;
-    color: #888;
+    font-size: 0.75rem;
+    color: var(--c-888, #888);
     text-align: right;
 }
 
 .escrever-redacao-form button {
     align-self: flex-start;
     padding: 12px 28px;
-    background: #B5A9D8;
-    color: white;
+    background: var(--accent-suave, #B5A9D8);
+    color: var(--cor-fundo-cartao, white);
     border: none;
     border-radius: 50px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 0.875rem;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .escrever-redacao-form button:hover {
-    background: #a399c8;
+    background: var(--accent, #a399c8);
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(181, 169, 216, 0.3);
 }
@@ -148,13 +148,13 @@ body {
 
 /* HISTÓRICO */
 .secao-historico-redacao h2 {
-    font-size: 18px;
-    color: #333;
+    font-size: 1.125rem;
+    color: var(--cor-texto, #333);
     margin-bottom: 15px;
 }
 
 .redacoes-vazio {
-    color: #888;
+    color: var(--c-888, #888);
     padding: 20px 0;
 }
 
@@ -165,7 +165,7 @@ body {
 }
 
 .card-redacao {
-    background-color: white;
+    background-color: var(--cor-fundo-cartao, white);
     border-radius: 15px;
     padding: 22px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -181,16 +181,16 @@ body {
 }
 
 .card-redacao h3 {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
-    color: #333;
+    color: var(--cor-texto, #333);
 }
 
 .badge-tipo-redacao {
     align-self: flex-start;
-    background: #F3F0FA;
-    color: #7c6ea8;
-    font-size: 11px;
+    background: var(--c-f3f0fa, #F3F0FA);
+    color: var(--accent-forte, #7c6ea8);
+    font-size: 0.6875rem;
     font-weight: 600;
     padding: 4px 10px;
     border-radius: 50px;
@@ -198,9 +198,9 @@ body {
 
 .badge-tipo-redacao-visualizacao {
     display: inline-block;
-    background: #F3F0FA;
-    color: #7c6ea8;
-    font-size: 13px;
+    background: var(--c-f3f0fa, #F3F0FA);
+    color: var(--accent-forte, #7c6ea8);
+    font-size: 0.8125rem;
     font-weight: 600;
     padding: 6px 14px;
     border-radius: 50px;
@@ -208,24 +208,24 @@ body {
 }
 
 .nota-redacao {
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: #B5A9D8;
+    color: var(--accent-suave, #B5A9D8);
 }
 
 .data-redacao {
-    font-size: 12px;
-    color: #888;
+    font-size: 0.75rem;
+    color: var(--c-888, #888);
 }
 
 .botao-redacao {
-    background-color: #B5A9D8;
-    color: white;
+    background-color: var(--accent-suave, #B5A9D8);
+    color: var(--cor-fundo-cartao, white);
     border: none;
     border-radius: 10px;
     padding: 10px 16px;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -236,29 +236,29 @@ body {
 }
 
 .botao-redacao:hover {
-    background-color: #a399c8;
+    background-color: var(--accent, #a399c8);
 }
 
 /* VISUALIZAÇÃO DE UMA CORREÇÃO */
 .titulo-redacao-visualizacao {
-    font-size: 24px;
+    font-size: 1.5rem;
     font-weight: 700;
-    color: #333;
+    color: var(--cor-texto, #333);
     margin-top: 80px;
     margin-bottom: 10px;
 }
 
 .nota-total-grande {
-    font-size: 42px;
+    font-size: 2.625rem;
     font-weight: 700;
-    color: #B5A9D8;
+    color: var(--accent-suave, #B5A9D8);
     margin-bottom: 30px;
 }
 
 .nota-total-grande span {
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 400;
-    color: #999;
+    color: var(--c-999, #999);
 }
 
 .competencias-grid {
@@ -269,33 +269,33 @@ body {
 }
 
 .card-competencia {
-    background: #F3F0FA;
+    background: var(--c-f3f0fa, #F3F0FA);
     border-radius: 15px;
     padding: 20px;
 }
 
 .card-competencia h2 {
-    font-size: 14px;
-    color: #7c6ea8;
+    font-size: 0.875rem;
+    color: var(--accent-forte, #7c6ea8);
     margin-bottom: 8px;
 }
 
 .nota-competencia {
-    font-size: 22px;
+    font-size: 1.375rem;
     font-weight: 700;
-    color: #333;
+    color: var(--cor-texto, #333);
     margin-bottom: 8px;
 }
 
 .nota-competencia span {
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 400;
-    color: #999;
+    color: var(--c-999, #999);
 }
 
 .card-competencia p {
-    font-size: 13px;
-    color: #555;
+    font-size: 0.8125rem;
+    color: var(--c-555, #555);
     line-height: 1.5;
 }
 
@@ -306,21 +306,21 @@ body {
 
 .comentario-geral h2,
 .texto-original h2 {
-    font-size: 18px;
-    color: #333;
+    font-size: 1.125rem;
+    color: var(--cor-texto, #333);
     margin-bottom: 10px;
 }
 
 .comentario-geral p {
-    color: #555;
+    color: var(--c-555, #555);
     line-height: 1.6;
 }
 
 .texto-original p {
-    color: #444;
+    color: var(--c-444, #444);
     line-height: 1.8;
     white-space: pre-wrap;
-    background: #fafafa;
+    background: var(--c-fafafa, #fafafa);
     border-radius: 12px;
     padding: 20px;
 }
@@ -328,8 +328,8 @@ body {
 .link-voltar-redacao {
     display: inline-block;
     margin-bottom: 20px;
-    color: #7c6ea8;
-    font-size: 14px;
+    color: var(--accent-forte, #7c6ea8);
+    font-size: 0.875rem;
     text-decoration: none;
 }
 
@@ -346,7 +346,7 @@ body {
 
     .titulo-redacao,
     .titulo-redacao-visualizacao {
-        font-size: 24px;
+        font-size: 1.5rem;
     }
 
     .grade-historico-redacao,
@@ -355,6 +355,6 @@ body {
     }
 
     .nota-total-grande {
-        font-size: 34px;
+        font-size: 2.125rem;
     }
 }

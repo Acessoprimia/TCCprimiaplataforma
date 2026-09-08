@@ -16,8 +16,8 @@ body {
     margin: 0; /* Remove margens padrão */
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: rgb(0, 0, 0);
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, rgb(0, 0, 0));
     font-family: 'Poppins', sans-serif;
 }
 
@@ -25,14 +25,14 @@ body {
 main {
     max-width: 500px;
     margin: 0 auto;
-    background: white;
+    background: var(--cor-fundo-cartao, white);
     padding-top: 2.5rem;
     
 }
 
 .video-container {
     width: 100%;
-    background: #000;
+    background: var(--c-000, #000);
     padding: 1.5rem;
     margin-top: 10rem;
 }
@@ -50,12 +50,12 @@ video {
 h1 {
     font-size: 1.25rem;
     margin-bottom: 1rem;
-    color: #1a1a1a;
+    color: var(--cor-texto, #1a1a1a);
     font-weight: 600;
 }
 
 p {
-    color: #333;
+    color: var(--cor-texto, #333);
     font-size: 0.95rem;
     line-height: 1.6;
 }

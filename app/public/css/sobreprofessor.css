@@ -16,8 +16,8 @@ body {
     margin: 0; /* Remove margens padrão */
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: rgb(0, 0, 0);
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, rgb(0, 0, 0));
     font-family: 'Poppins', sans-serif;
 }
 
@@ -42,14 +42,14 @@ body {
   font-size: 1.8rem;
   margin-bottom: 50px;
   font-weight: 700;
-  color: #000;
+  color: var(--c-000, #000);
 }
 
 .texto-sobre p {
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 15px;
-  color: #333;
+  color: var(--cor-texto, #333);
 }
 
 main {

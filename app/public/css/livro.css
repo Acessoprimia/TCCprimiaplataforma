@@ -16,8 +16,8 @@ body {
     margin: 0; /* Remove margens padrão */
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: rgb(0, 0, 0);
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, rgb(0, 0, 0));
     font-family: 'Poppins', sans-serif;
 }
 
@@ -25,7 +25,7 @@ body {
         main {
             max-width: 600px;
             margin: 0 auto;
-            background-color: white;
+            background-color: var(--cor-fundo-cartao, white);
             min-height: 100vh;
             position: relative;
         }
@@ -44,7 +44,7 @@ body {
             left: 0;
             right: 0;
             height: 200px;
-            background: linear-gradient(135deg, #5fa8a0 0%, #4a8f88 100%);
+            background: linear-gradient(135deg, var(--c-5fa8a0, #5fa8a0) 0%, var(--c-4a8f88, #4a8f88) 100%);
             z-index: 0;
         }
 
@@ -136,15 +136,15 @@ body {
         }
 
         section.book-info h1 {
-            font-size: 24px;
+            font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 8px;
-            color: #1a1a1a;
+            color: var(--cor-texto, #1a1a1a);
         }
 
         section.book-info p.subtitle {
-            font-size: 14px;
-            color: #666;
+            font-size: 0.875rem;
+            color: var(--c-666, #666);
             margin-bottom: 12px;
         }
 
@@ -164,19 +164,19 @@ button.menu-button {
 }
 
         section.book-info p.authors {
-            font-size: 14px;
-            color: #333;
+            font-size: 0.875rem;
+            color: var(--cor-texto, #333);
             margin-bottom: 30px;
         }
 
         /* Botão de leitura */
         button.read-button {
-            background-color: #a89dd1;
-            color: white;
+            background-color: var(--accent, #a89dd1);
+            color: var(--cor-fundo-cartao, white);
             border: none;
             border-radius: 50px;
             padding: 16px 60px;
-            font-size: 16px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             display: inline-flex;
@@ -186,7 +186,7 @@ button.menu-button {
         }
 
         button.read-button:hover {
-            background-color: #9688c4;
+            background-color: var(--accent, #9688c4);
             transform: translateY(-2px);
         }
 
@@ -204,20 +204,20 @@ button.menu-button {
         /* Seção da sinopse */
         section.synopsis {
             padding: 30px 20px;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid var(--c-e0e0e0, #e0e0e0);
         }
 
         section.synopsis h2 {
-            font-size: 20px;
+            font-size: 1.25rem;
             font-weight: 700;
             margin-bottom: 16px;
-            color: #1a1a1a;
+            color: var(--cor-texto, #1a1a1a);
         }
 
         section.synopsis p {
-            font-size: 14px;
+            font-size: 0.875rem;
             line-height: 1.7;
-            color: #333;
+            color: var(--cor-texto, #333);
             text-align: justify;
         }
 
@@ -227,7 +227,7 @@ button.menu-button {
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: white;
+            background-color: var(--cor-fundo-cartao, white);
             border-radius: 20px 20px 0 0;
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
             padding: 20px;
@@ -250,17 +250,17 @@ button.menu-button {
         }
 
         aside.options-modal h3 {
-            font-size: 20px;
+            font-size: 1.25rem;
             font-weight: 700;
-            color: #1a1a1a;
+            color: var(--cor-texto, #1a1a1a);
         }
 
         button.close-modal {
             background: none;
             border: none;
-            font-size: 24px;
+            font-size: 1.5rem;
             cursor: pointer;
-            color: #666;
+            color: var(--c-666, #666);
             width: 32px;
             height: 32px;
             display: flex;
@@ -269,7 +269,7 @@ button.menu-button {
         }
 
         button.close-modal:hover {
-            color: #333;
+            color: var(--cor-texto, #333);
         }
 
         /* Lista de opções */
@@ -291,18 +291,18 @@ button.menu-button {
             display: flex;
             align-items: center;
             gap: 16px;
-            font-size: 16px;
-            color: #333;
+            font-size: 1rem;
+            color: var(--cor-texto, #333);
             border-radius: 8px;
             transition: background-color 0.2s;
         }
 
         ul.options-list button:hover {
-            background-color: #f5f5f5;
+            background-color: var(--c-f5f5f5, #f5f5f5);
         }
 
         ul.options-list button::before {
-            font-size: 24px;
+            font-size: 1.5rem;
         }
 
         ul.options-list button.share::before {
@@ -350,9 +350,9 @@ button.menu-button {
         .report-field {
             display: block;
             margin-bottom: 16px;
-            font-size: 14px;
+            font-size: 0.875rem;
             font-weight: 600;
-            color: #333;
+            color: var(--cor-texto, #333);
         }
 
         .report-field select,
@@ -361,36 +361,36 @@ button.menu-button {
             width: 100%;
             margin-top: 8px;
             padding: 12px 14px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--c-ddd, #ddd);
             border-radius: 10px;
             font-family: inherit;
-            font-size: 14px;
+            font-size: 0.875rem;
             font-weight: 400;
-            color: #1a1a1a;
+            color: var(--cor-texto, #1a1a1a);
             resize: vertical;
         }
 
         .report-field select:focus,
         .report-field textarea:focus {
             outline: none;
-            border-color: #a89dd1;
+            border-color: var(--accent, #a89dd1);
         }
 
         button.report-submit {
             width: 100%;
-            background-color: #a89dd1;
-            color: white;
+            background-color: var(--accent, #a89dd1);
+            color: var(--cor-fundo-cartao, white);
             border: none;
             border-radius: 50px;
             padding: 14px;
-            font-size: 15px;
+            font-size: 0.9375rem;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.3s;
         }
 
         button.report-submit:hover {
-            background-color: #9688c4;
+            background-color: var(--accent, #9688c4);
         }
 
         button.report-submit:disabled {

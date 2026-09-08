@@ -1,0 +1,660 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+main {
+    flex: 1;
+    padding: 40px 20px 60px;
+}
+
+.pagina-container {
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+}
+
+.titulo-pagina {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.config-subtitulo {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--cor-texto);
+    margin-bottom: 10px;
+}
+
+/* ========================================
+   LAYOUT: MENU DE ABAS + CONTEUDO
+   ======================================== */
+.config-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.config-abas {
+    flex: 0 0 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background-color: var(--cor-fundo-cartao);
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    /* .site-header e position:fixed (~70-80px de altura) - o "top" aqui
+       precisa ficar abaixo dele, senao o header (z-index maior) fica por
+       cima da barra de abas quando ela gruda no topo ao rolar a pagina. */
+    position: sticky;
+    top: 90px;
+}
+
+.aba-botao {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: none;
+    background: none;
+    color: var(--cor-texto-suave);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.875rem;
+    padding: 12px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.aba-botao svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+.aba-botao:hover {
+    color: var(--accent);
+    background-color: rgba(163, 152, 209, 0.08);
+}
+
+.aba-botao.aba-ativa {
+    color: var(--accent);
+    background-color: rgba(163, 152, 209, 0.14);
+}
+
+.aba-botao.aba-ativa svg {
+    opacity: 1;
+}
+
+/* CARD DE CONTEUDO */
+.config-conteudo {
+    flex: 1;
+    min-width: 0;
+}
+
+.config-painel {
+    background-color: var(--cor-fundo-cartao);
+    border-radius: 20px;
+    padding: 28px 26px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.config-painel[hidden] {
+    display: none;
+}
+
+.config-painel-titulo {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--cor-texto);
+    margin-bottom: 4px;
+}
+
+.config-painel-descricao {
+    font-size: 0.8125rem;
+    color: var(--cor-texto-suave);
+    margin-bottom: 20px;
+}
+
+/* MENSAGEM DE SUCESSO */
+.msg-sucesso {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: var(--sucesso, #1e7e34);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    margin-bottom: 18px;
+}
+
+/* FORMULARIO (reaproveita o padrao de editar perfil) */
+.editar-perfil {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.avatar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent, #A398D1);
+}
+
+.avatar-edit-btn {
+    background-color: var(--accent);
+    color: var(--on-accent);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.avatar-edit-btn:hover {
+    background-color: var(--accent-forte, #897eb6);
+}
+
+.campo-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1.8px solid var(--accent);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background-color: var(--cor-fundo-cartao);
+    transition: all 0.2s ease;
+    cursor: text;
+}
+
+.campo-wrapper:focus-within {
+    border-color: var(--accent-forte, #7b6fb5);
+    box-shadow: 0 0 0 3px rgba(163, 152, 209, 0.15);
+}
+
+.readonly-wrapper {
+    background-color: var(--cor-fundo-sutil);
+    border-color: var(--cor-borda);
+    cursor: not-allowed;
+}
+
+.readonly-wrapper .input-campo {
+    color: var(--cor-texto-suave);
+    cursor: not-allowed;
+}
+
+.icone-campo {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.icone {
+    width: 18px;
+    height: 18px;
+    opacity: 0.5;
+}
+
+.input-campo {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.875rem;
+    color: var(--cor-texto);
+    background-color: transparent;
+}
+
+.input-campo::placeholder {
+    color: var(--cor-texto-suave);
+    font-size: 0.8125rem;
+}
+
+.select-campo {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23999' stroke-width='2' stroke-linecap='round'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+    padding-right: 30px;
+}
+
+.input-campo[type="date"] {
+    color: var(--cor-texto-suave);
+}
+
+.input-campo[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0.4;
+    cursor: pointer;
+}
+
+.mostrar-senha {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    border: none;
+    background: none;
+    font-family: inherit;
+}
+
+.mostrar-senha:focus-visible {
+    outline: 3px solid var(--accent-forte, #8b83ac);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.icone-olho {
+    width: 22px;
+    height: 22px;
+    opacity: 0.5;
+    transition: opacity 0.25s;
+}
+
+.mostrar-senha:hover .icone-olho {
+    opacity: 0.75;
+}
+
+.mostrar-senha.aberto .icone-olho {
+    opacity: 1;
+}
+
+.erro-msg {
+    font-size: 0.75rem;
+    margin-top: -4px;
+    font-weight: 500;
+    color: var(--perigo, #d9534f);
+    min-height: 16px;
+}
+
+.erro-msg.correto {
+    color: var(--sucesso, #28a745);
+}
+
+.regras-senha-modern {
+    list-style: none;
+    padding: 10px 15px;
+    margin-top: 2px;
+    font-size: 0.75rem;
+    background: var(--cor-fundo-sutil);
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.regras-senha-modern li {
+    position: relative;
+    padding-left: 22px;
+    color: var(--perigo, #d9534f);
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.regras-senha-modern li::before {
+    content: "✖";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--perigo, #d9534f);
+    font-weight: bold;
+    font-size: 0.6875rem;
+}
+
+.regras-senha-modern li.correto {
+    color: var(--sucesso, #28a745);
+}
+
+.regras-senha-modern li.correto::before {
+    content: "✔";
+    color: var(--sucesso, #28a745);
+}
+
+.botao-submit {
+    background-color: var(--warm-suave, #FF9C7D);
+    color: var(--on-warm, #1A1A1A);
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 6px;
+    width: 100%;
+}
+
+.botao-submit:hover {
+    background-color: var(--warm, #ff8a66);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 156, 125, 0.4);
+}
+
+/* ========================================
+   ZONA DE RISCO (desativar / excluir conta)
+   ======================================== */
+.config-divisor {
+    border: none;
+    border-top: 1px solid var(--cor-borda);
+    margin: 26px 0 22px;
+}
+
+.zona-risco-titulo {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--perigo, #d9534f);
+    margin-bottom: 4px;
+}
+
+.zona-risco-descricao {
+    font-size: 0.8125rem;
+    color: var(--cor-texto-suave);
+    margin-bottom: 14px;
+}
+
+.zona-risco-acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.botao-perigo,
+.botao-secundario {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.botao-secundario {
+    background-color: var(--cor-fundo-sutil);
+    color: var(--cor-texto);
+    border: 1.8px solid var(--cor-borda);
+}
+
+.botao-secundario:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.botao-perigo {
+    background-color: var(--cor-fundo-cartao);
+    color: var(--perigo, #d9534f);
+    border: 1.8px solid var(--perigo, #d9534f);
+}
+
+.botao-perigo:hover {
+    background-color: var(--perigo, #d9534f);
+    color: var(--cor-fundo-cartao, #fff);
+}
+
+/* ========================================
+   ASSINATURA
+   ======================================== */
+.cartao-assinatura {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    background-color: var(--cor-fundo-sutil);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+}
+
+.assinatura-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 6px;
+}
+
+.assinatura-status.ativa {
+    background-color: rgba(40, 167, 69, 0.12);
+    color: var(--sucesso, #1e7e34);
+}
+
+.assinatura-status.inativa {
+    background-color: rgba(153, 153, 153, 0.15);
+    color: var(--c-777, #777);
+}
+
+.assinatura-detalhe {
+    font-size: 0.8125rem;
+    color: var(--cor-texto-suave);
+}
+
+.config-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.config-link-botao {
+    display: inline-block;
+    text-decoration: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 10px 18px;
+    background-color: var(--accent);
+    color: var(--on-accent);
+    transition: background-color 0.2s ease;
+}
+
+.config-link-botao:hover {
+    background-color: var(--accent-forte, #897eb6);
+}
+
+.config-link-botao.contorno {
+    background-color: transparent;
+    color: var(--accent);
+    border: 1.8px solid var(--accent);
+}
+
+.config-link-botao.contorno:hover {
+    background-color: rgba(163, 152, 209, 0.1);
+}
+
+/* ========================================
+   PLACEHOLDER "EM BREVE"
+   ======================================== */
+.placeholder-em-breve {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    padding: 30px 10px;
+    color: var(--cor-texto-suave);
+}
+
+.placeholder-em-breve svg {
+    opacity: 0.4;
+    margin-bottom: 6px;
+}
+
+.placeholder-em-breve strong {
+    color: var(--cor-texto);
+    font-size: 0.875rem;
+}
+
+.placeholder-em-breve span {
+    font-size: 0.8125rem;
+    max-width: 320px;
+}
+
+/* ========================================
+   TEMA (claro / escuro / automatico)
+   ======================================== */
+.tema-opcoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tema-botao {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--cor-texto-suave);
+    background-color: var(--cor-fundo-sutil);
+    border: 1.8px solid transparent;
+    border-radius: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tema-botao svg {
+    opacity: 0.7;
+}
+
+.tema-botao:hover {
+    color: var(--accent);
+}
+
+.tema-botao.ativo {
+    color: var(--accent);
+    background-color: rgba(163, 152, 209, 0.14);
+    border-color: var(--accent);
+}
+
+.tema-botao.ativo svg {
+    opacity: 1;
+}
+
+/* ========================================
+   TAMANHO DA FONTE
+   ======================================== */
+.fonte-opcoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.fonte-botao {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--cor-texto-suave);
+    background-color: var(--cor-fundo-sutil);
+    border: 1.8px solid transparent;
+    border-radius: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.fonte-amostra {
+    font-weight: 700;
+    line-height: 1;
+}
+
+.fonte-botao:hover {
+    color: var(--accent);
+}
+
+.fonte-botao.ativo {
+    color: var(--accent);
+    background-color: rgba(163, 152, 209, 0.14);
+    border-color: var(--accent);
+}
+
+/* ========================================
+   RESPONSIVO
+   ======================================== */
+@media (max-width: 720px) {
+    .config-layout {
+        flex-direction: column;
+    }
+
+    .config-abas {
+        flex-direction: row;
+        overflow-x: auto;
+        width: 100%;
+        position: static;
+        gap: 2px;
+    }
+
+    .aba-botao {
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 480px) {
+    main {
+        padding: 24px 14px 50px;
+    }
+
+    .config-painel {
+        padding: 22px 16px;
+    }
+
+    .titulo-pagina {
+        font-size: 1.125rem;
+    }
+
+    .avatar {
+        width: 65px;
+        height: 65px;
+    }
+
+    .cartao-assinatura {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

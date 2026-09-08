@@ -16,8 +16,8 @@ body {
     margin: 0; 
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: rgb(0, 0, 0);
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, rgb(0, 0, 0));
     font-family: 'Poppins', sans-serif;
 }
 
@@ -31,7 +31,7 @@ main {
 
 .titulo-principal {
     font-size: 2rem;
-    color: #FF9466;
+    color: var(--warm, #FF9466);
     text-align: center;
     margin-bottom: 1.5rem;
     font-weight: 700;
@@ -43,7 +43,7 @@ main {
 
 .filtro-label {
     display: block;
-    color: #a0a0a0;
+    color: var(--c-a0a0a0, #a0a0a0);
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
 }
@@ -51,19 +51,19 @@ main {
 .filtro-select {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--c-e0e0e0, #e0e0e0);
     border-radius: 8px;
     font-size: 1rem;
-    background: white;
-    color: #333;
+    background: var(--cor-fundo-cartao, white);
+    color: var(--cor-texto, #333);
     cursor: pointer;
 }
 
 .btn-fazer-pergunta {
     width: 100%;
     padding: 1rem;
-    background: #A398D1;
-    color: white;
+    background: var(--accent, #A398D1);
+    color: var(--cor-fundo-cartao, white);
     border: none;
     border-radius: 50px;
     font-size: 1.1rem;
@@ -74,7 +74,7 @@ main {
 }
 
 .btn-fazer-pergunta:hover {
-    background: #A398D1;
+    background: var(--accent, #A398D1);
 }
 
 .duvidas-container {
@@ -84,7 +84,7 @@ main {
 }
 
 .card-duvida {
-    background: white;
+    background: var(--cor-fundo-cartao, white);
     border-radius: 16px;
     padding: 1.5rem;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
@@ -101,26 +101,31 @@ main {
 .avatar {
     width: 50px;
     height: 50px;
-    background: #c5b8e8;
+    background: var(--accent-suave, #c5b8e8);
     border-radius: 50%;
     flex-shrink: 0;
 }
 
 .user-info {
     flex: 1;
-    min-width: 0;
+    /* min-width em rem (nao 0) pra que a tag de materia quebre pra linha
+       de baixo em vez de espremer o nome ate sumir - importante em tela
+       estreita com a fonte aumentada (Configuracoes > Aparencia). */
+    min-width: 8rem;
 }
 
 .user-name {
     font-size: 1rem;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--cor-texto, #1a1a1a);
+    overflow-wrap: break-word;
 }
 
 .user-serie {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--c-666, #666);
     font-style: italic;
+    overflow-wrap: break-word;
 }
 
 .materia-tag {
@@ -129,21 +134,23 @@ main {
     margin-left: auto;
     max-width: 100%;
     font-size: 0.8rem;
-    color: #A398D1;
+    color: var(--accent, #A398D1);
     font-style: italic;
     overflow-wrap: anywhere;
 }
 
 .pergunta-texto {
-    color: #333;
+    color: var(--cor-texto, #333);
     line-height: 1.6;
     margin-bottom: 1rem;
     text-align: justify;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .btn-ver-resposta {
-    background: #A398D1;
-    color: white;
+    background: var(--accent, #A398D1);
+    color: var(--cor-fundo-cartao, white);
     border: none;
     padding: 0.75rem 1.5rem;
     border-radius: 50px;
@@ -155,20 +162,20 @@ main {
 }
 
 .btn-ver-resposta:hover {
-    background: #A398D1;
+    background: var(--accent, #A398D1);
 }
 
 .resposta-container {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid var(--c-e0e0e0, #e0e0e0);
     clear: both;
 }
 
 .resposta-titulo {
     font-size: 1.1rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--cor-texto, #1a1a1a);
     margin-bottom: 1rem;
 }
 
@@ -181,7 +188,7 @@ main {
 .avatar-professor {
     width: 45px;
     height: 45px;
-    background: #c5b8e8;
+    background: var(--accent-suave, #c5b8e8);
     border-radius: 50%;
     margin-right: 1rem;
 }
@@ -189,26 +196,39 @@ main {
 .professor-name {
     font-size: 0.95rem;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--cor-texto, #1a1a1a);
 }
 
 .professor-materia {
     font-size: 0.85rem;
-    color: #666;
+    color: var(--c-666, #666);
     font-style: italic;
 }
 
 .resposta-texto,
 .explicacao-texto {
-    color: #333;
+    color: var(--cor-texto, #333);
     line-height: 1.6;
     margin-bottom: 1rem;
     text-align: justify;
+    /* Resposta longa nao deve fazer o card inteiro esticar - trava a
+       altura e deixa rolar por dentro, assim a lista de duvidas fica
+       com um tamanho previsivel independente do tanto que o professor
+       escreveu. */
+    max-height: 12rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+    scrollbar-width: thin;
+    /* Link ou palavra grande sem espaco nao pode forcar a caixa (e a
+       pagina) a esticar pro lado - quebra a palavra se precisar. */
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .explicacao-titulo {
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--cor-texto, #1a1a1a);
     margin-bottom: 0.5rem;
     margin-top: 1rem;
 }
@@ -219,8 +239,8 @@ main {
     right: 2rem;
     width: 60px;
     height: 60px;
-    background: #A398D1;
-    color: white;
+    background: var(--accent, #A398D1);
+    color: var(--cor-fundo-cartao, white);
     border: none;
     border-radius: 50%;
     font-size: 2rem;
@@ -231,7 +251,7 @@ main {
 }
 
 .btn-add-fixo:hover {
-    background: #A398D1;
+    background: var(--accent, #A398D1);
     transform: scale(1.1);
 }
 
@@ -253,7 +273,7 @@ main {
 }
 
 .modal-content {
-    background: white;
+    background: var(--cor-fundo-cartao, white);
     border-radius: 20px;
     padding: 2rem;
     max-width: 500px;
@@ -264,7 +284,7 @@ main {
 .modal-titulo {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--cor-texto, #1a1a1a);
     margin-bottom: 1.5rem;
 }
 
@@ -272,7 +292,7 @@ main {
     width: 100%;
     min-height: 120px;
     padding: 1rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--c-e0e0e0, #e0e0e0);
     border-radius: 12px;
     font-size: 1rem;
     font-family: inherit;
@@ -282,17 +302,17 @@ main {
 
 .modal-textarea:focus {
     outline: none;
-    border-color: #A398D1;
+    border-color: var(--accent, #A398D1);
 }
 
 .modal-select {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--c-e0e0e0, #e0e0e0);
     border-radius: 50px;
     font-size: 1rem;
-    background: #f0f0f0;
-    color: #A398D1;
+    background: var(--c-f0f0f0, #f0f0f0);
+    color: var(--accent, #A398D1);
     cursor: pointer;
     margin-bottom: 1rem;
 }
@@ -300,8 +320,8 @@ main {
 .btn-enviar {
     width: 100%;
     padding: 1rem;
-    background: #A398D1;
-    color: white;
+    background: var(--accent, #A398D1);
+    color: var(--cor-fundo-cartao, white);
     border: none;
     border-radius: 50px;
     font-size: 1.1rem;
@@ -311,7 +331,7 @@ main {
 }
 
 .btn-enviar:hover {
-    background: #A398D1;
+    background: var(--accent, #A398D1);
 }
 
 .btn-fechar {
@@ -321,7 +341,7 @@ main {
     background: none;
     border: none;
     font-size: 2rem;
-    color: #999;
+    color: var(--c-999, #999);
     cursor: pointer;
     width: 30px;
     height: 30px;
@@ -331,7 +351,7 @@ main {
 }
 
 .btn-fechar:hover {
-    color: #333;
+    color: var(--cor-texto, #333);
 }
 
 .form-excluir-forum {
@@ -339,10 +359,10 @@ main {
 }
 
 .btn-excluir-forum {
-    background: #fff0ec;
-    border: 1px solid #ffb39b;
+    background: var(--c-fff0ec, #fff0ec);
+    border: 1px solid var(--c-ffb39b, #ffb39b);
     border-radius: 8px;
-    color: #b44622;
+    color: var(--perigo, #b44622);
     cursor: pointer;
     font-size: 0.9rem;
     font-weight: 600;
@@ -351,6 +371,6 @@ main {
 }
 
 .btn-excluir-forum:hover {
-    background: #ff9466;
-    color: #1A1A1A;
+    background: var(--warm, #ff9466);
+    color: var(--on-warm, #1A1A1A);
 }

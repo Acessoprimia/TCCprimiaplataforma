@@ -15,8 +15,8 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #ffffff;
-    color: #000000;
+    background-color: var(--cor-fundo-cartao, #ffffff);
+    color: var(--c-000000, #000000);
     font-family: 'Poppins', sans-serif;
 }
 
@@ -38,31 +38,31 @@ body {
 
 .titulo-premium-assinar {
     margin-bottom: 8px;
-    color: #b5a9d8;
-    font-size: 28px;
+    color: var(--accent-suave, #b5a9d8);
+    font-size: 1.75rem;
     font-weight: 700;
 }
 
 .subtitulo-premium-assinar {
-    color: #666666;
+    color: var(--c-666666, #666666);
 }
 
 .premium-erro {
     margin-bottom: 20px;
     padding: 14px 18px;
     border-radius: 10px;
-    background-color: #fdecea;
-    color: #b3261e;
-    font-size: 14px;
+    background-color: var(--c-fdecea, #fdecea);
+    color: var(--perigo, #b3261e);
+    font-size: 0.875rem;
 }
 
 .premium-aviso {
     margin-bottom: 20px;
     padding: 14px 18px;
     border-radius: 10px;
-    background-color: #fff8e6;
-    color: #a17400;
-    font-size: 14px;
+    background-color: var(--c-fff8e6, #fff8e6);
+    color: var(--c-a17400, #a17400);
+    font-size: 0.875rem;
 }
 
 .grade-planos {
@@ -75,8 +75,8 @@ body {
 .titulo-planos {
     grid-column: 1 / -1;
     margin-bottom: 4px;
-    color: #333333;
-    font-size: 22px;
+    color: var(--cor-texto, #333333);
+    font-size: 1.375rem;
     font-weight: 600;
     text-align: center;
 }
@@ -88,7 +88,7 @@ body {
     height: 100%;
     padding: 24px;
     border-radius: 16px;
-    background-color: #f3f0fa;
+    background-color: var(--c-f3f0fa, #f3f0fa);
     text-align: center;
 }
 
@@ -97,21 +97,21 @@ body {
 }
 
 .card-plano h3 {
-    color: #333333;
-    font-size: 18px;
+    color: var(--cor-texto, #333333);
+    font-size: 1.125rem;
     font-weight: 600;
 }
 
 .preco-plano {
-    color: #b5a9d8;
-    font-size: 30px;
+    color: var(--accent-suave, #b5a9d8);
+    font-size: 1.875rem;
     font-weight: 700;
 }
 
 .duracao-plano {
     margin-bottom: 8px;
-    color: #666666;
-    font-size: 13px;
+    color: var(--c-666666, #666666);
+    font-size: 0.8125rem;
 }
 
 .card-plano form {
@@ -124,24 +124,24 @@ body {
     padding: 12px;
     border: none;
     border-radius: 50px;
-    background-color: #b5a9d8;
-    color: #ffffff;
+    background-color: var(--accent-suave, #b5a9d8);
+    color: var(--cor-fundo-cartao, #ffffff);
     font-family: inherit;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .card-plano button:hover {
-    background-color: #a399c8;
+    background-color: var(--accent, #a399c8);
     box-shadow: 0 4px 10px rgba(181, 169, 216, 0.3);
     transform: translateY(-1px);
 }
 
 .card-plano button:focus-visible,
 .botao-voltar-retorno:focus-visible {
-    outline: 3px solid #7d6eaf;
+    outline: 3px solid var(--c-7d6eaf, #7d6eaf);
     outline-offset: 3px;
 }
 
@@ -159,58 +159,58 @@ body {
     margin-bottom: 24px;
     padding: 32px;
     border-radius: 16px;
-    background-color: #f3f0fa;
+    background-color: var(--c-f3f0fa, #f3f0fa);
 }
 
 .card-retorno h1 {
     margin-bottom: 12px;
-    color: #333333;
-    font-size: 22px;
+    color: var(--cor-texto, #333333);
+    font-size: 1.375rem;
 }
 
 .card-retorno p {
-    color: #555555;
+    color: var(--c-555555, #555555);
     line-height: 1.6;
 }
 
 .card-retorno.sucesso {
-    background-color: #eafaf0;
+    background-color: var(--c-eafaf0, #eafaf0);
 }
 
 .card-retorno.sucesso h1 {
-    color: #1e8e4f;
+    color: var(--sucesso, #1e8e4f);
 }
 
 .card-retorno.erro {
-    background-color: #fdecea;
+    background-color: var(--c-fdecea, #fdecea);
 }
 
 .card-retorno.erro h1 {
-    color: #b3261e;
+    color: var(--perigo, #b3261e);
 }
 
 .card-retorno.pendente {
-    background-color: #fff8e6;
+    background-color: var(--c-fff8e6, #fff8e6);
 }
 
 .card-retorno.pendente h1 {
-    color: #a17400;
+    color: var(--c-a17400, #a17400);
 }
 
 .botao-voltar-retorno {
     display: inline-block;
     padding: 12px 28px;
     border-radius: 50px;
-    background-color: #b5a9d8;
-    color: #ffffff;
-    font-size: 14px;
+    background-color: var(--accent-suave, #b5a9d8);
+    color: var(--cor-fundo-cartao, #ffffff);
+    font-size: 0.875rem;
     font-weight: 600;
     text-decoration: none;
     transition: background-color 0.3s ease;
 }
 
 .botao-voltar-retorno:hover {
-    background-color: #a399c8;
+    background-color: var(--accent, #a399c8);
 }
 
 /* ---- HISTÓRICO DE PAGAMENTOS ---- */
@@ -240,13 +240,13 @@ body {
     overflow-x: auto;
     padding: 8px;
     border-radius: 16px;
-    background-color: #f3f0fa;
+    background-color: var(--c-f3f0fa, #f3f0fa);
 }
 
 .tabela-historico {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
 .tabela-historico th,
@@ -257,55 +257,55 @@ body {
 }
 
 .tabela-historico thead th {
-    border-bottom: 2px solid #e2dcf5;
-    color: #666666;
-    font-size: 13px;
+    border-bottom: 2px solid var(--c-e2dcf5, #e2dcf5);
+    color: var(--c-666666, #666666);
+    font-size: 0.8125rem;
     font-weight: 600;
 }
 
 .tabela-historico tbody tr:not(:last-child) td {
-    border-bottom: 1px solid #e2dcf5;
+    border-bottom: 1px solid var(--c-e2dcf5, #e2dcf5);
 }
 
 .badge-status {
     display: inline-block;
     padding: 4px 12px;
     border-radius: 50px;
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 600;
 }
 
 .badge-status.badge-sucesso {
-    background-color: #eafaf0;
-    color: #1e8e4f;
+    background-color: var(--c-eafaf0, #eafaf0);
+    color: var(--sucesso, #1e8e4f);
 }
 
 .badge-status.badge-erro {
-    background-color: #fdecea;
-    color: #b3261e;
+    background-color: var(--c-fdecea, #fdecea);
+    color: var(--perigo, #b3261e);
 }
 
 .badge-status.badge-pendente {
-    background-color: #fff8e6;
-    color: #a17400;
+    background-color: var(--c-fff8e6, #fff8e6);
+    color: var(--c-a17400, #a17400);
 }
 
 .botao-cancelar-pagamento {
     padding: 6px 14px;
-    border: 1px solid #b3261e;
+    border: 1px solid var(--perigo, #b3261e);
     border-radius: 50px;
     background-color: transparent;
-    color: #b3261e;
+    color: var(--perigo, #b3261e);
     font-family: inherit;
-    font-size: 12px;
+    font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .botao-cancelar-pagamento:hover {
-    background-color: #b3261e;
-    color: #ffffff;
+    background-color: var(--perigo, #b3261e);
+    color: var(--cor-fundo-cartao, #ffffff);
 }
 
 /* ---- RESPONSIVIDADE ---- */
@@ -320,7 +320,7 @@ body {
     }
 
     .titulo-premium-assinar {
-        font-size: 24px;
+        font-size: 1.5rem;
     }
 
     .grade-planos {

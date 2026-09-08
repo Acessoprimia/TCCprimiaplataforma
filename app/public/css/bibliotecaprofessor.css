@@ -16,8 +16,8 @@ body {
     margin: 0; 
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: rgb(0, 0, 0);
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, rgb(0, 0, 0));
     font-family: 'Poppins', sans-serif;
 }
 
@@ -28,8 +28,8 @@ body {
 }
 
 .biblioteca-header h1 {
-    font-size: 48px;
-    color: #FF9466;
+    font-size: 3rem;
+    color: var(--warm, #FF9466);
     font-weight: 700;
     margin-bottom: 20px;
 }
@@ -49,8 +49,8 @@ body {
     gap: 8px;
     background-color: transparent;
     border: none;
-    color: #A398D1;
-    font-size: 16px;
+    color: var(--accent, #A398D1);
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     padding: 10px;
@@ -59,7 +59,7 @@ body {
 }
 
 .filtro-btn:hover {
-    color: #8b83ac;
+    color: var(--accent-forte, #8b83ac);
 }
 
 .filtro-icon {
@@ -67,7 +67,7 @@ body {
     height: 0;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
-    border-top: 12px solid #A398D1;
+    border-top: 12px solid var(--accent, #A398D1);
 }
 
 /* MODAL DE FILTRO */
@@ -89,7 +89,7 @@ body {
 }
 
 .modal-content {
-    background-color: #E8E5F2;
+    background-color: var(--c-e8e5f2, #E8E5F2);
     padding: 40px;
     border-radius: 20px;
     max-width: 400px;
@@ -104,8 +104,8 @@ body {
 }
 
 .modal-header h2 {
-    font-size: 24px;
-    color: #4a4574;
+    font-size: 1.5rem;
+    color: var(--accent-forte, #4a4574);
     font-weight: 600;
 }
 
@@ -115,8 +115,8 @@ body {
     right: 20px;
     background: none;
     border: none;
-    font-size: 28px;
-    color: #4a4574;
+    font-size: 1.75rem;
+    color: var(--accent-forte, #4a4574);
     cursor: pointer;
     line-height: 1;
 }
@@ -139,23 +139,23 @@ body {
     width: 20px;
     height: 20px;
     cursor: pointer;
-    accent-color: #A398D1;
+    accent-color: var(--accent, #A398D1);
 }
 
 .disciplina-item span {
-    font-size: 16px;
-    color: #333;
+    font-size: 1rem;
+    color: var(--cor-texto, #333);
     cursor: pointer;
 }
 
 .buscar-btn {
     width: 100%;
     padding: 15px;
-    background-color: #A398D1;
-    color: white;
+    background-color: var(--accent, #A398D1);
+    color: var(--cor-fundo-cartao, white);
     border: none;
     border-radius: 25px;
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -163,7 +163,7 @@ body {
 }
 
 .buscar-btn:hover {
-    background-color: #8b83ac;
+    background-color: var(--accent-forte, #8b83ac);
     transform: translateY(-2px);
 }
 
@@ -182,7 +182,7 @@ body {
 }
 
 .livro-card {
-    background-color: white;
+    background-color: var(--cor-fundo-cartao, white);
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -208,8 +208,8 @@ body {
 }
 
 .livro-titulo {
-    font-size: 14px;
-    color: #A398D1;
+    font-size: 0.875rem;
+    color: var(--accent, #A398D1);
     font-weight: 600;
     line-height: 1.4;
 }
@@ -217,7 +217,7 @@ body {
 /* RESPONSIVO */
 @media (max-width: 768px) {
     .biblioteca-header h1 {
-        font-size: 36px;
+        font-size: 2.25rem;
     }
 
     .livros-grid {
@@ -237,7 +237,7 @@ body {
 
 @media (max-width: 480px) {
     .biblioteca-header h1 {
-        font-size: 28px;
+        font-size: 1.75rem;
     }
 
     .livros-grid {
@@ -250,6 +250,6 @@ body {
     }
 
     .livro-titulo {
-        font-size: 12px;
+        font-size: 0.75rem;
     }
 }

@@ -9,9 +9,9 @@
 }
 
 :root {
-  --header-bg: #ffffff;
-  --text-color: #A398D1;
-  --accent: #A398D1;
+  --header-bg: var(--cor-fundo-cartao, #ffffff);
+  --text-color: var(--accent, #A398D1);
+  --accent: var(--accent, #A398D1);
   --max-width: 1200px;
 }
 

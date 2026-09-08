@@ -8,7 +8,7 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #f5f5f5;
+    background-color: var(--c-f5f5f5, #f5f5f5);
     min-height: 100vh;
     padding-bottom: 0;
     display: flex;
@@ -17,7 +17,7 @@ body {
 
 /* SEÇÃO ROXA */
 .secao-roxa {
-    background: linear-gradient(180deg, #B5A9D8 0%, #A398D1 100%);
+    background: linear-gradient(180deg, var(--accent-suave, #B5A9D8) 0%, var(--accent, #A398D1) 100%);
     border-radius: 0 0 40px 40px;
     padding: 90px 20px 260px; /* espaço correto acima e abaixo */
     position: relative;
@@ -48,14 +48,14 @@ body {
 }
 
 h6 {
-    color: #8b83ac;
+    color: var(--accent-forte, #8b83ac);
     text-align: center;
-    font-size: 30px;
+    font-size: 1.875rem;
 }
 
 /* CARD */
 .card-selecao {
-    background-color: white;
+    background-color: var(--cor-fundo-cartao, white);
     border-radius: 20px;
     padding: 35px 25px;
     width: 100%;
@@ -79,7 +79,7 @@ h6 {
     padding: 16px;
     border-radius: 12px;
     font-family: 'Poppins', sans-serif;
-    font-size: 17px;
+    font-size: 1.0625rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -90,25 +90,25 @@ h6 {
 }
 
 .botao-aluno {
-    background-color: #A398D1;
-    color: white;
+    background-color: var(--accent, #A398D1);
+    color: var(--cor-fundo-cartao, white);
     box-shadow: 0 4px 12px rgba(163, 152, 209, 0.3);
 }
 
 .botao-aluno:hover {
-    background-color: #8b83ac;
+    background-color: var(--accent-forte, #8b83ac);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(163, 152, 209, 0.4);
 }
 
 .botao-professor {
-    background-color: white;
-    color: #A398D1;
-    border: 2px solid #A398D1;
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--accent, #A398D1);
+    border: 2px solid var(--accent, #A398D1);
 }
 
 .botao-professor:hover {
-    background-color: #f9f8fc;
+    background-color: var(--c-f9f8fc, #f9f8fc);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(163, 152, 209, 0.2);
 }
@@ -117,19 +117,19 @@ h6 {
 .rodape-card {
     text-align: center;
     padding-top: 18px;
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid var(--c-e5e5e5, #e5e5e5);
 }
 
 .link-login {
-    font-size: 13px;
-    color: #999;
+    font-size: 0.8125rem;
+    color: var(--c-999, #999);
     text-decoration: none;
     transition: all 0.3s ease;
     display: inline-block;
 }
 
 .link-login:hover {
-    color: #A398D1;
+    color: var(--accent, #A398D1);
     text-decoration: underline;
 }
 
@@ -156,12 +156,12 @@ h6 {
     }
 
     .botao-selecao {
-        font-size: 16px;
+        font-size: 1rem;
         padding: 14px;
     }
 
     .link-login {
-        font-size: 12px;
+        font-size: 0.75rem;
     }
 }
 
@@ -194,12 +194,12 @@ h6 {
     }
 
     .botao-selecao {
-        font-size: 18px;
+        font-size: 1.125rem;
         padding: 18px;
         border-radius: 15px;
     }
 
     .link-login {
-        font-size: 14px;
+        font-size: 0.875rem;
     }
 }

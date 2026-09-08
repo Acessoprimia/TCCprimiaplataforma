@@ -46,7 +46,7 @@ const VIEWS = Object.freeze({
   login: "pages/login",
   cadastro: "pages/cadastro",
   cadastroProfessor: "pages/cadastroprofessor",
-  editarPerfil: "pages/editarperfil",
+  configuracoes: "pages/configuracoes",
 });
 
 const VALORES_INICIAIS_CADASTRO_ALUNO = Object.freeze({
@@ -621,6 +621,63 @@ async function buscarPerfilLogado(req, tipoUsuario) {
     console.error("Erro ao buscar perfil:", erro);
     return null;
   }
+}
+
+const ABAS_CONFIGURACOES = Object.freeze([
+  "perfil",
+  "seguranca",
+  "assinatura",
+  "notificacoes",
+  "privacidade",
+  "aparencia",
+]);
+
+const MENSAGENS_SUCESSO_CONFIGURACOES = Object.freeze({
+  perfil: "Perfil atualizado com sucesso!",
+  senha: "Senha alterada com sucesso!",
+});
+
+// Contexto completo da pagina /configuracoes - usado tanto no GET quanto
+// nos POST das abas (perfil/senha), ja que qualquer erro de validacao
+// precisa re-renderizar a pagina inteira (todas as abas), nao so o form
+// que falhou.
+async function montarContextoConfiguracoes(req, tipoUsuario, overrides = {}) {
+  const usuario = await buscarPerfilLogado(req, tipoUsuario);
+  let assinatura = null;
+
+  if (tipoUsuario === TIPOS_USUARIO.aluno && usuario) {
+    const detalhe = await Models.assinaturas.buscarAtivaDetalhe(usuario.id).catch((erro) => {
+      console.error("Erro ao buscar assinatura para configuracoes:", erro);
+      return null;
+    });
+
+    assinatura = {
+      ativa: Boolean(detalhe),
+      dataFim: detalhe && detalhe.data_fim ? formatarDataLocal(detalhe.data_fim) : null,
+    };
+  }
+
+  return {
+    tipoUsuario,
+    abaInicial: "perfil",
+    valoresPerfil: {
+      nome: usuario?.nome || "",
+      email: usuario?.email || "",
+      serie: usuario?.serie || "",
+      ra: usuario?.ra || "0000",
+      materia: usuario?.materia || "",
+      data_nascimento: usuario?.data_nascimento || "",
+      foto_url: usuario?.foto_url || "",
+    },
+    erroValidacaoPerfil: {},
+    msgErroPerfil: {},
+    erroValidacaoSenha: {},
+    msgErroSenha: {},
+    msgErroConta: null,
+    msgSucesso: null,
+    assinatura,
+    ...overrides,
+  };
 }
 
 function somenteAdmin(req, res, next) {
@@ -3209,51 +3266,35 @@ router.get("/termouso", function (req, res) {
   res.render("pages/termouso");
 });
 
-router.get("/editarperfil", async function (req, res) {
-  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
-
-  if (!usuarioBase) {
-    return res.redirect("/login");
-  }
-
-  const usuario = await buscarPerfilLogado(req, TIPOS_USUARIO.aluno);
-
-  res.render(VIEWS.editarPerfil, {
-    erros: null,
-    valores: {
-      nome: usuario.nome,
-      email: usuario.email,
-      serie: usuario.serie || "",
-      ra: usuario.ra || "0000",
-      data_nascimento: usuario.data_nascimento || "",
-      foto_url: usuario.foto_url || "",
-    },
-    erroValidacao: {},
-    msgErro: {},
-  });
+// /editarperfil e /editarprofessor viraram abas dentro de /configuracoes -
+// os links antigos (favoritos, e-mails ja enviados) continuam funcionando.
+router.get("/editarperfil", function (req, res) {
+  res.redirect("/configuracoes");
 });
 
-router.get("/editarprofessor", async function (req, res) {
-  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+router.get("/editarprofessor", function (req, res) {
+  res.redirect("/configuracoes");
+});
 
-  if (!usuarioBase) {
+router.get("/configuracoes", async function (req, res) {
+  const usuarioCookie = lerCookieUsuario(req);
+  const tipoUsuario = usuarioCookie?.tipo_usuario;
+
+  if (
+    !usuarioCookie ||
+    (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor)
+  ) {
     return res.redirect("/login");
   }
 
-  const usuario = await buscarPerfilLogado(req, TIPOS_USUARIO.professor);
+  const abaInicial = ABAS_CONFIGURACOES.includes(req.query.aba) ? req.query.aba : "perfil";
 
-  res.render("pages/editarprofessor", {
-    erros: null,
-    valores: {
-      nome: usuario.nome,
-      email: usuario.email,
-      materia: usuario.materia || "Materia: Exemplo",
-      data_nascimento: usuario.data_nascimento || "",
-      foto_url: usuario.foto_url || "",
-    },
-    erroValidacao: {},
-    msgErro: {},
+  const contexto = await montarContextoConfiguracoes(req, tipoUsuario, {
+    abaInicial,
+    msgSucesso: MENSAGENS_SUCESSO_CONFIGURACOES[req.query.salvo] || null,
   });
+
+  res.render(VIEWS.configuracoes, contexto);
 });
 
 router.get("/termopriva", function (req, res) {
@@ -3720,7 +3761,8 @@ router.post(
 );
 
 
-// ========== ROTAS POST EDITAR PERFIL INTEGRADAS AO BANCO ==========
+// ========== ROTAS POST DA PAGINA DE CONFIGURACOES (integradas ao banco) ==========
+// Aba "Perfil" (aluno). A senha saiu daqui - agora e a aba "Seguranca" (POST /configuracoes/senha).
 router.post(
   "/editarperfil",
 
@@ -3729,13 +3771,6 @@ router.post(
   body("nome").trim().notEmpty().withMessage("O nome e obrigatorio!"),
   body("email").trim().notEmpty().withMessage("O e-mail e obrigatorio!").isEmail().withMessage("Digite um e-mail valido!"),
   body("serie").notEmpty().withMessage("A serie escolar e obrigatoria!"),
-  body("senha").optional({ checkFalsy: true }).isLength({ min: 8, max: 15 }).withMessage("A senha deve ter entre 8 e 15 caracteres!"),
-  body("confirmar-senha").optional({ checkFalsy: true }).custom((value, { req }) => {
-    if (req.body.senha && value !== req.body.senha) {
-      throw new Error("As senhas nao conferem!");
-    }
-    return true;
-  }),
 
   async (req, res) => {
     const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
@@ -3749,15 +3784,17 @@ router.post(
     if (!errors.isEmpty()) {
       const { erroValidacao, msgErro } = montarErrosValidacao(errors);
 
-      return res.render(VIEWS.editarPerfil, {
-        erros: errors,
-        valores: req.body,
-        erroValidacao,
-        msgErro,
+      const contexto = await montarContextoConfiguracoes(req, TIPOS_USUARIO.aluno, {
+        abaInicial: "perfil",
+        valoresPerfil: { ...req.body },
+        erroValidacaoPerfil: erroValidacao,
+        msgErroPerfil: msgErro,
       });
+
+      return res.render(VIEWS.configuracoes, contexto);
     }
 
-    const { nome, email, serie, senha } = req.body;
+    const { nome, email, serie } = req.body;
     const conexao = await pool.getConnection();
 
     try {
@@ -3766,12 +3803,14 @@ router.post(
       if (await emailPertenceAOutroUsuario(email, usuarioBase.id)) {
         await conexao.rollback();
 
-        return res.render(VIEWS.editarPerfil, {
-          erros: null,
-          valores: req.body,
-          erroValidacao: { email: "erro" },
-          msgErro: { email: "Este e-mail ja esta cadastrado em outra conta." },
+        const contexto = await montarContextoConfiguracoes(req, TIPOS_USUARIO.aluno, {
+          abaInicial: "perfil",
+          valoresPerfil: { ...req.body },
+          erroValidacaoPerfil: { email: "erro" },
+          msgErroPerfil: { email: "Este e-mail ja esta cadastrado em outra conta." },
         });
+
+        return res.render(VIEWS.configuracoes, contexto);
       }
 
       await Models.usuarios.atualizarPerfilBasico(
@@ -3801,13 +3840,6 @@ router.post(
         );
       }
 
-      if (senha) {
-        await atualizarSenhaUsuario(conexao, {
-          senha,
-          idUsuario: usuarioBase.id,
-        });
-      }
-
       await conexao.commit();
 
       criarCookieUsuario(res, {
@@ -3817,23 +3849,25 @@ router.post(
         tipo_usuario: TIPOS_USUARIO.aluno,
       });
 
-      return res.redirect("/entrada");
+      return res.redirect("/configuracoes?salvo=perfil");
     } catch (erro) {
       await conexao.rollback();
       console.error("Erro ao editar perfil do aluno:", erro);
 
-      return res.render(VIEWS.editarPerfil, {
-        erros: null,
-        valores: req.body,
-        erroValidacao: {},
-        msgErro: { geral: "Nao foi possivel salvar as alteracoes. Tente novamente." },
+      const contexto = await montarContextoConfiguracoes(req, TIPOS_USUARIO.aluno, {
+        abaInicial: "perfil",
+        valoresPerfil: { ...req.body },
+        msgErroPerfil: { geral: "Nao foi possivel salvar as alteracoes. Tente novamente." },
       });
+
+      return res.render(VIEWS.configuracoes, contexto);
     } finally {
       conexao.release();
     }
   }
 );
 
+// Aba "Perfil" (professor).
 router.post(
   "/editarprofessor",
 
@@ -3841,13 +3875,6 @@ router.post(
 
   body("nome").trim().notEmpty().withMessage("O nome e obrigatorio!"),
   body("email").trim().notEmpty().withMessage("O e-mail e obrigatorio!").isEmail().withMessage("Digite um e-mail valido!"),
-  body("senha").optional({ checkFalsy: true }).isLength({ min: 8, max: 15 }).withMessage("A senha deve ter entre 8 e 15 caracteres!"),
-  body("confirmar-senha").optional({ checkFalsy: true }).custom((value, { req }) => {
-    if (req.body.senha && value !== req.body.senha) {
-      throw new Error("As senhas nao conferem!");
-    }
-    return true;
-  }),
 
   async (req, res) => {
     const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
@@ -3861,15 +3888,17 @@ router.post(
     if (!errors.isEmpty()) {
       const { erroValidacao, msgErro } = montarErrosValidacao(errors);
 
-      return res.render("pages/editarprofessor", {
-        erros: errors,
-        valores: req.body,
-        erroValidacao,
-        msgErro,
+      const contexto = await montarContextoConfiguracoes(req, TIPOS_USUARIO.professor, {
+        abaInicial: "perfil",
+        valoresPerfil: { ...req.body },
+        erroValidacaoPerfil: erroValidacao,
+        msgErroPerfil: msgErro,
       });
+
+      return res.render(VIEWS.configuracoes, contexto);
     }
 
-    const { nome, email, senha } = req.body;
+    const { nome, email } = req.body;
     const conexao = await pool.getConnection();
 
     try {
@@ -3878,12 +3907,14 @@ router.post(
       if (await emailPertenceAOutroUsuario(email, usuarioBase.id)) {
         await conexao.rollback();
 
-        return res.render("pages/editarprofessor", {
-          erros: null,
-          valores: req.body,
-          erroValidacao: { email: "erro" },
-          msgErro: { email: "Este e-mail ja esta cadastrado em outra conta." },
+        const contexto = await montarContextoConfiguracoes(req, TIPOS_USUARIO.professor, {
+          abaInicial: "perfil",
+          valoresPerfil: { ...req.body },
+          erroValidacaoPerfil: { email: "erro" },
+          msgErroPerfil: { email: "Este e-mail ja esta cadastrado em outra conta." },
         });
+
+        return res.render(VIEWS.configuracoes, contexto);
       }
 
       await Models.usuarios.atualizarPerfilBasico(
@@ -3906,13 +3937,6 @@ router.post(
         );
       }
 
-      if (senha) {
-        await atualizarSenhaUsuario(conexao, {
-          senha,
-          idUsuario: usuarioBase.id,
-        });
-      }
-
       await conexao.commit();
 
       criarCookieUsuario(res, {
@@ -3922,29 +3946,46 @@ router.post(
         tipo_usuario: TIPOS_USUARIO.professor,
       });
 
-      return res.redirect("/entradaprofessor");
+      return res.redirect("/configuracoes?salvo=perfil");
     } catch (erro) {
       await conexao.rollback();
       console.error("Erro ao editar perfil do professor:", erro);
 
-      return res.render("pages/editarprofessor", {
-        erros: null,
-        valores: req.body,
-        erroValidacao: {},
-        msgErro: { geral: "Nao foi possivel salvar as alteracoes. Tente novamente." },
+      const contexto = await montarContextoConfiguracoes(req, TIPOS_USUARIO.professor, {
+        abaInicial: "perfil",
+        valoresPerfil: { ...req.body },
+        msgErroPerfil: { geral: "Nao foi possivel salvar as alteracoes. Tente novamente." },
       });
+
+      return res.render(VIEWS.configuracoes, contexto);
     } finally {
       conexao.release();
     }
   }
 );
 
+// Aba "Seguranca" - troca de senha (funciona pra aluno e professor).
+router.post(
+  "/configuracoes/senha",
 
+  body("senha")
+    .notEmpty().withMessage("A senha e obrigatoria.")
+    .isLength({ min: 8, max: 15 }).withMessage("A senha deve ter entre 8 e 15 caracteres!"),
+  body("confirmar-senha").custom((value, { req }) => {
+    if (value !== req.body.senha) {
+      throw new Error("As senhas nao conferem!");
+    }
+    return true;
+  }),
 
   async (req, res) => {
-    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+    const usuarioCookie = lerCookieUsuario(req);
+    const tipoUsuario = usuarioCookie?.tipo_usuario;
 
-    if (!usuarioBase) {
+    if (
+      !usuarioCookie ||
+      (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor)
+    ) {
       return res.redirect("/login");
     }
 
@@ -3953,19 +3994,95 @@ router.post(
     if (!errors.isEmpty()) {
       const { erroValidacao, msgErro } = montarErrosValidacao(errors);
 
-      return res.render(VIEWS.editarPerfil, {
-        erros: errors,
-        valores: req.body,
-        erroValidacao,
-        msgErro,
+      const contexto = await montarContextoConfiguracoes(req, tipoUsuario, {
+        abaInicial: "seguranca",
+        erroValidacaoSenha: erroValidacao,
+        msgErroSenha: msgErro,
       });
+
+      return res.render(VIEWS.configuracoes, contexto);
     }
 
-    // Tudo certo — redireciona para a entrada do aluno
-    res.redirect("/entrada");
+    try {
+      await atualizarSenhaUsuario(null, {
+        senha: req.body.senha,
+        idUsuario: usuarioCookie.id,
+      });
+
+      return res.redirect("/configuracoes?aba=seguranca&salvo=senha");
+    } catch (erro) {
+      console.error("Erro ao alterar senha:", erro);
+
+      const contexto = await montarContextoConfiguracoes(req, tipoUsuario, {
+        abaInicial: "seguranca",
+        msgErroSenha: { geral: "Nao foi possivel alterar a senha. Tente novamente." },
+      });
+
+      return res.render(VIEWS.configuracoes, contexto);
+    }
+  }
+);
+
+// Aba "Seguranca" - desativar a propria conta (login fica bloqueado ate reativacao manual).
+router.post("/configuracoes/desativar", async function (req, res) {
+  const usuarioCookie = lerCookieUsuario(req);
+  const tipoUsuario = usuarioCookie?.tipo_usuario;
+
+  if (
+    !usuarioCookie ||
+    (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor)
+  ) {
+    return res.redirect("/login");
   }
 
+  try {
+    await Models.usuarios.alterarStatusConta({
+      status: STATUS_CONTA.inativo,
+      idUsuario: usuarioCookie.id,
+    });
 
+    limparCookieUsuario(res);
+    return res.redirect("/login");
+  } catch (erro) {
+    console.error("Erro ao desativar conta:", erro);
+
+    const contexto = await montarContextoConfiguracoes(req, tipoUsuario, {
+      abaInicial: "seguranca",
+      msgErroConta: "Nao foi possivel desativar a conta. Tente novamente.",
+    });
+
+    return res.render(VIEWS.configuracoes, contexto);
+  }
+});
+
+// Aba "Seguranca" - exclusao definitiva da propria conta.
+router.post("/configuracoes/excluir", async function (req, res) {
+  const usuarioCookie = lerCookieUsuario(req);
+  const tipoUsuario = usuarioCookie?.tipo_usuario;
+
+  if (
+    !usuarioCookie ||
+    (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor)
+  ) {
+    return res.redirect("/login");
+  }
+
+  try {
+    await Models.usuarios.excluirConta(usuarioCookie.id);
+
+    limparCookieUsuario(res);
+    return res.redirect("/login");
+  } catch (erro) {
+    console.error("Erro ao excluir a propria conta:", erro);
+
+    const contexto = await montarContextoConfiguracoes(req, tipoUsuario, {
+      abaInicial: "seguranca",
+      msgErroConta: "Nao foi possivel excluir a conta. Tente novamente.",
+    });
+
+    return res.render(VIEWS.configuracoes, contexto);
+  }
+});
 
 
 module.exports = router;

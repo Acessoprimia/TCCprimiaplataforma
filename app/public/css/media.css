@@ -51,7 +51,7 @@
 .hamburger span {
   display: block;
   height: 3px;
-  background: #000;
+  background: var(--c-000, #000);
   border-radius: 3px;
   transition: all 0.3s ease;
 }
@@ -77,7 +77,7 @@
   position: absolute;
   top: 60px;
   right: 0;
-  background: #fff;
+  background: var(--cor-fundo-cartao, #fff);
   border-radius: 10px;
   padding: 20px;
   margin-top: 10px;
@@ -88,13 +88,13 @@
 
 #menuToggle ul a {
   display: block;
-  color: #000;
-  font-size: 18px;
+  color: var(--c-000, #000);
+  font-size: 1.125rem;
   text-decoration: none;
 }
 
 #menuToggle ul a:hover {
-  color: #A398D1;
+  color: var(--accent, #A398D1);
   transition: 0.3s all;
 }
 
@@ -129,7 +129,7 @@
 
   /* Restaurar destaque da área login no desktop */
   #menuToggle ul .login-highlight {
-    background: #f0f0f0; /* ou cor desejada */
+    background: var(--c-f0f0f0, #f0f0f0); /* ou cor desejada */
     padding: 5px 10px;
     border-radius: 5px;
   }
@@ -234,7 +234,7 @@
 @media (max-width: 480px) {
 
     title {
-    font-size: 60px;
+    font-size: 3.75rem;
     }
     
     aside h2 {
@@ -247,7 +247,7 @@
 
     .material,
     .areas {
-        font-size: 50px;
+        font-size: 3.125rem;
         line-height: 1.4;
         word-break: break-word;
         white-space: normal;
@@ -285,15 +285,15 @@
 }
 
 .slide {
-    font-size: 18px;
+    font-size: 1.125rem;
     padding: 8px 12px;
 }
 
 .pass {
-    font-size: 16px;
+    font-size: 1rem;
     padding: 6px 10px;
 }
 
 footer {
-    font-size: 12px;
+    font-size: 0.75rem;
 }

@@ -5,11 +5,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Aplica o tema salvo (Configuracoes > Aparencia) antes da 1a pintura,
+       pra pagina nao "piscar" clara e depois trocar pra escura. -->
+  <script>
+    (function () {
+      try {
+        var tema = localStorage.getItem("primia-tema");
+        if (tema === "light" || tema === "dark") {
+          document.documentElement.setAttribute("data-theme", tema);
+        }
+        var fonte = localStorage.getItem("primia-fonte");
+        if (fonte === "grande" || fonte === "extra") {
+          document.documentElement.setAttribute("data-fonte", fonte);
+        }
+      } catch (e) {}
+    })();
+  </script>
   <title></title>
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link href="../css/theme.css" rel="stylesheet">
   <link href="../css/header.css" rel="stylesheet">
 </head>
 <body>
@@ -50,6 +67,13 @@
             <%- include('./notificacoes.ejs') %>
         </span>
 
+        <a href="/configuracoes" class="nav-config" id="config-btn" aria-label="Configurações">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+        </a>
+
         <a href="/logout" class="btn-login">Sair</a>
 
       </span>
@@ -70,6 +94,7 @@
       <li><a href="/entradaprofessor">Início</a></li>
       <li><a href="/sobre">Sobre</a></li>
       <li><a href="/contato">Contato</a></li>
+      <li><a href="/configuracoes">Configurações</a></li>
       <li><a href="/logout" class="mobile-login-btn">SAIR</a></li>
     </ul>
   </nav>

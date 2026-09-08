@@ -16,8 +16,8 @@ body {
     margin: 0; 
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: rgb(0, 0, 0);
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, rgb(0, 0, 0));
     font-family: 'Poppins', sans-serif;
 }
 main {
@@ -33,7 +33,7 @@ section {
 
 .titulo-principal {
     font-size: 2rem;
-    color: #FF9466;
+    color: var(--warm, #FF9466);
     text-align: center;
     margin-bottom: 2rem;
     font-weight: 700;
@@ -41,7 +41,7 @@ section {
 
 .titulo-secao {
     font-size: 1.5rem;
-    color: #fda078;
+    color: var(--warm, #fda078);
     text-align: center;
     margin-bottom: 1rem;
     font-weight: 700;
@@ -65,7 +65,7 @@ section {
 .lista-prioridades,
 .lista-conteudos {
     list-style: none;
-    background: white;
+    background: var(--cor-fundo-cartao, white);
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -75,7 +75,7 @@ section {
     display: flex;
     align-items: center;
     padding: 0.75rem 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--c-f0f0f0, #f0f0f0);
 }
 
 .item-lista:last-child {
@@ -87,12 +87,12 @@ section {
     height: 18px;
     margin-right: 0.75rem;
     cursor: pointer;
-    accent-color: #667eea;
+    accent-color: var(--info, #667eea);
 }
 
 .label-checkbox {
     font-size: 1rem;
-    color: #333;
+    color: var(--cor-texto, #333);
     cursor: pointer;
     flex: 1;
 }
@@ -107,7 +107,7 @@ section {
     padding: 2px 6px;
     opacity: 1;
     border-radius: 4px;
-    color: #FF9466;
+    color: var(--warm, #FF9466);
 }
  
 .item-lista:hover .btn-editar {
@@ -117,27 +117,27 @@ section {
 .input-editar {
     flex: 1;
     border: none;
-    border-bottom: 2px solid #FF9466;
+    border-bottom: 2px solid var(--warm, #FF9466);
     outline: none;
     font-size: 1rem;
     font-family: 'Poppins', sans-serif;
-    color: #333;
+    color: var(--cor-texto, #333);
     background: transparent;
     padding: 0 2px;
 }
  
 .label-checkbox.riscado {
     text-decoration: line-through;
-    color: #aaa;
+    color: var(--c-aaa, #aaa);
 }
  
 .btn-editar {
-    color: #FF9466;
+    color: var(--warm, #FF9466);
 }
 
 /* ADICIONAR ITEM */
 .adicionar-item-container {
-    background: #FFF3EE;
+    background: var(--c-fff3ee, #FFF3EE);
     border-radius: 16px;
     padding: 1.25rem 1.5rem;
     margin: 0 auto 1.5rem;
@@ -155,16 +155,16 @@ section {
     flex: 1;
     min-width: 160px;
     padding: 10px 14px;
-    border: 2px solid #ffd7c4;
+    border: 2px solid var(--c-ffd7c4, #ffd7c4);
     border-radius: 50px;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
 .form-adicionar-item button {
     padding: 10px 24px;
-    background: #FF9466;
-    color: #1A1A1A;
+    background: var(--warm, #FF9466);
+    color: var(--on-warm, #1A1A1A);
     border: none;
     border-radius: 50px;
     font-weight: 600;
@@ -172,7 +172,7 @@ section {
 }
 
 .itens-vazio {
-    color: #888;
+    color: var(--c-888, #888);
     padding: 12px 0;
 }
 
@@ -185,13 +185,13 @@ section {
 .form-prioridade select {
     padding: 4px 10px;
     border-radius: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--c-ddd, #ddd);
     font-size: 0.85rem;
 }
 
 /* GERAR COM IA */
 .gerar-simulado-container {
-    background: #FFF3EE;
+    background: var(--c-fff3ee, #FFF3EE);
     border-radius: 16px;
     padding: 20px;
     margin: 0 auto 1.5rem;
@@ -199,8 +199,8 @@ section {
 }
 
 .gerar-simulado-container h2 {
-    font-size: 18px;
-    color: #FF9466;
+    font-size: 1.125rem;
+    color: var(--warm, #FF9466);
     margin-bottom: 12px;
 }
 
@@ -215,16 +215,16 @@ section {
     flex: 1;
     min-width: 150px;
     padding: 10px 14px;
-    border: 2px solid #ffd7c4;
+    border: 2px solid var(--c-ffd7c4, #ffd7c4);
     border-radius: 50px;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
 .gerar-simulado-form button {
     padding: 10px 24px;
-    background: #FF9466;
-    color: #1A1A1A;
+    background: var(--warm, #FF9466);
+    color: var(--on-warm, #1A1A1A);
     border: none;
     border-radius: 50px;
     font-weight: 600;
@@ -232,15 +232,15 @@ section {
 }
 
 .aviso-materia-simulado {
-    font-size: 12px;
-    color: #999;
+    font-size: 0.75rem;
+    color: var(--c-999, #999);
     margin-top: 8px;
     width: 100%;
 }
 
 /* MONTAR NA MAO */
 .montar-simulado-container {
-    background: #f8f9fa;
+    background: var(--c-f8f9fa, #f8f9fa);
     border-radius: 16px;
     padding: 20px;
     margin: 0 auto 1.5rem;
@@ -248,24 +248,24 @@ section {
 }
 
 .montar-simulado-container h2 {
-    font-size: 18px;
-    color: #333;
+    font-size: 1.125rem;
+    color: var(--cor-texto, #333);
     margin-bottom: 12px;
 }
 
 .input-titulo-manual {
     width: 100%;
     padding: 10px 14px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--c-e0e0e0, #e0e0e0);
     border-radius: 50px;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 0.875rem;
     margin-bottom: 16px;
 }
 
 .pergunta-manual {
-    background: white;
-    border: 1px solid #e0e0e0;
+    background: var(--cor-fundo-cartao, white);
+    border: 1px solid var(--c-e0e0e0, #e0e0e0);
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 14px;
@@ -280,14 +280,14 @@ section {
 
 .pergunta-manual-numero {
     font-weight: 600;
-    color: #FF9466;
+    color: var(--warm, #FF9466);
 }
 
 .btn-remover-pergunta {
     background: none;
     border: none;
-    color: #c0392b;
-    font-size: 13px;
+    color: var(--perigo, #c0392b);
+    font-size: 0.8125rem;
     cursor: pointer;
 }
 
@@ -295,10 +295,10 @@ section {
 .campo-descricao-evento {
     width: 100%;
     padding: 10px 14px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--c-e0e0e0, #e0e0e0);
     border-radius: 10px;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 0.875rem;
     margin-bottom: 10px;
 }
 
@@ -312,10 +312,10 @@ section {
     flex: 1;
     min-width: 110px;
     padding: 8px 12px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--c-e0e0e0, #e0e0e0);
     border-radius: 8px;
     font-family: inherit;
-    font-size: 13px;
+    font-size: 0.8125rem;
 }
 
 .acoes-simulado-manual {
@@ -326,8 +326,8 @@ section {
 
 .btn-add-pergunta {
     padding: 10px 20px;
-    background: #f0f0f0;
-    color: #333;
+    background: var(--c-f0f0f0, #f0f0f0);
+    color: var(--cor-texto, #333);
     border: none;
     border-radius: 50px;
     font-weight: 600;
@@ -336,8 +336,8 @@ section {
 
 .btn-salvar-manual {
     padding: 10px 24px;
-    background: #FF9466;
-    color: #1A1A1A;
+    background: var(--warm, #FF9466);
+    color: var(--on-warm, #1A1A1A);
     border: none;
     border-radius: 50px;
     font-weight: 600;
@@ -349,20 +349,20 @@ section {
     margin: 0 auto 1.25rem;
     padding: 12px 16px;
     border-radius: 12px;
-    font-size: 14px;
+    font-size: 0.875rem;
     border-left: 4px solid;
 }
 
 .aviso-plano-erro {
-    background: #FDECEA;
-    border-color: #EF4444;
-    color: #8a2b22;
+    background: var(--c-fdecea, #FDECEA);
+    border-color: var(--perigo, #EF4444);
+    color: var(--perigo, #8a2b22);
 }
 
 .aviso-plano-ok {
-    background: #E8F7F1;
-    border-color: #10B981;
-    color: #1c6b52;
+    background: var(--c-e8f7f1, #E8F7F1);
+    border-color: var(--sucesso, #10B981);
+    color: var(--sucesso, #1c6b52);
 }
 
 .grade-container,
@@ -372,8 +372,8 @@ section {
 }
 
 .grade-nota {
-    font-size: 12px;
-    color: #999;
+    font-size: 0.75rem;
+    color: var(--c-999, #999);
     margin-top: 8px;
 }
 
@@ -387,25 +387,25 @@ section {
 
 .btn-regerar {
     padding: 8px 18px;
-    background: #f0f0f0;
-    color: #333;
+    background: var(--c-f0f0f0, #f0f0f0);
+    color: var(--cor-texto, #333);
     border: none;
     border-radius: 50px;
     font-family: inherit;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 0.8125rem;
     cursor: pointer;
 }
 
 .btn-regerar:hover {
-    background: #e4e4e4;
+    background: var(--c-e4e4e4, #e4e4e4);
 }
 
 .aviso-regerar {
     flex: 1;
     min-width: 220px;
-    font-size: 11px;
-    color: #aaa;
+    font-size: 0.6875rem;
+    color: var(--c-aaa, #aaa);
     line-height: 1.4;
 }
 
@@ -415,13 +415,13 @@ section {
 }
 
 .cards-container h2 {
-    font-size: 18px;
-    color: #333;
+    font-size: 1.125rem;
+    color: var(--cor-texto, #333);
     margin-bottom: 12px;
 }
 
 .cronogramas-vazio {
-    color: #888;
+    color: var(--c-888, #888);
 }
 
 .cronograma-link {
@@ -432,8 +432,8 @@ section {
 }
 
 .cronograma-card {
-    background: white;
-    border: 1px solid #e0e0e0;
+    background: var(--cor-fundo-cartao, white);
+    border: 1px solid var(--c-e0e0e0, #e0e0e0);
     border-radius: 12px;
     padding: 16px;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -446,11 +446,11 @@ section {
 
 .cronograma-card-info {
     font-size: 0.85rem;
-    color: #888;
+    color: var(--c-888, #888);
 }
 
 .upsell-premium-cronograma {
-    background: #FFF3EE;
+    background: var(--c-fff3ee, #FFF3EE);
     border-radius: 16px;
     padding: 20px;
     margin: 0 auto 1.5rem;
@@ -460,14 +460,14 @@ section {
 
 .upsell-premium-cronograma p {
     margin-bottom: 10px;
-    color: #555;
+    color: var(--c-555, #555);
 }
 
 .upsell-premium-cronograma a {
     display: inline-block;
     padding: 8px 20px;
-    background: #FF9466;
-    color: #1A1A1A;
+    background: var(--warm, #FF9466);
+    color: var(--on-warm, #1A1A1A);
     border-radius: 50px;
     text-decoration: none;
     font-weight: 600;
@@ -477,7 +477,7 @@ section {
 .calendario-container {
     max-width: 900px;
     margin: 0 auto 1.5rem;
-    background: white;
+    background: var(--cor-fundo-cartao, white);
     border-radius: 16px;
     padding: 1rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);

@@ -1,0 +1,335 @@
+/* ========================================
+   SISTEMA DE TEMA (claro / escuro / automatico)
+   ======================================== */
+/* "Automatico" (padrao) segue prefers-color-scheme do sistema. Quando a
+   pessoa escolhe manualmente em Configuracoes > Aparencia, o JS grava
+   data-theme="light"|"dark" no <html> e esse valor sempre vence. */
+
+/* ========================================
+   TAMANHO DE FONTE (padrao / grande / extra)
+   ======================================== */
+/* Todo font-size do site esta em rem, entao mexer no font-size da raiz
+   escala o texto inteiro de uma vez. Sem data-fonte = 100% (16px), que
+   e exatamente como o site sempre foi. */
+html[data-fonte="grande"] {
+    font-size: 112.5%; /* 18px */
+}
+
+html[data-fonte="extra"] {
+    font-size: 125%; /* 20px */
+}
+
+:root {
+    /* paleta base do header/nav - ja usada em header.css */
+    --header-bg: #ffffff;
+    --text-color: #A398D1;
+    --accent: #A398D1;
+    --on-accent: #ffffff;
+
+    /* paleta geral de pagina (usada em configuracoes.css) */
+    --cor-fundo: #f0eff5;
+    --cor-fundo-cartao: #ffffff;
+    --cor-fundo-sutil: #f4f3f2;
+    --cor-texto: #333333;
+    --cor-texto-suave: #888888;
+    --cor-borda: #eeeeee;
+
+    /* texto claro fixo - pra quando o fundo por baixo (rodape, banner de
+       cookies) ja e escuro nos dois temas e nao pode escurecer junto */
+    --on-dark: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --header-bg: #1c1830;
+        --text-color: #c3b8ef;
+        --accent: #b3a6e8;
+        --on-accent: #1c1830;
+
+        --cor-fundo: #15121f;
+        --cor-fundo-cartao: #211c33;
+        --cor-fundo-sutil: #2a2540;
+        --cor-texto: #ece9f7;
+        --cor-texto-suave: #a49dc2;
+        --cor-borda: #3a3450;
+    }
+}
+
+:root[data-theme="dark"] {
+    --header-bg: #1c1830;
+    --text-color: #c3b8ef;
+    --accent: #b3a6e8;
+    --on-accent: #1c1830;
+
+    --cor-fundo: #15121f;
+    --cor-fundo-cartao: #211c33;
+    --cor-fundo-sutil: #2a2540;
+    --cor-texto: #ece9f7;
+    --cor-texto-suave: #a49dc2;
+    --cor-borda: #3a3450;
+}
+
+/* ===== paleta adicional (gerada p/ dark mode em todas as paginas) ===== */
+:root {
+    --c-f5f5f5: #F5F5F5;
+    --warm: #FDA078;
+    --c-666: #666;
+    --c-f0f0f0: #F0F0F0;
+    --c-e0e0e0: #E0E0E0;
+    --c-999: #999;
+    --c-555: #555;
+    --c-fafafa: #FAFAFA;
+    --warm-suave: #FF9C7D;
+    --on-warm: #1A1A1A;
+    --perigo: #D84F4F;
+    --c-777: #777;
+    --sucesso: #2F8F6B;
+    --c-eaf8f2: #EAF8F2;
+    --c-efefef: #EFEFEF;
+    --c-e8e6f2: #E8E6F2;
+    --c-f0eefa: #F0EEFA;
+    --c-fff0ea: #FFF0EA;
+    --accent-forte: #8B83AC;
+    --c-fdecec: #FDECEC;
+    --c-f2f0fb: #F2F0FB;
+    --c-999999: #999999;
+    --c-f4f4f4: #F4F4F4;
+    --c-d0d0d0: #D0D0D0;
+    --c-f9f8fc: #F9F8FC;
+    --c-d1cde1: #D1CDE1;
+    --c-f1effa: #F1EFFA;
+    --accent-suave: #B5A9D8;
+    --c-f9f9f9: #F9F9F9;
+    --c-fefefe: #FEFEFE;
+    --c-aaa: #AAA;
+    --c-c0c0c0: #C0C0C0;
+    --c-a8a8a8: #A8A8A8;
+    --c-fff3ee: #FFF3EE;
+    --c-ffd7c4: #FFD7C4;
+    --c-888: #888;
+    --c-7c68c1: #7C68C1;
+    --c-ede9fb: #EDE9FB;
+    --c-6c54b4: #6C54B4;
+    --c-5b44a3: #5B44A3;
+    --c-e8e5f2: #E8E5F2;
+    --c-e8e4f3: #E8E4F3;
+    --c-f8f9fa: #F8F9FA;
+    --info: #A78BFA;
+    --c-bbb: #BBB;
+    --c-f7f7f7: #F7F7F7;
+    --c-ccc: #CCC;
+    --c-18142a: #18142A;
+    --c-ddd: #DDD;
+    --c-fdecea: #FDECEA;
+    --c-e8f7f1: #E8F7F1;
+    --c-fbfaff: #FBFAFF;
+    --c-222: #222;
+    --c-382e64: #382E64;
+    --c-fbfbfc: #FBFBFC;
+    --c-b8b1d1: #B8B1D1;
+    --c-a0a0a0: #A0A0A0;
+    --c-fff0ec: #FFF0EC;
+    --c-ffb39b: #FFB39B;
+    --c-f5f4fa: #F5F4FA;
+    --c-2b2b2b: #2B2B2B;
+    --c-fff5f0: #FFF5F0;
+    --c-444: #444;
+    --c-5fa8a0: #5FA8A0;
+    --c-4a8f88: #4A8F88;
+    --c-e5e5e5: #E5E5E5;
+    --c-000: #000;
+    --c-e4e4e4: #E4E4E4;
+    --c-000000: #000000;
+    --c-666666: #666666;
+    --c-fff8e6: #FFF8E6;
+    --c-a17400: #A17400;
+    --c-f3f0fa: #F3F0FA;
+    --c-7d6eaf: #7D6EAF;
+    --c-555555: #555555;
+    --c-eafaf0: #EAFAF0;
+    --c-e2dcf5: #E2DCF5;
+    --c-d9d0ef: #D9D0EF;
+    --c-d4f4dd: #D4F4DD;
+    --c-fbdada: #FBDADA;
+    --c-faf8ff: #FAF8FF;
+    --c-9b8bc9: #9B8BC9;
+    --c-eceafd: #ECEAFD;
+    --c-eee6f7: #EEE6F7;
+    --c-ece9f7: #ECE9F7;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --c-f5f5f5: #15131d;
+        --warm: #FDA078;
+        --c-666: #d4cfe1;
+        --c-f0f0f0: #17141f;
+        --c-e0e0e0: #ddd9e7;
+        --c-999: #c6c1d7;
+        --c-555: #d8d4e4;
+        --c-fafafa: #14111b;
+        --warm-suave: #FF9C7D;
+        --perigo: #F0736E;
+        --c-777: #cfcadd;
+        --sucesso: #4FD17A;
+        --c-eaf8f2: #0d261b;
+        --c-efefef: #171420;
+        --c-e8e6f2: #161325;
+        --c-f0eefa: #100b26;
+        --c-fff0ea: #2d0f04;
+        --accent-forte: #C9BEF0;
+        --c-fdecec: #2c0505;
+        --c-f2f0fb: #0f0a26;
+        --c-999999: #c6c1d7;
+        --c-f4f4f4: #16131e;
+        --c-d0d0d0: #cbc6da;
+        --c-f9f8fc: #120d1f;
+        --c-d1cde1: #d1cde1;
+        --c-f1effa: #100c25;
+        --accent-suave: #8F81C4;
+        --c-f9f9f9: #14121c;
+        --c-fefefe: #121019;
+        --c-aaa: #a197bd;
+        --c-c0c0c0: #262235;
+        --c-a8a8a8: #2e283f;
+        --c-fff3ee: #2b0f04;
+        --c-ffd7c4: #fbd9c8;
+        --c-888: #cbc6da;
+        --c-7c68c1: #312559;
+        --c-ede9fb: #10082b;
+        --c-6c54b4: #634bab;
+        --c-5b44a3: #735cbb;
+        --c-e8e5f2: #161225;
+        --c-e8e4f3: #e8e4f3;
+        --c-f8f9fa: #12171b;
+        --info: #A78BFA;
+        --c-bbb: #b4acca;
+        --c-f7f7f7: #15121c;
+        --c-ccc: #c6c1d7;
+        --c-18142a: #100d1c;
+        --c-ddd: #d9d6e4;
+        --c-fdecea: #2d0904;
+        --c-e8f7f1: #0d271c;
+        --c-fbfaff: #0a0327;
+        --c-222: #e5e3ed;
+        --c-382e64: #1f1937;
+        --c-fbfbfc: #f3f3f7;
+        --c-b8b1d1: #b8b1d1;
+        --c-a0a0a0: #c6c1d7;
+        --c-fff0ec: #2c0c04;
+        --c-ffb39b: #f8b7a3;
+        --c-f5f4fa: #110f20;
+        --c-2b2b2b: #e3e0eb;
+        --c-fff5f0: #2b1103;
+        --c-444: #dcd9e7;
+        --c-5fa8a0: #2e5450;
+        --c-4a8f88: #1d3d38;
+        --c-e5e5e5: #1a1724;
+        --c-000: #eeecf3;
+        --c-e4e4e4: #1b1725;
+        --c-000000: #eeecf3;
+        --c-666666: #d4cfe1;
+        --c-fff8e6: #2e2204;
+        --c-a17400: #faeac0;
+        --c-f3f0fa: #130c24;
+        --c-7d6eaf: #372f54;
+        --c-555555: #d8d4e4;
+        --c-eafaf0: #0a2915;
+        --c-e2dcf5: #150d2e;
+        --c-d9d0ef: #d9d0ef;
+        --c-d4f4dd: #0c3016;
+        --c-fbdada: #320505;
+        --c-faf8ff: #0e0328;
+        --c-9b8bc9: #c9bef0;
+        --c-eceafd: #09042d;
+        --c-eee6f7: #1a0d29;
+        --c-ece9f7: #130e26;
+    }
+}
+
+:root[data-theme="dark"] {
+        --c-f5f5f5: #15131d;
+        --warm: #FDA078;
+        --c-666: #d4cfe1;
+        --c-f0f0f0: #17141f;
+        --c-e0e0e0: #ddd9e7;
+        --c-999: #c6c1d7;
+        --c-555: #d8d4e4;
+        --c-fafafa: #14111b;
+        --warm-suave: #FF9C7D;
+        --perigo: #F0736E;
+        --c-777: #cfcadd;
+        --sucesso: #4FD17A;
+        --c-eaf8f2: #0d261b;
+        --c-efefef: #171420;
+        --c-e8e6f2: #161325;
+        --c-f0eefa: #100b26;
+        --c-fff0ea: #2d0f04;
+        --accent-forte: #C9BEF0;
+        --c-fdecec: #2c0505;
+        --c-f2f0fb: #0f0a26;
+        --c-999999: #c6c1d7;
+        --c-f4f4f4: #16131e;
+        --c-d0d0d0: #cbc6da;
+        --c-f9f8fc: #120d1f;
+        --c-d1cde1: #d1cde1;
+        --c-f1effa: #100c25;
+        --accent-suave: #8F81C4;
+        --c-f9f9f9: #14121c;
+        --c-fefefe: #121019;
+        --c-aaa: #a197bd;
+        --c-c0c0c0: #262235;
+        --c-a8a8a8: #2e283f;
+        --c-fff3ee: #2b0f04;
+        --c-ffd7c4: #fbd9c8;
+        --c-888: #cbc6da;
+        --c-7c68c1: #312559;
+        --c-ede9fb: #10082b;
+        --c-6c54b4: #634bab;
+        --c-5b44a3: #735cbb;
+        --c-e8e5f2: #161225;
+        --c-e8e4f3: #e8e4f3;
+        --c-f8f9fa: #12171b;
+        --info: #A78BFA;
+        --c-bbb: #b4acca;
+        --c-f7f7f7: #15121c;
+        --c-ccc: #c6c1d7;
+        --c-18142a: #100d1c;
+        --c-ddd: #d9d6e4;
+        --c-fdecea: #2d0904;
+        --c-e8f7f1: #0d271c;
+        --c-fbfaff: #0a0327;
+        --c-222: #e5e3ed;
+        --c-382e64: #1f1937;
+        --c-fbfbfc: #f3f3f7;
+        --c-b8b1d1: #b8b1d1;
+        --c-a0a0a0: #c6c1d7;
+        --c-fff0ec: #2c0c04;
+        --c-ffb39b: #f8b7a3;
+        --c-f5f4fa: #110f20;
+        --c-2b2b2b: #e3e0eb;
+        --c-fff5f0: #2b1103;
+        --c-444: #dcd9e7;
+        --c-5fa8a0: #2e5450;
+        --c-4a8f88: #1d3d38;
+        --c-e5e5e5: #1a1724;
+        --c-000: #eeecf3;
+        --c-e4e4e4: #1b1725;
+        --c-000000: #eeecf3;
+        --c-666666: #d4cfe1;
+        --c-fff8e6: #2e2204;
+        --c-a17400: #faeac0;
+        --c-f3f0fa: #130c24;
+        --c-7d6eaf: #372f54;
+        --c-555555: #d8d4e4;
+        --c-eafaf0: #0a2915;
+        --c-e2dcf5: #150d2e;
+        --c-d9d0ef: #d9d0ef;
+        --c-d4f4dd: #0c3016;
+        --c-fbdada: #320505;
+        --c-faf8ff: #0e0328;
+        --c-9b8bc9: #c9bef0;
+        --c-eceafd: #09042d;
+        --c-eee6f7: #1a0d29;
+        --c-ece9f7: #130e26;
+}

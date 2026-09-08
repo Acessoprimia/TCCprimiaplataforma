@@ -46,14 +46,14 @@
     <!-- JORNADA COLABORATIVA -->
     <section id="jornada">
         <article class="jornada-card">
-            <div class="jornada-content">
+            <nav class="jornada-content">
                 <h2 class="jornada-title">Uma jornada de aprendizagem colaborativa...</h2>
                 <p class="jornada-text">
                     Valorizar cada estudante como único(a) foi o que nos permitiu desenvolver uma
                     solução completa e que promove a personalização do processo de aprendizado
                     em cada segmento de ensino.
                 </p>
-            </div>
+            </nav>
             <nav class="jornada-buttons">
                 <button class="jornada-btn">Dúvidas</button>
                 <button class="jornada-btn">Interação</button>
@@ -82,10 +82,7 @@
 
         <!-- MATERIAS - CARROSSEL -->
         <%
-            // Icones desenhados a mao pras materias originais - continuam
-            // aparecendo do mesmo jeito pra quem ja tinha esses nomes
-            // cadastrados. Materia nova (sem icone_url enviado no admin)
-            // cai no icone generico logo abaixo.
+           
             const iconesConhecidos = {
                 "Matemática": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.4" /><path d="M12 6.4 L6 20" /><path d="M12 6.4 L18 20" /><path d="M8.5 14 L15.5 14" /></svg>',
                 "História": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4 H21" /><path d="M4 6 H20" /><path d="M4 20 H20" /><path d="M6 6 V20" /><path d="M9 6 V20" /><path d="M12 6 V20" /><path d="M15 6 V20" /><path d="M18 6 V20" /></svg>',

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - Primia</title>
+    <link href="../css/configuracoes.css" rel="stylesheet">
+    <% if (tipoUsuario === 'professor') { %>
+        <%- include('../partials/headerprofessor.ejs') %>
+    <% } else { %>
+        <%- include('../partials/header.ejs') %>
+    <% } %>
+</head>
+
+<body>
+
+    <main class="pagina-container">
+
+        <h1 class="titulo-pagina">Configurações</h1>
+
+        <section id="configuracoes-app" class="config-layout" data-aba-inicial="<%= typeof abaInicial !== 'undefined' ? abaInicial : 'perfil' %>">
+
+            <!-- MENU DE ABAS -->
+            <nav class="config-abas" role="tablist" aria-label="Abas de configurações">
+                <button type="button" class="aba-botao" role="tab" data-aba-alvo="perfil">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Perfil
+                </button>
+                <button type="button" class="aba-botao" role="tab" data-aba-alvo="seguranca">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    Segurança
+                </button>
+                <% if (tipoUsuario === 'aluno') { %>
+                <button type="button" class="aba-botao" role="tab" data-aba-alvo="assinatura">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                    </svg>
+                    Assinatura
+                </button>
+                <% } %>
+                <button type="button" class="aba-botao" role="tab" data-aba-alvo="notificacoes">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    Notificações
+                </button>
+                <button type="button" class="aba-botao" role="tab" data-aba-alvo="privacidade">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"></path>
+                    </svg>
+                    Privacidade
+                </button>
+                <button type="button" class="aba-botao" role="tab" data-aba-alvo="aparencia">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path>
+                    </svg>
+                    Aparência
+                </button>
+            </nav>
+
+            <!-- CONTEUDO DAS ABAS -->
+            <div class="config-conteudo">
+
+                <!-- ABA: PERFIL -->
+                <section class="config-painel" data-aba-painel="perfil" hidden>
+                    <h2 class="config-painel-titulo">Perfil</h2>
+                    <p class="config-painel-descricao">Dados de identificação da sua conta.</p>
+
+                    <% if (typeof msgSucesso !== 'undefined' && msgSucesso && typeof abaInicial !== 'undefined' && abaInicial === 'perfil') { %>
+                        <p class="msg-sucesso"><%= msgSucesso %></p>
+                    <% } %>
+                    <% if (typeof msgErroPerfil !== 'undefined' && msgErroPerfil && msgErroPerfil.geral) { %>
+                        <p class="erro-msg"><%= msgErroPerfil.geral %></p>
+                    <% } %>
+
+                    <% if (tipoUsuario === 'professor') { %>
+                    <form class="editar-perfil" id="form-perfil" action="/editarprofessor" method="POST" enctype="multipart/form-data">
+
+                        <figure class="avatar-container">
+                            <img src="<%= (typeof valoresPerfil !== 'undefined' && valoresPerfil.foto_url) ? valoresPerfil.foto_url : '../image/usuario.webp' %>" alt="Foto de perfil" id="preview-avatar" class="avatar">
+                            <label for="avatar-upload" class="avatar-edit-btn">Alterar foto</label>
+                            <input type="file" id="avatar-upload" name="avatar" accept="image/*" hidden>
+                        </figure>
+
+                        <label class="campo-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/usuario.webp" alt="Usuário" class="icone">
+                            </figure>
+                            <input type="text" id="nome" name="nome" placeholder="Nome completo" class="input-campo"
+                                value="<%= typeof valoresPerfil !== 'undefined' && valoresPerfil.nome ? valoresPerfil.nome : '' %>">
+                        </label>
+                        <p id="erro-nome" class="erro-msg"><%= typeof msgErroPerfil !== 'undefined' && msgErroPerfil.nome ? msgErroPerfil.nome : '' %></p>
+
+                        <label class="campo-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/usuario.webp" alt="Email" class="icone">
+                            </figure>
+                            <input type="email" id="email" name="email" placeholder="Email" class="input-campo"
+                                value="<%= typeof valoresPerfil !== 'undefined' && valoresPerfil.email ? valoresPerfil.email : '' %>">
+                        </label>
+                        <p id="erro-email" class="erro-msg"><%= typeof msgErroPerfil !== 'undefined' && msgErroPerfil.email ? msgErroPerfil.email : '' %></p>
+
+                        <label class="campo-wrapper readonly-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/ra.webp" alt="Matéria" class="icone">
+                            </figure>
+                            <input type="text" id="materia" name="materia" placeholder="Matéria" class="input-campo"
+                                value="<%= typeof valoresPerfil !== 'undefined' && valoresPerfil.materia ? valoresPerfil.materia : 'Materia: Exemplo' %>" readonly>
+                        </label>
+
+                        <label class="campo-wrapper readonly-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/data.webp" alt="Data de Nascimento" class="icone">
+                            </figure>
+                            <input type="date" id="data-nascimento" name="data-nascimento" class="input-campo"
+                                value="<%= typeof valoresPerfil !== 'undefined' && valoresPerfil.data_nascimento ? valoresPerfil.data_nascimento : '' %>" readonly>
+                        </label>
+
+                        <button type="submit" class="botao-submit">Salvar alterações</button>
+                    </form>
+                    <% } else { %>
+                    <form class="editar-perfil" id="form-perfil" action="/editarperfil" method="POST" enctype="multipart/form-data">
+
+                        <figure class="avatar-container">
+                            <img src="<%= (typeof valoresPerfil !== 'undefined' && valoresPerfil.foto_url) ? valoresPerfil.foto_url : '../image/usuario.webp' %>" alt="Foto de perfil" id="preview-avatar" class="avatar">
+                            <label for="avatar-upload" class="avatar-edit-btn">Alterar foto</label>
+                            <input type="file" id="avatar-upload" name="avatar" accept="image/*" hidden>
+                        </figure>
+
+                        <label class="campo-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/usuario.webp" alt="Usuário" class="icone">
+                            </figure>
+                            <input type="text" id="nome" name="nome" placeholder="Nome completo" class="input-campo"
+                                value="<%= typeof valoresPerfil !== 'undefined' && valoresPerfil.nome ? valoresPerfil.nome : '' %>">
+                        </label>
+                        <p id="erro-nome" class="erro-msg"><%= typeof msgErroPerfil !== 'undefined' && msgErroPerfil.nome ? msgErroPerfil.nome : '' %></p>
+
+                        <label class="campo-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/usuario.webp" alt="Email" class="icone">
+                            </figure>
+                            <input type="email" id="email" name="email" placeholder="Email" class="input-campo"
+                                value="<%= typeof valoresPerfil !== 'undefined' && valoresPerfil.email ? valoresPerfil.email : '' %>">
+                        </label>
+                        <p id="erro-email" class="erro-msg"><%= typeof msgErroPerfil !== 'undefined' && msgErroPerfil.email ? msgErroPerfil.email : '' %></p>
+
+                        <label class="campo-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/ra.webp" alt="Série" class="icone">
+                            </figure>
+                            <select id="serie" name="serie" class="input-campo select-campo">
+                                <option value="" disabled <%= !valoresPerfil || !valoresPerfil.serie ? 'selected' : '' %>>Série escolar</option>
+                                <option value="1ano" <%= valoresPerfil && valoresPerfil.serie === '1ano' ? 'selected' : '' %>>1º Ano</option>
+                                <option value="2ano" <%= valoresPerfil && valoresPerfil.serie === '2ano' ? 'selected' : '' %>>2º Ano</option>
+                                <option value="3ano" <%= valoresPerfil && valoresPerfil.serie === '3ano' ? 'selected' : '' %>>3º Ano</option>
+                            </select>
+                        </label>
+                        <p id="erro-serie" class="erro-msg"><%= typeof msgErroPerfil !== 'undefined' && msgErroPerfil.serie ? msgErroPerfil.serie : '' %></p>
+
+                        <label class="campo-wrapper readonly-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/ra.webp" alt="RA" class="icone">
+                            </figure>
+                            <input type="text" id="matricula" name="matricula" placeholder="RA" class="input-campo"
+                                value="<%= typeof valoresPerfil !== 'undefined' && valoresPerfil.ra ? valoresPerfil.ra : '0000' %>" readonly>
+                        </label>
+
+                        <label class="campo-wrapper readonly-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/data.webp" alt="Data de Nascimento" class="icone">
+                            </figure>
+                            <input type="date" id="data-nascimento" name="data-nascimento" class="input-campo"
+                                value="<%= typeof valoresPerfil !== 'undefined' && valoresPerfil.data_nascimento ? valoresPerfil.data_nascimento : '' %>" readonly>
+                        </label>
+
+                        <button type="submit" class="botao-submit">Salvar alterações</button>
+                    </form>
+                    <% } %>
+                </section>
+
+                <!-- ABA: SEGURANÇA -->
+                <section class="config-painel" data-aba-painel="seguranca" hidden>
+                    <h2 class="config-painel-titulo">Segurança</h2>
+                    <p class="config-painel-descricao">Troque sua senha ou gerencie o acesso à sua conta.</p>
+
+                    <% if (typeof msgSucesso !== 'undefined' && msgSucesso && typeof abaInicial !== 'undefined' && abaInicial === 'seguranca') { %>
+                        <p class="msg-sucesso"><%= msgSucesso %></p>
+                    <% } %>
+                    <% if (typeof msgErroSenha !== 'undefined' && msgErroSenha && msgErroSenha.geral) { %>
+                        <p class="erro-msg"><%= msgErroSenha.geral %></p>
+                    <% } %>
+                    <% if (typeof msgErroConta !== 'undefined' && msgErroConta) { %>
+                        <p class="erro-msg"><%= msgErroConta %></p>
+                    <% } %>
+
+                    <form class="editar-perfil" id="form-senha" action="/configuracoes/senha" method="POST">
+                        <label class="campo-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/cadeado.webp" alt="Senha" class="icone">
+                            </figure>
+                            <input type="password" id="senha" name="senha" placeholder="Nova senha" class="input-campo" required>
+                            <button type="button" class="mostrar-senha" onclick="toggleSenha('senha')" aria-label="Mostrar ou ocultar senha">
+                                <img src="../image/olho_fechado.webp" alt="" class="icone-olho">
+                            </button>
+                        </label>
+                        <ul id="regras-senha" class="regras-senha-modern">
+                            <li id="tamanho">8 a 15 caracteres</li>
+                            <li id="maiuscula">Uma letra maiúscula</li>
+                            <li id="minuscula">Uma letra minúscula</li>
+                            <li id="numero">Um número</li>
+                            <li id="especial">Um caractere especial (@, !, #, $, %, &)</li>
+                        </ul>
+
+                        <label class="campo-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/cadeado.webp" alt="Repetir Senha" class="icone">
+                            </figure>
+                            <input type="password" id="confirmar-senha" name="confirmar-senha" placeholder="Confirmar nova senha" class="input-campo" required>
+                            <button type="button" class="mostrar-senha" onclick="toggleSenha('confirmar-senha')" aria-label="Mostrar ou ocultar senha">
+                                <img src="../image/olho_fechado.webp" alt="" class="icone-olho">
+                            </button>
+                        </label>
+                        <p id="erro-confirmar" class="erro-msg"><%= typeof msgErroSenha !== 'undefined' && msgErroSenha['confirmar-senha'] ? msgErroSenha['confirmar-senha'] : '' %></p>
+
+                        <button type="submit" class="botao-submit">Alterar senha</button>
+                    </form>
+
+                    <hr class="config-divisor">
+
+                    <h3 class="zona-risco-titulo">Desativar conta</h3>
+                    <p class="zona-risco-descricao">Sua conta fica inacessível até você pedir a reativação com o suporte.</p>
+                    <form id="form-desativar-conta" action="/configuracoes/desativar" method="POST">
+                        <div class="zona-risco-acoes">
+                            <button type="submit" class="botao-secundario">Desativar minha conta</button>
+                        </div>
+                    </form>
+
+                    <h3 class="zona-risco-titulo" style="margin-top: 18px;">Excluir conta</h3>
+                    <p class="zona-risco-descricao">Remove permanentemente seus dados da plataforma. Essa ação não pode ser desfeita.</p>
+                    <form id="form-excluir-conta" action="/configuracoes/excluir" method="POST">
+                        <div class="zona-risco-acoes">
+                            <button type="submit" class="botao-perigo">Excluir minha conta</button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- ABA: ASSINATURA (somente aluno) -->
+                <% if (tipoUsuario === 'aluno') { %>
+                <section class="config-painel" data-aba-painel="assinatura" hidden>
+                    <h2 class="config-painel-titulo">Assinatura</h2>
+                    <p class="config-painel-descricao">Veja o status do seu plano Premium.</p>
+
+                    <div class="cartao-assinatura">
+                        <div>
+                            <% if (typeof assinatura !== 'undefined' && assinatura && assinatura.ativa) { %>
+                                <span class="assinatura-status ativa">Premium ativo</span>
+                                <p class="assinatura-detalhe">
+                                    <%= assinatura.dataFim ? `Renova ou expira em ${assinatura.dataFim}` : 'Sem data de expiração definida' %>
+                                </p>
+                            <% } else { %>
+                                <span class="assinatura-status inativa">Sem assinatura ativa</span>
+                                <p class="assinatura-detalhe">Assine o Premium para desbloquear todos os recursos.</p>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="config-links">
+                        <% if (typeof assinatura !== 'undefined' && assinatura && assinatura.ativa) { %>
+                            <a href="/premium/historico" class="config-link-botao">Ver histórico e cancelar</a>
+                        <% } else { %>
+                            <a href="/premium/assinar" class="config-link-botao">Assinar Premium</a>
+                            <a href="/premium/historico" class="config-link-botao contorno">Ver histórico de pagamentos</a>
+                        <% } %>
+                    </div>
+                </section>
+                <% } %>
+
+                <!-- ABA: NOTIFICAÇÕES (em breve) -->
+                <section class="config-painel" data-aba-painel="notificacoes" hidden>
+                    <h2 class="config-painel-titulo">Notificações</h2>
+                    <p class="config-painel-descricao">Escolha o que você quer ser avisado.</p>
+                    <div class="placeholder-em-breve">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <strong>Em breve</strong>
+                        <span>Preferências de notificação por tipo de evento (fórum, redação, cronograma) estão a caminho.</span>
+                    </div>
+                </section>
+
+                <!-- ABA: PRIVACIDADE (em breve) -->
+                <section class="config-painel" data-aba-painel="privacidade" hidden>
+                    <h2 class="config-painel-titulo">Privacidade</h2>
+                    <p class="config-painel-descricao">Controle o que outras pessoas veem sobre você.</p>
+                    <div class="placeholder-em-breve">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"></path>
+                        </svg>
+                        <strong>Em breve</strong>
+                        <span>Enquanto isso, dá uma olhada nos nossos <a href="/termopriva">Termos de Privacidade</a>.</span>
+                    </div>
+                </section>
+
+                <!-- ABA: APARÊNCIA -->
+                <section class="config-painel" data-aba-painel="aparencia" hidden>
+                    <h2 class="config-painel-titulo">Aparência</h2>
+                    <p class="config-painel-descricao">Escolha como a plataforma aparece pra você. Fica salvo neste navegador.</p>
+
+                    <h3 class="config-subtitulo">Tema</h3>
+                    <div class="tema-opcoes" role="radiogroup" aria-label="Tema da plataforma">
+                        <button type="button" class="tema-botao" data-tema="light" role="radio" aria-checked="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path>
+                            </svg>
+                            Claro
+                        </button>
+                        <button type="button" class="tema-botao" data-tema="dark" role="radio" aria-checked="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                            </svg>
+                            Escuro
+                        </button>
+                        <button type="button" class="tema-botao" data-tema="auto" role="radio" aria-checked="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="4" width="20" height="14" rx="2"></rect>
+                                <path d="M8 21h8M12 17v4"></path>
+                            </svg>
+                            Automático
+                        </button>
+                    </div>
+                    <p class="config-painel-descricao" style="margin-top: 8px;">"Automático" segue o tema do seu sistema.</p>
+
+                    <hr class="config-divisor">
+
+                    <h3 class="config-subtitulo">Tamanho da fonte</h3>
+                    <div class="fonte-opcoes" role="radiogroup" aria-label="Tamanho da fonte">
+                        <button type="button" class="fonte-botao" data-fonte="padrao" role="radio" aria-checked="false">
+                            <span class="fonte-amostra" style="font-size: 0.9rem;">A</span>
+                            Padrão
+                        </button>
+                        <button type="button" class="fonte-botao" data-fonte="grande" role="radio" aria-checked="false">
+                            <span class="fonte-amostra" style="font-size: 1.15rem;">A</span>
+                            Grande
+                        </button>
+                        <button type="button" class="fonte-botao" data-fonte="extra" role="radio" aria-checked="false">
+                            <span class="fonte-amostra" style="font-size: 1.4rem;">A</span>
+                            Extra grande
+                        </button>
+                    </div>
+                    <p class="config-painel-descricao" style="margin-top: 8px;">Aumenta o texto do site inteiro. Também fica salvo neste navegador.</p>
+                </section>
+
+            </div>
+        </section>
+    </main>
+
+    <%- include('../partials/footer.ejs') %>
+        <script src="../js/configuracoes.js"></script>
+</body>
+
+</html>

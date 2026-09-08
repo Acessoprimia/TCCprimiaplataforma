@@ -8,13 +8,13 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #f5f5f5;
+    background-color: var(--c-f5f5f5, #f5f5f5);
     min-height: 100vh;
 }
 
 /* SEÇÃO ROXA COM ARREDONDAMENTO EMBAIXO */
 .secao-roxa {
-    background: linear-gradient(180deg, #B5A9D8 0%, #A398D1 100%);
+    background: linear-gradient(180deg, var(--accent-suave, #B5A9D8) 0%, var(--accent, #A398D1) 100%);
     border-radius: 0 0 40px 40px;
     padding: 120px 20px 220px;
     position: relative;
@@ -56,7 +56,7 @@ body {
 
 /* CARD DE LOGIN */
 .card-login {
-    background-color: white;
+    background-color: var(--cor-fundo-cartao, white);
     border-radius: 20px;
     padding: 35px 25px;
     width: 100%;
@@ -81,14 +81,14 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    border: 2px solid #A398D1;
+    border: 2px solid var(--accent, #A398D1);
     border-radius: 12px;
     padding: 12px 15px;
     transition: all 0.3s ease;
 }
 
 .campo-wrapper:focus-within {
-    border-color: #8b83ac;
+    border-color: var(--accent-forte, #8b83ac);
     box-shadow: 0 0 0 3px rgba(163, 152, 209, 0.1);
 }
 
@@ -112,17 +112,17 @@ body {
     border: none;
     outline: none;
     font-family: 'Poppins', sans-serif;
-    font-size: 15px;
-    color: #666;
+    font-size: 0.9375rem;
+    color: var(--c-666, #666);
 }
 
 .input-campo::placeholder {
-    color: #999;
+    color: var(--c-999, #999);
 }
 
 .erro-msg {
-    color: #d93025;
-    font-size: 13px;
+    color: var(--perigo, #d93025);
+    font-size: 0.8125rem;
     font-weight: 500;
     line-height: 1.4;
     margin: -10px 4px 0;
@@ -141,26 +141,26 @@ body {
 }
 
 .link-recuperar {
-    font-size: 13px;
-    color: #999;
+    font-size: 0.8125rem;
+    color: var(--c-999, #999);
     text-decoration: none;
     transition: all 0.3s ease;
 }
 
 .link-recuperar:hover {
-    color: #A398D1;
+    color: var(--accent, #A398D1);
     text-decoration: underline;
 }
 
 /* BOTÃO LOGIN */
 .botao-login {
-    background-color: #FF9C7D;
-    color: #1A1A1A;
+    background-color: var(--warm-suave, #FF9C7D);
+    color: var(--on-warm, #1A1A1A);
     border: none;
     border-radius: 12px;
     padding: 16px;
     font-family: 'Poppins', sans-serif;
-    font-size: 17px;
+    font-size: 1.0625rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -168,7 +168,7 @@ body {
 }
 
 .botao-login:hover {
-    background-color: #ff8a66;
+    background-color: var(--warm, #ff8a66);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(255, 156, 125, 0.4);
 }
@@ -184,12 +184,12 @@ body {
 .linha-divisor {
     flex: 1;
     height: 1px;
-    background-color: #e5e5e5;
+    background-color: var(--c-e5e5e5, #e5e5e5);
 }
 
 .texto-divisor {
-    font-size: 14px;
-    color: #999;
+    font-size: 0.875rem;
+    color: var(--c-999, #999);
 }
 
 /* REDES SOCIAIS */
@@ -203,7 +203,7 @@ body {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: #A398D1;
+    background-color: var(--accent, #A398D1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -212,7 +212,7 @@ body {
 }
 
 .btn-social:hover {
-    background-color: #8b83ac;
+    background-color: var(--accent-forte, #8b83ac);
     transform: translateY(-3px);
     box-shadow: 0 5px 15px rgba(163, 152, 209, 0.3);
 }
@@ -251,11 +251,11 @@ body {
     }
 
     .input-campo {
-        font-size: 14px;
+        font-size: 0.875rem;
     }
 
     .botao-login {
-        font-size: 16px;
+        font-size: 1rem;
         padding: 14px;
     }
 }
@@ -297,17 +297,17 @@ body {
     }
 
     .input-campo {
-        font-size: 16px;
+        font-size: 1rem;
     }
 
     .botao-login {
-        font-size: 18px;
+        font-size: 1.125rem;
         padding: 18px;
         margin-top: 12px;
     }
 
     .link-recuperar {
-        font-size: 14px;
+        font-size: 0.875rem;
     }
 }
 
@@ -318,13 +318,13 @@ body {
   border: none;
   background: none;
   font-family: inherit;
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1;
   cursor: pointer;
 }
 
 .mostrar-senha:focus-visible {
-  outline: 3px solid #8b83ac;
+  outline: 3px solid var(--accent-forte, #8b83ac);
   outline-offset: 2px;
   border-radius: 4px;
 }

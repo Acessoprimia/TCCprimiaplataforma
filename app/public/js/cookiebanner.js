@@ -50,14 +50,7 @@
       showBanner();
     }
 
-    // O site so usa cookies estritamente necessarios (sessao autenticada
-    // + a propria preferencia deste aviso), que sao dispensados de
-    // consentimento pela LGPD. Por isso o aviso e informativo e tem um
-    // unico botao: nao havia nada opcional pra "rejeitar", e um botao de
-    // recusa que nao bloqueia nada seria enganoso. Se um dia entrar
-    // algum cookie nao-essencial (analytics, rastreamento), ai sim
-    // volta o par aceitar/rejeitar - e o servidor precisa checar
-    // primia_cookie_consent antes de gravar esse cookie novo.
+
     if (acceptBtn) {
       acceptBtn.addEventListener("click", function () {
         setChoiceCookie("acknowledged");

@@ -16,8 +16,8 @@ body {
     margin: 0; 
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: rgb(0, 0, 0);
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, rgb(0, 0, 0));
     font-family: 'Poppins', sans-serif;
 }
 main {
@@ -33,7 +33,7 @@ section {
 
 .titulo-principal {
     font-size: 2rem;
-    color: #FF9466;
+    color: var(--warm, #FF9466);
     text-align: center;
     margin-bottom: 2rem;
     font-weight: 700;
@@ -41,7 +41,7 @@ section {
 
 .titulo-secao {
     font-size: 1.5rem;
-    color: #fda078;
+    color: var(--warm, #fda078);
     text-align: center;
     margin-bottom: 1rem;
     font-weight: 700;
@@ -65,7 +65,7 @@ section {
 .lista-prioridades,
 .lista-conteudos {
     list-style: none;
-    background: white;
+    background: var(--cor-fundo-cartao, white);
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -75,7 +75,7 @@ section {
     display: flex;
     align-items: center;
     padding: 0.75rem 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--c-f0f0f0, #f0f0f0);
 }
 
 .item-lista:last-child {
@@ -87,12 +87,12 @@ section {
     height: 18px;
     margin-right: 0.75rem;
     cursor: pointer;
-    accent-color: #667eea;
+    accent-color: var(--info, #667eea);
 }
 
 .label-checkbox {
     font-size: 1rem;
-    color: #333;
+    color: var(--cor-texto, #333);
     cursor: pointer;
     flex: 1;
 }

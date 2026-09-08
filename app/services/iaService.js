@@ -2,7 +2,16 @@ const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const { PDFParse } = require("pdf-parse");
 const CronogramaService = require("./cronogramaService");
 
-const nomeModelo = process.env.GEMINI_MODEL || "gemini-flash-latest";
+// Fixo, nao "-latest": o alias "-latest" e trocado pelo Google sem
+// aviso a cada lancamento novo e concentra o trafego de todo mundo que
+// nao fixou versao - e um dos fatores que mais gera 503 "high demand".
+// Usa 3.5 (nao a versao mais nova, 3.7) de proposito: testamos na mao e
+// o 3.7-flash tem cota gratuita diaria minuscula por ser recem-lancado
+// (20 requisicoes/dia por chave - estourou so com os testes desta
+// sessao). O 3.5 e estabelecido, com cota bem mais folgada, e continua
+// sendo uma versao fixa (nao muda sozinha). Pra atualizar de proposito
+// no futuro, so mudar esta constante (ou setar GEMINI_MODEL no .env).
+const nomeModelo = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
 const LIMITE_CARACTERES_PDF = 40000;
 const QUANTIDADE_PADRAO_PERGUNTAS = 5;
@@ -183,13 +192,35 @@ function ehErroDeCota(erro) {
   return /429|quota|Too Many Requests/i.test(mensagem);
 }
 
+// 503 "model overloaded" e sobrecarga temporaria do lado do Google, sem
+// relacao com cota - trocar de chave nao ajuda em nada (o modelo fica
+// sobrecarregado pra todo mundo, nao so pra uma chave). A propria
+// mensagem de erro deles recomenda tentar de novo em instantes, entao e
+// isso que MAX_TENTATIVAS_ERRO_TEMPORARIO faz, na mesma chave.
+function ehErroTemporario(erro) {
+  return erro?.status === 503 || /Service Unavailable|overloaded|high demand/i.test(String(erro?.message || ""));
+}
+
+// Backoff exponencial: 1.5s, 3s, 6s, 12s (~22.5s de espera total, mais
+// o tempo das proprias chamadas) - cobre picos de sobrecarga mais
+// longos que os ~4.5s de antes, sem deixar a espera descontrolada (o
+// hosting costuma cortar requisicao em ~30s).
+const MAX_TENTATIVAS_ERRO_TEMPORARIO = 4;
+const ESPERA_BASE_MS = 1500;
+
+function aguardar(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 // Chama generateContent no modelo indicado (por nome: "modelo",
 // "modeloSimulado" ou "modeloCronograma"), tentando as chaves
-// disponiveis em sequencia quando uma delas estoura a cota. So
-// rotaciona em erro de cota - qualquer outro erro (chave invalida,
-// rede, etc) sobe na hora, sem mascarar o problema real.
+// disponiveis em sequencia quando uma delas estoura a cota, e re-
+// tentando a mesma chave (com espera curta) em erro temporario (503).
+// Qualquer outro erro (chave invalida, rede, etc) sobe na hora, sem
+// mascarar o problema real.
 async function gerarComRotacaoDeChave(nomeModeloLogico, args) {
   let ultimoErro;
+  let tentativasTemporariasRestantes = MAX_TENTATIVAS_ERRO_TEMPORARIO;
 
   for (let tentativa = 0; tentativa < clientesGemini.length; tentativa++) {
     const cliente = clientesGemini[indiceChaveAtual];
@@ -198,6 +229,16 @@ async function gerarComRotacaoDeChave(nomeModeloLogico, args) {
       return await cliente[nomeModeloLogico].generateContent(args);
     } catch (erro) {
       ultimoErro = erro;
+
+      if (ehErroTemporario(erro) && tentativasTemporariasRestantes > 0) {
+        const numeroTentativa = MAX_TENTATIVAS_ERRO_TEMPORARIO - tentativasTemporariasRestantes;
+        const espera = ESPERA_BASE_MS * 2 ** numeroTentativa;
+        tentativasTemporariasRestantes--;
+        console.error(`Gemini sobrecarregado (503), tentando de novo em ${espera}ms...`);
+        await aguardar(espera);
+        tentativa--; // nao consome tentativa de chave - e a mesma chave de novo
+        continue;
+      }
 
       if (!ehErroDeCota(erro) || clientesGemini.length === 1) {
         throw erro;

@@ -16,8 +16,8 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: rgb(0, 0, 0);
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, rgb(0, 0, 0));
     font-family: 'Poppins', sans-serif;
 }
 
@@ -32,21 +32,21 @@ body {
 
 /* TÍTULO */
 .titulo-resultados {
-    font-size: 28px;
+    font-size: 1.75rem;
     font-weight: 700;
-    color: #B5A9D8;
+    color: var(--accent-suave, #B5A9D8);
     margin-bottom: 25px;
     margin-top: 80px;
 }
 
 /* AVISO DE ERRO */
 .resultados-erro {
-    background: #fdecea;
-    color: #b3261e;
+    background: var(--c-fdecea, #fdecea);
+    color: var(--perigo, #b3261e);
     border-radius: 10px;
     padding: 14px 18px;
     margin-bottom: 20px;
-    font-size: 14px;
+    font-size: 0.875rem;
 }
 
 /* SEÇÃO "SEUS NÚMEROS" */
@@ -56,15 +56,15 @@ body {
 
 .secao-numeros h2,
 .secao-analise-ia h2 {
-    font-size: 20px;
-    color: #333;
+    font-size: 1.25rem;
+    color: var(--cor-texto, #333);
     margin-bottom: 16px;
 }
 
 .secao-numeros h3,
 .secao-analise-ia h3 {
-    font-size: 15px;
-    color: #7c6ea8;
+    font-size: 0.9375rem;
+    color: var(--accent-forte, #7c6ea8);
     margin: 20px 0 10px;
 }
 
@@ -75,7 +75,7 @@ body {
 }
 
 .card-stat {
-    background: #F3F0FA;
+    background: var(--c-f3f0fa, #F3F0FA);
     border-radius: 15px;
     padding: 18px;
     text-align: center;
@@ -85,14 +85,14 @@ body {
 }
 
 .stat-valor {
-    font-size: 26px;
+    font-size: 1.625rem;
     font-weight: 700;
-    color: #B5A9D8;
+    color: var(--accent-suave, #B5A9D8);
 }
 
 .stat-label {
-    font-size: 12px;
-    color: #666;
+    font-size: 0.75rem;
+    color: var(--c-666, #666);
 }
 
 .lista-materia-taxa,
@@ -107,54 +107,54 @@ body {
 .lista-redacao-genero li {
     display: flex;
     justify-content: space-between;
-    background: white;
-    border: 1px solid #eee;
+    background: var(--cor-fundo-cartao, white);
+    border: 1px solid var(--cor-borda, #eee);
     border-radius: 10px;
     padding: 10px 16px;
-    font-size: 14px;
-    color: #444;
+    font-size: 0.875rem;
+    color: var(--c-444, #444);
 }
 
 /* SEÇÃO "ANÁLISE DA IA" */
 .secao-analise-ia {
-    background: #F3F0FA;
+    background: var(--c-f3f0fa, #F3F0FA);
     border-radius: 16px;
     padding: 24px;
 }
 
 .analise-atualizada-em {
-    font-size: 12px;
-    color: #888;
+    font-size: 0.75rem;
+    color: var(--c-888, #888);
     margin-bottom: 10px;
 }
 
 .analise-diagnostico {
-    font-size: 15px;
-    color: #333;
+    font-size: 0.9375rem;
+    color: var(--cor-texto, #333);
     line-height: 1.6;
     margin-bottom: 10px;
 }
 
 .secao-analise-ia p {
-    color: #555;
+    color: var(--c-555, #555);
     line-height: 1.6;
 }
 
 .analise-vazia {
-    color: #888;
+    color: var(--c-888, #888);
     margin-bottom: 16px;
 }
 
 .grupo-recomendacao {
-    background: white;
+    background: var(--cor-fundo-cartao, white);
     border-radius: 12px;
     padding: 14px 18px;
     margin-bottom: 12px;
 }
 
 .grupo-recomendacao h4 {
-    font-size: 14px;
-    color: #7c6ea8;
+    font-size: 0.875rem;
+    color: var(--accent-forte, #7c6ea8);
     margin-bottom: 8px;
 }
 
@@ -166,8 +166,8 @@ body {
 }
 
 .grupo-recomendacao a {
-    color: #B5A9D8;
-    font-size: 14px;
+    color: var(--accent-suave, #B5A9D8);
+    font-size: 0.875rem;
     font-weight: 600;
     text-decoration: none;
 }
@@ -182,18 +182,18 @@ body {
 
 .secao-analise-ia button {
     padding: 12px 28px;
-    background: #B5A9D8;
-    color: white;
+    background: var(--accent-suave, #B5A9D8);
+    color: var(--cor-fundo-cartao, white);
     border: none;
     border-radius: 50px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 0.875rem;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .secao-analise-ia button:hover {
-    background: #a399c8;
+    background: var(--accent, #a399c8);
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(181, 169, 216, 0.3);
 }
@@ -205,7 +205,7 @@ body {
     }
 
     .titulo-resultados {
-        font-size: 24px;
+        font-size: 1.5rem;
     }
 
     .grade-stats-resultados {

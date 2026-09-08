@@ -4,7 +4,7 @@
   left: 0;
   bottom: 0;
   right: 0;
-  background: #18142a;
+  background: var(--c-18142a, #18142a);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   padding: 16px 24px;
   z-index: 1000;
@@ -32,20 +32,20 @@
 
 .cookie-banner-text figcaption {
   font-weight: 700;
-  color: #ffffff;
-  font-size: 14px;
+  color: var(--on-dark, #ffffff);
+  font-size: 0.875rem;
   margin-bottom: 4px;
 }
 
 .cookie-banner-text p {
   margin: 0;
-  color: #8b83ac;
-  font-size: 13px;
+  color: var(--accent-forte, #8b83ac);
+  font-size: 0.8125rem;
   line-height: 1.5;
 }
 
 .cookie-banner-link {
-  color: #FF9C7D;
+  color: var(--warm-suave, #FF9C7D);
   text-decoration: none;
 }
 
@@ -70,19 +70,19 @@
   padding: 10px 16px;
   border-radius: 6px;
   border: none;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .cookie-btn-acept {
-  background: #FF9C7D;
-  color: #18142a;
+  background: var(--warm-suave, #FF9C7D);
+  color: var(--c-18142a, #18142a);
 }
 
 .cookie-btn-acept:hover {
-  background: #ffaf96;
+  background: var(--warm, #ffaf96);
 }
 
 .cookie-btn-acept:active {
@@ -131,10 +131,10 @@
   }
 
   .cookie-banner-text strong {
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
 
   .cookie-banner-text p {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 }

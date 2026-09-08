@@ -16,8 +16,8 @@ body {
     margin: 0; /* Remove margens padrão */
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: rgb(0, 0, 0);
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, rgb(0, 0, 0));
     font-family: 'Poppins', sans-serif;
 }
 
@@ -30,7 +30,7 @@ main {
 h1 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
-    color: #1a1a1a;
+    color: var(--cor-texto, #1a1a1a);
 }
 
 .filter-section {
@@ -41,7 +41,7 @@ label {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #667eea;
+    color: var(--info, #667eea);
     font-size: 0.95rem;
     cursor: pointer;
 }
@@ -49,18 +49,18 @@ label {
 select {
     width: 100%;
     padding: 0.75rem;
-    border: 2px solid #e0e0e0;
+    border: 2px solid var(--c-e0e0e0, #e0e0e0);
     border-radius: 8px;
     font-size: 1rem;
-    background: white;
-    color: #333;
+    background: var(--cor-fundo-cartao, white);
+    color: var(--cor-texto, #333);
     cursor: pointer;
     margin-top: 0.5rem;
 }
 
 select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--info, #667eea);
 }
 
 .cards-container {
@@ -70,7 +70,7 @@ select:focus {
 }
 
 article {
-    background: white;
+    background: var(--cor-fundo-cartao, white);
     border-radius: 16px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -102,11 +102,11 @@ a {
 h2 {
     font-size: 1.1rem;
     margin-bottom: 0.75rem;
-    color: #1a1a1a;
+    color: var(--cor-texto, #1a1a1a);
 }
 
 p {
-    color: #555;
+    color: var(--c-555, #555);
     font-size: 0.9rem;
     line-height: 1.6;
 }

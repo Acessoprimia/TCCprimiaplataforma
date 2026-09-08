@@ -16,8 +16,8 @@ body {
     margin: 0; /* Remove margens padrão */
     display: flex;
     flex-direction: column;
-    background-color: white;
-    color: rgb(0, 0, 0);
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--c-000, rgb(0, 0, 0));
     font-family: 'Poppins', sans-serif;
 }
 
@@ -42,14 +42,14 @@ body {
   font-size: 1.8rem;
   margin-bottom: 20px;
   font-weight: 700;
-  color: #FF9466;
+  color: var(--warm, #FF9466);
 }
 
 .texto-sobre p {
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 15px;
-  color: #333;
+  color: var(--cor-texto, #333);
 }
 
 main {
@@ -75,7 +75,7 @@ main {
 .sobre-secao-titulo {
   font-size: 1.7rem;
   font-weight: 700;
-  color: #A398D1;
+  color: var(--accent, #A398D1);
   text-align: center;
   margin-bottom: 30px;
 }
@@ -99,8 +99,8 @@ main {
   align-items: center;
   text-align: center;
   text-decoration: none;
-  background: #FAF8FF;
-  border: 1px solid #e8e4f3;
+  background: var(--c-faf8ff, #FAF8FF);
+  border: 1px solid var(--c-e8e4f3, #e8e4f3);
   border-radius: 18px;
   padding: 30px 20px;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
@@ -108,7 +108,7 @@ main {
 
 .sobre-recurso-card:hover {
   transform: translateY(-4px);
-  border-color: #A398D1;
+  border-color: var(--accent, #A398D1);
   box-shadow: 0 8px 20px rgba(163, 152, 209, 0.25);
 }
 
@@ -120,13 +120,13 @@ main {
 
 .sobre-recurso-card h3 {
   font-size: 1.05rem;
-  color: #2b2b2b;
+  color: var(--c-2b2b2b, #2b2b2b);
   margin-bottom: 8px;
 }
 
 .sobre-recurso-card p {
   font-size: 0.88rem;
-  color: #666;
+  color: var(--c-666, #666);
   line-height: 1.5;
 }
 
@@ -144,8 +144,8 @@ main {
 }
 
 .sobre-perfil-card {
-  background: linear-gradient(135deg, #A398D1 0%, #9B8BC9 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--accent, #A398D1) 0%, var(--c-9b8bc9, #9B8BC9) 100%);
+  color: var(--cor-fundo-cartao, white);
   border-radius: 20px;
   padding: 36px 34px;
 }
@@ -163,7 +163,7 @@ main {
 }
 
 .sobre-perfil-link {
-  color: white;
+  color: var(--cor-fundo-cartao, white);
   font-weight: 600;
   text-decoration: none;
   font-size: 0.95rem;
@@ -186,7 +186,7 @@ main {
 .sobre-historia p {
   font-size: 1rem;
   line-height: 1.75;
-  color: #555;
+  color: var(--c-555, #555);
 }
 
 /* CTA FINAL */
@@ -195,18 +195,18 @@ main {
   margin: 90px auto 0;
   padding: 60px 20px;
   text-align: center;
-  background: #FAF8FF;
+  background: var(--c-faf8ff, #FAF8FF);
 }
 
 .sobre-cta h2 {
   font-size: 1.6rem;
-  color: #FF9466;
+  color: var(--warm, #FF9466);
   margin-bottom: 10px;
 }
 
 .sobre-cta p {
   font-size: 1rem;
-  color: #555;
+  color: var(--c-555, #555);
   margin-bottom: 28px;
 }
 
@@ -227,23 +227,23 @@ main {
 }
 
 .sobre-cta-btn-principal {
-  background-color: #FF9466;
-  color: #1A1A1A;
+  background-color: var(--warm, #FF9466);
+  color: var(--on-warm, #1A1A1A);
 }
 
 .sobre-cta-btn-principal:hover {
-  background-color: #e67d50;
+  background-color: var(--warm, #e67d50);
   transform: translateY(-2px);
 }
 
 .sobre-cta-btn-secundario {
-  border: 2px solid #A398D1;
-  color: #A398D1;
+  border: 2px solid var(--accent, #A398D1);
+  color: var(--accent, #A398D1);
 }
 
 .sobre-cta-btn-secundario:hover {
-  background-color: #A398D1;
-  color: white;
+  background-color: var(--accent, #A398D1);
+  color: var(--cor-fundo-cartao, white);
 }
 
 /* Responsivo */

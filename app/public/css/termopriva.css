@@ -15,8 +15,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #fbfaff;
-  color: #222;
+  background-color: var(--c-fbfaff, #fbfaff);
+  color: var(--c-222, #222);
   font-family: 'Poppins', sans-serif;
 }
 
@@ -35,26 +35,26 @@ body {
 .priv-hero h1 {
   font-size: 2rem;
   font-weight: 700;
-  color: #A398D1;
+  color: var(--accent, #A398D1);
   margin-bottom: 8px;
 }
 
 .priv-atualizacao {
   font-size: 0.85rem;
-  color: #999;
+  color: var(--c-999, #999);
   margin-bottom: 18px;
 }
 
 .priv-intro {
   font-size: 1rem;
   line-height: 1.7;
-  color: #555;
+  color: var(--c-555, #555);
 }
 
 .priv-secao {
   margin-bottom: 34px;
   padding-bottom: 34px;
-  border-bottom: 1px solid #eee6f7;
+  border-bottom: 1px solid var(--c-eee6f7, #eee6f7);
 }
 
 .priv-secao:last-of-type {
@@ -64,14 +64,14 @@ body {
 .priv-secao h2 {
   font-size: 1.15rem;
   font-weight: 700;
-  color: #FF9466;
+  color: var(--warm, #FF9466);
   margin-bottom: 14px;
 }
 
 .priv-secao p {
   font-size: 0.95rem;
   line-height: 1.75;
-  color: #444;
+  color: var(--c-444, #444);
   margin-bottom: 12px;
 }
 
@@ -87,7 +87,7 @@ body {
 .priv-secao ul li {
   font-size: 0.95rem;
   line-height: 1.7;
-  color: #444;
+  color: var(--c-444, #444);
   padding-left: 22px;
   position: relative;
   margin-bottom: 8px;
@@ -101,20 +101,20 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: #A398D1;
+  background-color: var(--accent, #A398D1);
 }
 
 .priv-secao code {
   font-family: 'SFMono-Regular', Consolas, monospace;
   font-size: 0.85em;
-  background: #ece9f7;
-  color: #7b6fb0;
+  background: var(--c-ece9f7, #ece9f7);
+  color: var(--accent-forte, #7b6fb0);
   padding: 0.1em 0.4em;
   border-radius: 4px;
 }
 
 .priv-secao a {
-  color: #A398D1;
+  color: var(--accent, #A398D1);
   font-weight: 600;
   text-decoration: none;
 }

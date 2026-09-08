@@ -1,13 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
 :root {
-  --roxo: #7c68c1;
-  --roxo-claro: #ede9fb;
-  --roxo-escuro: #6c54b4;
-  --roxo-hover: #5b44a3;
-  --branco: #fff;
-  --texto: #333;
-  --texto-secundario: #555;
+  --roxo: var(--c-7c68c1, #7c68c1);
+  --roxo-claro: var(--c-ede9fb, #ede9fb);
+  --roxo-escuro: var(--c-6c54b4, #6c54b4);
+  --roxo-hover: var(--c-5b44a3, #5b44a3);
+  --branco: var(--cor-fundo-cartao, #fff);
+  --texto: var(--cor-texto, #333);
+  --texto-secundario: var(--c-555, #555);
+}
+
+/* --roxo/--roxo-escuro/--roxo-hover sao usados como FUNDO de botao (com
+   --branco por cima como texto) e tambem como COR DE TEXTO de titulo -
+   os --c-xxxxx globais foram calculados sem saber disso, entao aqui a
+   gente fixa manualmente pra funcionar nos dois papeis no modo escuro. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --roxo: #b3a6e8;
+    --roxo-claro: #2a2145;
+    --roxo-escuro: #c9bef0;
+    --roxo-hover: #a191e0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --roxo: #b3a6e8;
+  --roxo-claro: #2a2145;
+  --roxo-escuro: #c9bef0;
+  --roxo-hover: #a191e0;
 }
 
 /* =========================================================

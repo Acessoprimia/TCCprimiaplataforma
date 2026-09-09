@@ -351,6 +351,24 @@ function iniciarZonaDeRisco() {
 }
 
 // =============================================
+// PRIVACIDADE (cookies + links pra outras abas)
+// =============================================
+function iniciarPrivacidade() {
+    const btnCookies = document.getElementById("btn-rever-cookies");
+    if (btnCookies) {
+        btnCookies.addEventListener("click", () => {
+            if (typeof window.primiaReabrirAvisoCookies === "function") {
+                window.primiaReabrirAvisoCookies();
+            }
+        });
+    }
+
+    document.querySelectorAll("[data-ir-para-aba]").forEach((botao) => {
+        botao.addEventListener("click", () => ativarAba(botao.dataset.irParaAba));
+    });
+}
+
+// =============================================
 // INICIALIZAÇÃO
 // =============================================
 document.addEventListener("DOMContentLoaded", function () {
@@ -358,6 +376,7 @@ document.addEventListener("DOMContentLoaded", function () {
     iniciarFormularioPerfil();
     iniciarFormularioSenha();
     iniciarZonaDeRisco();
+    iniciarPrivacidade();
     iniciarTema();
     iniciarFonte();
 });

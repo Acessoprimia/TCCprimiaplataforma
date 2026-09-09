@@ -6,10 +6,14 @@ const Models = require("../models");
 // em iaService.js) - se precisar virar editavel pelo admin depois, da
 // pra migrar pra Configuracao_Plataforma, que ja existe.
 const PLANOS = Object.freeze({
-  mensal: { 
-   rotulo: "Premium - 30 dias", 
-   diasPremium: 30, 
-   valorCentavos: 1990 ,
+  // TEMPORARIO PRA TESTE: valor real era 1990 (R$ 19,90) - reduzido pra
+  // 100 (R$ 1,00) so pra validar o fluxo completo com credenciais de
+  // producao de verdade, sem arriscar muito dinheiro. Voltar pra 1990
+  // antes de ir ao ar de verdade.
+  mensal: {
+   rotulo: "Premium - 30 dias",
+   diasPremium: 30,
+   valorCentavos: 100,
 },
   
   trimestral: {
@@ -86,7 +90,20 @@ const PagamentoService = Object.freeze({
       diasPremium: plano.diasPremium,
     });
 
-    return { urlCheckout: resultado.sandbox_init_point || resultado.init_point };
+    // O Mercado Pago devolve os dois campos independente do tipo de
+    // credencial usada pra criar a preferencia - sandbox_init_point NAO
+    // e um indicador confiavel de "sera cobrado de verdade ou nao".
+    // Quem decide isso e o token: TEST- sempre cai no ambiente de teste
+    // deles, e so token de producao (APP_USR-) processa cobranca real.
+    // Escolher a URL certa pro tipo do token evita cair no sandbox sem
+    // querer mesmo com credencial de producao (foi exatamente o que
+    // aconteceu antes dessa correcao).
+    const usaAmbienteDeTeste = process.env.MERCADOPAGO_ACCESS_TOKEN.startsWith("TEST-");
+    const urlCheckout = usaAmbienteDeTeste
+      ? resultado.sandbox_init_point || resultado.init_point
+      : resultado.init_point;
+
+    return { urlCheckout };
   },
 
   // Nunca confia no corpo do webhook sozinho - sempre rebusca o

@@ -15,12 +15,29 @@ const queries = Object.freeze({
       m.nome AS materia,
       a.serie,
       u.id_usuario AS id_aluno,
-      u.nome AS aluno_nome
+      u.nome AS aluno_nome,
+      u.perfil_publico AS aluno_perfil_publico
     FROM ${TABELAS.duvidas} d
     INNER JOIN ${TABELAS.forum} f ON f.id_forum = d.id_forum
     INNER JOIN ${TABELAS.materias} m ON m.id_materia = f.id_materia
     INNER JOIN ${TABELAS.alunos} a ON a.id_aluno = d.id_aluno
     INNER JOIN ${TABELAS.usuarios} u ON u.id_usuario = a.id_aluno
+    ORDER BY d.data_envio DESC
+  `,
+  listarPorAluno: `
+    SELECT
+      d.id_duvida,
+      d.duvida,
+      d.status,
+      d.data_envio,
+      f.id_forum,
+      f.nome AS forum_nome,
+      m.id_materia,
+      m.nome AS materia
+    FROM ${TABELAS.duvidas} d
+    INNER JOIN ${TABELAS.forum} f ON f.id_forum = d.id_forum
+    INNER JOIN ${TABELAS.materias} m ON m.id_materia = f.id_materia
+    WHERE d.id_aluno = ?
     ORDER BY d.data_envio DESC
   `,
   listarPorProfessor: `
@@ -36,7 +53,8 @@ const queries = Object.freeze({
       m.nome AS materia,
       a.serie,
       u.id_usuario AS id_aluno,
-      u.nome AS aluno_nome
+      u.nome AS aluno_nome,
+      u.perfil_publico AS aluno_perfil_publico
     FROM ${TABELAS.duvidas} d
     INNER JOIN ${TABELAS.forum} f ON f.id_forum = d.id_forum
     INNER JOIN ${TABELAS.materias} m ON m.id_materia = f.id_materia
@@ -102,6 +120,11 @@ function banco(conexao) {
 const DuvidaModel = Object.freeze({
   async listar(conexao) {
     const [duvidas] = await banco(conexao).query(queries.listar);
+    return duvidas;
+  },
+
+  async listarPorAluno(idAluno, conexao) {
+    const [duvidas] = await banco(conexao).query(queries.listarPorAluno, [idAluno]);
     return duvidas;
   },
 

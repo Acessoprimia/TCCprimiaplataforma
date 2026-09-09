@@ -286,31 +286,90 @@
                 </section>
                 <% } %>
 
-                <!-- ABA: NOTIFICAÇÕES (em breve) -->
+                <!-- ABA: NOTIFICAÇÕES -->
                 <section class="config-painel" data-aba-painel="notificacoes" hidden>
                     <h2 class="config-painel-titulo">Notificações</h2>
-                    <p class="config-painel-descricao">Escolha o que você quer ser avisado.</p>
-                    <div class="placeholder-em-breve">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                        </svg>
-                        <strong>Em breve</strong>
-                        <span>Preferências de notificação por tipo de evento (fórum, redação, cronograma) estão a caminho.</span>
-                    </div>
+                    <p class="config-painel-descricao">Escolha sobre o que você quer ser avisado no sino do topo.</p>
+
+                    <% if (typeof msgSucesso !== 'undefined' && msgSucesso && typeof abaInicial !== 'undefined' && abaInicial === 'notificacoes') { %>
+                        <p class="msg-sucesso"><%= msgSucesso %></p>
+                    <% } %>
+                    <% if (typeof msgErroConta !== 'undefined' && msgErroConta && typeof abaInicial !== 'undefined' && abaInicial === 'notificacoes') { %>
+                        <p class="erro-msg"><%= msgErroConta %></p>
+                    <% } %>
+
+                    <form action="/configuracoes/notificacoes" method="POST">
+                        <% (typeof tiposNotificacao !== 'undefined' ? tiposNotificacao : []).forEach((item) => { %>
+                            <label class="config-toggle">
+                                <span class="config-toggle-texto">
+                                    <strong><%= item.titulo %></strong>
+                                    <span><%= item.descricao %></span>
+                                </span>
+                                <input type="checkbox" class="config-toggle-input" name="notificacao_<%= item.tipo %>"
+                                    <%= (typeof preferenciasNotificacao !== 'undefined' && preferenciasNotificacao[item.tipo] === false) ? '' : 'checked' %>>
+                                <span class="config-switch" aria-hidden="true"></span>
+                            </label>
+                        <% }) %>
+
+                        <button type="submit" class="botao-submit">Salvar preferências</button>
+                    </form>
+
+                    <p class="config-painel-descricao" style="margin-top: 16px;">
+                        Desligar um tipo faz a plataforma parar de gerar esses avisos pra você - os antigos continuam no sino.
+                    </p>
                 </section>
 
-                <!-- ABA: PRIVACIDADE (em breve) -->
+                <!-- ABA: PRIVACIDADE -->
                 <section class="config-painel" data-aba-painel="privacidade" hidden>
                     <h2 class="config-painel-titulo">Privacidade</h2>
-                    <p class="config-painel-descricao">Controle o que outras pessoas veem sobre você.</p>
-                    <div class="placeholder-em-breve">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"></path>
-                        </svg>
-                        <strong>Em breve</strong>
-                        <span>Enquanto isso, dá uma olhada nos nossos <a href="/termopriva">Termos de Privacidade</a>.</span>
+                    <p class="config-painel-descricao">Controle os seus dados e o que a gente guarda sobre você.</p>
+
+                    <% if (typeof msgSucesso !== 'undefined' && msgSucesso && typeof abaInicial !== 'undefined' && abaInicial === 'privacidade') { %>
+                        <p class="msg-sucesso"><%= msgSucesso %></p>
+                    <% } %>
+                    <% if (typeof msgErroConta !== 'undefined' && msgErroConta) { %>
+                        <p class="erro-msg"><%= msgErroConta %></p>
+                    <% } %>
+
+                    <h3 class="config-subtitulo">Cookies</h3>
+                    <p class="config-painel-descricao">
+                        Usamos só cookies essenciais (sessão e o aviso que você já viu). Sem rastreamento, sem publicidade.
+                        Veja os <a href="/termopriva">Termos de Privacidade</a> ou reveja o aviso quando quiser.
+                    </p>
+                    <div class="zona-risco-acoes">
+                        <button type="button" class="botao-secundario" id="btn-rever-cookies">Rever aviso de cookies</button>
                     </div>
+
+                    <hr class="config-divisor">
+
+                    <h3 class="config-subtitulo">Seus dados</h3>
+                    <p class="config-painel-descricao">
+                        Baixe uma cópia de tudo que temos associado à sua conta - perfil, dúvidas, respostas, notificações e mais,
+                        num arquivo <code>.json</code>.
+                    </p>
+                    <div class="config-links">
+                        <a href="/configuracoes/exportar-dados" class="config-link-botao">Baixar meus dados</a>
+                    </div>
+                    <p class="config-painel-descricao" style="margin-top: 12px;">
+                        Quer apagar seus dados em vez de exportar? Isso fica em <button type="button" class="link-inline" data-ir-para-aba="seguranca">Segurança</button>, na opção "Excluir conta".
+                    </p>
+
+                    <hr class="config-divisor">
+
+                    <h3 class="config-subtitulo">Visibilidade no fórum</h3>
+                    <form action="/configuracoes/privacidade" method="POST">
+                        <label class="config-toggle">
+                            <span class="config-toggle-texto">
+                                <strong>Mostrar meu nome no fórum</strong>
+                                <span>Desligado, suas <%= tipoUsuario === 'professor' ? 'respostas aparecem como "Professor(a) anônimo(a)"' : 'dúvidas aparecem como "Aluno anônimo"' %> pros outros usuários. A equipe da plataforma continua vendo seu nome para moderação.</span>
+                            </span>
+                            <input type="checkbox" class="config-toggle-input" name="perfil_publico"
+                                <%= (typeof perfilPublico !== 'undefined' && perfilPublico === false) ? '' : 'checked' %>>
+                            <span class="config-switch" aria-hidden="true"></span>
+                        </label>
+
+                        <button type="submit" class="botao-submit">Salvar preferências</button>
+                    </form>
                 </section>
 
                 <!-- ABA: APARÊNCIA -->

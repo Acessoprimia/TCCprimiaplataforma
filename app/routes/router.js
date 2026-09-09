@@ -541,9 +541,24 @@ function formatarNotificacao(notificacao) {
   };
 }
 
+// Quem desligou "perfil publico" em Configuracoes > Privacidade aparece
+// anonimo pros outros no forum. O id continua vindo do banco, entao as
+// permissoes (excluir a propria duvida, etc.) seguem funcionando - so o
+// nome exibido muda. O painel admin usa outras queries e continua vendo
+// o nome real pra moderacao.
+function nomeExibidoNoForum(nome, perfilPublico, rotulo) {
+  const escondido = perfilPublico === 0 || perfilPublico === false;
+  return escondido ? rotulo : nome;
+}
+
 function formatarDuvida(duvida) {
   return {
     ...duvida,
+    aluno_nome: nomeExibidoNoForum(
+      duvida.aluno_nome,
+      duvida.aluno_perfil_publico,
+      "Aluno anônimo"
+    ),
     materia_slug: slugMateria(duvida.materia),
     tempo: textoTempoRelativoSeguro(duvida.data_envio, duvida.segundos_desde_envio),
     serie_formatada: duvida.serie
@@ -551,6 +566,11 @@ function formatarDuvida(duvida) {
       : "Ensino Médio",
     respostas: (duvida.respostas || []).map((resposta) => ({
       ...resposta,
+      professor_nome: nomeExibidoNoForum(
+        resposta.professor_nome,
+        resposta.professor_perfil_publico,
+        "Professor(a) anônimo(a)"
+      ),
       tempo: textoTempoRelativoSeguro(resposta.data_resposta, resposta.segundos_desde_resposta),
     })),
   };
@@ -635,6 +655,38 @@ const ABAS_CONFIGURACOES = Object.freeze([
 const MENSAGENS_SUCESSO_CONFIGURACOES = Object.freeze({
   perfil: "Perfil atualizado com sucesso!",
   senha: "Senha alterada com sucesso!",
+  notificacoes: "Preferências de notificação salvas!",
+  privacidade: "Preferências de privacidade salvas!",
+});
+
+// Tipos de notificacao que o sistema realmente dispara hoje, separados
+// por quem recebe cada um. O ENUM do banco tem mais valores (reservados
+// pra usos futuros), mas so faz sentido mostrar toggle do que existe.
+const TIPOS_NOTIFICACAO_POR_PERFIL = Object.freeze({
+  [TIPOS_USUARIO.aluno]: [
+    {
+      tipo: "resposta_duvida",
+      titulo: "Respostas às suas dúvidas",
+      descricao: "Quando um professor responde uma dúvida que você enviou no fórum.",
+    },
+    {
+      tipo: "sistema",
+      titulo: "Avisos da plataforma",
+      descricao: "Pagamento aprovado, boas-vindas e outros avisos gerais da conta.",
+    },
+  ],
+  [TIPOS_USUARIO.professor]: [
+    {
+      tipo: "nova_duvida",
+      titulo: "Novas dúvidas na sua matéria",
+      descricao: "Quando um aluno envia uma dúvida da matéria que você leciona.",
+    },
+    {
+      tipo: "sistema",
+      titulo: "Avisos da plataforma",
+      descricao: "Aluno respondeu um simulado seu, boas-vindas e outros avisos gerais.",
+    },
+  ],
 });
 
 // Contexto completo da pagina /configuracoes - usado tanto no GET quanto
@@ -657,6 +709,18 @@ async function montarContextoConfiguracoes(req, tipoUsuario, overrides = {}) {
     };
   }
 
+  // Preferencias de notificacao: so vem linha do que a pessoa desligou,
+  // entao o padrao de qualquer tipo sem linha e ligado.
+  const preferenciasNotificacao = usuario
+    ? await Models.preferenciasNotificacao.buscarMapaPorUsuario(usuario.id).catch((erro) => {
+        console.error("Erro ao buscar preferencias de notificacao:", erro);
+        return {};
+      })
+    : {};
+
+  const tiposNotificacao = TIPOS_NOTIFICACAO_POR_PERFIL[tipoUsuario] || [];
+  const perfilPublico = usuario ? usuario.perfil_publico !== 0 : true;
+
   return {
     tipoUsuario,
     abaInicial: "perfil",
@@ -676,6 +740,9 @@ async function montarContextoConfiguracoes(req, tipoUsuario, overrides = {}) {
     msgErroConta: null,
     msgSucesso: null,
     assinatura,
+    tiposNotificacao,
+    preferenciasNotificacao,
+    perfilPublico,
     ...overrides,
   };
 }
@@ -4084,6 +4151,174 @@ router.post("/configuracoes/excluir", async function (req, res) {
   }
 });
 
+// Aba "Notificacoes" - liga/desliga cada tipo de aviso. Como o padrao e
+// ligado, so grava linha pro que veio desmarcado no formulario.
+router.post("/configuracoes/notificacoes", async function (req, res) {
+  const usuarioCookie = lerCookieUsuario(req);
+  const tipoUsuario = usuarioCookie?.tipo_usuario;
+
+  if (
+    !usuarioCookie ||
+    (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor)
+  ) {
+    return res.redirect("/login");
+  }
+
+  const tiposPermitidos = TIPOS_NOTIFICACAO_POR_PERFIL[tipoUsuario] || [];
+
+  try {
+    for (const { tipo } of tiposPermitidos) {
+      // checkbox desmarcado nao vem no body - ausencia significa desligado
+      const ativo = Boolean(req.body[`notificacao_${tipo}`]);
+
+      await Models.preferenciasNotificacao.definir({
+        idUsuario: usuarioCookie.id,
+        tipo,
+        ativo,
+      });
+    }
+
+    return res.redirect("/configuracoes?aba=notificacoes&salvo=notificacoes");
+  } catch (erro) {
+    console.error("Erro ao salvar preferencias de notificacao:", erro);
+
+    const contexto = await montarContextoConfiguracoes(req, tipoUsuario, {
+      abaInicial: "notificacoes",
+      msgErroConta: "Não foi possível salvar suas preferências agora. Tente novamente.",
+    });
+
+    return res.render(VIEWS.configuracoes, contexto);
+  }
+});
+
+// Aba "Privacidade" - visibilidade do nome no forum.
+router.post("/configuracoes/privacidade", async function (req, res) {
+  const usuarioCookie = lerCookieUsuario(req);
+  const tipoUsuario = usuarioCookie?.tipo_usuario;
+
+  if (
+    !usuarioCookie ||
+    (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor)
+  ) {
+    return res.redirect("/login");
+  }
+
+  try {
+    await Models.usuarios.atualizarPerfilPublico({
+      perfilPublico: Boolean(req.body.perfil_publico),
+      idUsuario: usuarioCookie.id,
+    });
+
+    return res.redirect("/configuracoes?aba=privacidade&salvo=privacidade");
+  } catch (erro) {
+    console.error("Erro ao salvar preferencias de privacidade:", erro);
+
+    const contexto = await montarContextoConfiguracoes(req, tipoUsuario, {
+      abaInicial: "privacidade",
+      msgErroConta: "Não foi possível salvar suas preferências agora. Tente novamente.",
+    });
+
+    return res.render(VIEWS.configuracoes, contexto);
+  }
+});
+
+// Aba "Privacidade" - exportacao dos proprios dados (LGPD). So le o que
+// ja existe nas tabelas atuais, sem precisar de coluna/tabela nova.
+router.get("/configuracoes/exportar-dados", async function (req, res) {
+  const usuarioCookie = lerCookieUsuario(req);
+  const tipoUsuario = usuarioCookie?.tipo_usuario;
+
+  if (
+    !usuarioCookie ||
+    (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor)
+  ) {
+    return res.redirect("/login");
+  }
+
+  const idUsuario = usuarioCookie.id;
+
+  try {
+    const dados = {
+      gerado_em: new Date().toISOString(),
+      tipo_conta: tipoUsuario,
+    };
+
+    if (tipoUsuario === TIPOS_USUARIO.aluno) {
+      const [
+        conta,
+        duvidasEnviadas,
+        redacoesResumo,
+        planoEstudoAvulso,
+        cronogramasGerados,
+        pagamentos,
+        assinaturaAtiva,
+        jaTevePremium,
+        notificacoes,
+        analiseDesempenho,
+      ] = await Promise.all([
+        Models.alunos.buscarPerfilCompleto(idUsuario),
+        Models.duvidas.listarPorAluno(idUsuario),
+        Models.redacoes.listarPorAluno(idUsuario),
+        Models.planoEstudo.listarPorAluno(idUsuario),
+        Models.planoEstudo.listarCronogramasGerados(idUsuario),
+        Models.pagamentos.listarPorAluno(idUsuario),
+        Models.assinaturas.buscarAtivaDetalhe(idUsuario),
+        Models.assinaturas.jaTevePremium(idUsuario),
+        Models.notificacoes.listarPorUsuario(idUsuario, 5000),
+        Models.resultados.buscarAnalise(idUsuario),
+      ]);
+
+      // redacoes.listarPorAluno so traz um resumo (sem o texto/correcao
+      // completos) - busca cada uma inteira, ja que sao poucas por aluno.
+      const redacoesCompletas = await Promise.all(
+        redacoesResumo.map((r) => Models.redacoes.buscarPorId(r.id_redacao))
+      );
+
+      dados.conta = conta;
+      dados.duvidas_enviadas = duvidasEnviadas;
+      dados.redacoes = redacoesCompletas.filter(Boolean);
+      dados.plano_de_estudo_itens_avulsos = planoEstudoAvulso;
+      dados.cronogramas_gerados_por_ia = cronogramasGerados;
+      dados.pagamentos = pagamentos;
+      dados.assinatura_premium = {
+        ativa_no_momento: Boolean(assinaturaAtiva),
+        detalhe: assinaturaAtiva,
+        ja_teve_premium_algum_dia: jaTevePremium,
+      };
+      dados.notificacoes = notificacoes;
+      dados.analise_de_desempenho = analiseDesempenho;
+    } else {
+      const [conta, duvidasDaMateria, respostasDadas, planosDeAula, notificacoes] =
+        await Promise.all([
+          Models.professores.buscarPerfilCompleto(idUsuario),
+          Models.duvidas.listarPorProfessor(idUsuario),
+          Models.respostas.listarPorProfessor(idUsuario),
+          Models.planoAula.listarCronogramasPorProfessor(idUsuario),
+          Models.notificacoes.listarPorUsuario(idUsuario, 5000),
+        ]);
+
+      dados.conta = conta;
+      dados.duvidas_da_sua_materia = duvidasDaMateria;
+      dados.respostas_que_voce_deu = respostasDadas;
+      dados.planos_de_aula_publicados = planosDeAula;
+      dados.notificacoes = notificacoes;
+    }
+
+    const nomeArquivo = `meus-dados-primia-${idUsuario}.json`;
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="${nomeArquivo}"`);
+    return res.send(JSON.stringify(dados, null, 2));
+  } catch (erro) {
+    console.error("Erro ao exportar dados do usuario:", erro);
+
+    const contexto = await montarContextoConfiguracoes(req, tipoUsuario, {
+      abaInicial: "privacidade",
+      msgErroConta: "Nao foi possivel gerar sua exportacao de dados agora. Tente novamente.",
+    });
+
+    return res.render(VIEWS.configuracoes, contexto);
+  }
+});
 
 module.exports = router;
 

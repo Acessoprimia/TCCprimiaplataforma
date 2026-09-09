@@ -10,6 +10,7 @@ const TABELAS = Object.freeze({
   duvidas: "Duvidas",
   respostas: "Respostas",
   notificacoes: "Notificacao",
+  preferenciasNotificacao: "Preferencia_Notificacao",
   denuncias: "Denuncia",
   conteudos: "Conteudo",
   mensagensContato: "Mensagem_Contato",

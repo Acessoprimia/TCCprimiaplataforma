@@ -5,7 +5,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- =========================================================
 -- TABELA: Usuario
-
+-- =========================================================
 
 CREATE TABLE Usuario (
     id_usuario INT NOT NULL AUTO_INCREMENT,
@@ -15,6 +15,7 @@ CREATE TABLE Usuario (
     tipo_usuario ENUM('aluno', 'professor', 'admin') NOT NULL,
     status ENUM('ativo', 'bloqueado', 'inativo') NOT NULL DEFAULT 'ativo',
     foto_url VARCHAR(255) NULL,
+    perfil_publico BOOLEAN NOT NULL DEFAULT TRUE,
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ultimo_login DATETIME NULL,
 
@@ -635,3 +636,30 @@ CREATE TABLE Pagamento (
 
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+CREATE TABLE Preferencia_Notificacao (
+    id_usuario INT NOT NULL,
+
+    tipo ENUM(
+        'nova_duvida',
+        'resposta_duvida',
+        'duvida_resolvida',
+        'duvida_removida',
+        'denuncia',
+        'sistema'
+    ) NOT NULL,
+
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+
+    atualizado_em DATETIME NOT NULL
+        DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_preferencia_notificacao PRIMARY KEY (id_usuario, tipo),
+
+    CONSTRAINT fk_preferencia_notificacao_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES Usuario(id_usuario)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);

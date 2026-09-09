@@ -7,6 +7,7 @@ module.exports = Object.freeze({
   duvidas: require("./duvidaModel"),
   respostas: require("./respostaModel"),
   notificacoes: require("./notificacaoModel"),
+  preferenciasNotificacao: require("./preferenciaNotificacaoModel"),
   contato: require("./contatoModel"),
   conteudos: require("./conteudoModel"),
   formularios: require("./formularioModel"),

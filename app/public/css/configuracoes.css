@@ -133,6 +133,29 @@ main {
     margin-bottom: 20px;
 }
 
+.config-painel-descricao code {
+    background: var(--cor-fundo-sutil);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+}
+
+/* botao que se parece com um link de texto no meio de uma frase */
+.link-inline {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.link-inline:hover {
+    color: var(--accent-forte, #897eb6);
+}
+
 /* MENSAGEM DE SUCESSO */
 .msg-sucesso {
     background-color: rgba(40, 167, 69, 0.1);
@@ -572,6 +595,85 @@ main {
 
 .tema-botao.ativo svg {
     opacity: 1;
+}
+
+/* ========================================
+   TOGGLE (notificacoes / privacidade)
+   ======================================== */
+.config-toggle {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--cor-borda);
+    cursor: pointer;
+}
+
+.config-toggle:last-of-type {
+    border-bottom: none;
+}
+
+.config-toggle-texto {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.config-toggle-texto strong {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--cor-texto);
+}
+
+.config-toggle-texto span {
+    font-size: 0.8125rem;
+    color: var(--cor-texto-suave);
+    line-height: 1.5;
+}
+
+/* checkbox real fica invisivel mas continua focavel pelo teclado */
+.config-toggle-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.config-switch {
+    flex-shrink: 0;
+    position: relative;
+    width: 44px;
+    height: 24px;
+    border-radius: 12px;
+    background-color: var(--c-ccc, #ccc);
+    transition: background-color 0.2s ease;
+}
+
+.config-switch::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: var(--cor-fundo-cartao, #fff);
+    transition: transform 0.2s ease;
+}
+
+.config-toggle-input:checked + .config-switch {
+    background-color: var(--accent);
+}
+
+.config-toggle-input:checked + .config-switch::after {
+    transform: translateX(20px);
+}
+
+.config-toggle-input:focus-visible + .config-switch {
+    outline: 3px solid var(--accent-forte, #8b83ac);
+    outline-offset: 2px;
 }
 
 /* ========================================

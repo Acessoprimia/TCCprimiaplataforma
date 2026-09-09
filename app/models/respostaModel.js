@@ -11,6 +11,7 @@ const queries = Object.freeze({
       TIMESTAMPDIFF(SECOND, r.data_resposta, NOW()) AS segundos_desde_resposta,
       p.id_professor,
       u.nome AS professor_nome,
+      u.perfil_publico AS professor_perfil_publico,
       m.nome AS materia
     FROM ${TABELAS.respostas} r
     INNER JOIN ${TABELAS.professores} p ON p.id_professor = r.id_professor
@@ -18,6 +19,21 @@ const queries = Object.freeze({
     LEFT JOIN ${TABELAS.materias} m ON m.id_materia = p.id_materia
     WHERE r.id_duvida = ?
     ORDER BY r.data_resposta ASC
+  `,
+  listarPorProfessor: `
+    SELECT
+      r.id_resposta,
+      r.id_duvida,
+      r.resposta,
+      r.data_resposta,
+      d.duvida AS duvida_texto,
+      m.nome AS materia
+    FROM ${TABELAS.respostas} r
+    INNER JOIN ${TABELAS.duvidas} d ON d.id_duvida = r.id_duvida
+    INNER JOIN ${TABELAS.forum} f ON f.id_forum = d.id_forum
+    INNER JOIN ${TABELAS.materias} m ON m.id_materia = f.id_materia
+    WHERE r.id_professor = ?
+    ORDER BY r.data_resposta DESC
   `,
   criar: `
     INSERT INTO ${TABELAS.respostas}
@@ -49,6 +65,11 @@ function banco(conexao) {
 const RespostaModel = Object.freeze({
   async listarPorDuvida(idDuvida, conexao) {
     const [respostas] = await banco(conexao).query(queries.listarPorDuvida, [idDuvida]);
+    return respostas;
+  },
+
+  async listarPorProfessor(idProfessor, conexao) {
+    const [respostas] = await banco(conexao).query(queries.listarPorProfessor, [idProfessor]);
     return respostas;
   },
 

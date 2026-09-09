@@ -40,6 +40,18 @@
     }
   }
 
+  // Apaga a escolha salva (usado quando a pessoa pede pra rever o aviso)
+  function apagarEscolha() {
+    document.cookie = COOKIE_NAME + "=; Path=/; SameSite=Strict; Max-Age=0";
+  }
+
+  // Exposto globalmente pra Configuracoes > Privacidade poder reabrir o
+  // aviso sob demanda, sem precisar esperar o cookie expirar sozinho.
+  window.primiaReabrirAvisoCookies = function () {
+    apagarEscolha();
+    showBanner();
+  };
+
   // Inicialização
   function init() {
     if (!banner) return;

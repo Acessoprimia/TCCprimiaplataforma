@@ -1,5 +1,6 @@
 const pool = require("../../db");
 const TABELAS = require("./tabelas");
+const PreferenciaNotificacaoModel = require("./preferenciaNotificacaoModel");
 
 const queries = Object.freeze({
   criar: `
@@ -46,7 +47,18 @@ function banco(conexao) {
 }
 
 const NotificacaoModel = Object.freeze({
+  // Respeita o que a pessoa escolheu em Configuracoes > Notificacoes: se
+  // ela desligou esse tipo, a notificacao simplesmente nao e criada.
+  // Se a consulta de preferencia falhar, cria mesmo assim (melhor uma
+  // notificacao a mais do que perder um aviso por causa de um erro).
   async criar({ idUsuario, tipo, titulo, mensagem, link = "/sobre" }, conexao) {
+    try {
+      const ativo = await PreferenciaNotificacaoModel.tipoEstaAtivo(idUsuario, tipo, conexao);
+      if (!ativo) return null;
+    } catch (erro) {
+      console.error("Erro ao checar preferencia de notificacao:", erro);
+    }
+
     const [resultado] = await banco(conexao).query(queries.criar, [
       idUsuario,
       tipo,

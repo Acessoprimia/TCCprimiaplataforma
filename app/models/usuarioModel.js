@@ -34,6 +34,11 @@ const queries = Object.freeze({
     SET foto_url = ?
     WHERE id_usuario = ?
   `,
+  atualizarPerfilPublico: `
+    UPDATE ${TABELAS.usuarios}
+    SET perfil_publico = ?
+    WHERE id_usuario = ?
+  `,
   alterarTipoConta: `
     UPDATE ${TABELAS.usuarios}
     SET tipo_usuario = ?
@@ -109,6 +114,14 @@ const UsuarioModel = Object.freeze({
 
   async atualizarFoto({ fotoUrl, idUsuario }, conexao) {
     const [resultado] = await banco(conexao).query(queries.atualizarFoto, [fotoUrl, idUsuario]);
+    return resultado;
+  },
+
+  async atualizarPerfilPublico({ perfilPublico, idUsuario }, conexao) {
+    const [resultado] = await banco(conexao).query(queries.atualizarPerfilPublico, [
+      Boolean(perfilPublico),
+      idUsuario,
+    ]);
     return resultado;
   },
 

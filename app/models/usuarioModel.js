@@ -3,7 +3,7 @@ const TABELAS = require("./tabelas");
 
 const queries = Object.freeze({
   buscarPorEmail: `
-    SELECT id_usuario, nome, email, senha, tipo_usuario, status
+    SELECT id_usuario, nome, email, senha, tipo_usuario, status, email_verificado
     FROM ${TABELAS.usuarios}
     WHERE email = ?
     LIMIT 1
@@ -16,8 +16,18 @@ const queries = Object.freeze({
   `,
   criarUsuario: `
     INSERT INTO ${TABELAS.usuarios}
-      (nome, senha, email, tipo_usuario, status)
-    VALUES (?, ?, ?, ?, ?)
+      (nome, senha, email, tipo_usuario, status, token_verificacao_email, token_verificacao_email_expira)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `,
+  confirmarEmailPorToken: `
+    UPDATE ${TABELAS.usuarios}
+    SET email_verificado = TRUE, token_verificacao_email = NULL, token_verificacao_email_expira = NULL
+    WHERE token_verificacao_email = ? AND token_verificacao_email_expira > NOW()
+  `,
+  salvarTokenVerificacaoEmail: `
+    UPDATE ${TABELAS.usuarios}
+    SET token_verificacao_email = ?, token_verificacao_email_expira = ?
+    WHERE id_usuario = ? AND email_verificado = FALSE
   `,
   atualizarPerfilBasico: `
     UPDATE ${TABELAS.usuarios}
@@ -83,16 +93,35 @@ const UsuarioModel = Object.freeze({
     return usuarios.length > 0;
   },
 
-  async criar({ nome, senhaCriptografada, email, tipoUsuario, status }, conexao) {
+  async criar(
+    { nome, senhaCriptografada, email, tipoUsuario, status, tokenVerificacao, tokenVerificacaoExpira },
+    conexao
+  ) {
     const [resultado] = await banco(conexao).query(queries.criarUsuario, [
       nome,
       senhaCriptografada,
       email,
       tipoUsuario,
       status,
+      tokenVerificacao || null,
+      tokenVerificacaoExpira || null,
     ]);
 
     return resultado.insertId;
+  },
+
+  async confirmarEmailPorToken(token, conexao) {
+    const [resultado] = await banco(conexao).query(queries.confirmarEmailPorToken, [token]);
+    return resultado.affectedRows > 0;
+  },
+
+  async salvarTokenVerificacaoEmail({ idUsuario, token, expiraEm }, conexao) {
+    const [resultado] = await banco(conexao).query(queries.salvarTokenVerificacaoEmail, [
+      token,
+      expiraEm,
+      idUsuario,
+    ]);
+    return resultado.affectedRows > 0;
   },
 
   async atualizarPerfilBasico({ nome, email, idUsuario }, conexao) {

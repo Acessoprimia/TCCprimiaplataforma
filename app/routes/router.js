@@ -47,6 +47,7 @@ const VIEWS = Object.freeze({
   cadastro: "pages/cadastro",
   cadastroProfessor: "pages/cadastroprofessor",
   configuracoes: "pages/configuracoes",
+  confirmarEmail: "pages/confirmarEmail",
 });
 
 const VALORES_INICIAIS_CADASTRO_ALUNO = Object.freeze({
@@ -386,19 +387,39 @@ async function emailJaCadastrado(conexao, email) {
   return Models.usuarios.emailJaCadastrado(email, conexao);
 }
 
+function gerarTokenVerificacaoEmail() {
+  const token = crypto.randomBytes(32).toString("hex");
+  const expiraEm = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  return { token, expiraEm };
+}
+
 async function cadastrarUsuarioBase(conexao, { nome, email, senha, tipoUsuario }) {
   const senhaCriptografada = await bcrypt.hash(senha, 10);
+  const { token, expiraEm } = gerarTokenVerificacaoEmail();
+
   // senha salva criptografada no banco com Hash
-  return Models.usuarios.criar(
+  const idUsuario = await Models.usuarios.criar(
     {
       nome,
       senhaCriptografada,
       email,
       tipoUsuario,
       status: STATUS_CONTA.ativo,
+      tokenVerificacao: token,
+      tokenVerificacaoExpira: expiraEm,
     },
     conexao
   );
+
+  return { idUsuario, tokenVerificacaoEmail: token };
+}
+
+async function enviarEmailConfirmacaoSeguro({ nome, email, token }) {
+  try {
+    await MailService.enviarEmailConfirmacao({ nome, email, token });
+  } catch (erro) {
+    console.error("Erro ao enviar e-mail de confirmacao:", erro);
+  }
 }
 
 async function buscarOuCriarMateria(conexao, nomeMateria) {
@@ -3472,6 +3493,56 @@ router.post("/api/notificacoes/marcar-todas", async function (req, res) {
 });
 
 
+// ========== ROTA CONFIRMACAO DE E-MAIL ==========
+router.get("/confirmar-email", async (req, res) => {
+  const token = String(req.query.token || "");
+
+  if (!token) {
+    return res.render(VIEWS.confirmarEmail, { status: "erro" });
+  }
+
+  try {
+    const confirmado = await Models.usuarios.confirmarEmailPorToken(token);
+    return res.render(VIEWS.confirmarEmail, { status: confirmado ? "sucesso" : "erro" });
+  } catch (erro) {
+    console.error("Erro ao confirmar e-mail:", erro);
+    return res.render(VIEWS.confirmarEmail, { status: "erro" });
+  }
+});
+
+router.post(
+  "/confirmar-email/reenviar",
+  body("email").notEmpty().isEmail(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.render(VIEWS.confirmarEmail, { status: "erro" });
+    }
+
+    const { email } = req.body;
+
+    try {
+      const usuario = await Models.usuarios.buscarPorEmail(email);
+
+      if (usuario && !usuario.email_verificado) {
+        const { token, expiraEm } = gerarTokenVerificacaoEmail();
+        await Models.usuarios.salvarTokenVerificacaoEmail({
+          idUsuario: usuario.id_usuario,
+          token,
+          expiraEm,
+        });
+        await enviarEmailConfirmacaoSeguro({ nome: usuario.nome, email, token });
+      }
+
+      // Sempre mostra a mesma mensagem, exista ou nao a conta, para nao vazar quais e-mails estao cadastrados.
+      return res.render(VIEWS.confirmarEmail, { status: "reenviado" });
+    } catch (erro) {
+      console.error("Erro ao reenviar confirmacao de e-mail:", erro);
+      return res.render(VIEWS.confirmarEmail, { status: "erro" });
+    }
+  }
+);
+
 // ========== ROTA GET CADASTRO ==========
 router.get("/cadastro", (req, res) => {
   renderizarCadastroAluno(res);
@@ -3563,7 +3634,7 @@ router.post(
         });
       }
 
-      const idUsuario = await cadastrarUsuarioBase(conexao, {
+      const { idUsuario, tokenVerificacaoEmail } = await cadastrarUsuarioBase(conexao, {
         nome,
         email,
         senha,
@@ -3590,6 +3661,8 @@ router.post(
         conexao
       );
       await conexao.commit();
+
+      enviarEmailConfirmacaoSeguro({ nome, email, token: tokenVerificacaoEmail });
 
       criarCookieUsuario(res, {
         id: idUsuario,
@@ -3683,7 +3756,7 @@ router.post(
         });
       }
 
-      const idUsuario = await cadastrarUsuarioBase(conexao, {
+      const { idUsuario, tokenVerificacaoEmail } = await cadastrarUsuarioBase(conexao, {
         nome: nomeCompleto,
         email,
         senha,
@@ -3712,6 +3785,8 @@ router.post(
         conexao
       );
       await conexao.commit();
+
+      enviarEmailConfirmacaoSeguro({ nome: nomeCompleto, email, token: tokenVerificacaoEmail });
 
       criarCookieUsuario(res, {
         id: idUsuario,

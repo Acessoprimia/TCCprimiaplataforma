@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Confirmação de e-mail - Primia</title>
+
+    <link href="../css/premium.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <%- include('../partials/header.ejs') %>
+
+    <main class="container-premium-retorno">
+
+        <% if (status === 'sucesso') { %>
+
+            <section class="card-retorno sucesso">
+
+                <h1>E-mail confirmado!</h1>
+
+                <p>
+                    Seu e-mail foi confirmado com sucesso. Agora você já pode
+                    aproveitar tudo o que a Primia tem para oferecer.
+                </p>
+
+            </section>
+
+        <% } else if (status === 'reenviado') { %>
+
+            <section class="card-retorno pendente">
+
+                <h1>Verifique seu e-mail</h1>
+
+                <p>
+                    Se houver uma conta pendente de confirmação para esse e-mail,
+                    acabamos de enviar um novo link. Confira sua caixa de entrada
+                    (e o spam) e clique no link para confirmar.
+                </p>
+
+            </section>
+
+        <% } else { %>
+
+            <section class="card-retorno erro">
+
+                <h1>Link inválido ou expirado</h1>
+
+                <p>
+                    Não conseguimos confirmar seu e-mail. O link pode já ter sido
+                    usado ou expirou depois de 24 horas. Informe seu e-mail abaixo
+                    para receber um novo link de confirmação.
+                </p>
+
+                <form action="/confirmar-email/reenviar" method="POST" class="form-reenviar-confirmacao">
+                    <input type="email" name="email" placeholder="Seu e-mail" required>
+                    <button type="submit" class="botao-voltar-retorno">Reenviar confirmação</button>
+                </form>
+
+            </section>
+
+        <% } %>
+
+        <a href="/entrada" class="botao-voltar-retorno">
+            Voltar para o início
+        </a>
+
+    </main>
+
+    <%- include('../partials/footer.ejs') %>
+
+</body>
+
+</html>

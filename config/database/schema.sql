@@ -19,6 +19,10 @@ CREATE TABLE Usuario (
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ultimo_login DATETIME NULL,
 
+    email_verificado BOOLEAN NOT NULL DEFAULT FALSE,
+    token_verificacao_email VARCHAR(64) NULL,
+    token_verificacao_email_expira DATETIME NULL,
+
     CONSTRAINT pk_usuario PRIMARY KEY (id_usuario),
     CONSTRAINT uq_usuario_email UNIQUE (email)
 );

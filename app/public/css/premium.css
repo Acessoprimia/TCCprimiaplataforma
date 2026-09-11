@@ -213,6 +213,28 @@ body {
     background-color: var(--accent, #a399c8);
 }
 
+.form-reenviar-confirmacao {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.form-reenviar-confirmacao input[type="email"] {
+    padding: 10px 16px;
+    border-radius: 50px;
+    border: 1px solid var(--accent-suave, #b5a9d8);
+    font-size: 0.875rem;
+    min-width: 220px;
+}
+
+.form-reenviar-confirmacao button {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
 /* ---- HISTÓRICO DE PAGAMENTOS ---- */
 .container-premium-historico {
     width: 100%;

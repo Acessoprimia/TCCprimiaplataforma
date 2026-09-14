@@ -29,6 +29,20 @@
 
             </section>
 
+        <% } else if (status === 'cadastrado') { %>
+
+            <section class="card-retorno pendente">
+
+                <h1>Falta pouco!</h1>
+
+                <p>
+                    Seu cadastro foi criado. Enviamos um link de confirmação para
+                    o seu e-mail — confira a caixa de entrada (e o spam) e clique
+                    nele antes de entrar na plataforma.
+                </p>
+
+            </section>
+
         <% } else if (status === 'reenviado') { %>
 
             <section class="card-retorno pendente">
@@ -64,8 +78,8 @@
 
         <% } %>
 
-        <a href="/entrada" class="botao-voltar-retorno">
-            Voltar para o início
+        <a href="<%= status === 'cadastrado' || status === 'erro' || status === 'reenviado' ? '/login' : '/entrada' %>" class="botao-voltar-retorno">
+            <%= status === 'sucesso' ? 'Entrar' : 'Ir para o login' %>
         </a>
 
     </main>

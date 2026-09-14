@@ -17,29 +17,36 @@
         <h1 class="titulo-simulados">Meus simulados</h1>
 
         <!-- GERAR NOVO SIMULADO -->
-        <section class="gerar-simulado-container">
-            <h2>Gerar simulado com IA</h2>
-            <form action="/areadosimulado/gerar" method="POST" class="gerar-simulado-form">
-                <input type="text" name="tema" placeholder="Sobre qual tema? Ex: Frações e números racionais" required>
-                <select name="materia_id">
-                    <option value="">Sem matéria específica</option>
-                    <% materias.forEach(function (materia) { %>
-                        <option value="<%= materia.id_materia %>"><%= materia.nome %></option>
-                    <% }) %>
-                </select>
-                <select name="quantidade">
-                    <% for (let i = 1; i <= 10; i++) { %>
-                        <option value="<%= i %>" <%= i === 5 ? 'selected' : '' %>><%= i %> pergunta<%= i > 1 ? 's' : '' %></option>
-                    <% } %>
-                </select>
-                <select name="dificuldade">
-                    <option value="facil">Fácil</option>
-                    <option value="medio" selected>Médio</option>
-                    <option value="dificil">Difícil</option>
-                </select>
-                <button type="submit">Gerar</button>
-            </form>
-        </section>
+        <% if (ehPremium) { %>
+            <section class="gerar-simulado-container">
+                <h2>Gerar simulado com IA</h2>
+                <form action="/areadosimulado/gerar" method="POST" class="gerar-simulado-form">
+                    <input type="text" name="tema" placeholder="Sobre qual tema? Ex: Frações e números racionais" required>
+                    <select name="materia_id">
+                        <option value="">Sem matéria específica</option>
+                        <% materias.forEach(function (materia) { %>
+                            <option value="<%= materia.id_materia %>"><%= materia.nome %></option>
+                        <% }) %>
+                    </select>
+                    <select name="quantidade">
+                        <% for (let i = 1; i <= 10; i++) { %>
+                            <option value="<%= i %>" <%= i === 5 ? 'selected' : '' %>><%= i %> pergunta<%= i > 1 ? 's' : '' %></option>
+                        <% } %>
+                    </select>
+                    <select name="dificuldade">
+                        <option value="facil">Fácil</option>
+                        <option value="medio" selected>Médio</option>
+                        <option value="dificil">Difícil</option>
+                    </select>
+                    <button type="submit">Gerar</button>
+                </form>
+            </section>
+        <% } else { %>
+            <section class="upsell-premium-simulado">
+                <p>✨ Assinantes premium podem gerar o próprio simulado com IA e acessam simulados exclusivos publicados pelos professores.</p>
+                <a href="/partepremium">Conhecer o premium</a>
+            </section>
+        <% } %>
 
         <!-- ABAS DE FILTRO -->
         <nav class="abas-filtro">

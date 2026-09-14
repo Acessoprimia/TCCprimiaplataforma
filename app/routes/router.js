@@ -1749,6 +1749,8 @@ router.get("/areadosimulado", async function (req, res) {
     return res.redirect("/login");
   }
 
+  const ehPremium = await Models.assinaturas.estaAtiva(usuarioBase.id);
+
   const [materias, meusFormulariosBase, publicadosBase] = await Promise.all([
     Models.materias.listarAtivas(),
     Models.formularios.listarPorAluno(usuarioBase.id),
@@ -1758,9 +1760,15 @@ router.get("/areadosimulado", async function (req, res) {
   const meusFormularios = (await anexarStatusResposta(meusFormulariosBase, usuarioBase.id)).map(
     (formulario) => ({ ...formulario, origem: "Gerado por voce" })
   );
-  const publicados = (await anexarStatusResposta(publicadosBase, usuarioBase.id)).map(
-    (formulario) => ({ ...formulario, origem: `Professor ${formulario.professor || ""}`.trim() })
-  );
+  // Formularios publicados por professor sao sempre premium (mesmo sem
+  // coluna is_premium - ver nota em formularioModel.js) - nao mostra pra
+  // aluno gratuito, senao ele veria e conseguiria abrir um conteudo que
+  // deveria ser exclusivo.
+  const publicados = ehPremium
+    ? (await anexarStatusResposta(publicadosBase, usuarioBase.id)).map(
+        (formulario) => ({ ...formulario, origem: `Professor ${formulario.professor || ""}`.trim() })
+      )
+    : [];
 
   const todos = [...meusFormularios, ...publicados];
 
@@ -1768,6 +1776,7 @@ router.get("/areadosimulado", async function (req, res) {
     materias,
     emAndamento: todos.filter((formulario) => !formulario.respondido),
     finalizados: todos.filter((formulario) => formulario.respondido),
+    ehPremium,
     msgErro: null,
   });
 });
@@ -1780,6 +1789,10 @@ router.post(
 
     if (!usuarioBase) {
       return res.redirect("/login");
+    }
+
+    if (!(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
+      return redirecionarFaltaPremium(usuarioBase.id, res);
     }
 
     const { tema, materia_id, quantidade, dificuldade } = req.body;
@@ -1832,6 +1845,10 @@ router.get("/simulado/:id", async function (req, res) {
     });
   }
 
+  if (formulario.id_professor && !(await Models.assinaturas.estaAtiva(usuarioAluno.id))) {
+    return redirecionarFaltaPremium(usuarioAluno.id, res);
+  }
+
   const respostas = await Models.formularios.listarRespostas(formulario.id_formulario, usuarioAluno.id);
   const respostasPorPergunta = Object.fromEntries(respostas.map((r) => [r.pergunta_ref, r]));
 
@@ -1853,6 +1870,10 @@ router.post("/simulado/:id/responder", async function (req, res) {
 
   if (!formulario) {
     return res.redirect("/areadosimulado");
+  }
+
+  if (formulario.id_professor && !(await Models.assinaturas.estaAtiva(usuarioBase.id))) {
+    return redirecionarFaltaPremium(usuarioBase.id, res);
   }
 
   const jaRespondeu = await Models.formularios.listarRespostas(formulario.id_formulario, usuarioBase.id);
@@ -3498,7 +3519,8 @@ router.get("/confirmar-email", async (req, res) => {
   const token = String(req.query.token || "");
 
   if (!token) {
-    return res.render(VIEWS.confirmarEmail, { status: "erro" });
+    const status = req.query.status === "cadastrado" ? "cadastrado" : "erro";
+    return res.render(VIEWS.confirmarEmail, { status });
   }
 
   try {
@@ -3655,7 +3677,8 @@ router.post(
           idUsuario: idUsuario,
           tipo: "sistema",
           titulo: "Bem-vindo à Primia",
-          mensagem: "Seu cadastro foi criado com sucesso. Conheça a plataforma.",
+          mensagem:
+            "Seu cadastro foi criado com sucesso. Conheça a plataforma. Enviamos um e-mail de confirmação - se não encontrar na caixa de entrada, confira o spam.",
           link: "/sobre",
         },
         conexao
@@ -3664,17 +3687,7 @@ router.post(
 
       enviarEmailConfirmacaoSeguro({ nome, email, token: tokenVerificacaoEmail });
 
-      criarCookieUsuario(res, {
-        id: idUsuario,
-        nome,
-        email,
-        tipo_usuario: TIPOS_USUARIO.aluno,
-        ra,
-        serie,
-        data_nascimento,
-      });
-
-      return res.redirect(rotaInicialPorTipoUsuario(TIPOS_USUARIO.aluno));
+      return res.redirect("/confirmar-email?status=cadastrado");
     } catch (erro) {
       await conexao.rollback();
       console.error("Erro ao cadastrar aluno:", erro);
@@ -3779,7 +3792,8 @@ router.post(
           idUsuario: idUsuario,
           tipo: "sistema",
           titulo: "Bem-vindo à Primia",
-          mensagem: "Seu cadastro de professor foi criado com sucesso.",
+          mensagem:
+            "Seu cadastro de professor foi criado com sucesso. Enviamos um e-mail de confirmação - se não encontrar na caixa de entrada, confira o spam.",
           link: "/sobre",
         },
         conexao
@@ -3788,16 +3802,7 @@ router.post(
 
       enviarEmailConfirmacaoSeguro({ nome: nomeCompleto, email, token: tokenVerificacaoEmail });
 
-      criarCookieUsuario(res, {
-        id: idUsuario,
-        nome: nomeCompleto,
-        email,
-        tipo_usuario: TIPOS_USUARIO.professor,
-        materia: materia ? `Materia: ${materia}` : "Materia: Exemplo",
-        data_nascimento: dataNascimento,
-      });
-
-      return res.redirect(rotaInicialPorTipoUsuario(TIPOS_USUARIO.professor));
+      return res.redirect("/confirmar-email?status=cadastrado");
     } catch (erro) {
       await conexao.rollback();
       console.error("Erro ao cadastrar professor:", erro);
@@ -3877,6 +3882,13 @@ router.post(
       if (!senhaValida) {
         return renderizarLogin(res, req.body, {
           geral: "E-mail ou senha incorretos.",
+        });
+      }
+
+      if (!usuario.email_verificado) {
+        return renderizarLogin(res, req.body, {
+          geral:
+            'Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada (ou spam), ou <a href="/confirmar-email">solicite um novo link de confirmação</a>.',
         });
       }
 

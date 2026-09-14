@@ -41,7 +41,7 @@
                 <p id="erro-senha" class="erro-msg"><%= typeof msgErro !== 'undefined' && msgErro && msgErro.senha ? msgErro.senha : '' %></p>
 
                 <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.geral) { %>
-                    <p class="erro-msg erro-login-geral"><%= msgErro.geral %></p>
+                    <p class="erro-msg erro-login-geral"><%- msgErro.geral %></p>
                 <% } %>
 
                 <!-- LINK ESQUECEU A SENHA -->

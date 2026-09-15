@@ -48,6 +48,8 @@ const VIEWS = Object.freeze({
   cadastroProfessor: "pages/cadastroprofessor",
   configuracoes: "pages/configuracoes",
   confirmarEmail: "pages/confirmarEmail",
+  recuperarSenha: "pages/recuperarSenha",
+  redefinirSenha: "pages/redefinirSenha",
 });
 
 const VALORES_INICIAIS_CADASTRO_ALUNO = Object.freeze({
@@ -374,12 +376,13 @@ async function renderizarCadastroProfessor(res, valores = VALORES_INICIAIS_CADAS
   });
 }
 
-function renderizarLogin(res, valores = VALORES_INICIAIS_LOGIN, msgErro = {}) {
+function renderizarLogin(res, valores = VALORES_INICIAIS_LOGIN, msgErro = {}, aviso = null) {
   return res.render(VIEWS.login, {
     erros: null,
     valores,
     erroValidacao: {},
     msgErro,
+    aviso,
   });
 }
 
@@ -390,6 +393,14 @@ async function emailJaCadastrado(conexao, email) {
 function gerarTokenVerificacaoEmail() {
   const token = crypto.randomBytes(32).toString("hex");
   const expiraEm = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  return { token, expiraEm };
+}
+
+// Validade curta de proposito: redefinir senha e mais sensivel que confirmar
+// e-mail, entao o link vive 1 hora em vez das 24h da confirmacao.
+function gerarTokenRedefinicaoSenha() {
+  const token = crypto.randomBytes(32).toString("hex");
+  const expiraEm = new Date(Date.now() + 60 * 60 * 1000);
   return { token, expiraEm };
 }
 
@@ -419,6 +430,14 @@ async function enviarEmailConfirmacaoSeguro({ nome, email, token }) {
     await MailService.enviarEmailConfirmacao({ nome, email, token });
   } catch (erro) {
     console.error("Erro ao enviar e-mail de confirmacao:", erro);
+  }
+}
+
+async function enviarEmailRedefinicaoSenhaSeguro({ nome, email, token }) {
+  try {
+    await MailService.enviarEmailRedefinicaoSenha({ nome, email, token });
+  } catch (erro) {
+    console.error("Erro ao enviar e-mail de redefinicao de senha:", erro);
   }
 }
 
@@ -3565,6 +3584,119 @@ router.post(
   }
 );
 
+// ========== ROTAS "ESQUECI MINHA SENHA" ==========
+router.get("/recuperar-senha", (req, res) => {
+  res.render(VIEWS.recuperarSenha, { status: null, msgErro: null, valores: { email: "" } });
+});
+
+router.post(
+  "/recuperar-senha",
+  body("email")
+    .trim()
+    .notEmpty().withMessage("Informe seu e-mail.")
+    .isEmail().withMessage("Informe um e-mail valido."),
+  async (req, res) => {
+    const errors = validationResult(req);
+    const email = String(req.body.email || "").trim();
+
+    if (!errors.isEmpty()) {
+      const { msgErro } = montarErrosValidacao(errors);
+      return res.render(VIEWS.recuperarSenha, { status: null, msgErro, valores: { email } });
+    }
+
+    try {
+      const usuario = await Models.usuarios.buscarPorEmail(email);
+
+      if (usuario) {
+        const { token, expiraEm } = gerarTokenRedefinicaoSenha();
+        await Models.usuarios.salvarTokenRedefinicaoSenha({
+          idUsuario: usuario.id_usuario,
+          token,
+          expiraEm,
+        });
+        await enviarEmailRedefinicaoSenhaSeguro({ nome: usuario.nome, email, token });
+      }
+
+      // Mesma resposta exista ou nao a conta, senao a tela vira um detector de
+      // quais e-mails estao cadastrados (mesma decisao ja tomada no reenvio de
+      // confirmacao de e-mail).
+      return res.render(VIEWS.recuperarSenha, {
+        status: "enviado",
+        msgErro: null,
+        valores: { email: "" },
+      });
+    } catch (erro) {
+      console.error("Erro ao iniciar redefinicao de senha:", erro);
+      return res.render(VIEWS.recuperarSenha, {
+        status: null,
+        msgErro: { geral: "Nao foi possivel enviar o link agora. Tente novamente." },
+        valores: { email },
+      });
+    }
+  }
+);
+
+router.get("/redefinir-senha", async (req, res) => {
+  const token = String(req.query.token || "");
+
+  if (!token) {
+    return res.render(VIEWS.redefinirSenha, { tokenValido: false, token: "", msgErro: null });
+  }
+
+  try {
+    const tokenValido = await Models.usuarios.tokenRedefinicaoSenhaValido(token);
+    return res.render(VIEWS.redefinirSenha, { tokenValido, token, msgErro: null });
+  } catch (erro) {
+    console.error("Erro ao validar token de redefinicao:", erro);
+    return res.render(VIEWS.redefinirSenha, { tokenValido: false, token: "", msgErro: null });
+  }
+});
+
+router.post(
+  "/redefinir-senha",
+
+  body("senha")
+    .notEmpty().withMessage("A senha e obrigatoria.")
+    .isLength({ min: 8, max: 15 }).withMessage("A senha deve ter entre 8 e 15 caracteres!"),
+  body("confirmar-senha").custom((value, { req }) => {
+    if (value !== req.body.senha) {
+      throw new Error("As senhas nao conferem!");
+    }
+    return true;
+  }),
+
+  async (req, res) => {
+    const token = String(req.body.token || "");
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const { msgErro } = montarErrosValidacao(errors);
+      return res.render(VIEWS.redefinirSenha, { tokenValido: true, token, msgErro });
+    }
+
+    try {
+      const senhaCriptografada = await bcrypt.hash(req.body.senha, 10);
+      const redefinida = await Models.usuarios.redefinirSenhaPorToken({
+        token,
+        senhaCriptografada,
+      });
+
+      if (!redefinida) {
+        return res.render(VIEWS.redefinirSenha, { tokenValido: false, token: "", msgErro: null });
+      }
+
+      return res.redirect("/login?senha=redefinida");
+    } catch (erro) {
+      console.error("Erro ao redefinir senha:", erro);
+      return res.render(VIEWS.redefinirSenha, {
+        tokenValido: true,
+        token,
+        msgErro: { geral: "Nao foi possivel redefinir a senha. Tente novamente." },
+      });
+    }
+  }
+);
+
 // ========== ROTA GET CADASTRO ==========
 router.get("/cadastro", (req, res) => {
   renderizarCadastroAluno(res);
@@ -3821,7 +3953,12 @@ router.post(
 
 // ========== ROTA GET LOGIN ==========
 router.get("/login", (req, res) => {
-  renderizarLogin(res);
+  const aviso =
+    req.query.senha === "redefinida"
+      ? "Senha redefinida com sucesso! Entre com a nova senha."
+      : null;
+
+  renderizarLogin(res, VALORES_INICIAIS_LOGIN, {}, aviso);
 });
 
 router.get("/loginprofessor", (req, res) => {

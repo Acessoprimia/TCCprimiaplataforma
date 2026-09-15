@@ -23,6 +23,9 @@ CREATE TABLE Usuario (
     token_verificacao_email VARCHAR(64) NULL,
     token_verificacao_email_expira DATETIME NULL,
 
+    token_redefinicao_senha VARCHAR(64) NULL,
+    token_redefinicao_senha_expira DATETIME NULL,
+
     CONSTRAINT pk_usuario PRIMARY KEY (id_usuario),
     CONSTRAINT uq_usuario_email UNIQUE (email)
 );

@@ -1,12 +1,5 @@
-// Monta a grade semanal (dias nas colunas, horarios nas linhas) e gera a
-// rotina generica do aluno gratuito.
-//
-// Regra importante da grade: as LINHAS de horario sao derivadas dos
-// horarios que realmente existem nos dados. Antes a tela usava uma faixa
-// fixa de 07:00 as 19:00 e qualquer evento fora disso simplesmente
-// sumia da tela (era o motivo dos cronogramas de IA aparecerem vazios,
-// porque a IA colocava tudo as 19:00). Derivando as linhas do proprio
-// dado, nenhum evento pode ficar invisivel.
+// Monta a grade semanal (dias nas colunas, horarios nas linhas) 
+
 
 const DIAS_SEMANA = [
   "Domingo",
@@ -46,23 +39,11 @@ const BLOCOS_ROTINA_GENERICA = Object.freeze([
   { inicio: "16:00", fim: "17:00" },
 ]);
 
-// Cada materia percorre esse ciclo na ordem em que aparece na semana.
-// Amarrar o tipo a OCORRENCIA DA MATERIA (e nao ao indice do bloco) e o
-// que garante variedade - com tipo derivado de indice por aritmetica
-// modular, materia em quantidade multipla do ciclo cai sempre no mesmo
-// tipo.
-//
-// Exercicios e simulado sao premium (mesmo pacote que ja gate exercicios/
-// simulados/videoaulas no restante da plataforma); aluno gratuito so
-// tem estudo e revisao no cronograma generico.
+
 const CICLO_ATIVIDADE_PREMIUM = Object.freeze(["estudo", "exercicios", "revisao"]);
 const CICLO_ATIVIDADE_GRATIS = Object.freeze(["estudo", "revisao"]);
 
-// Janela de horarios possiveis pra um cronograma gerado por IA: 4 blocos
-// de manha (08h-12h) + 4 de tarde (14h-18h), sempre pulando o almoco. E
-// o teto de quantos eventos cabem num unico dia sem virar rotina irreal
-// - usado tanto pro "diario" (tudo num dia so) quanto pra distribuir
-// quantos blocos por dia o "semanal" recebe.
+
 const JANELA_HORARIOS_IA = Object.freeze([
   { hora_inicio: "08:00", hora_fim: "09:00" },
   { hora_inicio: "09:00", hora_fim: "10:00" },
@@ -106,8 +87,7 @@ function somarUmaHora(hora) {
   return `${String((h + 1) % 24).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
-// Segunda-feira da semana da data informada (usada pra agrupar
-// cronogramas que passam de uma semana em varias grades).
+
 function segundaDaSemana(data) {
   const copia = new Date(data.getFullYear(), data.getMonth(), data.getDate());
   const diaSemana = copia.getDay();

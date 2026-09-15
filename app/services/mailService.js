@@ -50,6 +50,34 @@ const MailService = Object.freeze({
       `,
     });
   },
+
+  async enviarEmailRedefinicaoSenha({ nome, email, token }) {
+    const urlBase = process.env.URL_BASE_SITE || `http://localhost:${process.env.PORT || 3000}`;
+    const link = `${urlBase}/redefinir-senha?token=${token}`;
+
+    await sgMail.send({
+      from: { email: EMAIL_REMETENTE, name: "Primia" },
+      to: email,
+      subject: "Redefinicao de senha - Primia",
+      text: [
+        `Ola, ${nome}!`,
+        ``,
+        `Recebemos um pedido para redefinir a senha da sua conta na Primia.`,
+        `Crie uma nova senha pelo link abaixo (valido por 1 hora):`,
+        link,
+        ``,
+        `Se voce nao pediu isso, ignore esta mensagem - sua senha atual continua valendo.`,
+      ].join("\n"),
+      html: `
+        <p>Ola, ${nome}!</p>
+        <p>Recebemos um pedido para redefinir a senha da sua conta na Primia.</p>
+        <p>Crie uma nova senha clicando no botao abaixo (valido por 1 hora):</p>
+        <p><a href="${link}" style="display:inline-block;padding:10px 20px;background:#2f6fed;color:#fff;text-decoration:none;border-radius:6px;">Redefinir senha</a></p>
+        <p>Ou copie e cole este link no navegador:<br>${link}</p>
+        <p>Se voce nao pediu isso, ignore esta mensagem - sua senha atual continua valendo.</p>
+      `,
+    });
+  },
 });
 
 module.exports = MailService;

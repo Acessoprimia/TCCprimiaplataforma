@@ -1,0 +1,44 @@
+/* Telas de recuperacao/redefinicao de senha.
+   Reaproveitam login.css (campos, botao, mensagens de erro), mas la o
+   .card-login e posicionado de forma absoluta contando com a altura do
+   formulario completo de login (com redes sociais). Estes cards sao bem
+   menores, entao voltam para o fluxo normal do documento. */
+
+.secao-roxa {
+    padding-bottom: 60px;
+    margin-bottom: 60px;
+    min-height: auto;
+}
+
+.card-login {
+    position: static;
+    transform: none;
+    bottom: auto;
+    left: auto;
+}
+
+.titulo-recuperar {
+    font-size: 1.25rem;
+    color: var(--accent-forte, #8b83ac);
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.texto-recuperar {
+    font-size: 0.875rem;
+    color: var(--c-666, #666);
+    text-align: center;
+    line-height: 1.5;
+    margin-bottom: 22px;
+}
+
+.rodape-recuperar {
+    margin-top: 18px;
+    text-align: center;
+}
+
+.botao-link-recuperar {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}

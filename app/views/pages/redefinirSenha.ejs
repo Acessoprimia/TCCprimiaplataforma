@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova senha - Primia</title>
+    <link href="../css/login.css" rel="stylesheet">
+    <link href="../css/recuperarsenha.css" rel="stylesheet">
+    <%- include("../partials/header.ejs") %>
+</head>
+
+<body>
+    <h1 class="sr-only">Criar nova senha na Primia</h1>
+
+    <section class="secao-roxa">
+        <figure class="logo-wrapper"></figure>
+
+        <article class="card-login">
+
+            <% if (!tokenValido) { %>
+
+                <h2 class="titulo-recuperar">Link inválido ou expirado</h2>
+                <p class="texto-recuperar">
+                    Este link de redefinição não vale mais — ele pode já ter sido
+                    usado ou ter passado de 1 hora. Peça um novo link para
+                    continuar.
+                </p>
+
+                <a href="/recuperar-senha" class="botao-login botao-link-recuperar">Pedir novo link</a>
+
+            <% } else { %>
+
+                <h2 class="titulo-recuperar">Criar nova senha</h2>
+                <p class="texto-recuperar">
+                    Escolha uma senha de 8 a 15 caracteres.
+                </p>
+
+                <form class="form-login" action="/redefinir-senha" method="POST">
+                    <input type="hidden" name="token" value="<%= token %>">
+
+                    <label class="campo-wrapper">
+                        <figure class="icone-campo">
+                            <img src="../image/cadeado.webp" alt="Senha" class="icone">
+                        </figure>
+                        <input type="password" id="senha" name="senha" placeholder="Nova senha" class="input-campo" required>
+                        <button type="button" class="mostrar-senha" onclick="alternarSenha('senha')"
+                            aria-label="Mostrar ou ocultar senha">&#128065;</button>
+                    </label>
+                    <p class="erro-msg"><%= msgErro && msgErro.senha ? msgErro.senha : '' %></p>
+
+                    <label class="campo-wrapper">
+                        <figure class="icone-campo">
+                            <img src="../image/cadeado.webp" alt="Confirmar senha" class="icone">
+                        </figure>
+                        <input type="password" id="confirmar-senha" name="confirmar-senha" placeholder="Confirmar nova senha"
+                            class="input-campo" required>
+                        <button type="button" class="mostrar-senha" onclick="alternarSenha('confirmar-senha')"
+                            aria-label="Mostrar ou ocultar senha">&#128065;</button>
+                    </label>
+                    <p class="erro-msg"><%= msgErro && msgErro['confirmar-senha'] ? msgErro['confirmar-senha'] : '' %></p>
+
+                    <% if (msgErro && msgErro.geral) { %>
+                        <p class="erro-msg erro-login-geral"><%= msgErro.geral %></p>
+                    <% } %>
+
+                    <button type="submit" class="botao-login">Salvar nova senha</button>
+                </form>
+
+            <% } %>
+
+        </article>
+    </section>
+
+    <script src="/js/recuperarsenha.js"></script>
+    <%- include('../partials/footer.ejs') %>
+</body>
+
+</html>

@@ -7,6 +7,7 @@
     <title>Meus Simulados - Primia</title>
 
     <link href="../css/areadosimulado.css" rel="stylesheet">
+    <link href="../css/excluiritem.css" rel="stylesheet">
     <%- include('../partials/headerpremium.ejs') %>
 </head>
 
@@ -90,6 +91,12 @@
                     <h2 class="titulo-simulado"><%= formulario.titulo %></h2>
                     <p class="origem-simulado"><%= formulario.origem %><% if (formulario.materia) { %> · <%= formulario.materia %><% } %></p>
                     <a href="/simulado/<%= formulario.id_formulario %>" class="botao-simulado botao-andamento">Faça</a>
+                    <% if (formulario.podeExcluir) { %>
+                        <form action="/areadosimulado/<%= formulario.id_formulario %>/excluir" method="POST" class="form-excluir-item"
+                            onsubmit="return confirm('Excluir o simulado &quot;<%= formulario.titulo %>&quot;? Essa ação não pode ser desfeita.');">
+                            <button type="submit" class="botao-excluir-item">Excluir</button>
+                        </form>
+                    <% } %>
                 </article>
             <% }) %>
         </section>
@@ -104,6 +111,12 @@
                     <h2 class="titulo-simulado"><%= formulario.titulo %></h2>
                     <p class="origem-simulado"><%= formulario.origem %><% if (formulario.materia) { %> · <%= formulario.materia %><% } %></p>
                     <a href="/simulado/<%= formulario.id_formulario %>" class="botao-simulado botao-finalizado">Ver resultado</a>
+                    <% if (formulario.podeExcluir) { %>
+                        <form action="/areadosimulado/<%= formulario.id_formulario %>/excluir" method="POST" class="form-excluir-item"
+                            onsubmit="return confirm('Excluir o simulado &quot;<%= formulario.titulo %>&quot;? Essa ação não pode ser desfeita.');">
+                            <button type="submit" class="botao-excluir-item">Excluir</button>
+                        </form>
+                    <% } %>
                 </article>
             <% }) %>
         </section>

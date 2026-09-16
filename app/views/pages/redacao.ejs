@@ -7,6 +7,7 @@
     <title>Redação - Primia</title>
 
     <link href="../css/redacao.css" rel="stylesheet">
+    <link href="../css/excluiritem.css" rel="stylesheet">
     <%- include('../partials/headerpremium.ejs') %>
 </head>
 
@@ -66,6 +67,10 @@
                         <p class="nota-redacao"><%= r.nota_total %> / 1000</p>
                         <time class="data-redacao"><%= new Date(r.criado_em).toLocaleDateString('pt-BR') %></time>
                         <a href="/redacao/<%= r.id_redacao %>" class="botao-redacao">Ver correção</a>
+                        <form action="/redacao/<%= r.id_redacao %>/excluir" method="POST" class="form-excluir-item"
+                            onsubmit="return confirm('Excluir a redação &quot;<%= r.tema %>&quot; e sua correção? Essa ação não pode ser desfeita.');">
+                            <button type="submit" class="botao-excluir-item">Excluir</button>
+                        </form>
                     </article>
                 <% }) %>
             </div>

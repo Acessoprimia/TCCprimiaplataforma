@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cronogramas</title>
     <link href="../css/cronogramaprofessor.css" rel="stylesheet">
+    <link href="../css/excluiritem.css" rel="stylesheet">
     <%- include("../partials/headerprofessorpremium.ejs") %>
 </head>
 
@@ -83,13 +84,19 @@
                 <p class="cronogramas-vazio">Nenhum cronograma publicado ainda. Gere um acima!</p>
             <% } %>
             <% meusCronogramas.forEach(function (cronograma) { %>
-                <a href="/cronograma/<%= cronograma.codigo_lote %>" class="cronograma-link">
-                    <article class="cronograma-card">
-                        <h3><%= cronograma.titulo_cronograma %></h3>
-                        <p class="cronograma-card-info"><%= cronograma.materia %></p>
-                        <p class="cronograma-card-info"><%= cronograma.total_eventos %> evento<%= cronograma.total_eventos > 1 ? 's' : '' %></p>
-                    </article>
-                </a>
+                <section class="cronograma-item">
+                    <a href="/cronograma/<%= cronograma.codigo_lote %>" class="cronograma-link">
+                        <article class="cronograma-card">
+                            <h3><%= cronograma.titulo_cronograma %></h3>
+                            <p class="cronograma-card-info"><%= cronograma.materia %></p>
+                            <p class="cronograma-card-info"><%= cronograma.total_eventos %> evento<%= cronograma.total_eventos > 1 ? 's' : '' %></p>
+                        </article>
+                    </a>
+                    <form action="/cronogramaprofessor/<%= cronograma.codigo_lote %>/excluir" method="POST" class="form-excluir-item"
+                        onsubmit="return confirm('Excluir o cronograma &quot;<%= cronograma.titulo_cronograma %>&quot; e seus <%= cronograma.total_eventos %> evento(s)?');">
+                        <button type="submit" class="botao-excluir-item">Excluir</button>
+                    </form>
+                </section>
             <% }) %>
         </section>
     </main>

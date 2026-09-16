@@ -20,4 +20,5 @@ module.exports = Object.freeze({
   configuracoes: require("./configuracaoModel"),
   resultados: require("./resultadoModel"),
   pagamentos: require("./pagamentoModel"),
+  auditoria: require("./auditoriaModel"),
 });

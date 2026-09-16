@@ -48,6 +48,8 @@ const VIEWS = Object.freeze({
   cadastroProfessor: "pages/cadastroprofessor",
   configuracoes: "pages/configuracoes",
   confirmarEmail: "pages/confirmarEmail",
+  recuperarSenha: "pages/recuperarSenha",
+  redefinirSenha: "pages/redefinirSenha",
 });
 
 const VALORES_INICIAIS_CADASTRO_ALUNO = Object.freeze({
@@ -206,6 +208,16 @@ function formatarDataLocal(data) {
   const mes = String(dataObj.getMonth() + 1).padStart(2, "0");
   const dia = String(dataObj.getDate()).padStart(2, "0");
   return `${ano}-${mes}-${dia}`;
+}
+
+// Data + hora em formato BR (dd/mm/aaaa hh:mm) para exibicao. Le os campos
+// locais na mao pelo mesmo motivo de formatarDataLocal acima.
+function formatarDataHoraLocal(data) {
+  const dataObj = data instanceof Date ? data : new Date(data);
+  const [ano, mes, dia] = formatarDataLocal(dataObj).split("-");
+  const hora = String(dataObj.getHours()).padStart(2, "0");
+  const minuto = String(dataObj.getMinutes()).padStart(2, "0");
+  return `${dia}/${mes}/${ano} ${hora}:${minuto}`;
 }
 
 // A descricao guarda "Titulo - Detalhe" nos cronogramas gerados; na
@@ -374,12 +386,13 @@ async function renderizarCadastroProfessor(res, valores = VALORES_INICIAIS_CADAS
   });
 }
 
-function renderizarLogin(res, valores = VALORES_INICIAIS_LOGIN, msgErro = {}) {
+function renderizarLogin(res, valores = VALORES_INICIAIS_LOGIN, msgErro = {}, aviso = null) {
   return res.render(VIEWS.login, {
     erros: null,
     valores,
     erroValidacao: {},
     msgErro,
+    aviso,
   });
 }
 
@@ -390,6 +403,14 @@ async function emailJaCadastrado(conexao, email) {
 function gerarTokenVerificacaoEmail() {
   const token = crypto.randomBytes(32).toString("hex");
   const expiraEm = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  return { token, expiraEm };
+}
+
+// Validade curta de proposito: redefinir senha e mais sensivel que confirmar
+// e-mail, entao o link vive 1 hora em vez das 24h da confirmacao.
+function gerarTokenRedefinicaoSenha() {
+  const token = crypto.randomBytes(32).toString("hex");
+  const expiraEm = new Date(Date.now() + 60 * 60 * 1000);
   return { token, expiraEm };
 }
 
@@ -420,6 +441,45 @@ async function enviarEmailConfirmacaoSeguro({ nome, email, token }) {
   } catch (erro) {
     console.error("Erro ao enviar e-mail de confirmacao:", erro);
   }
+}
+
+async function enviarEmailRedefinicaoSenhaSeguro({ nome, email, token }) {
+  try {
+    await MailService.enviarEmailRedefinicaoSenha({ nome, email, token });
+  } catch (erro) {
+    console.error("Erro ao enviar e-mail de redefinicao de senha:", erro);
+  }
+}
+
+// Grava no Log_Auditoria o que aluno/professor fez, pro admin consultar em
+// /admin/auditoria. Best-effort igual as notificacoes: erro aqui e logado e
+// engolido, nunca derruba a acao real do usuario. Recebe a descricao ja
+// montada (e nao so o id) porque a linha original costuma estar sendo
+// apagada - depois do DELETE nao da mais pra descobrir o que era.
+async function registrarAuditoria({ usuarioBase, acao, entidade, idEntidade = null, descricao }) {
+  try {
+    const nome = await Models.usuarios.buscarNomePorId(usuarioBase.id);
+
+    await Models.auditoria.criar({
+      idUsuario: usuarioBase.id,
+      nomeUsuario: nome || "Conta removida",
+      tipoUsuario: usuarioBase.tipo_usuario,
+      acao,
+      entidade,
+      idEntidade,
+      descricao,
+    });
+  } catch (erro) {
+    console.error("Erro ao registrar auditoria:", erro);
+  }
+}
+
+// Corta textos longos (duvida/resposta) pra caber no VARCHAR(255) da
+// descricao sem estourar a coluna.
+function resumirTexto(texto, limite = 80) {
+  const limpo = String(texto || "").trim().replace(/\s+/g, " ");
+  if (!limpo) return "(sem texto)";
+  return limpo.length > limite ? `${limpo.slice(0, limite)}...` : limpo;
 }
 
 async function buscarOuCriarMateria(conexao, nomeMateria) {
@@ -1433,6 +1493,37 @@ router.get("/admin/relatorios", somenteAdmin, async function (req, res) {
   });
 });
 
+// Filtros vem por query string (?tipo=&acao=&entidade=). Valor fora da lista
+// permitida vira null (= sem filtro), entao nao da pra injetar nada no WHERE.
+function filtroAuditoria(valor, permitidos) {
+  const limpo = String(valor || "").trim();
+  return permitidos.includes(limpo) ? limpo : null;
+}
+
+router.get("/admin/auditoria", somenteAdmin, async function (req, res) {
+  const filtros = {
+    tipoUsuario: filtroAuditoria(req.query.tipo, ["aluno", "professor", "admin"]),
+    acao: filtroAuditoria(req.query.acao, ["criou", "editou", "excluiu"]),
+    entidade: filtroAuditoria(req.query.entidade, [
+      "duvida",
+      "resposta",
+      "conteudo",
+      "formulario",
+      "cronograma",
+      "redacao",
+      "conta",
+    ]),
+  };
+
+  const logs = await Models.auditoria.listar(filtros);
+
+  res.render("pages/admin/auditoria", {
+    activeAdminPage: "auditoria",
+    logs: logs.map((log) => ({ ...log, quando: formatarDataHoraLocal(log.criado_em) })),
+    filtros,
+  });
+});
+
 router.get("/admin/configuracoes", somenteAdmin, async function (req, res) {
   const config = await Models.configuracoes.buscarMapa();
   res.render("pages/admin/configuracoes", { activeAdminPage: "configuracoes", config });
@@ -1757,8 +1848,10 @@ router.get("/areadosimulado", async function (req, res) {
     Models.formularios.listarPublicadosPorProfessor(),
   ]);
 
+  // podeExcluir so nos gerados pelo proprio aluno - os publicados por
+  // professor aparecem na lista dele, mas nao sao dele pra apagar.
   const meusFormularios = (await anexarStatusResposta(meusFormulariosBase, usuarioBase.id)).map(
-    (formulario) => ({ ...formulario, origem: "Gerado por voce" })
+    (formulario) => ({ ...formulario, origem: "Gerado por voce", podeExcluir: true })
   );
   // Formularios publicados por professor sao sempre premium (mesmo sem
   // coluna is_premium - ver nota em formularioModel.js) - nao mostra pra
@@ -1822,6 +1915,39 @@ router.post(
     }
   }
 );
+
+// So apaga simulado que o proprio aluno gerou (id_aluno no WHERE do model):
+// os publicados por professor aparecem pra ele, mas nao sao dele pra excluir.
+router.post("/areadosimulado/:id/excluir", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const formulario = await Models.formularios.buscarPorId(req.params.id);
+
+    const resultado = await Models.formularios.excluirDoAluno({
+      id: req.params.id,
+      idAluno: usuarioBase.id,
+    });
+
+    if (resultado.affectedRows) {
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "excluiu",
+        entidade: "formulario",
+        idEntidade: Number(req.params.id),
+        descricao: `Excluiu o proprio simulado "${resumirTexto(formulario?.titulo)}"${formulario?.materia ? ` de ${formulario.materia}` : ""}`,
+      });
+    }
+  } catch (erro) {
+    console.error("Erro ao excluir simulado do aluno:", erro);
+  }
+
+  return res.redirect("/areadosimulado");
+});
 
 router.get("/simulado/:id", async function (req, res) {
   const usuarioAluno = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
@@ -2006,6 +2132,37 @@ router.get("/redacao/:id", async function (req, res) {
     redacao,
     perfil: IaService.buscarPerfilRedacao(redacao.tipo_redacao),
   });
+});
+
+router.post("/redacao/:id/excluir", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const redacao = await Models.redacoes.buscarPorId(req.params.id);
+
+    const resultado = await Models.redacoes.excluirDoAluno({
+      id: req.params.id,
+      idAluno: usuarioBase.id,
+    });
+
+    if (resultado.affectedRows) {
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "excluiu",
+        entidade: "redacao",
+        idEntidade: Number(req.params.id),
+        descricao: `Excluiu a propria redacao "${resumirTexto(redacao?.tema)}" (nota ${redacao?.nota_total ?? "?"})`,
+      });
+    }
+  } catch (erro) {
+    console.error("Erro ao excluir redacao do aluno:", erro);
+  }
+
+  return res.redirect("/redacao");
 });
 
 // buscarResumoAgregado devolve porGenero so com o slug (tipo_redacao) -
@@ -2432,6 +2589,37 @@ router.post(
   }
 );
 
+router.post("/simuladoprofessor/:id/excluir", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const formulario = await Models.formularios.buscarPorId(req.params.id);
+
+    const resultado = await Models.formularios.excluirDoProfessor({
+      id: req.params.id,
+      idProfessor: usuarioBase.id,
+    });
+
+    if (resultado.affectedRows) {
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "excluiu",
+        entidade: "formulario",
+        idEntidade: Number(req.params.id),
+        descricao: `Excluiu o simulado "${resumirTexto(formulario?.titulo)}" de ${formulario?.materia || "materia removida"}`,
+      });
+    }
+  } catch (erro) {
+    console.error("Erro ao excluir simulado do professor:", erro);
+  }
+
+  return res.redirect("/simuladoprofessor");
+});
+
 router.get("/videoaulaprofessor", async function (req, res) {
   const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
 
@@ -2452,7 +2640,11 @@ router.get("/videoaulaprofessor", async function (req, res) {
   res.render("pages/videoaulaprofessor", {
     materias: materiasBase.map((materia) => ({ ...materia, slug: slugMateria(materia.nome) })),
     materiaParaAdicionar,
-    videos: videosBase.map((video) => ({ ...video, materiaSlug: slugMateria(video.materia) })),
+    videos: videosBase.map((video) => ({
+      ...video,
+      materiaSlug: slugMateria(video.materia),
+      podeExcluir: video.professor_id === usuarioBase.id,
+    })),
   });
 });
 
@@ -2554,6 +2746,41 @@ router.post(
   }
 );
 
+// Cronograma publicado = um lote de linhas de Plano_de_Aula (uma por
+// evento), por isso a chave aqui e o codigo_lote e nao um id.
+router.post("/cronogramaprofessor/:codigoLote/excluir", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const lote = await Models.planoAula.buscarLoteDoProfessor({
+      codigoLote: req.params.codigoLote,
+      idProfessor: usuarioBase.id,
+    });
+
+    const resultado = await Models.planoAula.excluirLoteDoProfessor({
+      codigoLote: req.params.codigoLote,
+      idProfessor: usuarioBase.id,
+    });
+
+    if (resultado.affectedRows) {
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "excluiu",
+        entidade: "cronograma",
+        descricao: `Excluiu o cronograma "${resumirTexto(lote?.titulo_cronograma)}" de ${lote?.materia || "materia removida"} (${resultado.affectedRows} evento${resultado.affectedRows > 1 ? "s" : ""})`,
+      });
+    }
+  } catch (erro) {
+    console.error("Erro ao excluir cronograma do professor:", erro);
+  }
+
+  return res.redirect("/cronogramaprofessor");
+});
+
 
 
 router.get("/bibliotecaprofessor", async function (req, res) {
@@ -2576,7 +2803,13 @@ router.get("/bibliotecaprofessor", async function (req, res) {
   res.render("pages/bibliotecaprofessor", {
     materias: materiasBase.map((materia) => ({ ...materia, slug: slugMateria(materia.nome) })),
     materiaParaAdicionar,
-    livros: livrosBase.map((livro) => ({ ...livro, materiaSlug: slugMateria(livro.materia) })),
+    // A lista mostra o catalogo inteiro (de todos os professores), mas so
+    // da pra excluir o que o professor logado publicou.
+    livros: livrosBase.map((livro) => ({
+      ...livro,
+      materiaSlug: slugMateria(livro.materia),
+      podeExcluir: livro.professor_id === usuarioBase.id,
+    })),
   });
 });
 
@@ -2695,6 +2928,45 @@ router.post(
     }
   }
 );
+
+// Serve pros dois tipos de Conteudo (livro e video) - a rota de volta muda
+// conforme o tipo do que foi apagado.
+router.post("/professor/conteudos/:id/excluir", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  let rotaVolta = "/bibliotecaprofessor";
+
+  try {
+    const conteudo = await Models.conteudos.buscarPorId(req.params.id);
+
+    if (conteudo?.tipo === "video") {
+      rotaVolta = "/videoaulaprofessor";
+    }
+
+    const resultado = await Models.conteudos.removerDoProfessor({
+      id: req.params.id,
+      idProfessor: usuarioBase.id,
+    });
+
+    if (resultado.affectedRows) {
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "excluiu",
+        entidade: "conteudo",
+        idEntidade: Number(req.params.id),
+        descricao: `Excluiu ${conteudo?.tipo === "video" ? "a video-aula" : "o livro"} "${resumirTexto(conteudo?.titulo)}" de ${conteudo?.materia || "materia removida"}`,
+      });
+    }
+  } catch (erro) {
+    console.error("Erro ao excluir conteudo do professor:", erro);
+  }
+
+  return res.redirect(rotaVolta);
+});
 
 
 router.get("/livro/:id", async function (req, res) {
@@ -2888,6 +3160,9 @@ router.post("/forumdeduvidas/:id/excluir", async function (req, res) {
   try {
     await conexao.beginTransaction();
 
+    // Lido ANTES do DELETE: depois de apagada nao da mais pra saber o texto.
+    const duvida = await Models.duvidas.buscarPorId(req.params.id, conexao);
+
     await Models.respostas.excluirDaDuvidaDoAluno(
       {
         idDuvida: req.params.id,
@@ -2908,6 +3183,14 @@ router.post("/forumdeduvidas/:id/excluir", async function (req, res) {
 
     if (!resultado.affectedRows) {
       console.warn("Nenhuma duvida foi excluida. Verifique se a duvida pertence ao aluno logado.");
+    } else {
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "excluiu",
+        entidade: "duvida",
+        idEntidade: Number(req.params.id),
+        descricao: `Excluiu a propria duvida em ${duvida?.materia || "materia removida"}: "${resumirTexto(duvida?.duvida)}"`,
+      });
     }
   } catch (erro) {
     await conexao.rollback();
@@ -3043,7 +3326,9 @@ router.post("/forumprofessor/respostas/:id/excluir", async function (req, res) {
   try {
     await conexao.beginTransaction();
 
-    await Models.respostas.excluirDoProfessor(
+    const resposta = await Models.respostas.buscarPorId(req.params.id, conexao);
+
+    const resultado = await Models.respostas.excluirDoProfessor(
       {
         idResposta: req.params.id,
         idProfessor: usuarioBase.id,
@@ -3056,6 +3341,16 @@ router.post("/forumprofessor/respostas/:id/excluir", async function (req, res) {
     }
 
     await conexao.commit();
+
+    if (resultado.affectedRows) {
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "excluiu",
+        entidade: "resposta",
+        idEntidade: Number(req.params.id),
+        descricao: `Excluiu a propria resposta para a duvida "${resumirTexto(resposta?.duvida_texto)}"`,
+      });
+    }
   } catch (erro) {
     await conexao.rollback();
     console.error("Erro ao excluir resposta:", erro);
@@ -3078,10 +3373,22 @@ router.post("/forumprofessor/duvidas/:id/excluir", async function (req, res) {
   try {
     await conexao.beginTransaction();
 
+    const duvida = await Models.duvidas.buscarPorId(req.params.id, conexao);
+
     await Models.respostas.excluirPorDuvida(req.params.id, conexao);
-    await Models.duvidas.excluirPorId(req.params.id, conexao);
+    const resultado = await Models.duvidas.excluirPorId(req.params.id, conexao);
 
     await conexao.commit();
+
+    if (resultado.affectedRows) {
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "excluiu",
+        entidade: "duvida",
+        idEntidade: Number(req.params.id),
+        descricao: `Removeu (moderacao) a duvida de um aluno em ${duvida?.materia || "materia removida"}: "${resumirTexto(duvida?.duvida)}"`,
+      });
+    }
   } catch (erro) {
     await conexao.rollback();
     console.error("Erro ao excluir duvida pelo professor:", erro);
@@ -3371,6 +3678,42 @@ router.post(
   }
 );
 
+// Mesma logica do cronograma do professor: apaga o lote inteiro, nao um
+// evento so. Aqui o delete cai no Plano_de_Estudo e o Cronograma vai junto
+// por CASCADE (ver nota no model).
+router.post("/planoestudo/:codigoLote/excluir", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.aluno);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const lote = await Models.planoEstudo.buscarLoteDoAluno({
+      codigoLote: req.params.codigoLote,
+      idAluno: usuarioBase.id,
+    });
+
+    const resultado = await Models.planoEstudo.excluirLoteDoAluno({
+      codigoLote: req.params.codigoLote,
+      idAluno: usuarioBase.id,
+    });
+
+    if (resultado.affectedRows) {
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "excluiu",
+        entidade: "cronograma",
+        descricao: `Excluiu o proprio cronograma "${resumirTexto(lote?.titulo_cronograma)}" de ${lote?.materia || "materia removida"} (${resultado.affectedRows} evento${resultado.affectedRows > 1 ? "s" : ""})`,
+      });
+    }
+  } catch (erro) {
+    console.error("Erro ao excluir cronograma do aluno:", erro);
+  }
+
+  return res.redirect("/planoestudo");
+});
+
 router.get("/termouso", function (req, res) {
   res.render("pages/termouso");
 });
@@ -3561,6 +3904,119 @@ router.post(
     } catch (erro) {
       console.error("Erro ao reenviar confirmacao de e-mail:", erro);
       return res.render(VIEWS.confirmarEmail, { status: "erro" });
+    }
+  }
+);
+
+// ========== ROTAS "ESQUECI MINHA SENHA" ==========
+router.get("/recuperar-senha", (req, res) => {
+  res.render(VIEWS.recuperarSenha, { status: null, msgErro: null, valores: { email: "" } });
+});
+
+router.post(
+  "/recuperar-senha",
+  body("email")
+    .trim()
+    .notEmpty().withMessage("Informe seu e-mail.")
+    .isEmail().withMessage("Informe um e-mail valido."),
+  async (req, res) => {
+    const errors = validationResult(req);
+    const email = String(req.body.email || "").trim();
+
+    if (!errors.isEmpty()) {
+      const { msgErro } = montarErrosValidacao(errors);
+      return res.render(VIEWS.recuperarSenha, { status: null, msgErro, valores: { email } });
+    }
+
+    try {
+      const usuario = await Models.usuarios.buscarPorEmail(email);
+
+      if (usuario) {
+        const { token, expiraEm } = gerarTokenRedefinicaoSenha();
+        await Models.usuarios.salvarTokenRedefinicaoSenha({
+          idUsuario: usuario.id_usuario,
+          token,
+          expiraEm,
+        });
+        await enviarEmailRedefinicaoSenhaSeguro({ nome: usuario.nome, email, token });
+      }
+
+      // Mesma resposta exista ou nao a conta, senao a tela vira um detector de
+      // quais e-mails estao cadastrados (mesma decisao ja tomada no reenvio de
+      // confirmacao de e-mail).
+      return res.render(VIEWS.recuperarSenha, {
+        status: "enviado",
+        msgErro: null,
+        valores: { email: "" },
+      });
+    } catch (erro) {
+      console.error("Erro ao iniciar redefinicao de senha:", erro);
+      return res.render(VIEWS.recuperarSenha, {
+        status: null,
+        msgErro: { geral: "Nao foi possivel enviar o link agora. Tente novamente." },
+        valores: { email },
+      });
+    }
+  }
+);
+
+router.get("/redefinir-senha", async (req, res) => {
+  const token = String(req.query.token || "");
+
+  if (!token) {
+    return res.render(VIEWS.redefinirSenha, { tokenValido: false, token: "", msgErro: null });
+  }
+
+  try {
+    const tokenValido = await Models.usuarios.tokenRedefinicaoSenhaValido(token);
+    return res.render(VIEWS.redefinirSenha, { tokenValido, token, msgErro: null });
+  } catch (erro) {
+    console.error("Erro ao validar token de redefinicao:", erro);
+    return res.render(VIEWS.redefinirSenha, { tokenValido: false, token: "", msgErro: null });
+  }
+});
+
+router.post(
+  "/redefinir-senha",
+
+  body("senha")
+    .notEmpty().withMessage("A senha e obrigatoria.")
+    .isLength({ min: 8, max: 15 }).withMessage("A senha deve ter entre 8 e 15 caracteres!"),
+  body("confirmar-senha").custom((value, { req }) => {
+    if (value !== req.body.senha) {
+      throw new Error("As senhas nao conferem!");
+    }
+    return true;
+  }),
+
+  async (req, res) => {
+    const token = String(req.body.token || "");
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const { msgErro } = montarErrosValidacao(errors);
+      return res.render(VIEWS.redefinirSenha, { tokenValido: true, token, msgErro });
+    }
+
+    try {
+      const senhaCriptografada = await bcrypt.hash(req.body.senha, 10);
+      const redefinida = await Models.usuarios.redefinirSenhaPorToken({
+        token,
+        senhaCriptografada,
+      });
+
+      if (!redefinida) {
+        return res.render(VIEWS.redefinirSenha, { tokenValido: false, token: "", msgErro: null });
+      }
+
+      return res.redirect("/login?senha=redefinida");
+    } catch (erro) {
+      console.error("Erro ao redefinir senha:", erro);
+      return res.render(VIEWS.redefinirSenha, {
+        tokenValido: true,
+        token,
+        msgErro: { geral: "Nao foi possivel redefinir a senha. Tente novamente." },
+      });
     }
   }
 );
@@ -3821,7 +4277,12 @@ router.post(
 
 // ========== ROTA GET LOGIN ==========
 router.get("/login", (req, res) => {
-  renderizarLogin(res);
+  const aviso =
+    req.query.senha === "redefinida"
+      ? "Senha redefinida com sucesso! Entre com a nova senha."
+      : null;
+
+  renderizarLogin(res, VALORES_INICIAIS_LOGIN, {}, aviso);
 });
 
 router.get("/loginprofessor", (req, res) => {

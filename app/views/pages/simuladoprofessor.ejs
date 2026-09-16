@@ -7,6 +7,7 @@
     <title>Meus Simulados - Primia</title>
 
     <link href="../css/simuladoprofessor.css" rel="stylesheet">
+    <link href="../css/excluiritem.css" rel="stylesheet">
     <%- include('../partials/headerprofessorpremium.ejs') %>
 </head>
 
@@ -91,6 +92,10 @@
                     <h2 class="titulo-simulado"><%= formulario.titulo %></h2>
                     <p class="origem-simulado"><% if (formulario.materia) { %><%= formulario.materia %><% } %></p>
                     <a href="/simulado/<%= formulario.id_formulario %>" class="botao-simulado botao-andamento">Ver</a>
+                    <form action="/simuladoprofessor/<%= formulario.id_formulario %>/excluir" method="POST" class="form-excluir-item"
+                        onsubmit="return confirm('Excluir o simulado &quot;<%= formulario.titulo %>&quot;? As respostas dos alunos também serão apagadas.');">
+                        <button type="submit" class="botao-excluir-item">Excluir</button>
+                    </form>
                 </article>
             <% }) %>
         </section>

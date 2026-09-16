@@ -23,6 +23,9 @@ CREATE TABLE Usuario (
     token_verificacao_email VARCHAR(64) NULL,
     token_verificacao_email_expira DATETIME NULL,
 
+    token_redefinicao_senha VARCHAR(64) NULL,
+    token_redefinicao_senha_expira DATETIME NULL,
+
     CONSTRAINT pk_usuario PRIMARY KEY (id_usuario),
     CONSTRAINT uq_usuario_email UNIQUE (email)
 );
@@ -639,8 +642,6 @@ CREATE TABLE Pagamento (
 );
 
 
-SET FOREIGN_KEY_CHECKS = 1;
-
 CREATE TABLE Preferencia_Notificacao (
     id_usuario INT NOT NULL,
 
@@ -667,3 +668,44 @@ CREATE TABLE Preferencia_Notificacao (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+
+
+-- TABELA: Log_Auditoria
+
+CREATE TABLE Log_Auditoria (
+    id_log INT NOT NULL AUTO_INCREMENT,
+
+    
+    id_usuario INT NULL,
+
+    
+    nome_usuario VARCHAR(100) NOT NULL,
+    tipo_usuario ENUM('aluno', 'professor', 'admin') NOT NULL,
+
+    acao ENUM('criou', 'editou', 'excluiu') NOT NULL,
+
+    entidade ENUM(
+        'duvida',
+        'resposta',
+        'conteudo',
+        'formulario',
+        'cronograma',
+        'redacao',
+        'conta'
+    ) NOT NULL,
+
+    id_entidade INT NULL,
+    descricao VARCHAR(255) NOT NULL,
+
+    criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT pk_log_auditoria PRIMARY KEY (id_log),
+
+    CONSTRAINT fk_log_auditoria_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES Usuario(id_usuario)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+
+CREATE INDEX idx_log_auditoria_criado_em ON Log_Auditoria (criado_em);

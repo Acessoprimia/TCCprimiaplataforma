@@ -56,6 +56,16 @@ const queries = Object.freeze({
   excluir: `
     DELETE FROM ${TABELAS.formularios} WHERE id_formulario = ?
   `,
+  // O dono entra no WHERE pra ninguem apagar simulado de outra pessoa
+  // trocando o id na requisicao.
+  excluirDoProfessor: `
+    DELETE FROM ${TABELAS.formularios}
+    WHERE id_formulario = ? AND id_professor = ?
+  `,
+  excluirDoAluno: `
+    DELETE FROM ${TABELAS.formularios}
+    WHERE id_formulario = ? AND id_aluno = ?
+  `,
 });
 
 function banco(conexao) {
@@ -113,6 +123,16 @@ const FormularioModel = Object.freeze({
 
   async excluir(id, conexao) {
     const [resultado] = await banco(conexao).query(queries.excluir, [id]);
+    return resultado;
+  },
+
+  async excluirDoProfessor({ id, idProfessor }, conexao) {
+    const [resultado] = await banco(conexao).query(queries.excluirDoProfessor, [id, idProfessor]);
+    return resultado;
+  },
+
+  async excluirDoAluno({ id, idAluno }, conexao) {
+    const [resultado] = await banco(conexao).query(queries.excluirDoAluno, [id, idAluno]);
     return resultado;
   },
 });

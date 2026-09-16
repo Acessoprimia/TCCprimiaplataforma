@@ -7,6 +7,7 @@
     <title>Biblioteca - Primia</title>
 
     <link href="../css/bibliotecaprofessor.css" rel="stylesheet">
+    <link href="../css/excluiritem.css" rel="stylesheet">
     <%- include('../partials/headerprofessor.ejs') %>
         <%- include('../partials/botao.ejs', { tipoConteudo: 'livro', materias: typeof materiaParaAdicionar !== 'undefined' ? materiaParaAdicionar : [] }) %>
 </head>
@@ -52,14 +53,22 @@
         <% } %>
 
         <% livros.forEach(function (livro) { %>
-            <a href="/livro/<%= livro.id %>" class="livro-link">
-                <article class="livro-card" data-disciplina="<%= livro.materiaSlug %>">
-                    <img class="livro-cover" src="<%= livro.imagem_url || '../image/escolab.webp' %>" alt="<%= livro.titulo %>">
-                    <section class="livro-info">
-                        <p class="livro-titulo"><%= livro.titulo %></p>
-                    </section>
-                </article>
-            </a>
+            <section class="livro-item">
+                <a href="/livro/<%= livro.id %>" class="livro-link">
+                    <article class="livro-card" data-disciplina="<%= livro.materiaSlug %>">
+                        <img class="livro-cover" src="<%= livro.imagem_url || '../image/escolab.webp' %>" alt="<%= livro.titulo %>">
+                        <section class="livro-info">
+                            <p class="livro-titulo"><%= livro.titulo %></p>
+                        </section>
+                    </article>
+                </a>
+                <% if (livro.podeExcluir) { %>
+                    <form action="/professor/conteudos/<%= livro.id %>/excluir" method="POST" class="form-excluir-item"
+                        onsubmit="return confirm('Excluir o livro &quot;<%= livro.titulo %>&quot;? Essa ação não pode ser desfeita.');">
+                        <button type="submit" class="botao-excluir-item">Excluir</button>
+                    </form>
+                <% } %>
+            </section>
         <% }) %>
     </main>
 

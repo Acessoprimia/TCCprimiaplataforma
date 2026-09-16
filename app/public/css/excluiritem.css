@@ -1,0 +1,40 @@
+/* Botao "Excluir" usado nas listas onde aluno/professor apaga o que
+   publicou (biblioteca, video-aulas, simulados, cronogramas, redacoes).
+   Component compartilhado: cada uma dessas paginas tem seu proprio CSS,
+   entao o estilo do botao mora aqui pra nao ser copiado sete vezes. */
+
+.form-excluir-item {
+    margin-top: 8px;
+}
+
+.botao-excluir-item {
+    border: 1px solid var(--perigo, #d93025);
+    border-radius: 50px;
+    background: transparent;
+    color: var(--perigo, #d93025);
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.botao-excluir-item:hover {
+    background: var(--perigo, #d93025);
+    color: #fff;
+}
+
+/* Wrappers criados so pra separar o card (que e um link) do formulario de
+   exclusao - form dentro de <a> e HTML invalido. */
+.livro-item,
+.cronograma-item {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.livro-item .livro-link,
+.cronograma-item .cronograma-link {
+    display: block;
+}

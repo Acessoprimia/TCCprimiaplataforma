@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar senha - Primia</title>
+    <link href="../css/login.css" rel="stylesheet">
+    <link href="../css/recuperarsenha.css" rel="stylesheet">
+    <%- include("../partials/header.ejs") %>
+</head>
+
+<body>
+    <h1 class="sr-only">Recuperar senha da Primia</h1>
+
+    <section class="secao-roxa">
+        <figure class="logo-wrapper"></figure>
+
+        <article class="card-login">
+
+            <% if (status === 'enviado') { %>
+
+                <h2 class="titulo-recuperar">Verifique seu e-mail</h2>
+                <p class="texto-recuperar">
+                    Se houver uma conta cadastrada com esse e-mail, acabamos de
+                    enviar um link para criar uma nova senha. Confira sua caixa
+                    de entrada (e o spam) — o link vale por 1 hora.
+                </p>
+
+                <a href="/login" class="botao-login botao-link-recuperar">Voltar para o login</a>
+
+            <% } else { %>
+
+                <h2 class="titulo-recuperar">Esqueceu a senha?</h2>
+                <p class="texto-recuperar">
+                    Informe o e-mail da sua conta e enviaremos um link para você
+                    criar uma nova senha.
+                </p>
+
+                <form class="form-login" action="/recuperar-senha" method="POST">
+                    <label class="campo-wrapper">
+                        <figure class="icone-campo">
+                            <img src="../image/usuario.webp" alt="Usuário" class="icone">
+                        </figure>
+                        <input type="email" id="email" name="email" placeholder="Email" class="input-campo"
+                            value="<%= valores.email %>" required>
+                    </label>
+                    <p class="erro-msg"><%= msgErro && msgErro.email ? msgErro.email : '' %></p>
+
+                    <% if (msgErro && msgErro.geral) { %>
+                        <p class="erro-msg erro-login-geral"><%= msgErro.geral %></p>
+                    <% } %>
+
+                    <button type="submit" class="botao-login">Enviar link</button>
+                </form>
+
+                <footer class="rodape-form rodape-recuperar">
+                    <a href="/login" class="link-recuperar">Voltar para o login</a>
+                </footer>
+
+            <% } %>
+
+        </article>
+    </section>
+
+    <%- include('../partials/footer.ejs') %>
+</body>
+
+</html>

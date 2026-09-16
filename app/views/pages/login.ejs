@@ -21,6 +21,10 @@
         <!-- CARD DE LOGIN -->
         <article class="card-login">
             <form class="form-login" action="/login" method="POST">
+                <% if (typeof aviso !== 'undefined' && aviso) { %>
+                    <p class="aviso-login" role="status"><%= aviso %></p>
+                <% } %>
+
                 <!-- CAMPO EMAIL -->
                 <label class="campo-wrapper">
                     <figure class="icone-campo">

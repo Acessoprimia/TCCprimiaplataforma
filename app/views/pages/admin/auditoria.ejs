@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoria - Painel Administrativo Primia</title>
+    <link href="/css/admin.css" rel="stylesheet">
+    <%- include('../../partials/headeradmin.ejs') %>
+</head>
+
+<body>
+    <main class="admin-page">
+        <section class="admin-mobile-intro">
+            <p class="admin-kicker">Painel Administrativo</p>
+            <h1>Auditoria</h1>
+            <p>Historico do que alunos e professores fizeram na plataforma.</p>
+        </section>
+
+        <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'auditoria' }) %>
+
+        <section class="admin-content">
+            <section class="admin-panel" id="auditoria">
+                <header class="panel-header">
+                    <article>
+                        <h2>Registro de atividades</h2>
+                        <p>Exclusoes e alteracoes feitas por alunos e professores, da mais recente para a mais antiga.</p>
+                    </article>
+                </header>
+
+                <form method="GET" action="/admin/auditoria" class="auditoria-filtros">
+                    <label>
+                        <span>Tipo de usuario</span>
+                        <select name="tipo">
+                            <option value="">Todos</option>
+                            <% ['aluno', 'professor', 'admin'].forEach(function (opcao) { %>
+                                <option value="<%= opcao %>" <%= filtros.tipoUsuario === opcao ? 'selected' : '' %>><%= opcao %></option>
+                            <% }) %>
+                        </select>
+                    </label>
+
+                    <label>
+                        <span>Acao</span>
+                        <select name="acao">
+                            <option value="">Todas</option>
+                            <% ['criou', 'editou', 'excluiu'].forEach(function (opcao) { %>
+                                <option value="<%= opcao %>" <%= filtros.acao === opcao ? 'selected' : '' %>><%= opcao %></option>
+                            <% }) %>
+                        </select>
+                    </label>
+
+                    <label>
+                        <span>Entidade</span>
+                        <select name="entidade">
+                            <option value="">Todas</option>
+                            <% ['duvida', 'resposta', 'conteudo', 'formulario', 'cronograma', 'redacao', 'conta'].forEach(function (opcao) { %>
+                                <option value="<%= opcao %>" <%= filtros.entidade === opcao ? 'selected' : '' %>><%= opcao %></option>
+                            <% }) %>
+                        </select>
+                    </label>
+
+                    <button type="submit" class="filtro-btn ativo">Filtrar</button>
+                    <a href="/admin/auditoria" class="filtro-btn">Limpar</a>
+                </form>
+
+                <section class="table-scroll">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Quando</th>
+                                <th>Quem</th>
+                                <th>Tipo</th>
+                                <th>Acao</th>
+                                <th>Entidade</th>
+                                <th>Descricao</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (logs.length === 0) { %>
+                                <tr class="tabela-vazia">
+                                    <td colspan="6">Nenhuma atividade registrada para esses filtros.</td>
+                                </tr>
+                            <% } %>
+                            <% logs.forEach(function (log) { %>
+                                <tr>
+                                    <td><%= log.quando %></td>
+                                    <td>
+                                        <%= log.nome_usuario %>
+                                        <% if (log.email_usuario) { %>
+                                            <br><small><%= log.email_usuario %></small>
+                                        <% } else { %>
+                                            <br><small>conta excluida</small>
+                                        <% } %>
+                                    </td>
+                                    <td><%= log.tipo_usuario %></td>
+                                    <td><span class="auditoria-acao auditoria-acao-<%= log.acao %>"><%= log.acao %></span></td>
+                                    <td><%= log.entidade %><% if (log.id_entidade) { %> #<%= log.id_entidade %><% } %></td>
+                                    <td><%= log.descricao %></td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+        </section>
+    </main>
+
+    <%- include('../../partials/footer.ejs') %>
+</body>
+
+</html>

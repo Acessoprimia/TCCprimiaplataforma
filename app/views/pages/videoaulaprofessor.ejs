@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Videoaulas</title>
     <link href="../css/videoaulaprofessor.css" rel="stylesheet">
+    <link href="../css/excluiritem.css" rel="stylesheet">
     <%- include('../partials/botao.ejs', { tipoConteudo: 'video', materias: typeof materiaParaAdicionar !== 'undefined' ? materiaParaAdicionar : [] }) %>
         <%- include("../partials/headerprofessorpremium.ejs") %>
 </head>
@@ -43,6 +44,12 @@
                             <p><%= video.descricao || 'Sinopse ainda não cadastrada.' %></p>
                         </section>
                     </a>
+                    <% if (video.podeExcluir) { %>
+                        <form action="/professor/conteudos/<%= video.id %>/excluir" method="POST" class="form-excluir-item"
+                            onsubmit="return confirm('Excluir a vídeo-aula &quot;<%= video.titulo %>&quot;? Essa ação não pode ser desfeita.');">
+                            <button type="submit" class="botao-excluir-item">Excluir</button>
+                        </form>
+                    <% } %>
                 </article>
             <% }) %>
         </section>

@@ -47,16 +47,22 @@ const queries = Object.freeze({
     GROUP BY tipo_redacao
   `,
   buscarAnalise: `SELECT * FROM ${TABELAS.resultados} WHERE id_aluno = ? LIMIT 1`,
+  // gerado_em vai explicito nos DOIS caminhos (insert e update): o relogio do
+  // servidor de banco desse projeto esta 3h a frente do real, e essa coluna
+  // tem DEFAULT/ON UPDATE CURRENT_TIMESTAMP - passar o valor na query e o que
+  // desliga os dois automatismos.
   salvarAnalise: `
     INSERT INTO ${TABELAS.resultados}
-      (id_aluno, diagnostico, pontos_fortes, recomendacao_geral, materias_fracas, recomendacoes)
-    VALUES (?, ?, ?, ?, ?, ?)
+      (id_aluno, diagnostico, pontos_fortes, recomendacao_geral, materias_fracas, recomendacoes,
+       gerado_em)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
     ON DUPLICATE KEY UPDATE
       diagnostico = VALUES(diagnostico),
       pontos_fortes = VALUES(pontos_fortes),
       recomendacao_geral = VALUES(recomendacao_geral),
       materias_fracas = VALUES(materias_fracas),
-      recomendacoes = VALUES(recomendacoes)
+      recomendacoes = VALUES(recomendacoes),
+      gerado_em = VALUES(gerado_em)
   `,
 });
 
@@ -130,6 +136,7 @@ const ResultadoModel = Object.freeze({
       recomendacaoGeral,
       JSON.stringify(materiasFracas),
       JSON.stringify(recomendacoes),
+      new Date(),
     ]);
   },
 });

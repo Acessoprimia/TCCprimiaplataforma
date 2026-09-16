@@ -35,22 +35,25 @@ buscarBtn.addEventListener('click', () => {
     });
 
     const livros = document.querySelectorAll('.livro-link');
-    
+
+    // Na biblioteca do professor cada livro vem embrulhado num .livro-item
+    // (link + botao de excluir). Esconder so o link deixaria o botao orfao
+    // na tela, entao esconde o wrapper quando ele existe.
+    const alvoDoFiltro = livro => livro.closest('.livro-item') || livro;
+
     if (selectedDisciplinas.length === 0) {
         // Se nenhum filtro selecionado, mostra todos os livros
         livros.forEach(livro => {
-            livro.style.display = 'block';
+            alvoDoFiltro(livro).style.display = 'block';
         });
     } else {
         // Filtra por disciplinas selecionadas
         livros.forEach(livro => {
             const card = livro.querySelector('.livro-card');
             const disciplina = card.getAttribute('data-disciplina');
-            if (selectedDisciplinas.includes(disciplina)) {
-                livro.style.display = 'block';
-            } else {
-                livro.style.display = 'none';
-            }
+            alvoDoFiltro(livro).style.display = selectedDisciplinas.includes(disciplina)
+                ? 'block'
+                : 'none';
         });
     }
 

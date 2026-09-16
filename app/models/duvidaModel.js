@@ -69,6 +69,14 @@ const queries = Object.freeze({
       (id_aluno, id_forum, duvida)
     VALUES (?, ?, ?)
   `,
+  buscarPorId: `
+    SELECT d.id_duvida, d.id_aluno, d.duvida, m.nome AS materia
+    FROM ${TABELAS.duvidas} d
+    INNER JOIN ${TABELAS.forum} f ON f.id_forum = d.id_forum
+    INNER JOIN ${TABELAS.materias} m ON m.id_materia = f.id_materia
+    WHERE d.id_duvida = ?
+    LIMIT 1
+  `,
   excluirPorId: `
     DELETE FROM ${TABELAS.duvidas}
     WHERE id_duvida = ?
@@ -136,6 +144,11 @@ const DuvidaModel = Object.freeze({
   async criar({ idAluno, idForum, duvida }, conexao) {
     const [resultado] = await banco(conexao).query(queries.criar, [idAluno, idForum, duvida]);
     return resultado.insertId;
+  },
+
+  async buscarPorId(idDuvida, conexao) {
+    const [duvidas] = await banco(conexao).query(queries.buscarPorId, [idDuvida]);
+    return duvidas[0] || null;
   },
 
   async excluirPorId(idDuvida, conexao) {

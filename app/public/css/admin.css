@@ -1460,3 +1460,61 @@ textarea {
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
+
+/* AUDITORIA */
+.auditoria-filtros {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.auditoria-filtros label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--c-666, #666);
+}
+
+.auditoria-filtros select {
+    border: 1px solid var(--accent, #A398D1);
+    border-radius: 12px;
+    background-color: var(--cor-fundo-cartao, #ffffff);
+    color: inherit;
+    font-family: inherit;
+    font-size: 0.8125rem;
+    padding: 8px 12px;
+    min-width: 150px;
+}
+
+.auditoria-filtros .filtro-btn {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.auditoria-acao {
+    border-radius: 50px;
+    padding: 3px 10px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.auditoria-acao-criou {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+}
+
+.auditoria-acao-editou {
+    background: rgba(245, 158, 11, 0.15);
+    color: #F59E0B;
+}
+
+.auditoria-acao-excluiu {
+    background: rgba(239, 68, 68, 0.15);
+    color: #EF4444;
+}

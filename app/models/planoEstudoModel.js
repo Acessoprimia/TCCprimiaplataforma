@@ -64,6 +64,23 @@ const queries = Object.freeze({
     INNER JOIN ${TABELAS.planosEstudo} pe ON pe.id_plano_estudos = c.id_plano_estudos
     WHERE pe.id_aluno = ? AND c.codigo_lote IS NULL
   `,
+  buscarLoteDoAluno: `
+    SELECT c.codigo_lote, c.titulo_cronograma, COUNT(*) AS total_eventos, m.nome AS materia
+    FROM ${TABELAS.cronogramas} c
+    INNER JOIN ${TABELAS.planosEstudo} pe ON pe.id_plano_estudos = c.id_plano_estudos
+    INNER JOIN ${TABELAS.materias} m ON m.id_materia = pe.id_materia
+    WHERE c.codigo_lote = ? AND pe.id_aluno = ?
+    GROUP BY c.codigo_lote, c.titulo_cronograma, m.nome
+    LIMIT 1
+  `,
+  // Apaga o Plano_de_Estudo (e nao o Cronograma): cada evento gerado criou
+  // UM par plano+cronograma, e Cronograma tem ON DELETE CASCADE pro plano.
+  // Apagando so o Cronograma o plano ficaria orfao no banco.
+  excluirLoteDoAluno: `
+    DELETE pe FROM ${TABELAS.planosEstudo} pe
+    INNER JOIN ${TABELAS.cronogramas} c ON c.id_plano_estudos = pe.id_plano_estudos
+    WHERE c.codigo_lote = ? AND pe.id_aluno = ?
+  `,
 });
 
 function banco(conexao) {
@@ -171,6 +188,19 @@ const PlanoEstudoModel = Object.freeze({
     const [resultado] = await banco(conexao).query(queries.atualizarConcluido, [
       concluido,
       idCronograma,
+      idAluno,
+    ]);
+    return resultado;
+  },
+
+  async buscarLoteDoAluno({ codigoLote, idAluno }, conexao) {
+    const [lotes] = await banco(conexao).query(queries.buscarLoteDoAluno, [codigoLote, idAluno]);
+    return lotes[0] || null;
+  },
+
+  async excluirLoteDoAluno({ codigoLote, idAluno }, conexao) {
+    const [resultado] = await banco(conexao).query(queries.excluirLoteDoAluno, [
+      codigoLote,
       idAluno,
     ]);
     return resultado;

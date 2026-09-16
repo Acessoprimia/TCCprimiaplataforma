@@ -14,6 +14,12 @@ const queries = Object.freeze({
     WHERE email = ? AND id_usuario <> ?
     LIMIT 1
   `,
+  buscarNomePorId: `
+    SELECT nome
+    FROM ${TABELAS.usuarios}
+    WHERE id_usuario = ?
+    LIMIT 1
+  `,
   criarUsuario: `
     INSERT INTO ${TABELAS.usuarios}
       (nome, senha, email, tipo_usuario, status, token_verificacao_email, token_verificacao_email_expira)
@@ -108,6 +114,11 @@ const UsuarioModel = Object.freeze({
   async buscarPorEmail(email, conexao) {
     const [usuarios] = await banco(conexao).query(queries.buscarPorEmail, [email]);
     return usuarios[0] || null;
+  },
+
+  async buscarNomePorId(idUsuario, conexao) {
+    const [usuarios] = await banco(conexao).query(queries.buscarNomePorId, [idUsuario]);
+    return usuarios[0]?.nome || null;
   },
 
   async emailJaCadastrado(email, conexao) {

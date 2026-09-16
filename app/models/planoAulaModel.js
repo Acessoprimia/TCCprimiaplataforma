@@ -36,6 +36,21 @@ const queries = Object.freeze({
     WHERE pa.codigo_lote = ?
     ORDER BY pa.data_atual, pa.hora_inicio
   `,
+  // Um cronograma publicado e um LOTE de linhas de Plano_de_Aula (uma por
+  // evento) amarradas pelo mesmo codigo_lote - por isso o delete e por lote,
+  // nao por id. id_professor no WHERE impede apagar o lote de outro.
+  buscarLoteDoProfessor: `
+    SELECT pa.codigo_lote, pa.titulo_cronograma, COUNT(*) AS total_eventos, m.nome AS materia
+    FROM ${TABELAS.planosAula} pa
+    INNER JOIN ${TABELAS.materias} m ON m.id_materia = pa.id_materia
+    WHERE pa.codigo_lote = ? AND pa.id_professor = ?
+    GROUP BY pa.codigo_lote, pa.titulo_cronograma, m.nome
+    LIMIT 1
+  `,
+  excluirLoteDoProfessor: `
+    DELETE FROM ${TABELAS.planosAula}
+    WHERE codigo_lote = ? AND id_professor = ?
+  `,
 });
 
 function banco(conexao) {
@@ -116,6 +131,22 @@ const PlanoAulaModel = Object.freeze({
   async listarEventosPorLote(codigoLote, conexao) {
     const [eventos] = await banco(conexao).query(queries.listarEventosPorLote, [codigoLote]);
     return eventos;
+  },
+
+  async buscarLoteDoProfessor({ codigoLote, idProfessor }, conexao) {
+    const [lotes] = await banco(conexao).query(queries.buscarLoteDoProfessor, [
+      codigoLote,
+      idProfessor,
+    ]);
+    return lotes[0] || null;
+  },
+
+  async excluirLoteDoProfessor({ codigoLote, idProfessor }, conexao) {
+    const [resultado] = await banco(conexao).query(queries.excluirLoteDoProfessor, [
+      codigoLote,
+      idProfessor,
+    ]);
+    return resultado;
   },
 });
 

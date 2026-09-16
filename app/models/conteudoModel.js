@@ -4,7 +4,7 @@ const TABELAS = require("./tabelas");
 const queries = Object.freeze({
   listarPublicadosPorTipo: `
     SELECT c.id, c.titulo, c.autor, c.descricao, c.tipo, c.imagem_url, c.arquivo_url,
-           c.is_premium, c.destaque, m.nome AS materia
+           c.is_premium, c.destaque, c.professor_id, m.nome AS materia
     FROM ${TABELAS.conteudos} c
     LEFT JOIN ${TABELAS.materias} m ON m.id_materia = c.materia_id
     WHERE c.status = 'publicado' AND c.tipo = ?
@@ -60,6 +60,11 @@ const queries = Object.freeze({
   `,
   remover: `
     DELETE FROM ${TABELAS.conteudos} WHERE id = ?
+  `,
+  // O professor_id entra no WHERE (e nao so o id) pra um professor nao
+  // conseguir apagar o conteudo de outro trocando o id na requisicao.
+  removerDoProfessor: `
+    DELETE FROM ${TABELAS.conteudos} WHERE id = ? AND professor_id = ?
   `,
   listarRecomendadosPorMateria: `
     SELECT id, titulo, tipo
@@ -189,6 +194,11 @@ const ConteudoModel = Object.freeze({
 
   async remover(id, conexao) {
     const [resultado] = await banco(conexao).query(queries.remover, [id]);
+    return resultado;
+  },
+
+  async removerDoProfessor({ id, idProfessor }, conexao) {
+    const [resultado] = await banco(conexao).query(queries.removerDoProfessor, [id, idProfessor]);
     return resultado;
   },
 

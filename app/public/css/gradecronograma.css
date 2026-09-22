@@ -4,8 +4,13 @@
 /* As duas paginas tem main estreito (500-600px); com a grade a coluna
    precisa ser larga o bastante pra semana inteira caber sem rolar no
    desktop. Este arquivo e carregado depois dos css das paginas. */
+/* min() com 100%: sem o teto relativo, o body (que e flex column) deixava
+   este main esticar ate a largura minima da grade (620-720px) e a PAGINA
+   inteira passava a rolar de lado no celular - header e rodape saiam do
+   lugar junto. Com o teto em 100% o main respeita a tela e quem rola e so
+   o .grade-scroll, que foi feito pra isso (coluna de horario fixa). */
 main.com-grade {
-    max-width: 1040px;
+    max-width: min(1040px, 100%);
 }
 
 .grade-semana-rotulo {

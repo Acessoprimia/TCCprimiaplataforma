@@ -289,6 +289,67 @@ body {
     border-bottom: 1px solid var(--c-e2dcf5, #e2dcf5);
 }
 
+/* Abaixo dessa largura as 5 colunas (com white-space: nowrap) nao cabem e a
+   tabela so poderia ser vista rolando de lado. Vira uma pilha de cartoes,
+   mesmo padrao usado nas tabelas do admin - cada celula mostra o proprio
+   rotulo via data-label. */
+@media (max-width: 720px) {
+    .tabela-historico-wrap {
+        overflow-x: visible;
+        background-color: transparent;
+        padding: 0;
+    }
+
+    .tabela-historico,
+    .tabela-historico tbody,
+    .tabela-historico tr,
+    .tabela-historico td {
+        display: block;
+        width: 100%;
+    }
+
+    .tabela-historico thead {
+        display: none;
+    }
+
+    .tabela-historico tr {
+        background-color: var(--c-f3f0fa, #f3f0fa);
+        border-radius: 16px;
+        padding: 14px;
+        margin-bottom: 14px;
+    }
+
+    .tabela-historico th,
+    .tabela-historico td {
+        white-space: normal;
+        padding: 10px 0;
+        text-align: left;
+    }
+
+    .tabela-historico tbody tr:not(:last-child) td {
+        border-bottom: none;
+    }
+
+    .tabela-historico td:not(:last-child) {
+        border-bottom: 1px solid var(--c-e2dcf5, #e2dcf5);
+    }
+
+    .tabela-historico td[data-label]::before {
+        content: attr(data-label);
+        display: block;
+        color: var(--accent, #A398D1);
+        font-size: 0.6875rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    /* Ultima celula so tem o botao de cancelar (e as vezes vem vazia) -
+       sem rotulo e sem borda pendurada. */
+    .tabela-historico td:last-child:empty {
+        display: none;
+    }
+}
+
 .badge-status {
     display: inline-block;
     padding: 4px 12px;

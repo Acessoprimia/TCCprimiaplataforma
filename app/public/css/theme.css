@@ -1,4 +1,39 @@
 /* ========================================
+   BASE DE RESPONSIVIDADE (vale pro site inteiro)
+   ======================================== */
+/* theme.css e carregado por todos os partials de header, entao e o unico
+   arquivo que chega em toda pagina - por isso as regras que precisam valer
+   globalmente moram aqui. Sao defaults defensivos: nao mudam layout que ja
+   esta certo, so impedem que conteudo escape da caixa em telas estreitas. */
+
+/* Sem isso uma imagem maior que o container simplesmente vaza e empurra a
+   pagina inteira (era o caso da imagem do /sobre). height: auto preserva a
+   proporcao quando a largura e reduzida. */
+img,
+video,
+canvas,
+svg:not([width]) {
+    max-width: 100%;
+}
+
+img,
+video {
+    height: auto;
+}
+
+/* Palavras muito longas (URLs, e-mails, nomes de arquivo) nao quebram
+   sozinhas e esticam a caixa que as contem. */
+body {
+    overflow-wrap: break-word;
+}
+
+/* Deliberadamente NAO ha "overflow-x: hidden" no body aqui: isso esconderia
+   o vazamento cortando o conteudo (o oposto do que se quer) e ainda
+   mascararia quebras reais que precisam ser corrigidas na origem. Conteudo
+   que precisa rolar na horizontal (tabelas, calendario) leva overflow-x:
+   auto no proprio container. */
+
+/* ========================================
    SISTEMA DE TEMA (claro / escuro / automatico)
    ======================================== */
 /* "Automatico" (padrao) segue prefers-color-scheme do sistema. Quando a

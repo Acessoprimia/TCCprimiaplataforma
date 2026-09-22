@@ -205,6 +205,34 @@ function fecharTodosMenus() {
     document.querySelectorAll('[data-menu-toggle][aria-expanded="true"]').forEach((botao) => botao.setAttribute("aria-expanded", "false"));
 }
 
+// O menu e position: fixed pra nao ser recortado pelo overflow-x da tabela,
+// entao as coordenadas precisam ser calculadas na mao. Alinha pela direita do
+// botao e vira pra cima/esquerda quando nao cabe na janela.
+function posicionarMenu(menu, gatilho) {
+    const botao = gatilho.getBoundingClientRect();
+    menu.style.visibility = "hidden";
+    menu.classList.add("aberto");
+
+    const largura = menu.offsetWidth;
+    const altura = menu.offsetHeight;
+    const margem = 8;
+
+    let esquerda = botao.right - largura;
+    if (esquerda < margem) esquerda = margem;
+    if (esquerda + largura > window.innerWidth - margem) {
+        esquerda = Math.max(margem, window.innerWidth - largura - margem);
+    }
+
+    let topo = botao.bottom + 6;
+    if (topo + altura > window.innerHeight - margem) {
+        topo = Math.max(margem, botao.top - altura - 6);
+    }
+
+    menu.style.left = `${esquerda}px`;
+    menu.style.top = `${topo}px`;
+    menu.style.visibility = "";
+}
+
 document.addEventListener("click", (evento) => {
     const gatilhoMenu = evento.target.closest("[data-menu-toggle]");
 
@@ -214,7 +242,7 @@ document.addEventListener("click", (evento) => {
         fecharTodosMenus();
 
         if (!jaAberto) {
-            menu.classList.add("aberto");
+            posicionarMenu(menu, gatilhoMenu);
             gatilhoMenu.setAttribute("aria-expanded", "true");
         }
 
@@ -233,6 +261,12 @@ document.addEventListener("click", (evento) => {
         fecharTodosMenus();
     }
 });
+
+// Menu fixed nao acompanha a rolagem: se a pagina (ou a tabela) rolar, ele
+// ficaria flutuando longe do botao que o abriu. Fechar e o comportamento
+// esperado e evita ter que reposicionar a cada frame.
+window.addEventListener("scroll", fecharTodosMenus, true);
+window.addEventListener("resize", fecharTodosMenus);
 
 adminModalForm.addEventListener("submit", (evento) => {
     evento.preventDefault();

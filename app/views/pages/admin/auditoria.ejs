@@ -83,8 +83,8 @@
                             <% } %>
                             <% logs.forEach(function (log) { %>
                                 <tr>
-                                    <td><%= log.quando %></td>
-                                    <td>
+                                    <td data-label="Quando"><%= log.quando %></td>
+                                    <td data-label="Quem">
                                         <%= log.nome_usuario %>
                                         <% if (log.email_usuario) { %>
                                             <br><small><%= log.email_usuario %></small>
@@ -92,10 +92,10 @@
                                             <br><small>conta excluida</small>
                                         <% } %>
                                     </td>
-                                    <td><%= log.tipo_usuario %></td>
-                                    <td><span class="auditoria-acao auditoria-acao-<%= log.acao %>"><%= log.acao %></span></td>
-                                    <td><%= log.entidade %><% if (log.id_entidade) { %> #<%= log.id_entidade %><% } %></td>
-                                    <td><%= log.descricao %></td>
+                                    <td data-label="Tipo"><%= log.tipo_usuario %></td>
+                                    <td data-label="Acao"><span class="auditoria-acao auditoria-acao-<%= log.acao %>"><%= log.acao %></span></td>
+                                    <td data-label="Entidade"><%= log.entidade %><% if (log.id_entidade) { %> #<%= log.id_entidade %><% } %></td>
+                                    <td data-label="Descricao"><%= log.descricao %></td>
                                 </tr>
                             <% }) %>
                         </tbody>

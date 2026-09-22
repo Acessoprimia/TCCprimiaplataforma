@@ -724,14 +724,19 @@ main {
         flex-direction: column;
     }
 
+    /* As abas quebram em varias linhas em vez de rolarem de lado: com
+       overflow-x: auto as ultimas ficavam escondidas fora da tela e nada
+       indicava que existiam. flex-wrap mostra todas de uma vez. */
     .config-abas {
         flex-direction: row;
-        overflow-x: auto;
+        flex-wrap: wrap;
         width: 100%;
         position: static;
-        gap: 2px;
+        gap: 6px;
     }
 
+    /* nowrap so DENTRO do botao (o texto da aba nao parte no meio); quem
+       quebra e a linha de botoes, nao a palavra. */
     .aba-botao {
         white-space: nowrap;
     }

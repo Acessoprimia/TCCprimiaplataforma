@@ -42,10 +42,10 @@
                     <tbody>
                         <% historico.forEach(function (pagamento) { %>
                             <tr>
-                                <td><%= pagamento.dataFormatada %></td>
-                                <td><%= pagamento.dias_premium %> dias</td>
-                                <td>R$ <%= pagamento.valorFormatado %></td>
-                                <td>
+                                <td data-label="Data"><%= pagamento.dataFormatada %></td>
+                                <td data-label="Dias de premium"><%= pagamento.dias_premium %> dias</td>
+                                <td data-label="Valor">R$ <%= pagamento.valorFormatado %></td>
+                                <td data-label="Status">
                                     <span class="badge-status badge-<%= pagamento.status.classe %>">
                                         <%= pagamento.status.texto %>
                                     </span>

@@ -554,13 +554,20 @@ textarea {
     margin-bottom: 18px;
 }
 
+/* Mesmo padrao do .grade-cronograma-wrap e do .tabela-historico-wrap: a
+   tabela rola DENTRO da propria caixa em vez de empurrar a pagina. Antes
+   isso era overflow: visible, provavelmente pro menu de acoes nao ser
+   cortado - hoje esse menu e position: fixed (ver admin/common.js), entao
+   nao depende mais do overflow do container. */
 .table-scroll {
     width: 100%;
-    overflow: visible;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .admin-table {
     width: 100%;
+    min-width: 680px;
     border-collapse: collapse;
 }
 
@@ -613,11 +620,12 @@ textarea {
     color: var(--accent, #A398D1);
 }
 
+/* position: fixed (e nao absolute) pra escapar do overflow-x: auto do
+   .table-scroll - dentro de um container que rola, um menu absolute seria
+   recortado. As coordenadas sao calculadas na abertura, em common.js. */
 .table-menu {
     display: none;
-    position: absolute;
-    right: 0;
-    top: calc(100% + 6px);
+    position: fixed;
     min-width: 190px;
     background-color: var(--cor-fundo-cartao, #ffffff);
     border-radius: 12px;
@@ -1258,7 +1266,23 @@ textarea {
     display: block;
 }
 
-@media (max-width: 559px) {
+/* A tabela so cabe inteira quando a caixa dela tem ~680px. Com a sidebar
+   ocupando 260px + espacamentos, isso so acontece a partir de ~1060px de
+   viewport (medido, nao estimado). Abaixo disso ela vira uma pilha de
+   cartoes: assim nenhuma coluna fica cortada nem exige rolagem lateral,
+   que e o comportamento que o layout de cartoes ja usava no celular -
+   aqui ele apenas passa a valer em toda a faixa onde a tabela nao cabe. */
+@media (max-width: 1239px) {
+    /* Em cartoes nao existe "coluna", entao o min-width do modo tabela so
+       esticaria os cartoes e pediria rolagem lateral a toa. */
+    .admin-table {
+        min-width: 0;
+    }
+
+    .table-scroll {
+        overflow-x: visible;
+    }
+
     .admin-table,
     .admin-table thead,
     .admin-table tbody,
@@ -1291,6 +1315,8 @@ textarea {
         padding-bottom: 0;
     }
 
+    /* O rotulo da coluna vem do data-label de cada celula - sem ele o cartao
+       viraria uma lista de valores sem contexto. */
     .admin-table td::before {
         content: attr(data-label);
         display: block;
@@ -1304,6 +1330,22 @@ textarea {
         flex-direction: column;
     }
 
+    .table-actions-cell {
+        text-align: left;
+    }
+}
+
+/* No modo tabela so e preciso quebrar o que realmente nao cabe sozinho
+   (e-mail longo). break-word, e nao anywhere: "anywhere" parte tambem
+   palavras curtas no meio ("Ativ/o", "Statu/s") pra espremer a coluna. */
+@media (min-width: 1240px) {
+    .admin-table th,
+    .admin-table td {
+        overflow-wrap: break-word;
+    }
+}
+
+@media (max-width: 559px) {
     .table-actions button,
     .content-admin-card button,
     .premium-card button {

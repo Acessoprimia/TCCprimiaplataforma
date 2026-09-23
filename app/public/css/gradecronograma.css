@@ -114,7 +114,7 @@ main.com-grade {
     border-radius: 10px;
     border-left: 4px solid var(--cor-prioridade, var(--cor-atividade));
     background: var(--c-f5f4fa, #f5f4fa); /* fallback pra navegador sem color-mix */
-    background: color-mix(in srgb, var(--cor-atividade) 14%, white);
+    background: color-mix(in srgb, var(--cor-atividade) 14%, var(--cor-fundo-cartao, white));
 }
 
 .grade-atividade + .grade-atividade {

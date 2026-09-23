@@ -99,6 +99,19 @@ body {
     font-size: 0.8125rem;
 }
 
+/* Navegador ignora background-color normal em campo autopreenchido (login
+   salvo) e forca fundo branco proprio - so da pra sobrescrever via o truque
+   do box-shadow inset gigante, que "pinta por cima" da cor nativa. */
+.input-campo:-webkit-autofill,
+.input-campo:-webkit-autofill:hover,
+.input-campo:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--c-666, #666);
+    -webkit-box-shadow: 0 0 0 1000px var(--cor-fundo-cartao, white) inset;
+    box-shadow: 0 0 0 1000px var(--cor-fundo-cartao, white) inset;
+    transition: background-color 9999s ease-in-out 0s;
+    caret-color: var(--c-666, #666);
+}
+
 /* SELECT ESPECÍFICO */
 .select-campo {
     cursor: pointer;

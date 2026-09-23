@@ -86,6 +86,7 @@ body {
     font-family: inherit;
     font-size: 0.875rem;
     background-color: var(--cor-fundo-cartao, white);
+    color: var(--cor-texto, #333);
 }
 
 .campo-tipo-redacao {
@@ -106,6 +107,8 @@ body {
     resize: vertical;
     min-height: 260px;
     line-height: 1.6;
+    background-color: var(--cor-fundo-cartao, white);
+    color: var(--cor-texto, #333);
 }
 
 .escrever-redacao-form input[type="text"]:focus,

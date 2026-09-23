@@ -85,6 +85,7 @@ body {
     border-radius: 12px;
     padding: 12px 15px;
     transition: all 0.3s ease;
+    background-color: var(--cor-fundo-cartao, white);
 }
 
 .campo-wrapper:focus-within {
@@ -114,10 +115,24 @@ body {
     font-family: 'Poppins', sans-serif;
     font-size: 0.9375rem;
     color: var(--c-666, #666);
+    background-color: transparent;
 }
 
 .input-campo::placeholder {
     color: var(--c-999, #999);
+}
+
+/* Navegador ignora background-color normal em campo autopreenchido (login
+   salvo) e forca fundo branco proprio - so da pra sobrescrever via o truque
+   do box-shadow inset gigante, que "pinta por cima" da cor nativa. */
+.input-campo:-webkit-autofill,
+.input-campo:-webkit-autofill:hover,
+.input-campo:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--c-666, #666);
+    -webkit-box-shadow: 0 0 0 1000px var(--cor-fundo-cartao, white) inset;
+    box-shadow: 0 0 0 1000px var(--cor-fundo-cartao, white) inset;
+    transition: background-color 9999s ease-in-out 0s;
+    caret-color: var(--c-666, #666);
 }
 
 .erro-msg {

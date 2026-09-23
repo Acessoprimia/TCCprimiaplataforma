@@ -367,6 +367,7 @@ button.menu-button {
             font-size: 0.875rem;
             font-weight: 400;
             color: var(--cor-texto, #1a1a1a);
+            background-color: var(--cor-fundo-cartao, white);
             resize: vertical;
         }
 

@@ -114,8 +114,8 @@
   height: 44px;
   border-radius: 50%;
   border: none;
-  background: var(--cor-fundo-cartao, #ffffff);
-  color: var(--c-18142a, #18142a);
+  background: var(--accent, #A398D1);
+  color: var(--on-accent, #ffffff);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;

@@ -20,6 +20,14 @@ const queries = Object.freeze({
     WHERE id_usuario = ?
     LIMIT 1
   `,
+  // Perfil completo direto da Usuario, sem join com Aluno/Professor - serve
+  // pro admin em /configuracoes, que nao tem tabela de subtipo propria.
+  buscarPerfilCompleto: `
+    SELECT id_usuario, nome, email, tipo_usuario, status, foto_url, perfil_publico, foto_publica, criado_em
+    FROM ${TABELAS.usuarios}
+    WHERE id_usuario = ?
+    LIMIT 1
+  `,
   criarUsuario: `
     INSERT INTO ${TABELAS.usuarios}
       (nome, senha, email, tipo_usuario, status, token_verificacao_email, token_verificacao_email_expira)
@@ -85,6 +93,11 @@ const queries = Object.freeze({
     SET perfil_publico = ?
     WHERE id_usuario = ?
   `,
+  atualizarFotoPublica: `
+    UPDATE ${TABELAS.usuarios}
+    SET foto_publica = ?
+    WHERE id_usuario = ?
+  `,
   alterarTipoConta: `
     UPDATE ${TABELAS.usuarios}
     SET tipo_usuario = ?
@@ -119,6 +132,11 @@ const UsuarioModel = Object.freeze({
   async buscarNomePorId(idUsuario, conexao) {
     const [usuarios] = await banco(conexao).query(queries.buscarNomePorId, [idUsuario]);
     return usuarios[0]?.nome || null;
+  },
+
+  async buscarPerfilCompleto(idUsuario, conexao) {
+    const [usuarios] = await banco(conexao).query(queries.buscarPerfilCompleto, [idUsuario]);
+    return usuarios[0] || null;
   },
 
   async emailJaCadastrado(email, conexao) {
@@ -219,6 +237,14 @@ const UsuarioModel = Object.freeze({
   async atualizarPerfilPublico({ perfilPublico, idUsuario }, conexao) {
     const [resultado] = await banco(conexao).query(queries.atualizarPerfilPublico, [
       Boolean(perfilPublico),
+      idUsuario,
+    ]);
+    return resultado;
+  },
+
+  async atualizarFotoPublica({ fotoPublica, idUsuario }, conexao) {
+    const [resultado] = await banco(conexao).query(queries.atualizarFotoPublica, [
+      Boolean(fotoPublica),
       idUsuario,
     ]);
     return resultado;

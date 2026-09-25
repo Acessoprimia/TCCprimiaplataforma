@@ -18,32 +18,7 @@
         <h1>Biblioteca</h1>
     </header>
 
-    <!-- FILTRO -->
-    <nav class="filtro-container">
-        <button class="filtro-btn" id="openFilter">
-            <span class="filtro-icon"></span>
-            Filtro
-        </button>
-    </nav>
-
-    <!-- MODAL DE FILTRO -->
-    <aside class="modal-overlay" id="modalOverlay">
-        <section class="modal-content">
-            <button class="close-modal" id="closeModal">&times;</button>
-            <header class="modal-header">
-                <h2>Selecione A Disciplina:</h2>
-            </header>
-            <form class="disciplinas-list">
-                <% materias.forEach(function (materia) { %>
-                    <label class="disciplina-item">
-                        <input type="checkbox" id="<%= materia.slug %>" value="<%= materia.slug %>">
-                        <span><%= materia.nome %></span>
-                    </label>
-                <% }) %>
-            </form>
-            <button class="buscar-btn" id="buscarBtn">Buscar</button>
-        </section>
-    </aside>
+    <%- include('../partials/filtroPadrao.ejs', { opcoesFiltro: materias.map(function (m) { return { valor: m.slug, nome: m.nome }; }) }) %>
 
     <!-- GRADE DE LIVROS -->
 

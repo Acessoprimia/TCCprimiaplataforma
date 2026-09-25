@@ -1,14 +1,11 @@
-const filter = document.getElementById('materia-filter');
 const cards = document.querySelectorAll('article');
 
-filter.addEventListener('change', (e) => {
-    const selectedMateria = e.target.value;
+document.addEventListener('filtro:aplicar', (e) => {
+    const selecionadas = e.detail.valores;
 
     cards.forEach(card => {
-        if (selectedMateria === '' || card.dataset.materia === selectedMateria) {
-            card.style.display = 'block';
-        } else {
-            card.style.display = 'none';
-        }
+        card.style.display = selecionadas.length === 0 || selecionadas.includes(card.dataset.materia)
+            ? 'block'
+            : 'none';
     });
 });

@@ -86,6 +86,46 @@ const UploadService = Object.freeze({
     return UploadService.enviarArquivo(bufferArquivo, pasta, "image");
   },
 
+  // Diploma e dado sensivel: sobe como "authenticated" (URL publica nao
+  // funciona). Guarda so uma referencia curta na coluna; o admin ve por
+  // URL assinada (urlDiploma).
+  async enviarDiploma(bufferArquivo) {
+    return new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "primia/diplomas", resource_type: "auto", type: "authenticated" },
+        (erro, r) => {
+          if (erro) return reject(erro);
+          resolve(`${r.resource_type}|${r.public_id}|${r.format || ""}`);
+        }
+      );
+      stream.end(bufferArquivo);
+    });
+  },
+
+  // Best-effort: se falhar, sobra um arquivo orfao no Cloudinary, mas nunca
+  // derruba a aprovacao/recusa que ja foi gravada no banco.
+  async apagarDiploma(referencia) {
+    const [resourceType, publicId] = String(referencia || "").split("|");
+    if (!resourceType || !publicId) return;
+    try {
+      await cloudinary.uploader.destroy(publicId, { resource_type: resourceType, type: "authenticated" });
+    } catch (erro) {
+      console.error("Erro ao apagar diploma no Cloudinary:", erro);
+    }
+  },
+
+  urlDiploma(referencia) {
+    const [resourceType, publicId, format] = String(referencia || "").split("|");
+    if (!resourceType || !publicId) return null;
+    return cloudinary.url(publicId, {
+      resource_type: resourceType,
+      type: "authenticated",
+      sign_url: true,
+      secure: true,
+      ...(format ? { format } : {}),
+    });
+  },
+
   ehSvg(mimetype, bufferArquivo) {
     if (mimetype === "image/svg+xml") return true;
     const inicio = bufferArquivo.toString("utf8", 0, 300);

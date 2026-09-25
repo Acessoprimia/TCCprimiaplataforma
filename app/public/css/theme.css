@@ -115,7 +115,10 @@ html[data-fonte="extra"] {
     --c-555: #555;
     --c-fafafa: #FAFAFA;
     --warm-suave: #FF9C7D;
-    --on-warm: #1A1A1A;
+    /* Pedido explicito: texto branco nos botoes "quentes" (laranja), mesmo
+       com o contraste caindo de ~9:1 pra ~2:1 sobre o --warm/--warm-suave -
+       ficou ilegivel de proposito, avisado antes da troca. */
+    --on-warm: #ffffff;
     --perigo: #D84F4F;
     --c-777: #777;
     --sucesso: #2F8F6B;

@@ -1,0 +1,32 @@
+<%# Filtro padrao por disciplina (mesmo visual da Biblioteca).
+    Recebe `opcoesFiltro`: [{ valor, nome }]. Ao clicar em Buscar dispara o
+    evento "filtro:aplicar" em document com detail.valores (array; vazio =
+    mostrar tudo) - cada pagina escuta e esconde/mostra os seus cards. %>
+<link href="/css/filtroPadrao.css" rel="stylesheet">
+
+<nav class="filtro-container">
+    <button type="button" class="filtro-btn" id="openFilter">
+        <span class="filtro-icon"></span>
+        Filtro
+    </button>
+</nav>
+
+<aside class="filtro-overlay" id="modalOverlay">
+    <section class="filtro-modal">
+        <button type="button" class="filtro-fechar" id="closeModal" aria-label="Fechar">&times;</button>
+        <header class="filtro-modal-header">
+            <h2>Selecione A Disciplina:</h2>
+        </header>
+        <form class="filtro-lista" onsubmit="return false;">
+            <% opcoesFiltro.forEach(function (opcao) { %>
+                <label class="filtro-item">
+                    <input type="checkbox" value="<%= opcao.valor %>">
+                    <span><%= opcao.nome %></span>
+                </label>
+            <% }) %>
+        </form>
+        <button type="button" class="filtro-buscar" id="buscarBtn">Buscar</button>
+    </section>
+</aside>
+
+<script src="/js/filtroPadrao.js"></script>

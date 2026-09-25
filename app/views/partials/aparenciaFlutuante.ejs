@@ -1,0 +1,56 @@
+<!-- Popover de Aparencia (tema + fonte) pra visitante deslogado - reaproveita
+     as chaves de localStorage da aba Aparencia em /configuracoes. So o
+     painel + script: os gatilhos (icone no header e item no menu hamburguer)
+     ficam inline em cada header, porque a estrutura de cada um e diferente. -->
+<link rel="stylesheet" href="../css/aparenciaFlutuante.css">
+
+<section class="aparencia-flutuante-painel" id="aparenciaFlutuantePainel" role="dialog" aria-label="Aparência do site" hidden>
+    <header class="aparencia-flutuante-cabecalho">
+        <h2>Aparência</h2>
+        <button type="button" class="aparencia-flutuante-fechar" id="aparenciaFlutuanteFechar" aria-label="Fechar">&times;</button>
+    </header>
+
+    <h3 class="aparencia-flutuante-subtitulo">Tema</h3>
+    <nav class="tema-opcoes" role="radiogroup" aria-label="Tema da plataforma">
+        <button type="button" class="tema-botao" data-tema="light" role="radio" aria-checked="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"></circle>
+                <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path>
+            </svg>
+            Claro
+        </button>
+        <button type="button" class="tema-botao" data-tema="dark" role="radio" aria-checked="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            Escuro
+        </button>
+        <button type="button" class="tema-botao" data-tema="auto" role="radio" aria-checked="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="14" rx="2"></rect>
+                <path d="M8 21h8M12 17v4"></path>
+            </svg>
+            Automático
+        </button>
+    </nav>
+
+    <h3 class="aparencia-flutuante-subtitulo">Tamanho da fonte</h3>
+    <nav class="fonte-opcoes" role="radiogroup" aria-label="Tamanho da fonte">
+        <button type="button" class="fonte-botao" data-fonte="padrao" role="radio" aria-checked="false">
+            <span class="fonte-amostra" style="font-size: 0.9rem;">A</span>
+            Padrão
+        </button>
+        <button type="button" class="fonte-botao" data-fonte="grande" role="radio" aria-checked="false">
+            <span class="fonte-amostra" style="font-size: 1.15rem;">A</span>
+            Grande
+        </button>
+        <button type="button" class="fonte-botao" data-fonte="extra" role="radio" aria-checked="false">
+            <span class="fonte-amostra" style="font-size: 1.4rem;">A</span>
+            Extra grande
+        </button>
+    </nav>
+
+    <p class="aparencia-flutuante-rodape">Fica salvo neste navegador. <a href="/login">Crie uma conta</a> pra levar essa preferência com você e ajustar outras coisas.</p>
+</section>
+
+<script src="../js/aparenciaFlutuante.js"></script>

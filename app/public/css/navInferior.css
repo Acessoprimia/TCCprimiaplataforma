@@ -1,0 +1,117 @@
+/* Barra de navegacao inferior - so na faixa em que o hamburguer aparece
+   (mesmo corte do header.css: ate 1023px). */
+.nav-inferior {
+    display: none;
+}
+
+@media (max-width: 1023px) {
+    .nav-inferior {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 9990;
+        background: var(--header-bg, var(--cor-fundo-cartao, white));
+        border-top: 1px solid var(--c-e0e0e0, #e0e0e0);
+        box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+        padding-bottom: env(safe-area-inset-bottom);
+        /* itens agrupados no centro em vez de esticados pela tela toda */
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .nav-inferior-item {
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: 84px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        height: 60px;
+        padding: 0 2px;
+        background: none;
+        border: none;
+        color: var(--c-666, #666);
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.6875rem;
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-inferior-item span {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .nav-inferior-item:hover,
+    .nav-inferior-item.ativo {
+        color: var(--accent, #A398D1);
+    }
+
+    .nav-inferior-item.ativo {
+        font-weight: 700;
+    }
+
+    /* Espaco pro conteudo/rodape nao ficar escondido atras da barra. */
+    body:has(.nav-inferior) {
+        padding-bottom: calc(60px + env(safe-area-inset-bottom));
+    }
+
+    /* Elementos fixos embaixo sobem pra nao ficarem cobertos. */
+    body:has(.nav-inferior) .cookie-banner {
+        bottom: calc(60px + env(safe-area-inset-bottom));
+    }
+
+    body:has(.nav-inferior) .btn-add-fixo,
+    body:has(.nav-inferior) .site-footer-top-btn {
+        bottom: calc(60px + env(safe-area-inset-bottom) + 1rem);
+    }
+
+    /* O hamburguer do topo sai: o botao "Menu" da barra faz o mesmo papel. */
+    body:has(.nav-inferior) .hamburger {
+        display: none;
+    }
+
+    body:has(.nav-inferior) .header-acoes {
+        margin-right: 0;
+    }
+
+    /* Sem o hamburguer virando X, o menu lateral ganha o proprio botao de fechar. */
+    .nav-mobile-fechar {
+        position: absolute;
+        top: 16px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 2rem;
+        line-height: 1;
+        color: var(--text-color, #333);
+        cursor: pointer;
+    }
+
+    /* Menu lateral e fundo escurecido cobrem o header e o conteudo, mas
+       terminam acima da barra, que continua visivel e clicavel (o botao
+       "Menu" fecha o menu de novo). */
+    body:has(.nav-inferior) .overlay {
+        z-index: 10010;
+        height: auto;
+        bottom: calc(60px + env(safe-area-inset-bottom));
+    }
+
+    body:has(.nav-inferior) .nav-mobile {
+        z-index: 10011;
+        height: auto;
+        bottom: calc(60px + env(safe-area-inset-bottom));
+    }
+
+    body:has(.nav-inferior) .nav-inferior {
+        z-index: 10012;
+    }
+}

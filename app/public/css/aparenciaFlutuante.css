@@ -1,0 +1,182 @@
+/* Ajuste de Aparencia (tema + tamanho de fonte) pra quem esta deslogado -
+   um icone no header (como o "Configuracoes" de quem tem conta) que abre
+   um popover, mais um item dentro do menu hamburguer no mobile. Mesmas
+   chaves de localStorage da aba Aparencia em /configuracoes, entao o que
+   for ajustado aqui continua valendo depois que a pessoa criar conta. */
+
+/* Encapsula o icone (desktop) - fica ao lado do "Ja tem uma conta?", e serve
+   de ancora pro popover (position: relative). Nao depende de header.css:
+   hdeslogado.ejs (paginas de login/cadastro) tem seu proprio CSS e nao
+   define .header-acoes/.nav-config. */
+.aparencia-header-slot {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto;
+    position: relative;
+}
+
+.aparencia-trigger {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--accent, #A398D1);
+    cursor: pointer;
+}
+
+.aparencia-trigger:hover {
+    color: var(--warm, #FF9466);
+}
+
+/* So aparece a partir do breakpoint em que o menu deixa de ser o
+   hamburguer (mesmo ponto de corte usado pro .btn-login/.nav-desktop). */
+@media (min-width: 1024px) {
+    .aparencia-trigger {
+        display: flex;
+    }
+}
+
+/* Item dentro do menu hamburguer (mobile) - mesma pinta dos links de
+   .nav-mobile ul li a, so que em botao (nao navega, abre o popover). */
+.aparencia-trigger-mobile {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: var(--text-color, inherit);
+    text-decoration: none;
+    font-family: inherit;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 14px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.aparencia-trigger-mobile:hover {
+    padding-left: 12px;
+    opacity: 0.85;
+}
+
+.aparencia-flutuante-painel {
+    position: fixed;
+    top: 76px;
+    right: 16px;
+    width: min(300px, calc(100vw - 32px));
+    max-height: min(480px, calc(100vh - 100px));
+    overflow-y: auto;
+    background: var(--cor-fundo-cartao, #fff);
+    border-radius: 18px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+    padding: 18px;
+    z-index: 10001;
+}
+
+.aparencia-flutuante-cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.aparencia-flutuante-cabecalho h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cor-texto, #333);
+    margin: 0;
+}
+
+.aparencia-flutuante-fechar {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--c-999, #999);
+    cursor: pointer;
+    padding: 2px 6px;
+}
+
+.aparencia-flutuante-fechar:hover {
+    color: var(--cor-texto, #333);
+}
+
+.aparencia-flutuante-subtitulo {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--c-999, #999);
+    margin: 14px 0 8px;
+}
+
+.aparencia-flutuante-subtitulo:first-of-type {
+    margin-top: 0;
+}
+
+.aparencia-flutuante-rodape {
+    font-size: 0.75rem;
+    color: var(--cor-texto-suave, #888);
+    margin: 14px 0 0;
+    line-height: 1.4;
+}
+
+.aparencia-flutuante-rodape a {
+    color: var(--accent, #A398D1);
+    font-weight: 600;
+}
+
+/* Botoes de tema/fonte - mesmo visual da aba Aparencia de /configuracoes,
+   copiado aqui porque essas paginas publicas nao carregam configuracoes.css. */
+.tema-opcoes,
+.fonte-opcoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tema-botao,
+.fonte-botao {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--cor-texto-suave, #888);
+    background-color: var(--cor-fundo-sutil, #f5f4fa);
+    border: 1.8px solid transparent;
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tema-botao svg {
+    opacity: 0.7;
+}
+
+.tema-botao:hover,
+.fonte-botao:hover {
+    color: var(--accent, #A398D1);
+}
+
+.tema-botao.ativo,
+.fonte-botao.ativo {
+    color: var(--accent, #A398D1);
+    background-color: rgba(163, 152, 209, 0.14);
+    border-color: var(--accent, #A398D1);
+}
+
+.tema-botao.ativo svg {
+    opacity: 1;
+}
+
+.fonte-amostra {
+    font-weight: 700;
+    line-height: 1;
+}

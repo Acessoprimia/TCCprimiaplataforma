@@ -11,6 +11,13 @@ const MailService = require("../services/mailService");
 const CronogramaService = require("../services/cronogramaService");
 const PagamentoService = require("../services/pagamentoService");
 
+const uploadDiploma = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) =>
+    cb(null, ["application/pdf", "image/jpeg", "image/png"].includes(file.mimetype)),
+});
+
 const uploadConteudo = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 20 * 1024 * 1024 },
@@ -317,7 +324,7 @@ function rotinaDesatualizada(itens, ehPremium) {
 // so estudo/revisao.
 async function semearCronogramaGenerico(idAluno, ehPremium) {
   const materias = await Models.materias.listarAtivas();
-  const diasUteis = CronogramaService.proximosDiasUteis(5);
+  const diasUteis = CronogramaService.proximosDiasUteis(5, CronogramaService.proximaSegunda());
   const rotina = CronogramaService.gerarRotinaGenerica(materias, diasUteis, ehPremium);
 
   for (const item of rotina) {
@@ -456,9 +463,16 @@ async function enviarEmailRedefinicaoSenhaSeguro({ nome, email, token }) {
 // engolido, nunca derruba a acao real do usuario. Recebe a descricao ja
 // montada (e nao so o id) porque a linha original costuma estar sendo
 // apagada - depois do DELETE nao da mais pra descobrir o que era.
-async function registrarAuditoria({ usuarioBase, acao, entidade, idEntidade = null, descricao }) {
+async function registrarAuditoria({
+  usuarioBase,
+  acao,
+  entidade,
+  idEntidade = null,
+  descricao,
+  nomeUsuario = null,
+}) {
   try {
-    const nome = await Models.usuarios.buscarNomePorId(usuarioBase.id);
+    const nome = nomeUsuario || (await Models.usuarios.buscarNomePorId(usuarioBase.id));
 
     await Models.auditoria.criar({
       idUsuario: usuarioBase.id,
@@ -474,12 +488,40 @@ async function registrarAuditoria({ usuarioBase, acao, entidade, idEntidade = nu
   }
 }
 
+// Atalho pras rotas /admin/...: quem age e o admin logado (somenteAdmin ja
+// garantiu que existe cookie valido), nao o usuario que sofreu a acao.
+function auditarAdmin(req, dados) {
+  return registrarAuditoria({ usuarioBase: lerCookieUsuario(req), ...dados });
+}
+
 // Corta textos longos (duvida/resposta) pra caber no VARCHAR(255) da
 // descricao sem estourar a coluna.
 function resumirTexto(texto, limite = 80) {
   const limpo = String(texto || "").trim().replace(/\s+/g, " ");
   if (!limpo) return "(sem texto)";
   return limpo.length > limite ? `${limpo.slice(0, limite)}...` : limpo;
+}
+
+// Exclui a conta e, NA MESMA transacao, troca o nome nas linhas do log de
+// auditoria por "Conta removida" - o FK ja zera o id_usuario (ON DELETE SET
+// NULL), mas o nome ficaria guardado sem isso. O numero antigo da conta
+// fica no texto ("Conta removida (#12)") pra ainda dar pra ligar as linhas
+// da mesma pessoa sem mostrar quem ela e. Se qualquer passo falhar,
+// nada e apagado e o erro sobe pra rota mostrar a mensagem de sempre.
+async function excluirContaAnonimizandoAuditoria(idUsuario) {
+  const conexao = await pool.getConnection();
+
+  try {
+    await conexao.beginTransaction();
+    await Models.auditoria.anonimizarUsuario(idUsuario, conexao);
+    await Models.usuarios.excluirConta(idUsuario, conexao);
+    await conexao.commit();
+  } catch (erro) {
+    await conexao.rollback();
+    throw erro;
+  } finally {
+    conexao.release();
+  }
 }
 
 async function buscarOuCriarMateria(conexao, nomeMateria) {
@@ -594,6 +636,13 @@ function perfilFallback(tipoUsuario) {
     };
   }
 
+  if (tipoUsuario === TIPOS_USUARIO.admin) {
+    return {
+      nome: "Administrador",
+      email: "admin@primia.com",
+    };
+  }
+
   return {
     nome: "Usuario do Aluno",
     email: "usuarioaluno@gmail.com",
@@ -632,6 +681,17 @@ function nomeExibidoNoForum(nome, perfilPublico, rotulo) {
   return escondido ? rotulo : nome;
 }
 
+// Mesma regra do nome: quem desligou perfil publico tambem nao mostra a
+// propria foto no forum (senao daria pra identificar o "anonimo" so pela
+// imagem). null faz a view cair no silhueta padrao (image/usuario.webp).
+// Quem desligou "mostrar minha foto" (foto_publica) tambem fica com a
+// silhueta, independente do nome.
+function fotoExibidaNoForum(fotoUrl, perfilPublico, fotoPublica) {
+  const escondido =
+    perfilPublico === 0 || perfilPublico === false || fotoPublica === 0 || fotoPublica === false;
+  return escondido ? null : fotoUrl || null;
+}
+
 function formatarDuvida(duvida) {
   return {
     ...duvida,
@@ -639,6 +699,11 @@ function formatarDuvida(duvida) {
       duvida.aluno_nome,
       duvida.aluno_perfil_publico,
       "Aluno anônimo"
+    ),
+    aluno_foto_url: fotoExibidaNoForum(
+      duvida.aluno_foto_url,
+      duvida.aluno_perfil_publico,
+      duvida.aluno_foto_publica
     ),
     materia_slug: slugMateria(duvida.materia),
     tempo: textoTempoRelativoSeguro(duvida.data_envio, duvida.segundos_desde_envio),
@@ -651,6 +716,11 @@ function formatarDuvida(duvida) {
         resposta.professor_nome,
         resposta.professor_perfil_publico,
         "Professor(a) anônimo(a)"
+      ),
+      professor_foto_url: fotoExibidaNoForum(
+        resposta.professor_foto_url,
+        resposta.professor_perfil_publico,
+        resposta.professor_foto_publica
       ),
       tempo: textoTempoRelativoSeguro(resposta.data_resposta, resposta.segundos_desde_resposta),
     })),
@@ -708,10 +778,16 @@ async function buscarPerfilLogado(req, tipoUsuario) {
   }
 
   try {
-    const perfil =
-      tipoUsuario === TIPOS_USUARIO.professor
-        ? await Models.professores.buscarPerfilCompleto(usuarioBase.id)
-        : await Models.alunos.buscarPerfilCompleto(usuarioBase.id);
+    let perfil;
+    if (tipoUsuario === TIPOS_USUARIO.professor) {
+      perfil = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+    } else if (tipoUsuario === TIPOS_USUARIO.admin) {
+      // Admin nao tem tabela de subtipo (Aluno/Professor) - o perfil e so
+      // a linha da propria Usuario.
+      perfil = await Models.usuarios.buscarPerfilCompleto(usuarioBase.id);
+    } else {
+      perfil = await Models.alunos.buscarPerfilCompleto(usuarioBase.id);
+    }
 
     if (!perfil) {
       return { ...perfilFallback(tipoUsuario), ...usuarioBase };
@@ -736,6 +812,8 @@ const ABAS_CONFIGURACOES = Object.freeze([
 const MENSAGENS_SUCESSO_CONFIGURACOES = Object.freeze({
   perfil: "Perfil atualizado com sucesso!",
   senha: "Senha alterada com sucesso!",
+  diploma: "Diploma enviado com sucesso!",
+  diploma_analise: "Novo diploma enviado! Ele ficará em análise até a aprovação da equipe.",
   notificacoes: "Preferências de notificação salvas!",
   privacidade: "Preferências de privacidade salvas!",
 });
@@ -801,6 +879,7 @@ async function montarContextoConfiguracoes(req, tipoUsuario, overrides = {}) {
 
   const tiposNotificacao = TIPOS_NOTIFICACAO_POR_PERFIL[tipoUsuario] || [];
   const perfilPublico = usuario ? usuario.perfil_publico !== 0 : true;
+  const fotoPublica = usuario ? usuario.foto_publica !== 0 : true;
 
   return {
     tipoUsuario,
@@ -813,6 +892,8 @@ async function montarContextoConfiguracoes(req, tipoUsuario, overrides = {}) {
       materia: usuario?.materia || "",
       data_nascimento: usuario?.data_nascimento || "",
       foto_url: usuario?.foto_url || "",
+      tem_diploma: String(usuario?.diploma || "").includes("|"),
+      diploma_pendente: !!usuario?.diploma_pendente,
     },
     erroValidacaoPerfil: {},
     msgErroPerfil: {},
@@ -824,6 +905,7 @@ async function montarContextoConfiguracoes(req, tipoUsuario, overrides = {}) {
     tiposNotificacao,
     preferenciasNotificacao,
     perfilPublico,
+    fotoPublica,
     ...overrides,
   };
 }
@@ -913,6 +995,23 @@ async function carregarNotificacoes(req, res, next) {
   return next();
 }
 
+// As duas rotas abaixo ficam ANTES do carregarNotificacoes de proposito:
+// nenhuma precisa do banco, entao respondem na hora.
+
+// Pingada pelo monitor de uptime (UptimeRobot) a cada poucos minutos pra
+// o Render free nao colocar o servico pra dormir.
+router.get("/health", function (req, res) {
+  res.set("Cache-Control", "no-store");
+  res.status(200).send("ok");
+});
+
+// start_url do manifest.json: o app instalado abre aqui. Quem ja esta
+// logado vai direto pra sua area em vez de cair na tela inicial publica.
+router.get("/app", function (req, res) {
+  const usuario = lerCookieUsuario(req);
+  res.redirect(usuario ? rotaInicialPorTipoUsuario(usuario.tipo_usuario) : "/telainicial");
+});
+
 router.use(carregarNotificacoes);
 
 async function renderizarTelaInicial(res) {
@@ -967,6 +1066,8 @@ function usuarioParaAdminJson(usuario) {
     tipoUsuario: usuario.tipo_usuario,
     status: usuario.status,
     materia: usuario.materia || null,
+    temDiploma: !!usuario.tem_diploma,
+    diplomaPendente: !!usuario.diploma_pendente,
     premium: {
       ativo: !!usuario.premium_ativo,
       ate: usuario.premium_ate ? formatarDataLocal(usuario.premium_ate) : null,
@@ -986,6 +1087,85 @@ router.get("/admin/usuarios", somenteAdmin, async function (req, res) {
   });
 });
 
+router.get("/admin/usuarios/:id/diploma", somenteAdmin, async function (req, res) {
+  try {
+    const perfil = await Models.professores.buscarPerfilCompleto(Number(req.params.id));
+    const url = UploadService.urlDiploma(perfil?.diploma);
+    if (!url) return res.status(404).send("Diploma nao disponivel para este professor.");
+    return res.redirect(url);
+  } catch (erro) {
+    console.error("Erro ao abrir diploma (admin):", erro);
+    return res.status(500).send("Nao foi possivel abrir o diploma.");
+  }
+});
+
+router.get("/admin/usuarios/:id/diploma-pendente", somenteAdmin, async function (req, res) {
+  try {
+    const perfil = await Models.professores.buscarPerfilCompleto(Number(req.params.id));
+    const url = UploadService.urlDiploma(perfil?.diploma_pendente);
+    if (!url) return res.status(404).send("Nao ha diploma pendente para este professor.");
+    return res.redirect(url);
+  } catch (erro) {
+    console.error("Erro ao abrir diploma pendente (admin):", erro);
+    return res.status(500).send("Nao foi possivel abrir o diploma.");
+  }
+});
+
+async function decidirDiplomaPendente(req, res, aprovar) {
+  const idProfessor = Number(req.params.id);
+
+  try {
+    const perfil = await Models.professores.buscarPerfilCompleto(idProfessor);
+
+    if (!perfil?.diploma_pendente) {
+      return res.status(400).json({ erro: "Este professor nao tem diploma pendente." });
+    }
+
+    const antigo = perfil.diploma;
+    const pendente = perfil.diploma_pendente;
+
+    if (aprovar) {
+      await Models.professores.aprovarDiplomaPendente(idProfessor);
+      UploadService.apagarDiploma(antigo);
+    } else {
+      await Models.professores.limparDiplomaPendente(idProfessor);
+      UploadService.apagarDiploma(pendente);
+    }
+
+    await auditarAdmin(req, {
+      acao: "editou",
+      entidade: "conta",
+      idEntidade: idProfessor,
+      descricao: `${aprovar ? "Aprovou" : "Recusou"} a troca de diploma do professor #${idProfessor}`,
+    });
+
+    await Models.notificacoes
+      .criar({
+        idUsuario: idProfessor,
+        tipo: "sistema",
+        titulo: aprovar ? "Novo diploma aprovado" : "Novo diploma recusado",
+        mensagem: aprovar
+          ? "O diploma que você enviou foi aprovado e agora é o diploma da sua conta."
+          : "O novo diploma que você enviou foi recusado. Seu diploma anterior continua válido; você pode enviar outro arquivo.",
+        link: "/configuracoes",
+      })
+      .catch((erro) => console.error("Erro ao notificar decisao de diploma:", erro));
+
+    return res.json({ ok: true });
+  } catch (erro) {
+    console.error("Erro ao decidir diploma pendente (admin):", erro);
+    return res.status(500).json({ erro: "Nao foi possivel concluir a acao." });
+  }
+}
+
+router.post("/admin/usuarios/:id/diploma/aprovar", somenteAdmin, (req, res) =>
+  decidirDiplomaPendente(req, res, true)
+);
+
+router.post("/admin/usuarios/:id/diploma/recusar", somenteAdmin, (req, res) =>
+  decidirDiplomaPendente(req, res, false)
+);
+
 router.post("/admin/usuarios/:id/editar", somenteAdmin, async function (req, res) {
   const idUsuario = Number(req.params.id);
   const nome = String(req.body.nome || "").trim();
@@ -1002,6 +1182,14 @@ router.post("/admin/usuarios/:id/editar", somenteAdmin, async function (req, res
     }
 
     await Models.usuarios.atualizarPerfilBasico({ nome, email, idUsuario });
+
+    await auditarAdmin(req, {
+      acao: "editou",
+      entidade: "conta",
+      idEntidade: idUsuario,
+      descricao: `Editou o nome/e-mail da conta #${idUsuario}`,
+    });
+
     return res.json({ ok: true });
   } catch (erro) {
     console.error("Erro ao editar usuario (admin):", erro);
@@ -1019,6 +1207,14 @@ router.post("/admin/usuarios/:id/status", somenteAdmin, async function (req, res
 
   try {
     await Models.usuarios.alterarStatusConta({ status, idUsuario });
+
+    await auditarAdmin(req, {
+      acao: "editou",
+      entidade: "conta",
+      idEntidade: idUsuario,
+      descricao: `Alterou o status da conta #${idUsuario} para ${status}`,
+    });
+
     return res.json({ ok: true });
   } catch (erro) {
     console.error("Erro ao alterar status de usuario (admin):", erro);
@@ -1031,6 +1227,14 @@ router.post("/admin/usuarios/:id/premium/conceder", somenteAdmin, async function
 
   try {
     await Models.assinaturas.conceder(idUsuario);
+
+    await auditarAdmin(req, {
+      acao: "editou",
+      entidade: "conta",
+      idEntidade: idUsuario,
+      descricao: `Concedeu acesso Premium a conta #${idUsuario}`,
+    });
+
     return res.json({ ok: true });
   } catch (erro) {
     console.error("Erro ao conceder premium (admin):", erro);
@@ -1043,6 +1247,14 @@ router.post("/admin/usuarios/:id/premium/remover", somenteAdmin, async function 
 
   try {
     await Models.assinaturas.revogar(idUsuario);
+
+    await auditarAdmin(req, {
+      acao: "editou",
+      entidade: "conta",
+      idEntidade: idUsuario,
+      descricao: `Removeu o acesso Premium da conta #${idUsuario}`,
+    });
+
     return res.json({ ok: true });
   } catch (erro) {
     console.error("Erro ao remover premium (admin):", erro);
@@ -1059,7 +1271,15 @@ router.post("/admin/usuarios/:id/excluir", somenteAdmin, async function (req, re
   }
 
   try {
-    await Models.usuarios.excluirConta(idUsuario);
+    const alvo = await Models.usuarios.buscarPerfilCompleto(idUsuario);
+    await excluirContaAnonimizandoAuditoria(idUsuario);
+
+    await auditarAdmin(req, {
+      acao: "excluiu",
+      entidade: "conta",
+      descricao: `Excluiu a conta de ${alvo?.tipo_usuario || "usuario"} #${idUsuario}`,
+    });
+
     return res.json({ ok: true });
   } catch (erro) {
     console.error("Erro ao excluir usuario (admin):", erro);
@@ -1124,6 +1344,14 @@ router.post("/admin/conteudos/:id/editar", somenteAdmin, async function (req, re
       status,
     });
     await Models.conteudos.atualizarPremium({ id, isPremium: !!premium });
+
+    await auditarAdmin(req, {
+      acao: "editou",
+      entidade: "conteudo",
+      idEntidade: id,
+      descricao: `Editou o conteudo #${id}: "${resumirTexto(titulo)}" (status ${status}${premium ? ", premium" : ""})`,
+    });
+
     return res.json({ ok: true });
   } catch (erro) {
     console.error("Erro ao editar conteudo (admin):", erro);
@@ -1134,6 +1362,14 @@ router.post("/admin/conteudos/:id/editar", somenteAdmin, async function (req, re
 router.post("/admin/conteudos/:id/destaque", somenteAdmin, async function (req, res) {
   try {
     await Models.conteudos.atualizarDestaque({ id: Number(req.params.id), destaque: !!req.body.destaque });
+
+    await auditarAdmin(req, {
+      acao: "editou",
+      entidade: "conteudo",
+      idEntidade: Number(req.params.id),
+      descricao: `${req.body.destaque ? "Destacou o" : "Removeu o destaque do"} conteudo #${req.params.id}`,
+    });
+
     return res.json({ ok: true });
   } catch (erro) {
     console.error("Erro ao alternar destaque (admin):", erro);
@@ -1144,6 +1380,14 @@ router.post("/admin/conteudos/:id/destaque", somenteAdmin, async function (req, 
 router.post("/admin/conteudos/:id/premium", somenteAdmin, async function (req, res) {
   try {
     await Models.conteudos.atualizarPremium({ id: Number(req.params.id), isPremium: !!req.body.premium });
+
+    await auditarAdmin(req, {
+      acao: "editou",
+      entidade: "conteudo",
+      idEntidade: Number(req.params.id),
+      descricao: `Marcou o conteudo #${req.params.id} como ${req.body.premium ? "premium" : "gratuito"}`,
+    });
+
     return res.json({ ok: true });
   } catch (erro) {
     console.error("Erro ao alternar premium do conteudo (admin):", erro);
@@ -1154,6 +1398,14 @@ router.post("/admin/conteudos/:id/premium", somenteAdmin, async function (req, r
 router.post("/admin/conteudos/:id/arquivar", somenteAdmin, async function (req, res) {
   try {
     await Models.conteudos.atualizarArquivado({ id: Number(req.params.id), arquivado: !!req.body.arquivado });
+
+    await auditarAdmin(req, {
+      acao: "editou",
+      entidade: "conteudo",
+      idEntidade: Number(req.params.id),
+      descricao: `${req.body.arquivado ? "Arquivou" : "Restaurou"} o conteudo #${req.params.id}`,
+    });
+
     return res.json({ ok: true });
   } catch (erro) {
     console.error("Erro ao arquivar conteudo (admin):", erro);
@@ -1167,6 +1419,14 @@ router.post("/admin/conteudos/:id/duplicar", somenteAdmin, async function (req, 
     if (!novoId) {
       return res.status(404).json({ erro: "Conteudo original nao encontrado." });
     }
+
+    await auditarAdmin(req, {
+      acao: "criou",
+      entidade: "conteudo",
+      idEntidade: novoId,
+      descricao: `Duplicou o conteudo #${req.params.id} (copia #${novoId})`,
+    });
+
     return res.json({ ok: true, id: novoId });
   } catch (erro) {
     console.error("Erro ao duplicar conteudo (admin):", erro);
@@ -1176,7 +1436,16 @@ router.post("/admin/conteudos/:id/duplicar", somenteAdmin, async function (req, 
 
 router.post("/admin/conteudos/:id/excluir", somenteAdmin, async function (req, res) {
   try {
+    const conteudo = await Models.conteudos.buscarPorId(Number(req.params.id));
     await Models.conteudos.remover(Number(req.params.id));
+
+    await auditarAdmin(req, {
+      acao: "excluiu",
+      entidade: "conteudo",
+      idEntidade: Number(req.params.id),
+      descricao: `Excluiu ${conteudo?.tipo === "video" ? "a video-aula" : "o livro"} "${resumirTexto(conteudo?.titulo)}" pelo painel admin`,
+    });
+
     return res.json({ ok: true });
   } catch (erro) {
     console.error("Erro ao excluir conteudo (admin):", erro);
@@ -1432,6 +1701,20 @@ router.post("/admin/denuncias/:id/remover-conteudo", somenteAdmin, async functio
     await Models.denuncias.resolver({ id, resolucao: "conteudo_removido" }, conexao);
 
     await conexao.commit();
+
+    const entidadeRemovida = ["conteudo", "formulario", "duvida"].includes(denuncia.tipo_conteudo)
+      ? denuncia.tipo_conteudo
+      : null;
+
+    if (entidadeRemovida) {
+      await auditarAdmin(req, {
+        acao: "excluiu",
+        entidade: entidadeRemovida,
+        idEntidade: denuncia.id_conteudo_alvo || denuncia.id_duvida || null,
+        descricao: `Removeu um(a) ${entidadeRemovida} por causa da denuncia #${id}`,
+      });
+    }
+
     return res.json({ ok: true });
   } catch (erro) {
     await conexao.rollback();
@@ -1450,9 +1733,32 @@ router.post("/admin/contatos/:id/responder", somenteAdmin, async function (req, 
     return res.status(400).json({ erro: "Escreva uma resposta antes de salvar." });
   }
 
+  const enviarEmail = req.body.enviarEmail === true || req.body.enviarEmail === "on";
+
   try {
     await Models.contato.responder({ id, resposta });
-    return res.json({ ok: true });
+
+    if (!enviarEmail) {
+      return res.json({ ok: true, emailEnviado: false });
+    }
+
+    // A resposta ja esta salva; se o e-mail falhar o admin e avisado, mas
+    // nada se perde.
+    try {
+      const contato = await Models.contato.buscarPorId(id);
+      await MailService.enviarRespostaContato({
+        nome: contato.nome,
+        email: contato.email,
+        assunto: contato.assunto,
+        mensagem: contato.mensagem,
+        resposta,
+        replyTo: res.locals.configuracoesSite?.email_contato_destino || undefined,
+      });
+      return res.json({ ok: true, emailEnviado: true });
+    } catch (erroEmail) {
+      console.error("Erro ao enviar resposta de contato por e-mail:", erroEmail);
+      return res.json({ ok: true, emailEnviado: false, avisoEmail: "Resposta salva, mas o e-mail não pôde ser enviado." });
+    }
   } catch (erro) {
     console.error("Erro ao responder contato (admin):", erro);
     return res.status(500).json({ erro: "Nao foi possivel salvar a resposta." });
@@ -1493,34 +1799,27 @@ router.get("/admin/relatorios", somenteAdmin, async function (req, res) {
   });
 });
 
-// Filtros vem por query string (?tipo=&acao=&entidade=). Valor fora da lista
-// permitida vira null (= sem filtro), entao nao da pra injetar nada no WHERE.
-function filtroAuditoria(valor, permitidos) {
-  const limpo = String(valor || "").trim();
-  return permitidos.includes(limpo) ? limpo : null;
-}
+// Busca, filtros e paginacao sao client-side (auditoria.js), igual a
+// /admin/usuarios. O limite so evita mandar o log inteiro quando ele crescer:
+// registros alem dos mais recentes nao aparecem na busca.
+const LIMITE_LOGS_AUDITORIA = 2000;
 
 router.get("/admin/auditoria", somenteAdmin, async function (req, res) {
-  const filtros = {
-    tipoUsuario: filtroAuditoria(req.query.tipo, ["aluno", "professor", "admin"]),
-    acao: filtroAuditoria(req.query.acao, ["criou", "editou", "excluiu"]),
-    entidade: filtroAuditoria(req.query.entidade, [
-      "duvida",
-      "resposta",
-      "conteudo",
-      "formulario",
-      "cronograma",
-      "redacao",
-      "conta",
-    ]),
-  };
-
-  const logs = await Models.auditoria.listar(filtros);
+  const logs = await Models.auditoria.listar({ limite: LIMITE_LOGS_AUDITORIA });
 
   res.render("pages/admin/auditoria", {
     activeAdminPage: "auditoria",
-    logs: logs.map((log) => ({ ...log, quando: formatarDataHoraLocal(log.criado_em) })),
-    filtros,
+    logs: logs.map((log) => ({
+      id: log.id_log,
+      nome: log.nome_usuario,
+      email: log.email_usuario,
+      tipoUsuario: log.tipo_usuario,
+      acao: log.acao,
+      entidade: log.entidade,
+      idEntidade: log.id_entidade,
+      descricao: log.descricao,
+      quando: formatarDataHoraLocal(log.criado_em),
+    })),
   });
 });
 
@@ -1908,6 +2207,14 @@ router.post(
         geradoPorIa: true,
       });
 
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "criou",
+        entidade: "formulario",
+        idEntidade: idFormulario,
+        descricao: `Gerou um simulado com IA: "${resumirTexto(tema)}"${materia ? ` (${materia.nome})` : ""}`,
+      });
+
       return res.redirect(`/simulado/${idFormulario}`);
     } catch (erro) {
       console.error("Erro ao gerar simulado:", erro);
@@ -2101,6 +2408,15 @@ router.post(
         tipoRedacao,
         correcao,
       });
+
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "criou",
+        entidade: "redacao",
+        idEntidade: idRedacao,
+        descricao: `Enviou uma redacao para correcao. Tema: "${resumirTexto(tema)}"`,
+      });
+
       return res.redirect(`/redacao/${idRedacao}`);
     } catch (erro) {
       console.error("Erro ao corrigir redacao:", erro);
@@ -2532,6 +2848,14 @@ router.post(
         geradoPorIa: true,
       });
 
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "criou",
+        entidade: "formulario",
+        idEntidade: idFormulario,
+        descricao: `Gerou um simulado com IA: "${resumirTexto(tema)}" (${professor.materia})`,
+      });
+
       return res.redirect(`/simulado/${idFormulario}`);
     } catch (erro) {
       console.error("Erro ao gerar simulado (professor):", erro);
@@ -2579,6 +2903,14 @@ router.post(
         titulo,
         schemaJson: formularioValidado,
         geradoPorIa: false,
+      });
+
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "criou",
+        entidade: "formulario",
+        idEntidade: idFormulario,
+        descricao: `Criou um simulado manualmente: "${resumirTexto(titulo)}" (${professor.materia})`,
       });
 
       return res.redirect(`/simulado/${idFormulario}`);
@@ -2695,6 +3027,13 @@ router.post(
         tituloCronograma: tema,
       });
 
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "criou",
+        entidade: "cronograma",
+        descricao: `Gerou um cronograma com IA: "${resumirTexto(tema)}" (${professor.materia})`,
+      });
+
       return res.redirect(`/cronograma/${codigoLote}`);
     } catch (erro) {
       console.error("Erro ao gerar cronograma com IA (professor):", erro);
@@ -2736,6 +3075,13 @@ router.post(
       idProfessor: usuarioBase.id,
       idMateria: professor.id_materia,
       tituloCronograma: titulo,
+    });
+
+    await registrarAuditoria({
+      usuarioBase,
+      acao: "criou",
+      entidade: "cronograma",
+      descricao: `Criou um cronograma manualmente: "${resumirTexto(titulo)}" (${professor.materia})`,
     });
 
     return res.redirect(`/cronograma/${codigoLote}`);
@@ -2907,7 +3253,7 @@ router.post(
         ? await UploadService.enviarImagem(capaFile.buffer, "primia/capas")
         : null;
 
-      await Models.conteudos.criar({
+      const idConteudo = await Models.conteudos.criar({
         titulo,
         autor,
         descricao,
@@ -2919,6 +3265,14 @@ router.post(
         isPremium: !!is_premium,
         destaque: !!destaque,
         status: "publicado",
+      });
+
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "criou",
+        entidade: "conteudo",
+        idEntidade: idConteudo || null,
+        descricao: `Publicou ${tipo === "video" ? "a video-aula" : "o livro"} "${resumirTexto(titulo)}" de ${professor.materia}`,
       });
 
       return res.redirect(rotaVolta);
@@ -3137,6 +3491,15 @@ router.post(
       }
 
       await conexao.commit();
+
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "criou",
+        entidade: "duvida",
+        idEntidade: idDuvida,
+        descricao: `Criou uma duvida em ${materia.nome}: "${resumirTexto(duvida)}"`,
+      });
+
       return res.redirect(`/forumdeduvidas?duvida=${idDuvida}`);
     } catch (erro) {
       await conexao.rollback();
@@ -3280,7 +3643,7 @@ router.post(
         return res.redirect("/forumprofessor");
       }
 
-      await Models.respostas.criar(
+      const idResposta = await Models.respostas.criar(
         {
           idProfessor: usuarioBase.id,
           idDuvida: id_duvida,
@@ -3302,6 +3665,15 @@ router.post(
       );
 
       await conexao.commit();
+
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "criou",
+        entidade: "resposta",
+        idEntidade: idResposta,
+        descricao: `Respondeu uma duvida de ${duvida.materia}: "${resumirTexto(resposta)}"`,
+      });
+
       return res.redirect("/forumprofessor");
     } catch (erro) {
       await conexao.rollback();
@@ -3490,6 +3862,13 @@ router.post("/planoestudo/regerar", async function (req, res) {
     return res.redirect("/planoestudo?erro=regerar");
   }
 
+  await registrarAuditoria({
+    usuarioBase,
+    acao: "editou",
+    entidade: "cronograma",
+    descricao: "Regerou a propria rotina de estudos (substituiu a rotina padrao anterior)",
+  });
+
   return res.redirect("/planoestudo?ok=regerar");
 });
 
@@ -3581,6 +3960,13 @@ router.post(
         dataFim: data_fim || new Date(),
         descricao,
       });
+
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "criou",
+        entidade: "cronograma",
+        descricao: `Adicionou um item ao proprio plano de estudo: "${resumirTexto(descricao)}"`,
+      });
     } catch (erro) {
       console.error("Erro ao criar item de plano de estudo:", erro);
     }
@@ -3622,6 +4008,13 @@ router.post(
         idAluno: usuarioBase.id,
         idMateria: materia_id,
         tituloCronograma: tema,
+      });
+
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "criou",
+        entidade: "cronograma",
+        descricao: `Gerou um cronograma com IA: "${resumirTexto(tema)}"${materia ? ` (${materia.nome})` : ""}`,
       });
 
       // Abre direto o cronograma recem-criado, em vez de voltar pra
@@ -3668,6 +4061,13 @@ router.post(
         idAluno: usuarioBase.id,
         idMateria: materia_id,
         tituloCronograma: titulo,
+      });
+
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "criou",
+        entidade: "cronograma",
+        descricao: `Criou um cronograma manualmente: "${resumirTexto(titulo)}"`,
       });
 
       return res.redirect(`/planoestudo/${codigoLote}`);
@@ -3734,7 +4134,7 @@ router.get("/configuracoes", async function (req, res) {
 
   if (
     !usuarioCookie ||
-    (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor)
+    (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor && tipoUsuario !== TIPOS_USUARIO.admin)
   ) {
     return res.redirect("/login");
   }
@@ -3747,6 +4147,86 @@ router.get("/configuracoes", async function (req, res) {
   });
 
   res.render(VIEWS.configuracoes, contexto);
+});
+
+// Sem diploma valido (contas antigas com o placeholder
+// "diploma_pendente_upload"): o envio vale na hora. Com diploma valido: o
+// arquivo novo vai pra coluna diploma_pendente e so substitui o atual quando
+// o admin aprovar. Em nenhum caso o professor remove o diploma.
+router.post("/configuracoes/diploma", function (req, res, next) {
+  if (!usuarioAutenticado(req, TIPOS_USUARIO.professor)) {
+    return res.redirect("/login");
+  }
+
+  uploadDiploma.single("diploma")(req, res, async function (erroUpload) {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+    const voltarComErro = async (msgErroDiploma) =>
+      res.status(400).render(
+        VIEWS.configuracoes,
+        await montarContextoConfiguracoes(req, TIPOS_USUARIO.professor, { msgErroDiploma })
+      );
+
+    try {
+      const perfil = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+
+      if (erroUpload) {
+        return voltarComErro(
+          erroUpload.code === "LIMIT_FILE_SIZE"
+            ? "O diploma deve ter no maximo 5 MB."
+            : "Nao foi possivel enviar o diploma."
+        );
+      }
+
+      if (!req.file) {
+        return voltarComErro("Envie o diploma em PDF, JPG ou PNG (ate 5 MB).");
+      }
+
+      const diploma = await UploadService.enviarDiploma(req.file.buffer);
+      const jaTemDiploma = String(perfil?.diploma || "").includes("|");
+
+      if (!jaTemDiploma) {
+        await Models.professores.atualizarDiploma({ diploma, idProfessor: usuarioBase.id });
+        return res.redirect("/configuracoes?aba=perfil&salvo=diploma");
+      }
+
+      await Models.professores.definirDiplomaPendente({ diplomaPendente: diploma, idProfessor: usuarioBase.id });
+      // Reenvio antes da decisao: o pendente anterior nao vale mais.
+      if (perfil.diploma_pendente) {
+        UploadService.apagarDiploma(perfil.diploma_pendente);
+      }
+
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "editou",
+        entidade: "conta",
+        idEntidade: usuarioBase.id,
+        descricao: "Enviou um novo diploma para aprovacao",
+      });
+
+      return res.redirect("/configuracoes?aba=perfil&salvo=diploma_analise");
+    } catch (erro) {
+      console.error("Erro ao enviar diploma (professor):", erro);
+      return voltarComErro("Nao foi possivel enviar o diploma. Tente novamente.");
+    }
+  });
+});
+router.get("/configuracoes/diploma", async function (req, res) {
+  const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.professor);
+
+  if (!usuarioBase) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const perfil = await Models.professores.buscarPerfilCompleto(usuarioBase.id);
+    const url = UploadService.urlDiploma(perfil?.diploma);
+    if (!url) return res.status(404).send("Nenhum diploma enviado para esta conta.");
+    return res.redirect(url);
+  } catch (erro) {
+    console.error("Erro ao abrir diploma (professor):", erro);
+    return res.status(500).send("Nao foi possivel abrir o diploma.");
+  }
 });
 
 router.get("/termopriva", function (req, res) {
@@ -4141,6 +4621,14 @@ router.post(
       );
       await conexao.commit();
 
+      await registrarAuditoria({
+        usuarioBase: { id: idUsuario, tipo_usuario: TIPOS_USUARIO.aluno },
+        acao: "criou",
+        entidade: "conta",
+        idEntidade: idUsuario,
+        descricao: "Criou a propria conta de aluno",
+      });
+
       enviarEmailConfirmacaoSeguro({ nome, email, token: tokenVerificacaoEmail });
 
       return res.redirect("/confirmar-email?status=cadastrado");
@@ -4164,6 +4652,17 @@ router.post(
 // ========== ROTA POST CADASTRO PROFESSOR ==========
 router.post(
   "/cadastroprofessor",
+
+  function (req, res, next) {
+    uploadDiploma.single("diploma")(req, res, function (erro) {
+      if (!erro) return next();
+      const msg =
+        erro.code === "LIMIT_FILE_SIZE"
+          ? "O diploma deve ter no maximo 5 MB."
+          : "Nao foi possivel enviar o diploma.";
+      return renderizarCadastroProfessor(res, req.body, { diploma: msg });
+    });
+  },
 
   body("nomeCompleto")
     .trim()
@@ -4212,7 +4711,22 @@ router.post(
     }
 
     const { nomeCompleto, email, senha, materia, dataNascimento } = req.body;
-    const diploma = req.body.diploma || "diploma_pendente_upload";
+    if (!req.file) {
+      return renderizarCadastroProfessor(res, req.body, {
+        diploma: "Envie o diploma em PDF, JPG ou PNG (ate 5 MB).",
+      });
+    }
+
+    let diploma;
+    try {
+      diploma = await UploadService.enviarDiploma(req.file.buffer);
+    } catch (erro) {
+      console.error("Erro ao enviar diploma:", erro);
+      return renderizarCadastroProfessor(res, req.body, {
+        diploma: "Nao foi possivel enviar o diploma. Tente novamente.",
+      });
+    }
+
     const conexao = await pool.getConnection();
 
     try {
@@ -4255,6 +4769,14 @@ router.post(
         conexao
       );
       await conexao.commit();
+
+      await registrarAuditoria({
+        usuarioBase: { id: idUsuario, tipo_usuario: TIPOS_USUARIO.professor },
+        acao: "criou",
+        entidade: "conta",
+        idEntidade: idUsuario,
+        descricao: "Criou a propria conta de professor",
+      });
 
       enviarEmailConfirmacaoSeguro({ nome: nomeCompleto, email, token: tokenVerificacaoEmail });
 
@@ -4464,6 +4986,14 @@ router.post(
         tipo_usuario: TIPOS_USUARIO.aluno,
       });
 
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "editou",
+        entidade: "conta",
+        idEntidade: usuarioBase.id,
+        descricao: `Editou o proprio perfil de aluno${req.file ? " (incluindo a foto)" : ""}`,
+      });
+
       return res.redirect("/configuracoes?salvo=perfil");
     } catch (erro) {
       await conexao.rollback();
@@ -4561,12 +5091,126 @@ router.post(
         tipo_usuario: TIPOS_USUARIO.professor,
       });
 
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "editou",
+        entidade: "conta",
+        idEntidade: usuarioBase.id,
+        descricao: `Editou o proprio perfil de professor${req.file ? " (incluindo a foto)" : ""}`,
+      });
+
       return res.redirect("/configuracoes?salvo=perfil");
     } catch (erro) {
       await conexao.rollback();
       console.error("Erro ao editar perfil do professor:", erro);
 
       const contexto = await montarContextoConfiguracoes(req, TIPOS_USUARIO.professor, {
+        abaInicial: "perfil",
+        valoresPerfil: { ...req.body },
+        msgErroPerfil: { geral: "Nao foi possivel salvar as alteracoes. Tente novamente." },
+      });
+
+      return res.render(VIEWS.configuracoes, contexto);
+    } finally {
+      conexao.release();
+    }
+  }
+);
+
+// Aba "Perfil" (admin). Sem tabela de subtipo (Aluno/Professor) - so nome,
+// email e foto direto na Usuario, igual ao professor menos a materia.
+router.post(
+  "/editaradmin",
+
+  uploadConteudo.single("avatar"),
+
+  body("nome").trim().notEmpty().withMessage("O nome e obrigatorio!"),
+  body("email").trim().notEmpty().withMessage("O e-mail e obrigatorio!").isEmail().withMessage("Digite um e-mail valido!"),
+
+  async (req, res) => {
+    const usuarioBase = usuarioAutenticado(req, TIPOS_USUARIO.admin);
+
+    if (!usuarioBase) {
+      return res.redirect("/login");
+    }
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const { erroValidacao, msgErro } = montarErrosValidacao(errors);
+
+      const contexto = await montarContextoConfiguracoes(req, TIPOS_USUARIO.admin, {
+        abaInicial: "perfil",
+        valoresPerfil: { ...req.body },
+        erroValidacaoPerfil: erroValidacao,
+        msgErroPerfil: msgErro,
+      });
+
+      return res.render(VIEWS.configuracoes, contexto);
+    }
+
+    const { nome, email } = req.body;
+    const conexao = await pool.getConnection();
+
+    try {
+      await conexao.beginTransaction();
+
+      if (await emailPertenceAOutroUsuario(email, usuarioBase.id)) {
+        await conexao.rollback();
+
+        const contexto = await montarContextoConfiguracoes(req, TIPOS_USUARIO.admin, {
+          abaInicial: "perfil",
+          valoresPerfil: { ...req.body },
+          erroValidacaoPerfil: { email: "erro" },
+          msgErroPerfil: { email: "Este e-mail ja esta cadastrado em outra conta." },
+        });
+
+        return res.render(VIEWS.configuracoes, contexto);
+      }
+
+      await Models.usuarios.atualizarPerfilBasico(
+        {
+          nome,
+          email,
+          idUsuario: usuarioBase.id,
+        },
+        conexao
+      );
+
+      if (req.file) {
+        const fotoUrl = await UploadService.enviarImagem(req.file.buffer, "primia/avatares");
+        await Models.usuarios.atualizarFoto(
+          {
+            fotoUrl,
+            idUsuario: usuarioBase.id,
+          },
+          conexao
+        );
+      }
+
+      await conexao.commit();
+
+      criarCookieUsuario(res, {
+        ...usuarioBase,
+        nome,
+        email,
+        tipo_usuario: TIPOS_USUARIO.admin,
+      });
+
+      await registrarAuditoria({
+        usuarioBase,
+        acao: "editou",
+        entidade: "conta",
+        idEntidade: usuarioBase.id,
+        descricao: `Editou o proprio perfil de admin${req.file ? " (incluindo a foto)" : ""}`,
+      });
+
+      return res.redirect("/configuracoes?salvo=perfil");
+    } catch (erro) {
+      await conexao.rollback();
+      console.error("Erro ao editar perfil do admin:", erro);
+
+      const contexto = await montarContextoConfiguracoes(req, TIPOS_USUARIO.admin, {
         abaInicial: "perfil",
         valoresPerfil: { ...req.body },
         msgErroPerfil: { geral: "Nao foi possivel salvar as alteracoes. Tente novamente." },
@@ -4599,7 +5243,7 @@ router.post(
 
     if (
       !usuarioCookie ||
-      (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor)
+      (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor && tipoUsuario !== TIPOS_USUARIO.admin)
     ) {
       return res.redirect("/login");
     }
@@ -4622,6 +5266,14 @@ router.post(
       await atualizarSenhaUsuario(null, {
         senha: req.body.senha,
         idUsuario: usuarioCookie.id,
+      });
+
+      await registrarAuditoria({
+        usuarioBase: usuarioCookie,
+        acao: "editou",
+        entidade: "conta",
+        idEntidade: usuarioCookie.id,
+        descricao: "Alterou a propria senha",
       });
 
       return res.redirect("/configuracoes?aba=seguranca&salvo=senha");
@@ -4656,6 +5308,14 @@ router.post("/configuracoes/desativar", async function (req, res) {
       idUsuario: usuarioCookie.id,
     });
 
+    await registrarAuditoria({
+      usuarioBase: usuarioCookie,
+      acao: "editou",
+      entidade: "conta",
+      idEntidade: usuarioCookie.id,
+      descricao: "Desativou a propria conta",
+    });
+
     limparCookieUsuario(res);
     return res.redirect("/login");
   } catch (erro) {
@@ -4683,7 +5343,18 @@ router.post("/configuracoes/excluir", async function (req, res) {
   }
 
   try {
-    await Models.usuarios.excluirConta(usuarioCookie.id);
+    await excluirContaAnonimizandoAuditoria(usuarioCookie.id);
+
+    // Depois da exclusao a conta nao existe mais (FK do log), entao o
+    // evento entra sem vinculo e ja com o nome anonimizado, no mesmo
+    // formato das linhas antigas dessa pessoa ("Conta removida (#id)").
+    await registrarAuditoria({
+      usuarioBase: { id: null, tipo_usuario: tipoUsuario },
+      nomeUsuario: `Conta removida (#${usuarioCookie.id})`,
+      acao: "excluiu",
+      entidade: "conta",
+      descricao: `Excluiu a propria conta de ${tipoUsuario}`,
+    });
 
     limparCookieUsuario(res);
     return res.redirect("/login");
@@ -4756,6 +5427,10 @@ router.post("/configuracoes/privacidade", async function (req, res) {
       perfilPublico: Boolean(req.body.perfil_publico),
       idUsuario: usuarioCookie.id,
     });
+    await Models.usuarios.atualizarFotoPublica({
+      fotoPublica: Boolean(req.body.foto_publica),
+      idUsuario: usuarioCookie.id,
+    });
 
     return res.redirect("/configuracoes?aba=privacidade&salvo=privacidade");
   } catch (erro) {
@@ -4778,7 +5453,7 @@ router.get("/configuracoes/exportar-dados", async function (req, res) {
 
   if (
     !usuarioCookie ||
-    (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor)
+    (tipoUsuario !== TIPOS_USUARIO.aluno && tipoUsuario !== TIPOS_USUARIO.professor && tipoUsuario !== TIPOS_USUARIO.admin)
   ) {
     return res.redirect("/login");
   }
@@ -4835,6 +5510,10 @@ router.get("/configuracoes/exportar-dados", async function (req, res) {
       };
       dados.notificacoes = notificacoes;
       dados.analise_de_desempenho = analiseDesempenho;
+    } else if (tipoUsuario === TIPOS_USUARIO.admin) {
+      // Admin nao produz conteudo proprio nem tem subtipo - a exportacao
+      // e so a linha da conta mesmo.
+      dados.conta = await Models.usuarios.buscarPerfilCompleto(idUsuario);
     } else {
       const [conta, duvidasDaMateria, respostasDadas, planosDeAula, notificacoes] =
         await Promise.all([

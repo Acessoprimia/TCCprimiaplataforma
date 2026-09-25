@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conteudos - Painel Administrativo Primia</title>
+    <title>Conteúdos - Painel Administrativo Primia</title>
     <link href="/css/admin.css" rel="stylesheet">
     <%- include('../../partials/headeradmin.ejs') %>
 </head>
@@ -13,8 +13,8 @@
     <main class="admin-page">
         <section class="admin-mobile-intro">
             <p class="admin-kicker">Painel Administrativo</p>
-            <h1>Conteudos</h1>
-            <p>Materias, livros e videoaulas da biblioteca.</p>
+            <h1>Conteúdos</h1>
+            <p>Matérias, livros e videoaulas da biblioteca.</p>
         </section>
 
         <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'conteudos' }) %>
@@ -23,10 +23,10 @@
             <section class="admin-panel" id="materias">
                 <header class="panel-header panel-header-actions">
                     <article>
-                        <h2>Materias da plataforma</h2>
-                        <p>Controle as materias usadas em biblioteca, simulados, forum e planos.</p>
+                        <h2>Matérias da plataforma</h2>
+                        <p>Controle as matérias usadas em biblioteca, simulados, fórum e planos.</p>
                     </article>
-                    <button class="admin-button primary" type="button" data-admin-action="adicionar-materia">Adicionar materia</button>
+                    <button class="admin-button primary" type="button" data-admin-action="adicionar-materia">Adicionar matéria</button>
                 </header>
 
                 <% // A lista abaixo e populada por conteudos.js a partir de MATERIAS_MOCK (agora os %>
@@ -39,8 +39,8 @@
             <section class="admin-panel" id="conteudos">
                 <header class="panel-header panel-header-actions">
                     <article>
-                        <h2>Gerenciamento de conteudos</h2>
-                        <p>Livros e videoaulas publicados pelos professores na biblioteca. Simulados e cronogramas sao gerenciados nas telas proprias de cada professor.</p>
+                        <h2>Gerenciamento de conteúdos</h2>
+                        <p>Livros e videoaulas publicados pelos professores na biblioteca. Simulados e cronogramas são gerenciados nas telas próprias de cada professor.</p>
                     </article>
                 </header>
 
@@ -53,10 +53,10 @@
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
-                    <input type="search" id="conteudosBusca" placeholder="Buscar por titulo ou autor..." aria-label="Buscar conteudos">
+                    <input type="search" id="conteudosBusca" placeholder="Buscar por título ou autor..." aria-label="Buscar conteúdos">
                 </div>
 
-                <nav class="admin-filtros" aria-label="Filtrar por tipo de conteudo">
+                <nav class="admin-filtros" aria-label="Filtrar por tipo de conteúdo">
                     <button type="button" class="filtro-btn ativo" data-filtro-conteudos="todos">Todos</button>
                     <button type="button" class="filtro-btn" data-filtro-conteudos="livro">Livros</button>
                     <button type="button" class="filtro-btn" data-filtro-conteudos="videoaula">Videoaulas</button>
@@ -64,9 +64,9 @@
 
                 <div class="admin-filtros-painel">
                     <div class="admin-filtro-bloco">
-                        <span class="admin-filtros-label">Materia</span>
-                        <select class="filtro-select" id="conteudosFiltroMateria" aria-label="Filtrar por materia">
-                            <option value="todas">Todas as materias</option>
+                        <span class="admin-filtros-label">Matéria</span>
+                        <select class="filtro-select" id="conteudosFiltroMateria" aria-label="Filtrar por matéria">
+                            <option value="todas">Todas as matérias</option>
                         </select>
                     </div>
 
@@ -97,14 +97,14 @@
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th>Titulo</th>
+                                <th>Título</th>
                                 <th>Tipo</th>
-                                <th>Materia</th>
+                                <th>Matéria</th>
                                 <th>Status</th>
                                 <th>Acesso</th>
                                 <th>Autor</th>
                                 <th>Data</th>
-                                <th>Acoes</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody id="conteudosTabela"></tbody>
@@ -112,7 +112,7 @@
                 </section>
 
                 <footer class="admin-pagination">
-                    <p class="admin-pagination-info" id="conteudosPaginacaoInfo">Carregando conteudos...</p>
+                    <p class="admin-pagination-info" id="conteudosPaginacaoInfo">Carregando conteúdos...</p>
                     <div class="admin-pagination-controles" id="conteudosPaginacaoControles"></div>
                 </footer>
             </section>

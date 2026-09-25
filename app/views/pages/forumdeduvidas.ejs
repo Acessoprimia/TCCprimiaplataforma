@@ -17,17 +17,7 @@
             <p class="erro-msg"><%= msgErro.geral %></p>
         <% } %>
 
-        <section class="filtro-section">
-            <label for="materia-filtro" class="filtro-label">Filtro</label>
-            <select id="materia-filtro" class="filtro-select">
-                <option value="">Todas as matérias</option>
-                <% (materias || []).forEach((materia) => { %>
-                    <option value="<%= materia.nome.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') %>">
-                        <%= materia.nome %>
-                    </option>
-                <% }) %>
-            </select>
-        </section>
+        <%- include('../partials/filtroPadrao.ejs', { opcoesFiltro: (materias || []).map(function (materia) { return { valor: materia.nome.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), nome: materia.nome }; }) }) %>
 
         <button class="btn-fazer-pergunta" id="btn-abrir-modal">Faça sua pergunta</button>
 
@@ -41,7 +31,9 @@
             <% (duvidas || []).forEach((duvida) => { %>
                 <article class="card-duvida" id="duvida-<%= duvida.id_duvida %>" data-materia="<%= duvida.materia_slug %>">
                     <header class="card-header">
-                        <figure class="avatar"></figure>
+                        <figure class="avatar">
+                            <img src="<%= duvida.aluno_foto_url || '../image/usuario.webp' %>" alt="Foto de <%= duvida.aluno_nome %>">
+                        </figure>
                         <section class="user-info">
                             <h3 class="user-name"><%= duvida.aluno_nome %></h3>
                             <p class="user-serie"><%= duvida.serie_formatada %> - <span class="tempo-relativo" data-segundos="<%= Number(duvida.segundos_desde_envio || 0) %>"><%= duvida.tempo %></span></p>
@@ -62,7 +54,9 @@
                             <% duvida.respostas.forEach((resposta) => { %>
                                 <h4 class="resposta-titulo">Resposta</h4>
                                 <header class="resposta-header">
-                                    <figure class="avatar-professor"></figure>
+                                    <figure class="avatar-professor">
+                                        <img src="<%= resposta.professor_foto_url || '../image/usuario.webp' %>" alt="Foto de <%= resposta.professor_nome %>">
+                                    </figure>
                                     <section class="professor-info">
                                         <h5 class="professor-name"><%= resposta.professor_nome %></h5>
                                         <p class="professor-materia">Professor(a) de <%= resposta.materia || duvida.materia %> - <span class="tempo-relativo" data-segundos="<%= Number(resposta.segundos_desde_resposta || 0) %>"><%= resposta.tempo %></span></p>

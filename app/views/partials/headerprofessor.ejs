@@ -27,6 +27,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <%- include('./pwa.ejs') %>
   <link href="../css/theme.css" rel="stylesheet">
   <link href="../css/header.css" rel="stylesheet">
 </head>
@@ -101,6 +102,10 @@
   </nav>
 
   <!-- JavaScript -->
+  <% if (!emPaginaPublica && usuarioHeader) { %>
+    <%- include('./navInferior.ejs', { tipo: 'professor' }) %>
+  <% } %>
+
   <script src="../js/hamburguer.js"></script>
 
 <!-- Alvo do skip link: primeiro ponto depois do cabecalho repetido -->

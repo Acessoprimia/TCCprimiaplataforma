@@ -13,20 +13,7 @@
     <main>
         <h1>Videoaulas</h1>
 
-        <section class="filter-section">
-            <label for="materia-filter">
-                <svg class="filter-icon" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" />
-                </svg>
-                Filtro
-            </label>
-            <select id="materia-filter">
-                <option value="">Todas as matérias</option>
-                <% materias.forEach(function (materia) { %>
-                    <option value="<%= materia.slug %>"><%= materia.nome %></option>
-                <% }) %>
-            </select>
-        </section>
+        <%- include('../partials/filtroPadrao.ejs', { opcoesFiltro: materias.map(function (m) { return { valor: m.slug, nome: m.nome }; }) }) %>
 
         <section class="cards-container">
             <% if (videos.length === 0) { %>

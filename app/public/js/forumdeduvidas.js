@@ -1,4 +1,3 @@
-const filtro = document.getElementById("materia-filtro");
 const cards = document.querySelectorAll(".card-duvida");
 
 function textoTempoRelativo(segundos) {
@@ -23,19 +22,17 @@ function atualizarTemposRelativos() {
 
 setInterval(atualizarTemposRelativos, 30000);
 
-if (filtro) {
-    filtro.addEventListener("change", (e) => {
-        const selectedMateria = e.target.value;
+document.addEventListener("filtro:aplicar", (e) => {
+    const selecionadas = e.detail.valores;
 
-        cards.forEach((card) => {
-            if (!card.dataset.materia || selectedMateria === "" || card.dataset.materia === selectedMateria) {
-                card.style.display = "block";
-            } else {
-                card.style.display = "none";
-            }
-        });
+    cards.forEach((card) => {
+        if (!card.dataset.materia || selecionadas.length === 0 || selecionadas.includes(card.dataset.materia)) {
+            card.style.display = "block";
+        } else {
+            card.style.display = "none";
+        }
     });
-}
+});
 
 document.querySelectorAll(".btn-ver-resposta").forEach((botao) => {
     botao.addEventListener("click", () => {

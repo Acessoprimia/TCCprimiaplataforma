@@ -97,8 +97,8 @@ function formatarData(isoString) {
 
 function linhaUsuarioHtml(usuario) {
     const premiumHtml = usuario.premium.ativo
-        ? `<span class="status ativo">Ate ${formatarData(usuario.premium.ate)}</span>`
-        : `<span class="status inativo">Nao</span>`;
+        ? `<span class="status ativo">Até ${formatarData(usuario.premium.ate)}</span>`
+        : `<span class="status inativo">Não</span>`;
 
     const acaoBloquear = usuario.status === "bloqueado"
         ? `<button type="button" data-admin-action="ativar-conta">Ativar conta</button>`
@@ -115,9 +115,9 @@ function linhaUsuarioHtml(usuario) {
             <td data-label="Tipo"><span class="badge ${usuario.tipoUsuario}">${ROTULOS_TIPO_USUARIO[usuario.tipoUsuario]}</span></td>
             <td data-label="Status"><span class="status ${usuario.status}">${ROTULOS_STATUS_USUARIO[usuario.status]}</span></td>
             <td data-label="Premium">${premiumHtml}</td>
-            <td data-label="Ultimo acesso">${formatarDataHora(usuario.ultimoAcesso)}</td>
+            <td data-label="Último acesso">${formatarDataHora(usuario.ultimoAcesso)}</td>
             <td data-label="ID">${usuario.idAcesso}</td>
-            <td data-label="Acoes" class="table-actions-cell">
+            <td data-label="Ações" class="table-actions-cell">
                 <div class="table-menu-wrap">
                     <button type="button" class="table-menu-trigger" data-menu-toggle aria-haspopup="true" aria-expanded="false" aria-label="Acoes de ${escapeHtml(usuario.nome)}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -128,7 +128,9 @@ function linhaUsuarioHtml(usuario) {
                     </button>
                     <div class="table-menu" role="menu">
                         <button type="button" data-admin-action="ver-perfil">Ver perfil</button>
-                        <button type="button" data-admin-action="editar-usuario">Editar usuario</button>
+                        ${usuario.temDiploma ? '<button type="button" data-admin-action="ver-diploma">Ver diploma</button>' : ""}
+                        ${usuario.diplomaPendente ? '<button type="button" data-admin-action="ver-diploma-pendente">Ver novo diploma (pendente)</button><button type="button" data-admin-action="aprovar-diploma">Aprovar novo diploma</button><button type="button" class="danger" data-admin-action="recusar-diploma">Recusar novo diploma</button>' : ""}
+                        <button type="button" data-admin-action="editar-usuario">Editar usuário</button>
                         <button type="button" data-admin-action="alterar-tipo-conta">Alterar tipo</button>
                         ${acaoBloquear}
                         ${acaoPremium}
@@ -141,7 +143,7 @@ function linhaUsuarioHtml(usuario) {
 }
 
 function linhaVaziaUsuariosHtml() {
-    return `<tr class="tabela-vazia"><td colspan="8">Nenhum usuario encontrado para os filtros selecionados.</td></tr>`;
+    return `<tr class="tabela-vazia"><td colspan="8">Nenhum usuário encontrado para os filtros selecionados.</td></tr>`;
 }
 
 function renderizarTabelaUsuarios(itens) {
@@ -154,12 +156,12 @@ function renderizarPaginacaoUsuarios({ totalRegistros, pagina, tamanhoPagina, to
     const inicio = totalRegistros === 0 ? 0 : (pagina - 1) * tamanhoPagina + 1;
     const fim = Math.min(pagina * tamanhoPagina, totalRegistros);
 
-    paginacaoInfoUsuarios.textContent = `Mostrando ${inicio}-${fim} de ${totalRegistros.toLocaleString("pt-BR")} usuarios.`;
+    paginacaoInfoUsuarios.textContent = `Mostrando ${inicio}-${fim} de ${totalRegistros.toLocaleString("pt-BR")} usuários.`;
 
     paginacaoControlesUsuarios.innerHTML = `
         <button type="button" data-pagina-acao="anterior" ${pagina <= 1 ? "disabled" : ""}>Anterior</button>
-        <span class="paginacao-atual">Pagina ${pagina} de ${totalPaginas}</span>
-        <button type="button" data-pagina-acao="proxima" ${pagina >= totalPaginas ? "disabled" : ""}>Proxima</button>
+        <span class="paginacao-atual">Página ${pagina} de ${totalPaginas}</span>
+        <button type="button" data-pagina-acao="proxima" ${pagina >= totalPaginas ? "disabled" : ""}>Próxima</button>
     `;
 }
 
@@ -253,7 +255,19 @@ function tratarAcaoAdmin(botao) {
     switch (botao.dataset.adminAction) {
         case "ver-perfil":
             // Futuramente buscar dados de login em GET /api/admin/usuarios/:id.
-            abrirModalVisualizacao("Perfil do usuario", textoPerfilUsuario(usuario));
+            abrirModalVisualizacao("Perfil do usuário", textoPerfilUsuario(usuario));
+            break;
+        case "ver-diploma":
+            window.open(`/admin/usuarios/${usuario.id}/diploma`, "_blank", "noopener");
+            break;
+        case "ver-diploma-pendente":
+            window.open(`/admin/usuarios/${usuario.id}/diploma-pendente`, "_blank", "noopener");
+            break;
+        case "aprovar-diploma":
+            decidirDiploma(usuario, "aprovar");
+            break;
+        case "recusar-diploma":
+            decidirDiploma(usuario, "recusar");
             break;
         case "editar-usuario":
             abrirModalEditarUsuario(usuario);
@@ -277,7 +291,7 @@ function tratarAcaoAdmin(botao) {
             confirmarExclusao(usuario);
             break;
         default:
-            mostrarAvisoAdmin("Acao administrativa preparada.");
+            mostrarAvisoAdmin("Ação administrativa preparada.");
     }
 }
 
@@ -287,9 +301,10 @@ function textoPerfilUsuario(usuario) {
         `Email: ${usuario.email}`,
         `Tipo: ${ROTULOS_TIPO_USUARIO[usuario.tipoUsuario]}`,
         `Status: ${ROTULOS_STATUS_USUARIO[usuario.status]}`,
-        usuario.materia ? `Materia: ${usuario.materia}` : null,
-        `Premium: ${usuario.premium.ativo ? `Ate ${formatarData(usuario.premium.ate)}` : "Nao"}`,
-        `Ultimo acesso: ${formatarDataHora(usuario.ultimoAcesso)}`,
+        usuario.materia ? `Matéria: ${usuario.materia}` : null,
+        usuario.diplomaPendente ? "Diploma: troca aguardando aprovação" : null,
+        `Premium: ${usuario.premium.ativo ? `Até ${formatarData(usuario.premium.ate)}` : "Não"}`,
+        `Último acesso: ${formatarDataHora(usuario.ultimoAcesso)}`,
         `ID de acesso: ${usuario.idAcesso}`,
     ].filter(Boolean).join("\n");
 }
@@ -297,7 +312,7 @@ function textoPerfilUsuario(usuario) {
 function abrirModalEditarUsuario(usuario) {
     // Esta area edita apenas nome/email de exibicao; senha e login ficam em fluxo proprio e auditado.
     abrirModal(
-        "Editar usuario",
+        "Editar usuário",
         "editar-usuario",
         campoTexto("nome", "Nome", usuario.nome) + campoTexto("email", "Email", usuario.email, "email"),
         usuario
@@ -315,13 +330,33 @@ function abrirModalAlterarTipo(usuario) {
         "alterar-tipo-conta",
         campoLeitura("Conta selecionada", textoPerfilUsuario(usuario)) +
         campoSelect("tipo", "Novo tipo de conta", ["Aluno", "Professor", "Admin"], ROTULOS_TIPO_USUARIO[usuario.tipoUsuario]) +
-        campoLeitura("Aviso", "Essa acao ainda nao esta disponivel de verdade - mudar o tipo de conta exige recriar o cadastro de aluno/professor correspondente."),
+        campoLeitura("Aviso", "Essa ação ainda não está disponível de verdade - mudar o tipo de conta exige recriar o cadastro de aluno/professor correspondente."),
         usuario
     );
 }
 
+function decidirDiploma(usuario, decisao) {
+    const aprovar = decisao === "aprovar";
+    abrirConfirmacao(
+        aprovar ? "Aprovar novo diploma" : "Recusar novo diploma",
+        aprovar
+            ? "O novo diploma substituirá o atual e o arquivo antigo será apagado. Confirmar?"
+            : "O novo diploma será descartado e o atual continua valendo. Confirmar?",
+        async () => {
+            try {
+                await chamarApiAdmin(`/admin/usuarios/${usuario.id}/diploma/${decisao}`, {});
+                usuario.diplomaPendente = false;
+                atualizarTabelaUsuarios();
+                mostrarAvisoAdmin(aprovar ? "Novo diploma aprovado." : "Novo diploma recusado.");
+            } catch (erro) {
+                mostrarAvisoAdmin(erro.message);
+            }
+        }
+    );
+}
+
 function confirmarBloqueio(usuario) {
-    abrirConfirmacao("Bloquear conta", "Tem certeza que deseja bloquear esta conta? O usuario perdera acesso ate ser reativado.", async () => {
+    abrirConfirmacao("Bloquear conta", "Tem certeza que deseja bloquear esta conta? O usuário perderá acesso até ser reativado.", async () => {
         try {
             await chamarApiAdmin(`/admin/usuarios/${usuario.id}/status`, { status: "bloqueado" });
             usuario.status = "bloqueado";
@@ -360,7 +395,7 @@ async function liberarPremium(usuario) {
 }
 
 function confirmarRemocaoPremium(usuario) {
-    abrirConfirmacao("Remover premium", "Tem certeza que deseja remover o acesso premium deste usuario?", async () => {
+    abrirConfirmacao("Remover premium", "Tem certeza que deseja remover o acesso premium deste usuário?", async () => {
         try {
             await chamarApiAdmin(`/admin/usuarios/${usuario.id}/premium/remover`, {});
             usuario.premium = { ativo: false, ate: null };
@@ -373,12 +408,12 @@ function confirmarRemocaoPremium(usuario) {
 }
 
 function confirmarExclusao(usuario) {
-    abrirConfirmacao("Excluir conta", "Tem certeza que deseja excluir esta conta? Essa acao apaga tudo relacionado a ela (cronogramas, respostas, etc) e nao pode ser desfeita.", async () => {
+    abrirConfirmacao("Excluir conta", "Tem certeza que deseja excluir esta conta? Essa ação apaga tudo relacionado a ela (cronogramas, respostas, etc) e não pode ser desfeita.", async () => {
         try {
             await chamarApiAdmin(`/admin/usuarios/${usuario.id}/excluir`, {});
             removerUsuarioPorId(usuario.id);
             atualizarTabelaUsuarios();
-            mostrarAvisoAdmin("Conta excluida.");
+            mostrarAvisoAdmin("Conta excluída.");
         } catch (erro) {
             mostrarAvisoAdmin(erro.message);
         }
@@ -394,7 +429,7 @@ adminModalHandlers["editar-usuario"] = async function salvarEdicaoUsuario(dados)
         modalOrigem.nome = dados.nome;
         modalOrigem.email = dados.email;
         atualizarTabelaUsuarios();
-        mostrarAvisoAdmin("Usuario atualizado.");
+        mostrarAvisoAdmin("Usuário atualizado.");
     } catch (erro) {
         mostrarAvisoAdmin(erro.message);
     }
@@ -410,4 +445,18 @@ adminModalHandlers["alterar-tipo-conta"] = function salvarTipoConta(dados) {
 
 // ---- Inicializacao ----
 
-atualizarTabelaUsuarios();
+atualizarTabelaUsuarios().then(async () => {
+    const abrirMenu = new URLSearchParams(window.location.search).get("menu") === "1";
+    const linha = await destacarItemDaUrl({
+        lista: USUARIOS_MOCK,
+        estado: estadoConsultaUsuarios,
+        atualizar: atualizarTabelaUsuarios,
+        atributoLinha: "data-usuario-id",
+        rotulo: "Usuário",
+    });
+
+    // Vindo do alerta de diploma: ja deixa o menu de acoes aberto.
+    if (linha && abrirMenu) {
+        window.setTimeout(() => linha.querySelector("[data-menu-toggle]")?.click(), 900);
+    }
+});

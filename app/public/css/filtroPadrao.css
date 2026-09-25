@@ -1,0 +1,148 @@
+/* Filtro padrao do site (botao "Filtro" + modal de disciplinas com
+   checkboxes e "Buscar"). Origem: Biblioteca. Markup em
+   views/partials/filtroPadrao.ejs, comportamento em js/filtroPadrao.js. */
+
+.filtro-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 30px;
+    padding-left: 20px;
+}
+
+.filtro-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: transparent;
+    border: none;
+    color: var(--accent, #A398D1);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 10px;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.filtro-btn:hover {
+    color: var(--accent-forte, #8b83ac);
+}
+
+.filtro-icon {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 12px solid var(--accent, #A398D1);
+}
+
+.filtro-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* acima do header fixo (10001+) e do menu mobile */
+    z-index: 20000;
+    justify-content: center;
+    align-items: center;
+}
+
+.filtro-overlay.active {
+    display: flex;
+}
+
+.filtro-modal {
+    background-color: var(--c-e8e5f2, #E8E5F2);
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 400px;
+    width: 90%;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.filtro-modal-header {
+    margin-bottom: 25px;
+}
+
+.filtro-modal-header h2 {
+    font-size: 1.5rem;
+    color: var(--accent-forte, #4a4574);
+    font-weight: 600;
+}
+
+.filtro-fechar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    color: var(--accent-forte, #4a4574);
+    cursor: pointer;
+    line-height: 1;
+}
+
+.filtro-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+    /* so a lista rola; titulo e botao Buscar ficam sempre visiveis */
+    overflow-y: auto;
+    min-height: 0;
+    padding: 2px 4px 2px 0;
+}
+
+.filtro-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.filtro-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--accent, #A398D1);
+}
+
+.filtro-item span {
+    font-size: 1rem;
+    color: var(--cor-texto, #333);
+    cursor: pointer;
+}
+
+.filtro-buscar {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--accent, #A398D1);
+    color: var(--cor-fundo-cartao, white);
+    flex-shrink: 0;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Poppins', sans-serif;
+}
+
+.filtro-buscar:hover {
+    background-color: var(--accent-forte, #8b83ac);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .filtro-modal {
+        padding: 30px 25px;
+    }
+}

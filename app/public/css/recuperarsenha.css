@@ -5,9 +5,25 @@
    menores, entao voltam para o fluxo normal do documento. */
 
 .secao-roxa {
-    padding-bottom: 60px;
-    margin-bottom: 60px;
+    /* Faixa roxa enxuta: o card fica no fluxo normal, so precisa de um
+       pouco de roxo em volta (o login usa 120px/220px por causa do card
+       absoluto). */
+    /* padding-top precisa passar do header fixo (~80px), senao ele cobre
+       o topo do card. */
+    padding: 110px 20px 50px;
+    margin-top: 0;
+    margin-bottom: 0;
     min-height: auto;
+}
+
+/* Mensagem de erro vazia nao reserva espaco (senao abre um vao entre o
+   campo e o botao). */
+.erro-msg:empty {
+    display: none;
+}
+
+.logo-wrapper {
+    display: none;
 }
 
 .card-login {
@@ -15,6 +31,7 @@
     transform: none;
     bottom: auto;
     left: auto;
+    padding: 28px 22px;
 }
 
 .titulo-recuperar {

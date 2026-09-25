@@ -14,7 +14,7 @@
   <header class="secao-roxa"></header>
 
   <article class="card-cadastro">
-    <form id="cadastroProfessorForm" class="form-cadastro" action="/cadastroprofessor" method="POST" novalidate>
+    <form id="cadastroProfessorForm" class="form-cadastro" action="/cadastroprofessor" method="POST" enctype="multipart/form-data" novalidate>
       <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.geral) { %>
         <small class="erro-msg" role="alert"><%= msgErro.geral %></small>
       <% } %>
@@ -95,6 +95,7 @@
         </span>
         <span class="nome-arquivo">Selecione um arquivo</span>
         <input type="file" id="diploma" name="diploma" class="input-arquivo" accept=".pdf,.jpg,.png" required aria-label="Enviar diploma">
+        <% if (typeof msgErro !== "undefined" && msgErro && msgErro.diploma) { %><small class="erro-msg" role="alert"><%= msgErro.diploma %></small><% } %>
       </fieldset>
 
       <!-- MATÉRIA -->

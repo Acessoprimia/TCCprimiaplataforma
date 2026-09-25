@@ -18,9 +18,9 @@
             { chave: "totalAlunos", rotulo: "Total de alunos", descricao: "Alunos ativos na plataforma", icone: "alunos" },
             { chave: "totalProfessores", rotulo: "Total de professores", descricao: "Professores cadastrados", icone: "professores" },
             { chave: "contasProfessor", rotulo: "Contas professor", descricao: "Logins docentes cadastrados", icone: "login" },
-            { chave: "denunciasAbertas", rotulo: "Denuncias abertas", descricao: "Moderacao aguardando analise", icone: "alerta", alerta: true },
-            { chave: "conteudosCadastrados", rotulo: "Conteudos cadastrados", descricao: "Biblioteca, videos e planos", icone: "conteudos" },
-            { chave: "usuariosPremium", rotulo: "Usuarios premium", descricao: "Acessos premium ativos", icone: "premium" },
+              { chave: "denunciasAbertas", rotulo: "Denúncias abertas", descricao: "Moderação aguardando análise", icone: "alerta", alerta: true },
+            { chave: "conteudosCadastrados", rotulo: "Conteúdos cadastrados", descricao: "Biblioteca, vídeos e planos", icone: "conteudos" },
+            { chave: "usuariosPremium", rotulo: "Usuários premium", descricao: "Acessos premium ativos", icone: "premium" },
             { chave: "mensagensContato", rotulo: "Mensagens de contato", descricao: "Chamados abertos", icone: "mensagens" },
         ];
 
@@ -34,7 +34,7 @@
             mensagens: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22 6 12 13 2 6"></polyline>',
         };
 
-        const rotulosPrioridade = { alta: "Alta", media: "Media", baixa: "Baixa" };
+        const rotulosPrioridade = { alta: "Alta", media: "Média", baixa: "Baixa" };
 
         // Geometria do grafico de crescimento, calculada a partir de "grafico.series".
         // Trocar os valores mockados por agregacoes reais nao exige mudar nada abaixo.
@@ -72,8 +72,8 @@
     <main class="admin-page">
         <section class="admin-mobile-intro">
             <p class="admin-kicker">Painel Administrativo</p>
-            <h1>Gestao Primia</h1>
-            <p>Controle usuarios, conteudos, suporte, relatorios e configuracoes em um unico lugar.</p>
+            <h1>Gestão Primia</h1>
+            <p>Controle usuários, conteúdos, suporte, relatórios e configurações em um único lugar.</p>
         </section>
 
         <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'dashboard' }) %>
@@ -82,12 +82,12 @@
             <section class="admin-hero" id="dashboard">
                 <article>
                     <p class="admin-kicker">Painel Administrativo Primia</p>
-                    <h1>Bem-vindo ao centro de gestao</h1>
+                    <h1>Bem-vindo ao centro de gestão</h1>
                 </article>
-                <a href="/admin/usuarios" class="admin-primary-action">Gerenciar usuarios</a>
+                <a href="/admin/usuarios" class="admin-primary-action">Gerenciar usuários</a>
             </section>
 
-            <section class="admin-metrics" aria-label="Metricas principais">
+            <section class="admin-metrics" aria-label="Métricas principais">
                 <% cartoesMetricas.forEach((cartao) => { %>
                     <article class="metric-card <%= cartao.alerta ? 'alerta' : '' %>">
                         <header class="metric-card-head">
@@ -109,12 +109,12 @@
                     <header class="panel-header">
                         <article>
                             <h2>Crescimento da plataforma</h2>
-                            <p>Cadastros, duvidas respondidas e uso premium ao longo dos ultimos meses.</p>
+                            <p>Cadastros, dúvidas respondidas e uso premium ao longo dos últimos meses.</p>
                         </article>
                     </header>
                     <% // Futuramente montar grafico com agregacoes por data vindas do banco. %>
                     <section class="chart-frame">
-                        <svg class="growth-chart" viewBox="0 0 <%= chartWidth %> <%= chartHeight %>" role="img" aria-label="Grafico de linhas mostrando crescimento de cadastros, duvidas respondidas e uso premium">
+                        <svg class="growth-chart" viewBox="0 0 <%= chartWidth %> <%= chartHeight %>" role="img" aria-label="Gráfico de linhas mostrando crescimento de cadastros, dúvidas respondidas e uso premium">
                             <defs>
                                 <linearGradient id="growthChartArea" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="0%" stop-color="<%= seriesGrafico[0].cor %>" stop-opacity="0.32" />
@@ -151,8 +151,8 @@
                 <article class="admin-panel">
                     <header class="panel-header">
                         <article>
-                            <h2>Pendencias importantes</h2>
-                            <p>Itens que precisam de revisao administrativa.</p>
+                            <h2>Pendências importantes</h2>
+                            <p>Itens que precisam de revisão administrativa.</p>
                         </article>
                     </header>
                     <ul class="admin-list">

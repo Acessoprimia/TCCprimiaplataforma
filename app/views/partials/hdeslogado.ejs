@@ -28,6 +28,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <%- include('./pwa.ejs') %>
   <link href="../css/theme.css" rel="stylesheet">
   <link rel="stylesheet" href="header-semantico.css">
 </head>
@@ -55,7 +56,15 @@
       </nav>
 
       <!-- Botão login desktop -->
-      <a href="/login" class="btn-login">Já tem uma conta?</a>
+      <span class="aparencia-header-slot">
+        <button type="button" class="aparencia-trigger" id="aparenciaFlutuanteBtn" aria-haspopup="true" aria-expanded="false" aria-label="Aparência do site">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path>
+          </svg>
+        </button>
+        <a href="/login" class="btn-login">Já tem uma conta?</a>
+      </span>
 
       <!-- Botão hamburguer -->
       <button class="hamburger" id="hamburger" aria-label="Abrir menu" aria-expanded="false">
@@ -72,12 +81,15 @@
       <li><a href="/telainicial">Início</a></li>
       <li><a href="/sobre">Sobre</a></li>
       <li><a href="/contato">Contato</a></li>
+      <li><button type="button" class="aparencia-trigger-mobile" id="aparenciaFlutuanteBtnMobile" aria-haspopup="true" aria-expanded="false">Aparência</button></li>
       <li><a href="/login" class="mobile-login-btn">Já tem uma conta?</a></li>
     </ul>
   </nav>
 
   <!-- JavaScript -->
   <script src="../js/hamburguer.js"></script>
+
+  <%- include('./aparenciaFlutuante.ejs') %>
 
 <!-- Alvo do skip link: primeiro ponto depois do cabecalho repetido -->
   <span id="conteudo-principal" tabindex="-1"></span>

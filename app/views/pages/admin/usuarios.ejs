@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuarios - Painel Administrativo Primia</title>
+    <title>Usuários - Painel Administrativo Primia</title>
     <link href="/css/admin.css" rel="stylesheet">
     <%- include('../../partials/headeradmin.ejs') %>
 </head>
@@ -13,8 +13,8 @@
     <main class="admin-page">
         <section class="admin-mobile-intro">
             <p class="admin-kicker">Painel Administrativo</p>
-            <h1>Usuarios</h1>
-            <p>Alunos, professores, administradores e assinaturas premium em um unico lugar.</p>
+            <h1>Usuários</h1>
+            <p>Alunos, professores, administradores e assinaturas premium em um único lugar.</p>
         </section>
 
         <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'usuarios' }) %>
@@ -23,8 +23,8 @@
             <section class="admin-panel" id="usuarios">
                 <header class="panel-header panel-header-actions">
                     <article>
-                        <h2>Usuarios da plataforma</h2>
-                        <p>Visualizacao de dados de login, tipo de conta, status e acesso premium.</p>
+                        <h2>Usuários da plataforma</h2>
+                        <p>Visualização de dados de login, tipo de conta, status e acesso premium.</p>
                     </article>
                 </header>
 
@@ -33,7 +33,7 @@
                         <circle cx="11" cy="11" r="8"></circle>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
-                    <input type="search" id="usuariosBusca" placeholder="Buscar por nome, email ou ID de acesso..." aria-label="Buscar usuarios">
+                    <input type="search" id="usuariosBusca" placeholder="Buscar por nome, email ou ID de acesso..." aria-label="Buscar usuários">
                 </div>
 
                 <div class="admin-filtros-group">
@@ -65,9 +65,9 @@
                                 <th>Tipo</th>
                                 <th>Status</th>
                                 <th>Premium</th>
-                                <th>Ultimo acesso</th>
+                                <th>Último acesso</th>
                                 <th>ID</th>
-                                <th>Acoes</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody id="usuariosTabela"></tbody>
@@ -75,7 +75,7 @@
                 </section>
 
                 <footer class="admin-pagination">
-                    <p class="admin-pagination-info" id="usuariosPaginacaoInfo">Carregando usuarios...</p>
+                    <p class="admin-pagination-info" id="usuariosPaginacaoInfo">Carregando usuários...</p>
                     <div class="admin-pagination-controles" id="usuariosPaginacaoControles"></div>
                 </footer>
             </section>

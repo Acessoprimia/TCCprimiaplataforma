@@ -1,12 +1,16 @@
 <%# Grade semanal: dias nas colunas, horarios nas linhas.
     Recebe "grade" (saida de cronogramaService.montarGrade). Todas as
-    celulas vem dos dados reais do cronograma. %>
+    celulas vem dos dados reais do cronograma.
+    "semDatas" (opcional, default false): mostra so os dias da semana, sem
+    a data embaixo de cada coluna; se houver mais de uma semana, o rotulo
+    vira "Semana 1", "Semana 2"... em vez de "Semana de dd/mm". %>
+<% const ocultarDatas = typeof semDatas !== 'undefined' && semDatas; %>
 <% if (grade.vazia) { %>
     <p class="grade-vazia">Nenhuma atividade neste cronograma.</p>
 <% } else { %>
-    <% grade.semanas.forEach(function (semana) { %>
+    <% grade.semanas.forEach(function (semana, indiceSemana) { %>
         <% if (grade.mostrarRotuloSemana) { %>
-            <h3 class="grade-semana-rotulo"><%= semana.rotulo %></h3>
+            <h3 class="grade-semana-rotulo"><%= ocultarDatas ? 'Semana ' + (indiceSemana + 1) : semana.rotulo %></h3>
         <% } %>
 
         <div class="grade-scroll">
@@ -17,7 +21,9 @@
                         <% semana.dias.forEach(function (dia) { %>
                             <th scope="col">
                                 <span class="grade-dia-abrev"><%= dia.abrev %></span>
-                                <span class="grade-dia-data"><%= dia.dataCurta %></span>
+                                <% if (!ocultarDatas) { %>
+                                    <span class="grade-dia-data"><%= dia.dataCurta %></span>
+                                <% } %>
                             </th>
                         <% }) %>
                     </tr>

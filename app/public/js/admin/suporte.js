@@ -14,11 +14,11 @@ function tamanhoPaginaAtualSuporte() {
     return MEDIA_QUERY_MOBILE_SUPORTE.matches ? TAMANHO_PAGINA_MOBILE_SUPORTE : TAMANHO_PAGINA_DESKTOP_SUPORTE;
 }
 
-const ROTULOS_TIPO_DENUNCIA = { forum: "Forum", videoaula: "Videoaula", livro: "Livro", simulado: "Simulado", outros: "Outros" };
-const ROTULOS_PRIORIDADE_DENUNCIA = { alta: "Alta", media: "Media", baixa: "Baixa" };
-const ROTULOS_STATUS_DENUNCIA = { aberto: "Aberto", em_analise: "Em analise", resolvido: "Resolvido" };
+const ROTULOS_TIPO_DENUNCIA = { forum: "Fórum", videoaula: "Videoaula", livro: "Livro", simulado: "Simulado", outros: "Outros" };
+const ROTULOS_PRIORIDADE_DENUNCIA = { alta: "Alta", media: "Média", baixa: "Baixa" };
+const ROTULOS_STATUS_DENUNCIA = { aberto: "Aberto", em_analise: "Em análise", resolvido: "Resolvido" };
 const CLASSES_STATUS_DENUNCIA = { aberto: "pendente", em_analise: "premium", resolvido: "ativo" };
-const ROTULOS_RESOLUCAO_DENUNCIA = { resolvido: "Resolvida", ignorado: "Ignorada", conteudo_removido: "Conteudo removido" };
+const ROTULOS_RESOLUCAO_DENUNCIA = { resolvido: "Resolvida", ignorado: "Ignorada", conteudo_removido: "Conteúdo removido" };
 
 const ROTULOS_STATUS_CONTATO = { aberto: "Aberto", respondido: "Respondido", resolvido: "Resolvido" };
 const CLASSES_STATUS_CONTATO = { aberto: "pendente", respondido: "premium", resolvido: "ativo" };
@@ -95,10 +95,10 @@ function renderizarResumoSuporte() {
     const resumo = calcularResumoSuporte();
 
     resumoSuporte.innerHTML = [
-        cartaoResumoSuporteHtml("abertas", "Denuncias abertas", resumo.abertas, "Aguardando analise do admin", resumo.abertas > 0),
-        cartaoResumoSuporteHtml("analise", "Em analise", resumo.analise, "Denuncias sendo avaliadas"),
-        cartaoResumoSuporteHtml("mensagens", "Mensagens novas", resumo.mensagensNovas, "Contatos ainda nao respondidos"),
-        cartaoResumoSuporteHtml("resolvidas", "Resolvidas hoje", resumo.resolvidasHoje, "Denuncias e contatos encerrados"),
+        cartaoResumoSuporteHtml("abertas", "Denúncias abertas", resumo.abertas, "Aguardando análise do admin", resumo.abertas > 0),
+        cartaoResumoSuporteHtml("analise", "Em análise", resumo.analise, "Denúncias sendo avaliadas"),
+        cartaoResumoSuporteHtml("mensagens", "Mensagens novas", resumo.mensagensNovas, "Contatos ainda não respondidos"),
+        cartaoResumoSuporteHtml("resolvidas", "Resolvidas hoje", resumo.resolvidasHoje, "Denúncias e contatos encerrados"),
     ].join("");
 }
 
@@ -154,13 +154,13 @@ function linhaDenunciaHtml(denuncia) {
     return `
         <tr data-denuncia-id="${denuncia.id}">
             <td data-label="ID">${denuncia.codigo}</td>
-            <td data-label="Usuario">${escapeHtml(denuncia.usuario.nome)}<span class="celula-secundaria">${denuncia.usuario.idAcesso}</span></td>
+            <td data-label="Usuário">${escapeHtml(denuncia.usuario.nome)}<span class="celula-secundaria">${denuncia.usuario.idAcesso}</span></td>
             <td data-label="Tipo"><span class="badge ${denuncia.tipo}">${ROTULOS_TIPO_DENUNCIA[denuncia.tipo]}</span></td>
             <td data-label="Motivo">${escapeHtml(denuncia.motivo)}</td>
             <td data-label="Prioridade"><span class="priority-badge ${denuncia.prioridade}">${ROTULOS_PRIORIDADE_DENUNCIA[denuncia.prioridade]}</span></td>
             <td data-label="Status"><span class="status ${CLASSES_STATUS_DENUNCIA[denuncia.status]}">${ROTULOS_STATUS_DENUNCIA[denuncia.status]}</span></td>
             <td data-label="Data">${formatarDataSuporte(denuncia.criadoEm)}</td>
-            <td data-label="Acoes" class="table-actions-cell">
+            <td data-label="Ações" class="table-actions-cell">
                 <div class="table-menu-wrap">
                     <button type="button" class="table-menu-trigger" data-menu-toggle aria-haspopup="true" aria-expanded="false" aria-label="Acoes da denuncia ${denuncia.codigo}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -174,7 +174,7 @@ function linhaDenunciaHtml(denuncia) {
                         <button type="button" data-admin-action="responder-denuncia">Responder</button>
                         <button type="button" data-admin-action="resolver-denuncia">Resolver</button>
                         <button type="button" data-admin-action="ignorar-denuncia">Ignorar</button>
-                        <button type="button" class="danger" data-admin-action="remover-conteudo-denuncia">Remover conteudo</button>
+                        <button type="button" class="danger" data-admin-action="remover-conteudo-denuncia">Remover conteúdo</button>
                     </div>
                 </div>
             </td>
@@ -183,7 +183,7 @@ function linhaDenunciaHtml(denuncia) {
 }
 
 function linhaVaziaDenunciasHtml() {
-    return `<tr class="tabela-vazia"><td colspan="8">Nenhuma denuncia encontrada para os filtros selecionados.</td></tr>`;
+    return `<tr class="tabela-vazia"><td colspan="8">Nenhuma denúncia encontrada para os filtros selecionados.</td></tr>`;
 }
 
 function renderizarTabelaDenuncias(itens) {
@@ -194,12 +194,12 @@ function renderizarPaginacaoDenuncias({ totalRegistros, pagina, tamanhoPagina, t
     const inicio = totalRegistros === 0 ? 0 : (pagina - 1) * tamanhoPagina + 1;
     const fim = Math.min(pagina * tamanhoPagina, totalRegistros);
 
-    paginacaoInfoDenuncias.textContent = `Mostrando ${inicio}-${fim} de ${totalRegistros.toLocaleString("pt-BR")} denuncias.`;
+    paginacaoInfoDenuncias.textContent = `Mostrando ${inicio}-${fim} de ${totalRegistros.toLocaleString("pt-BR")} denúncias.`;
 
     paginacaoControlesDenuncias.innerHTML = `
         <button type="button" data-pagina-acao="anterior" ${pagina <= 1 ? "disabled" : ""}>Anterior</button>
-        <span class="paginacao-atual">Pagina ${pagina} de ${totalPaginas}</span>
-        <button type="button" data-pagina-acao="proxima" ${pagina >= totalPaginas ? "disabled" : ""}>Proxima</button>
+        <span class="paginacao-atual">Página ${pagina} de ${totalPaginas}</span>
+        <button type="button" data-pagina-acao="proxima" ${pagina >= totalPaginas ? "disabled" : ""}>Próxima</button>
     `;
 }
 
@@ -302,7 +302,7 @@ function linhaContatoHtml(contato) {
             <td data-label="Assunto">${escapeHtml(contato.assunto)}</td>
             <td data-label="Status"><span class="status ${CLASSES_STATUS_CONTATO[contato.status]}">${ROTULOS_STATUS_CONTATO[contato.status]}</span></td>
             <td data-label="Data">${formatarDataSuporte(contato.criadoEm)}</td>
-            <td data-label="Acoes" class="table-actions-cell">
+            <td data-label="Ações" class="table-actions-cell">
                 <div class="table-menu-wrap">
                     <button type="button" class="table-menu-trigger" data-menu-toggle aria-haspopup="true" aria-expanded="false" aria-label="Acoes da mensagem de ${escapeHtml(contato.nome)}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -339,8 +339,8 @@ function renderizarPaginacaoContato({ totalRegistros, pagina, tamanhoPagina, tot
 
     paginacaoControlesContato.innerHTML = `
         <button type="button" data-pagina-acao="anterior" ${pagina <= 1 ? "disabled" : ""}>Anterior</button>
-        <span class="paginacao-atual">Pagina ${pagina} de ${totalPaginas}</span>
-        <button type="button" data-pagina-acao="proxima" ${pagina >= totalPaginas ? "disabled" : ""}>Proxima</button>
+        <span class="paginacao-atual">Página ${pagina} de ${totalPaginas}</span>
+        <button type="button" data-pagina-acao="proxima" ${pagina >= totalPaginas ? "disabled" : ""}>Próxima</button>
     `;
 }
 
@@ -404,18 +404,18 @@ window.addEventListener("resize", () => {
 
 function textoDenuncia(denuncia) {
     const linhas = [
-        `Denuncia: ${denuncia.codigo}`,
-        `Usuario: ${denuncia.usuario.nome} (${denuncia.usuario.idAcesso})`,
+        `Denúncia: ${denuncia.codigo}`,
+        `Usuário: ${denuncia.usuario.nome} (${denuncia.usuario.idAcesso})`,
         `Tipo: ${ROTULOS_TIPO_DENUNCIA[denuncia.tipo]}`,
-        `Materia: ${denuncia.materia}`,
+        `Matéria: ${denuncia.materia}`,
         `Prioridade: ${ROTULOS_PRIORIDADE_DENUNCIA[denuncia.prioridade]}`,
         `Status: ${ROTULOS_STATUS_DENUNCIA[denuncia.status]}`,
         denuncia.resolucao ? `Desfecho: ${ROTULOS_RESOLUCAO_DENUNCIA[denuncia.resolucao]}` : null,
         `Data: ${formatarDataSuporte(denuncia.criadoEm)}`,
         "",
-        `Conteudo denunciado: ${denuncia.conteudoDenunciado}`,
+        `Conteúdo denunciado: ${denuncia.conteudoDenunciado}`,
         "",
-        `Motivo da denuncia: ${denuncia.motivo}`,
+        `Motivo da denúncia: ${denuncia.motivo}`,
         denuncia.descricao ? `\nDetalhes enviados: ${denuncia.descricao}` : null,
         denuncia.resposta ? `\nResposta do admin: ${denuncia.resposta}` : null,
     ];
@@ -453,7 +453,7 @@ function tratarAcaoAdmin(botao) {
         return;
     }
 
-    mostrarAvisoAdmin("Acao administrativa preparada.");
+    mostrarAvisoAdmin("Ação administrativa preparada.");
 }
 
 function tratarAcaoDenuncia(botao, linha) {
@@ -465,30 +465,30 @@ function tratarAcaoDenuncia(botao, linha) {
 
     switch (botao.dataset.adminAction) {
         case "visualizar-denuncia":
-            abrirModalVisualizacao("Detalhes da denuncia", textoDenuncia(denuncia));
+            abrirModalVisualizacao("Detalhes da denúncia", textoDenuncia(denuncia));
             break;
         case "responder-denuncia":
             abrirModalRespostaDenuncia(denuncia);
             break;
         case "resolver-denuncia":
-            confirmarDesfechoDenuncia(denuncia, "resolvido", "Marcar como resolvida", "Tem certeza que deseja marcar esta denuncia como resolvida?", "Denuncia resolvida visualmente.");
+            confirmarDesfechoDenuncia(denuncia, "resolvido", "Marcar como resolvida", "Tem certeza que deseja marcar esta denúncia como resolvida?", "Denúncia resolvida visualmente.");
             break;
         case "ignorar-denuncia":
-            confirmarDesfechoDenuncia(denuncia, "ignorado", "Ignorar denuncia", "Tem certeza que deseja ignorar esta denuncia? O conteudo permanece publicado.", "Denuncia ignorada visualmente.");
+            confirmarDesfechoDenuncia(denuncia, "ignorado", "Ignorar denúncia", "Tem certeza que deseja ignorar esta denúncia? O conteúdo permanece publicado.", "Denúncia ignorada visualmente.");
             break;
         case "remover-conteudo-denuncia":
             confirmarRemocaoConteudoDenuncia(denuncia);
             break;
         default:
-            mostrarAvisoAdmin("Acao administrativa preparada.");
+            mostrarAvisoAdmin("Ação administrativa preparada.");
     }
 }
 
 function abrirModalRespostaDenuncia(denuncia) {
     abrirModal(
-        "Responder denuncia",
+        "Responder denúncia",
         "resposta-denuncia",
-        campoLeitura("Denuncia recebida", textoDenuncia(denuncia)) +
+        campoLeitura("Denúncia recebida", textoDenuncia(denuncia)) +
         campoTextarea("resposta", "Resposta do administrador", denuncia.resposta || ""),
         denuncia
     );
@@ -515,8 +515,8 @@ function confirmarDesfechoDenuncia(denuncia, resolucao, titulo, texto, mensagem)
 // rotulo. Por isso o texto de confirmacao avisa que nao da pra desfazer.
 function confirmarRemocaoConteudoDenuncia(denuncia) {
     abrirConfirmacao(
-        "Remover conteudo denunciado",
-        "Tem certeza que deseja remover o conteudo denunciado? Essa acao apaga o conteudo permanentemente (nao so a denuncia) e nao pode ser desfeita.",
+        "Remover conteúdo denunciado",
+        "Tem certeza que deseja remover o conteúdo denunciado? Essa ação apaga o conteúdo permanentemente (não só a denúncia) e não pode ser desfeita.",
         async () => {
             try {
                 await chamarApiAdmin(`/admin/denuncias/${denuncia.id}/remover-conteudo`, {});
@@ -525,7 +525,7 @@ function confirmarRemocaoConteudoDenuncia(denuncia) {
                 denuncia.resolvidoEm = new Date().toISOString();
                 atualizarTabelaDenuncias();
                 renderizarResumoSuporte();
-                mostrarAvisoAdmin("Conteudo denunciado removido.");
+                mostrarAvisoAdmin("Conteúdo denunciado removido.");
             } catch (erro) {
                 mostrarAvisoAdmin(erro.message);
             }
@@ -546,7 +546,7 @@ adminModalHandlers["resposta-denuncia"] = async function registrarRespostaDenunc
 
         atualizarTabelaDenuncias();
         renderizarResumoSuporte();
-        mostrarAvisoAdmin("Denuncia respondida.");
+        mostrarAvisoAdmin("Denúncia respondida.");
     } catch (erro) {
         mostrarAvisoAdmin(erro.message);
     }
@@ -573,7 +573,7 @@ function tratarAcaoContato(botao, linha) {
             confirmarExclusaoContato(contato);
             break;
         default:
-            mostrarAvisoAdmin("Acao administrativa preparada.");
+            mostrarAvisoAdmin("Ação administrativa preparada.");
     }
 }
 
@@ -582,7 +582,8 @@ function abrirModalRespostaContato(contato) {
         "Responder contato",
         "resposta-contato",
         campoLeitura("Mensagem recebida", textoContato(contato)) +
-        campoTextarea("resposta", "Resposta do administrador", contato.resposta || ""),
+        campoTextarea("resposta", "Resposta do administrador", contato.resposta || "") +
+        campoCheckbox("enviarEmail", `Enviar esta resposta por e-mail para ${escapeHtml(contato.email)}`, true),
         contato
     );
 }
@@ -620,7 +621,10 @@ adminModalHandlers["resposta-contato"] = async function registrarRespostaContato
     const contato = modalOrigem;
 
     try {
-        await chamarApiAdmin(`/admin/contatos/${contato.id}/responder`, { resposta: dados.resposta });
+        const retorno = await chamarApiAdmin(`/admin/contatos/${contato.id}/responder`, {
+            resposta: dados.resposta,
+            enviarEmail: dados.enviarEmail === "on",
+        });
         contato.resposta = dados.resposta;
 
         if (contato.status === "aberto") {
@@ -629,7 +633,10 @@ adminModalHandlers["resposta-contato"] = async function registrarRespostaContato
 
         atualizarTabelaContato();
         renderizarResumoSuporte();
-        mostrarAvisoAdmin("Contato respondido.");
+        mostrarAvisoAdmin(
+            retorno?.avisoEmail
+                || (retorno?.emailEnviado ? "Contato respondido e e-mail enviado." : "Contato respondido.")
+        );
     } catch (erro) {
         mostrarAvisoAdmin(erro.message);
     }
@@ -638,5 +645,29 @@ adminModalHandlers["resposta-contato"] = async function registrarRespostaContato
 // ---- Inicializacao ----
 
 renderizarResumoSuporte();
-atualizarTabelaDenuncias();
-atualizarTabelaContato();
+
+// Vindo do sino: ?aba=denuncias|contato&destaque=<id> abre a aba certa e
+// destaca a linha. A aba padrao continua sendo denuncias.
+const abaDoAlerta = new URLSearchParams(window.location.search).get("aba");
+const tabelasSuporte = Promise.all([atualizarTabelaDenuncias(), atualizarTabelaContato()]);
+
+tabelasSuporte.then(() => {
+    if (abaDoAlerta === "contato") {
+        document.querySelector('[data-aba-alvo="contato"]')?.click();
+        return destacarItemDaUrl({
+            lista: CONTATOS_MOCK,
+            estado: estadoConsultaContato,
+            atualizar: atualizarTabelaContato,
+            atributoLinha: "data-contato-id",
+            rotulo: "Mensagem de contato",
+        });
+    }
+
+    return destacarItemDaUrl({
+        lista: DENUNCIAS_MOCK,
+        estado: estadoConsultaDenuncias,
+        atualizar: atualizarTabelaDenuncias,
+        atributoLinha: "data-denuncia-id",
+        rotulo: "Denúncia",
+    });
+});

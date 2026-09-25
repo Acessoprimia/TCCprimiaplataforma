@@ -1,0 +1,29 @@
+<!-- PWA: manifest (instalar o app) + registro do service worker (/sw.js).
+     Incluido em todos os partials de header, que por sua vez chegam em
+     toda pagina. -->
+<link rel="manifest" href="/manifest.json">
+<!-- Cor da barra do navegador/app instalado = fundo do header em cada tema -->
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1c1830" media="(prefers-color-scheme: dark)">
+<script>
+  (function () {
+    // Tema escolhido em Configuracoes > Aparencia vence o do sistema.
+    try {
+      var tema = localStorage.getItem("primia-tema");
+      if (tema === "light" || tema === "dark") {
+        var cor = tema === "dark" ? "#1c1830" : "#ffffff";
+        document.querySelectorAll('meta[name="theme-color"]').forEach(function (meta) {
+          meta.setAttribute("content", cor);
+        });
+      }
+    } catch (e) {}
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("/sw.js").catch(function (erro) {
+          console.error("Falha ao registrar o service worker:", erro);
+        });
+      });
+    }
+  })();
+</script>

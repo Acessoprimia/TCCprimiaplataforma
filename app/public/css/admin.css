@@ -1490,8 +1490,13 @@ textarea {
 }
 
 @media (min-width: 1180px) {
+    /* auto-fit em vez de 7 colunas fixas: com 7 colunas o card ficava estreito
+       demais pros rotulos ("Professores", "cadastrados", "aguardando"), e o
+       overflow-wrap: break-word do theme.css (que evita vazamento) quebrava
+       as palavras no meio. minmax garante uma largura minima legivel e deixa
+       menos cards por linha em telas nao tao largas. */
     .admin-metrics {
-        grid-template-columns: repeat(7, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     }
 
     .resumo-cards {
@@ -1504,39 +1509,6 @@ textarea {
 }
 
 /* AUDITORIA */
-.auditoria-filtros {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 12px;
-    margin-bottom: 18px;
-}
-
-.auditoria-filtros label {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--c-666, #666);
-}
-
-.auditoria-filtros select {
-    border: 1px solid var(--accent, #A398D1);
-    border-radius: 12px;
-    background-color: var(--cor-fundo-cartao, #ffffff);
-    color: inherit;
-    font-family: inherit;
-    font-size: 0.8125rem;
-    padding: 8px 12px;
-    min-width: 150px;
-}
-
-.auditoria-filtros .filtro-btn {
-    text-decoration: none;
-    display: inline-block;
-}
-
 .auditoria-acao {
     border-radius: 50px;
     padding: 3px 10px;
@@ -1559,4 +1531,31 @@ textarea {
 .auditoria-acao-excluiu {
     background: rgba(239, 68, 68, 0.15);
     color: #EF4444;
+}
+
+/* Linha aberta a partir do sino do admin (?destaque=<id>) */
+@keyframes linha-destaque-pulso {
+    0%, 60% { background-color: rgba(163, 152, 209, 0.35); }
+    100% { background-color: transparent; }
+}
+
+tr.linha-destaque > td {
+    animation: linha-destaque-pulso 4s ease-out;
+}
+
+tr.linha-destaque > td:first-child {
+    box-shadow: inset 4px 0 0 var(--accent, #A398D1);
+}
+
+.admin-modal-fields label.campo-checkbox {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.admin-modal-fields label.campo-checkbox input {
+    width: auto;
+    margin: 0;
+    flex-shrink: 0;
 }

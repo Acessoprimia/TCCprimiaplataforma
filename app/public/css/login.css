@@ -198,56 +198,6 @@ body {
     box-shadow: 0 5px 15px rgba(255, 156, 125, 0.4);
 }
 
-/* DIVISOR OU */
-.divisor {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin: 15px 0;
-}
-
-.linha-divisor {
-    flex: 1;
-    height: 1px;
-    background-color: var(--c-e5e5e5, #e5e5e5);
-}
-
-.texto-divisor {
-    font-size: 0.875rem;
-    color: var(--c-999, #999);
-}
-
-/* REDES SOCIAIS */
-.redes-sociais {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.btn-social {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--accent, #A398D1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    text-decoration: none;
-}
-
-.btn-social:hover {
-    background-color: var(--accent-forte, #8b83ac);
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(163, 152, 209, 0.3);
-}
-
-.icone-social {
-    width: 24px;
-    height: 24px;
-    filter: brightness(0) invert(1);
-}
-
 /* RESPONSIVO MOBILE */
 @media (max-width: 480px) {
     .secao-roxa {

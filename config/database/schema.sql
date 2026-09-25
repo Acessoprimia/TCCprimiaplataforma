@@ -16,6 +16,8 @@ CREATE TABLE Usuario (
     status ENUM('ativo', 'bloqueado', 'inativo') NOT NULL DEFAULT 'ativo',
     foto_url VARCHAR(255) NULL,
     perfil_publico BOOLEAN NOT NULL DEFAULT TRUE,
+    -- Esconde so a foto no forum (o nome segue a regra de perfil_publico)
+    foto_publica BOOLEAN NOT NULL DEFAULT TRUE,
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ultimo_login DATETIME NULL,
 
@@ -75,6 +77,9 @@ CREATE TABLE Professor (
     id_professor INT NOT NULL,
     id_materia INT,
     diploma VARCHAR(255) NOT NULL,
+    -- Troca de diploma aguardando aprovacao do admin (o atual continua valendo)
+    diploma_pendente VARCHAR(255) NULL,
+    diploma_pendente_em DATETIME NULL,
     data_nascimento DATE NOT NULL,
 
     CONSTRAINT pk_professor PRIMARY KEY (id_professor),

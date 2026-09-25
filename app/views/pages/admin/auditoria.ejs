@@ -14,7 +14,7 @@
         <section class="admin-mobile-intro">
             <p class="admin-kicker">Painel Administrativo</p>
             <h1>Auditoria</h1>
-            <p>Historico do que alunos e professores fizeram na plataforma.</p>
+            <p>Histórico do que alunos, professores e administradores fizeram na plataforma.</p>
         </section>
 
         <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'auditoria' }) %>
@@ -24,45 +24,47 @@
                 <header class="panel-header">
                     <article>
                         <h2>Registro de atividades</h2>
-                        <p>Exclusoes e alteracoes feitas por alunos e professores, da mais recente para a mais antiga.</p>
+                        <p>Criações, edições e exclusões feitas por alunos, professores e administradores, da mais recente para a mais antiga.</p>
                     </article>
                 </header>
 
-                <form method="GET" action="/admin/auditoria" class="auditoria-filtros">
-                    <label>
-                        <span>Tipo de usuario</span>
-                        <select name="tipo">
-                            <option value="">Todos</option>
-                            <% ['aluno', 'professor', 'admin'].forEach(function (opcao) { %>
-                                <option value="<%= opcao %>" <%= filtros.tipoUsuario === opcao ? 'selected' : '' %>><%= opcao %></option>
-                            <% }) %>
-                        </select>
-                    </label>
+                <div class="admin-search-bar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="search" id="auditoriaBusca" placeholder="Buscar por nome, email ou descrição..." aria-label="Buscar atividades">
+                </div>
 
-                    <label>
-                        <span>Acao</span>
-                        <select name="acao">
-                            <option value="">Todas</option>
-                            <% ['criou', 'editou', 'excluiu'].forEach(function (opcao) { %>
-                                <option value="<%= opcao %>" <%= filtros.acao === opcao ? 'selected' : '' %>><%= opcao %></option>
-                            <% }) %>
-                        </select>
-                    </label>
+                <div class="admin-filtros-group">
+                    <nav class="admin-filtros" aria-label="Filtrar por tipo de usuário">
+                        <button type="button" class="filtro-btn ativo" data-filtro-tipo="todos">Todos</button>
+                        <button type="button" class="filtro-btn" data-filtro-tipo="aluno">Alunos</button>
+                        <button type="button" class="filtro-btn" data-filtro-tipo="professor">Professores</button>
+                        <button type="button" class="filtro-btn" data-filtro-tipo="admin">Administradores</button>
+                    </nav>
 
-                    <label>
-                        <span>Entidade</span>
-                        <select name="entidade">
-                            <option value="">Todas</option>
-                            <% ['duvida', 'resposta', 'conteudo', 'formulario', 'cronograma', 'redacao', 'conta'].forEach(function (opcao) { %>
-                                <option value="<%= opcao %>" <%= filtros.entidade === opcao ? 'selected' : '' %>><%= opcao %></option>
-                            <% }) %>
-                        </select>
-                    </label>
+                    <nav class="admin-filtros" aria-label="Filtrar por ação">
+                        <button type="button" class="filtro-btn ativo" data-filtro-acao="todos">Todas as ações</button>
+                        <button type="button" class="filtro-btn" data-filtro-acao="criou">Criou</button>
+                        <button type="button" class="filtro-btn" data-filtro-acao="editou">Editou</button>
+                        <button type="button" class="filtro-btn" data-filtro-acao="excluiu">Excluiu</button>
+                    </nav>
 
-                    <button type="submit" class="filtro-btn ativo">Filtrar</button>
-                    <a href="/admin/auditoria" class="filtro-btn">Limpar</a>
-                </form>
+                    <nav class="admin-filtros" aria-label="Filtrar por entidade">
+                        <button type="button" class="filtro-btn ativo" data-filtro-entidade="todos">Todas as entidades</button>
+                        <button type="button" class="filtro-btn" data-filtro-entidade="duvida">Dúvida</button>
+                        <button type="button" class="filtro-btn" data-filtro-entidade="resposta">Resposta</button>
+                        <button type="button" class="filtro-btn" data-filtro-entidade="conteudo">Conteúdo</button>
+                        <button type="button" class="filtro-btn" data-filtro-entidade="formulario">Formulário</button>
+                        <button type="button" class="filtro-btn" data-filtro-entidade="cronograma">Cronograma</button>
+                        <button type="button" class="filtro-btn" data-filtro-entidade="redacao">Redação</button>
+                        <button type="button" class="filtro-btn" data-filtro-entidade="conta">Conta</button>
+                    </nav>
+                </div>
 
+                <% // Populada por auditoria.js a partir de #dados-auditoria; busca, filtros %>
+                <% // e paginacao sao client-side, no mesmo esquema de /admin/usuarios. %>
                 <section class="table-scroll">
                     <table class="admin-table">
                         <thead>
@@ -70,41 +72,25 @@
                                 <th>Quando</th>
                                 <th>Quem</th>
                                 <th>Tipo</th>
-                                <th>Acao</th>
+                                <th>Ação</th>
                                 <th>Entidade</th>
-                                <th>Descricao</th>
+                                <th>Descrição</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <% if (logs.length === 0) { %>
-                                <tr class="tabela-vazia">
-                                    <td colspan="6">Nenhuma atividade registrada para esses filtros.</td>
-                                </tr>
-                            <% } %>
-                            <% logs.forEach(function (log) { %>
-                                <tr>
-                                    <td data-label="Quando"><%= log.quando %></td>
-                                    <td data-label="Quem">
-                                        <%= log.nome_usuario %>
-                                        <% if (log.email_usuario) { %>
-                                            <br><small><%= log.email_usuario %></small>
-                                        <% } else { %>
-                                            <br><small>conta excluida</small>
-                                        <% } %>
-                                    </td>
-                                    <td data-label="Tipo"><%= log.tipo_usuario %></td>
-                                    <td data-label="Acao"><span class="auditoria-acao auditoria-acao-<%= log.acao %>"><%= log.acao %></span></td>
-                                    <td data-label="Entidade"><%= log.entidade %><% if (log.id_entidade) { %> #<%= log.id_entidade %><% } %></td>
-                                    <td data-label="Descricao"><%= log.descricao %></td>
-                                </tr>
-                            <% }) %>
-                        </tbody>
+                        <tbody id="auditoriaTabela"></tbody>
                     </table>
                 </section>
+
+                <footer class="admin-pagination">
+                    <p class="admin-pagination-info" id="auditoriaPaginacaoInfo">Carregando atividades...</p>
+                    <div class="admin-pagination-controles" id="auditoriaPaginacaoControles"></div>
+                </footer>
             </section>
         </section>
     </main>
 
+    <script id="dados-auditoria" type="application/json"><%- jsonParaScript(logs) %></script>
+    <script src="/js/admin/auditoria.js"></script>
     <%- include('../../partials/footer.ejs') %>
 </body>
 

@@ -59,27 +59,7 @@
             </button>
         </nav>
 
-        <!-- SEÇÃO DE FILTRO -->
-        <section class="secao-filtro">
-            <figure class="icone-filtro">
-                <img src="../image/filtro.webp" alt="Filtro" class="icone">
-            </figure>
-            <span class="texto-filtro">Filtro</span>
-        </section>
-
-        <!-- MODAL DE FILTRO (com elemento dialog) -->
-        <dialog class="modal-filtro" id="modalFiltro">
-            <article class="modal-conteudo">
-                <button class="fechar-modal">&times;</button>
-                <h3>Selecione A Disciplina:</h3>
-                <form id="formFiltro">
-                    <% materias.forEach(function (materia) { %>
-                        <label><input type="checkbox" name="disciplina" value="<%= materia.nome %>"> <%= materia.nome %></label>
-                    <% }) %>
-                    <button type="submit" class="botao-buscar">Buscar</button>
-                </form>
-            </article>
-        </dialog>
+        <%- include('../partials/filtroPadrao.ejs', { opcoesFiltro: materias.map(function (m) { return { valor: m.nome, nome: m.nome }; }) }) %>
 
         <!-- SEÇÃO DE SIMULADOS EM ANDAMENTO -->
         <section class="secao-simulados" id="secao-andamento">

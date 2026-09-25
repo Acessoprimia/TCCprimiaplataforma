@@ -19,7 +19,7 @@ function escapeHtmlRelatorios(valor) {
 
 const MESES_ABREVIADOS_RELATORIO = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 const MESES_COMPLETOS_RELATORIO = [
-    "Janeiro", "Fevereiro", "Marco", "Abril", "Maio", "Junho",
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
     "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
 ];
 
@@ -191,10 +191,10 @@ function calcularCardsRelatorios(registrosPeriodo, registrosPeriodoAnterior) {
     const duvidasAnterior = somarCampo(registrosPeriodoAnterior, "duvidasRespondidas");
 
     return [
-        { icone: "crescimento", rotulo: "Crescimento de usuarios", descricao: "Novos alunos e professores no periodo", valor: usuariosAtual, variacao: calcularVariacaoPercentual(usuariosAtual, usuariosAnterior) },
-        { icone: "premium", rotulo: "Usuarios Premium", descricao: "Novas assinaturas premium no periodo", valor: premiumAtual, variacao: calcularVariacaoPercentual(premiumAtual, premiumAnterior) },
-        { icone: "conteudos", rotulo: "Conteudos publicados", descricao: "Materiais publicados no periodo", valor: conteudosAtual, variacao: calcularVariacaoPercentual(conteudosAtual, conteudosAnterior) },
-        { icone: "duvidas", rotulo: "Duvidas respondidas", descricao: "Duvidas do forum respondidas no periodo", valor: duvidasAtual, variacao: calcularVariacaoPercentual(duvidasAtual, duvidasAnterior) },
+        { icone: "crescimento", rotulo: "Crescimento de usuários", descricao: "Novos alunos e professores no período", valor: usuariosAtual, variacao: calcularVariacaoPercentual(usuariosAtual, usuariosAnterior) },
+        { icone: "premium", rotulo: "Usuários Premium", descricao: "Novas assinaturas premium no período", valor: premiumAtual, variacao: calcularVariacaoPercentual(premiumAtual, premiumAnterior) },
+        { icone: "conteudos", rotulo: "Conteúdos publicados", descricao: "Materiais publicados no período", valor: conteudosAtual, variacao: calcularVariacaoPercentual(conteudosAtual, conteudosAnterior) },
+        { icone: "duvidas", rotulo: "Dúvidas respondidas", descricao: "Dúvidas do fórum respondidas no período", valor: duvidasAtual, variacao: calcularVariacaoPercentual(duvidasAtual, duvidasAnterior) },
     ];
 }
 
@@ -310,7 +310,7 @@ function renderizarCardsRelatorios(cartoes) {
 
 function renderizarGraficoLinhas({ frameEl, legendaEl, labels, series, idGradiente }) {
     if (!labels.length) {
-        frameEl.innerHTML = '<p class="chart-vazio">Nenhum dado para o periodo selecionado.</p>';
+        frameEl.innerHTML = '<p class="chart-vazio">Nenhum dado para o período selecionado.</p>';
         if (legendaEl) {
             legendaEl.innerHTML = "";
         }
@@ -367,7 +367,7 @@ function renderizarGraficoLinhas({ frameEl, legendaEl, labels, series, idGradien
     `).join("");
 
     frameEl.innerHTML = `
-        <svg class="growth-chart" viewBox="0 0 ${largura} ${altura}" role="img" aria-label="Grafico de linhas">
+        <svg class="growth-chart" viewBox="0 0 ${largura} ${altura}" role="img" aria-label="Gráfico de linhas">
             <defs>${defsGradiente}</defs>
             ${grade}
             ${eixoX}
@@ -383,7 +383,7 @@ function renderizarGraficoLinhas({ frameEl, legendaEl, labels, series, idGradien
 
 function renderizarGraficoBarras({ frameEl, labels, valores, cor }) {
     if (!labels.length) {
-        frameEl.innerHTML = '<p class="chart-vazio">Nenhum dado para o periodo selecionado.</p>';
+        frameEl.innerHTML = '<p class="chart-vazio">Nenhum dado para o período selecionado.</p>';
         return;
     }
 
@@ -423,7 +423,7 @@ function renderizarGraficoBarras({ frameEl, labels, valores, cor }) {
     }).join("");
 
     frameEl.innerHTML = `
-        <svg class="growth-chart" viewBox="0 0 ${largura} ${altura}" role="img" aria-label="Grafico de barras">
+        <svg class="growth-chart" viewBox="0 0 ${largura} ${altura}" role="img" aria-label="Gráfico de barras">
             ${grade}
             ${eixoX}
             ${barras}
@@ -433,7 +433,7 @@ function renderizarGraficoBarras({ frameEl, labels, valores, cor }) {
 
 function renderizarAcessosPorMateria(elemento, itens) {
     if (!itens.length) {
-        elemento.innerHTML = '<p class="chart-vazio">Nenhum dado para o periodo selecionado.</p>';
+        elemento.innerHTML = '<p class="chart-vazio">Nenhum dado para o período selecionado.</p>';
         return;
     }
 
@@ -457,17 +457,17 @@ function renderizarAcessosPorMateria(elemento, itens) {
 function linhaTabelaRelatorioHtml(linha) {
     return `
         <tr>
-            <td data-label="Mes">${linha.mes}</td>
+            <td data-label="Mês">${linha.mes}</td>
             <td data-label="Novos alunos">${linha.novosAlunos.toLocaleString("pt-BR")}</td>
             <td data-label="Novos professores">${linha.novosProfessores.toLocaleString("pt-BR")}</td>
-            <td data-label="Conteudos publicados">${linha.conteudosPublicados.toLocaleString("pt-BR")}</td>
+            <td data-label="Conteúdos publicados">${linha.conteudosPublicados.toLocaleString("pt-BR")}</td>
             <td data-label="Premiums vendidos">${linha.premiumsVendidos.toLocaleString("pt-BR")}</td>
         </tr>
     `;
 }
 
 function linhaVaziaTabelaRelatorioHtml() {
-    return `<tr class="tabela-vazia"><td colspan="5">Nenhum dado para o periodo selecionado.</td></tr>`;
+    return `<tr class="tabela-vazia"><td colspan="5">Nenhum dado para o período selecionado.</td></tr>`;
 }
 
 function renderizarTabelaRelatorios(linhas) {

@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configurações - Primia</title>
     <link href="../css/configuracoes.css" rel="stylesheet">
-    <% if (tipoUsuario === 'professor') { %>
+    <% if (tipoUsuario === 'admin') { %>
+        <%- include('../partials/headeradmin.ejs') %>
+    <% } else if (tipoUsuario === 'professor') { %>
         <%- include('../partials/headerprofessor.ejs') %>
     <% } else { %>
         <%- include('../partials/header.ejs') %>
@@ -46,6 +48,7 @@
                     Assinatura
                 </button>
                 <% } %>
+                <% if (tipoUsuario !== 'admin') { %>
                 <button type="button" class="aba-botao" role="tab" data-aba-alvo="notificacoes">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -53,6 +56,7 @@
                     </svg>
                     Notificações
                 </button>
+                <% } %>
                 <button type="button" class="aba-botao" role="tab" data-aba-alvo="privacidade">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"></path>
@@ -83,7 +87,36 @@
                         <p class="erro-msg"><%= msgErroPerfil.geral %></p>
                     <% } %>
 
-                    <% if (tipoUsuario === 'professor') { %>
+                    <% if (tipoUsuario === 'admin') { %>
+                    <form class="editar-perfil" id="form-perfil" action="/editaradmin" method="POST" enctype="multipart/form-data">
+
+                        <figure class="avatar-container">
+                            <img src="<%= (typeof valoresPerfil !== 'undefined' && valoresPerfil.foto_url) ? valoresPerfil.foto_url : '../image/usuario.webp' %>" alt="Foto de perfil" id="preview-avatar" class="avatar">
+                            <label for="avatar-upload" class="avatar-edit-btn">Alterar foto</label>
+                            <input type="file" id="avatar-upload" name="avatar" accept="image/*" hidden>
+                        </figure>
+
+                        <label class="campo-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/usuario.webp" alt="Usuário" class="icone">
+                            </figure>
+                            <input type="text" id="nome" name="nome" placeholder="Nome completo" class="input-campo"
+                                value="<%= typeof valoresPerfil !== 'undefined' && valoresPerfil.nome ? valoresPerfil.nome : '' %>">
+                        </label>
+                        <p id="erro-nome" class="erro-msg"><%= typeof msgErroPerfil !== 'undefined' && msgErroPerfil.nome ? msgErroPerfil.nome : '' %></p>
+
+                        <label class="campo-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/usuario.webp" alt="Email" class="icone">
+                            </figure>
+                            <input type="email" id="email" name="email" placeholder="Email" class="input-campo"
+                                value="<%= typeof valoresPerfil !== 'undefined' && valoresPerfil.email ? valoresPerfil.email : '' %>">
+                        </label>
+                        <p id="erro-email" class="erro-msg"><%= typeof msgErroPerfil !== 'undefined' && msgErroPerfil.email ? msgErroPerfil.email : '' %></p>
+
+                        <button type="submit" class="botao-submit">Salvar alterações</button>
+                    </form>
+                    <% } else if (tipoUsuario === 'professor') { %>
                     <form class="editar-perfil" id="form-perfil" action="/editarprofessor" method="POST" enctype="multipart/form-data">
 
                         <figure class="avatar-container">
@@ -126,8 +159,38 @@
                                 value="<%= typeof valoresPerfil !== 'undefined' && valoresPerfil.data_nascimento ? valoresPerfil.data_nascimento : '' %>" readonly>
                         </label>
 
+                        <% if (typeof valoresPerfil !== 'undefined' && valoresPerfil.tem_diploma) { %>
+                        <a class="campo-wrapper readonly-wrapper link-diploma" href="/configuracoes/diploma" target="_blank" rel="noopener">
+                            <figure class="icone-campo">
+                                <img src="../image/diploma.webp" alt="Diploma" class="icone">
+                            </figure>
+                            <span class="input-campo">Ver diploma enviado</span>
+                        </a>
+                        <% } %>
+
                         <button type="submit" class="botao-submit">Salvar alterações</button>
                     </form>
+
+                    <% if (typeof valoresPerfil !== 'undefined') { %>
+                    <form class="editar-perfil form-diploma" action="/configuracoes/diploma" method="POST" enctype="multipart/form-data">
+                        <% if (valoresPerfil.tem_diploma) { %>
+                        <p class="texto-diploma">Precisa atualizar seu diploma? Envie o novo arquivo (PDF, JPG ou PNG de até 5 MB). O atual continua valendo até a equipe aprovar o novo.
+                        <% if (valoresPerfil.diploma_pendente) { %><strong>Você já tem um novo diploma em análise; enviar outro substitui o anterior.</strong><% } %></p>
+                        <% } else { %>
+                        <p class="texto-diploma">Você ainda não enviou seu diploma. Envie um arquivo PDF, JPG ou PNG de até 5 MB. Depois de enviado, ele não poderá ser removido por você.</p>
+                        <% } %>
+                        <% if (typeof msgErroDiploma !== 'undefined' && msgErroDiploma) { %>
+                            <p class="erro-msg" role="alert"><%= msgErroDiploma %></p>
+                        <% } %>
+                        <label class="campo-wrapper">
+                            <figure class="icone-campo">
+                                <img src="../image/diploma.webp" alt="Diploma" class="icone">
+                            </figure>
+                            <input type="file" name="diploma" class="input-campo" accept=".pdf,.jpg,.png" required aria-label="Enviar diploma">
+                        </label>
+                        <button type="submit" class="botao-submit"><%= valoresPerfil.tem_diploma ? 'Enviar novo diploma' : 'Enviar diploma' %></button>
+                    </form>
+                    <% } %>
                     <% } else { %>
                     <form class="editar-perfil" id="form-perfil" action="/editarperfil" method="POST" enctype="multipart/form-data">
 
@@ -236,6 +299,7 @@
                         <button type="submit" class="botao-submit">Alterar senha</button>
                     </form>
 
+                    <% if (tipoUsuario !== 'admin') { %>
                     <hr class="config-divisor">
 
                     <h3 class="zona-risco-titulo">Desativar conta</h3>
@@ -253,6 +317,7 @@
                             <button type="submit" class="botao-perigo">Excluir minha conta</button>
                         </div>
                     </form>
+                    <% } %>
                 </section>
 
                 <!-- ABA: ASSINATURA (somente aluno) -->
@@ -261,8 +326,8 @@
                     <h2 class="config-painel-titulo">Assinatura</h2>
                     <p class="config-painel-descricao">Veja o status do seu plano Premium.</p>
 
-                    <div class="cartao-assinatura">
-                        <div>
+                    <nav class="cartao-assinatura">
+                        <section>
                             <% if (typeof assinatura !== 'undefined' && assinatura && assinatura.ativa) { %>
                                 <span class="assinatura-status ativa">Premium ativo</span>
                                 <p class="assinatura-detalhe">
@@ -272,21 +337,22 @@
                                 <span class="assinatura-status inativa">Sem assinatura ativa</span>
                                 <p class="assinatura-detalhe">Assine o Premium para desbloquear todos os recursos.</p>
                             <% } %>
-                        </div>
-                    </div>
+                        </section>
+                    </nav>
 
-                    <div class="config-links">
+                    <nav class="config-links">
                         <% if (typeof assinatura !== 'undefined' && assinatura && assinatura.ativa) { %>
                             <a href="/premium/historico" class="config-link-botao">Ver histórico e cancelar</a>
                         <% } else { %>
                             <a href="/premium/assinar" class="config-link-botao">Assinar Premium</a>
                             <a href="/premium/historico" class="config-link-botao contorno">Ver histórico de pagamentos</a>
                         <% } %>
-                    </div>
+                        </nav>
                 </section>
                 <% } %>
 
-                <!-- ABA: NOTIFICAÇÕES -->
+                <!-- ABA: NOTIFICAÇÕES (nao existe pro admin - sem tipos de aviso definidos) -->
+                <% if (tipoUsuario !== 'admin') { %>
                 <section class="config-painel" data-aba-painel="notificacoes" hidden>
                     <h2 class="config-painel-titulo">Notificações</h2>
                     <p class="config-painel-descricao">Escolha sobre o que você quer ser avisado no sino do topo.</p>
@@ -318,6 +384,7 @@
                         Desligar um tipo faz a plataforma parar de gerar esses avisos pra você - os antigos continuam no sino.
                     </p>
                 </section>
+                <% } %>
 
                 <!-- ABA: PRIVACIDADE -->
                 <section class="config-painel" data-aba-painel="privacidade" hidden>
@@ -336,9 +403,9 @@
                         Usamos só cookies essenciais (sessão e o aviso que você já viu). Sem rastreamento, sem publicidade.
                         Veja os <a href="/termopriva">Termos de Privacidade</a> ou reveja o aviso quando quiser.
                     </p>
-                    <div class="zona-risco-acoes">
+                    <nav class="zona-risco-acoes">
                         <button type="button" class="botao-secundario" id="btn-rever-cookies">Rever aviso de cookies</button>
-                    </div>
+                    </nav>
 
                     <hr class="config-divisor">
 
@@ -350,10 +417,13 @@
                     <div class="config-links">
                         <a href="/configuracoes/exportar-dados" class="config-link-botao">Baixar meus dados</a>
                     </div>
+                    <% if (tipoUsuario !== 'admin') { %>
                     <p class="config-painel-descricao" style="margin-top: 12px;">
                         Quer apagar seus dados em vez de exportar? Isso fica em <button type="button" class="link-inline" data-ir-para-aba="seguranca">Segurança</button>, na opção "Excluir conta".
                     </p>
+                    <% } %>
 
+                    <% if (tipoUsuario !== 'admin') { %>
                     <hr class="config-divisor">
 
                     <h3 class="config-subtitulo">Visibilidade no fórum</h3>
@@ -368,8 +438,19 @@
                             <span class="config-switch" aria-hidden="true"></span>
                         </label>
 
+                        <label class="config-toggle">
+                            <span class="config-toggle-texto">
+                                <strong>Mostrar minha foto de perfil no fórum</strong>
+                                <span>Desligado, sua foto some e aparece a imagem padrão no lugar. Seu nome continua seguindo a opção acima.</span>
+                            </span>
+                            <input type="checkbox" class="config-toggle-input" name="foto_publica"
+                                <%= (typeof fotoPublica !== 'undefined' && fotoPublica === false) ? '' : 'checked' %>>
+                            <span class="config-switch" aria-hidden="true"></span>
+                        </label>
+
                         <button type="submit" class="botao-submit">Salvar preferências</button>
                     </form>
+                    <% } %>
                 </section>
 
                 <!-- ABA: APARÊNCIA -->
@@ -378,7 +459,7 @@
                     <p class="config-painel-descricao">Escolha como a plataforma aparece pra você. Fica salvo neste navegador.</p>
 
                     <h3 class="config-subtitulo">Tema</h3>
-                    <div class="tema-opcoes" role="radiogroup" aria-label="Tema da plataforma">
+                    <nav class="tema-opcoes" role="radiogroup" aria-label="Tema da plataforma">
                         <button type="button" class="tema-botao" data-tema="light" role="radio" aria-checked="false">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="5"></circle>
@@ -399,13 +480,13 @@
                             </svg>
                             Automático
                         </button>
-                    </div>
+                    </nav>
                     <p class="config-painel-descricao" style="margin-top: 8px;">"Automático" segue o tema do seu sistema.</p>
 
                     <hr class="config-divisor">
 
                     <h3 class="config-subtitulo">Tamanho da fonte</h3>
-                    <div class="fonte-opcoes" role="radiogroup" aria-label="Tamanho da fonte">
+                    <nav class="fonte-opcoes" role="radiogroup" aria-label="Tamanho da fonte">
                         <button type="button" class="fonte-botao" data-fonte="padrao" role="radio" aria-checked="false">
                             <span class="fonte-amostra" style="font-size: 0.9rem;">A</span>
                             Padrão
@@ -418,7 +499,7 @@
                             <span class="fonte-amostra" style="font-size: 1.4rem;">A</span>
                             Extra grande
                         </button>
-                    </div>
+                    </nav>
                     <p class="config-painel-descricao" style="margin-top: 8px;">Aumenta o texto do site inteiro. Também fica salvo neste navegador.</p>
                 </section>
 

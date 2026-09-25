@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuracoes - Painel Administrativo Primia</title>
+    <title>Configurações - Painel Administrativo Primia</title>
     <link href="/css/admin.css" rel="stylesheet">
     <%- include('../../partials/headeradmin.ejs') %>
 </head>
@@ -13,7 +13,7 @@
     <main class="admin-page">
         <section class="admin-mobile-intro">
             <p class="admin-kicker">Painel Administrativo</p>
-            <h1>Configuracoes</h1>
+            <h1>Configurações</h1>
             <p>Ajustes gerais de textos, banners e recursos premium do site.</p>
         </section>
 
@@ -23,19 +23,19 @@
             <section class="admin-panel" id="configuracoes">
                 <header class="panel-header">
                     <article>
-                        <h2>Configuracoes gerais</h2>
-                        <p>Esses valores aparecem em paginas publicas do site (aviso no topo, texto e imagem da home, area premium) e no e-mail de "Fale conosco".</p>
+                        <h2>Configurações gerais</h2>
+                        <p>Esses valores aparecem em páginas públicas do site (aviso no topo, texto e imagem da home, área premium) e no e-mail de "Fale conosco".</p>
                     </article>
                 </header>
 
                 <form class="settings-form" id="formConfiguracoes">
                     <label>
                         Texto institucional
-                        <textarea name="texto_institucional" rows="4" placeholder="Texto exibido na pagina inicial"><%= config.texto_institucional %></textarea>
+                        <textarea name="texto_institucional" rows="4" placeholder="Texto exibido na página inicial"><%= config.texto_institucional %></textarea>
                     </label>
                     <label>
                         Aviso do site
-                        <input type="text" name="aviso_site" value="<%= config.aviso_site %>" placeholder="Ex: Novos simulados disponiveis esta semana">
+                        <input type="text" name="aviso_site" value="<%= config.aviso_site %>" placeholder="Ex: Novos simulados disponíveis esta semana">
                     </label>
                     <label>
                         Recurso premium em destaque
@@ -47,14 +47,14 @@
                         </select>
                     </label>
                     <label>
-                        Periodo de teste premium
-                        <input type="text" name="periodo_teste_premium" value="<%= config.periodo_teste_premium %>" placeholder="Ex: Teste uma semana gratis">
+                        Período de teste premium
+                        <input type="text" name="periodo_teste_premium" value="<%= config.periodo_teste_premium %>" placeholder="Ex: Teste uma semana grátis">
                     </label>
                     <label>
                         E-mail de contato
                         <input type="email" name="email_contato_destino" value="<%= config.email_contato_destino %>" placeholder="Recebe as mensagens de Fale conosco">
                     </label>
-                    <button class="admin-button primary" type="submit">Salvar configuracoes</button>
+                    <button class="admin-button primary" type="submit">Salvar configurações</button>
                 </form>
 
                 <form class="settings-form" id="formBannerConfiguracoes" style="margin-top: 24px;">

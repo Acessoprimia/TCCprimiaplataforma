@@ -19,89 +19,15 @@ abaBotoes.forEach(botao => {
     });
 });
 
-// Lógica para o Modal de Filtro
-const secaoFiltro = document.querySelector('.secao-filtro');
-const modalFiltro = document.getElementById('modalFiltro');
-const fecharModal = document.querySelector('.fechar-modal');
-const formFiltro = document.getElementById('formFiltro');
-
-secaoFiltro.addEventListener('click', () => {
-    modalFiltro.showModal(); // Mostra o modal
-});
-
-fecharModal.addEventListener('click', () => {
-    modalFiltro.close(); // Fecha o modal
-});
-
-// O elemento <dialog> já lida com o clique fora para fechar, mas podemos adicionar um listener para o evento 'close' se necessário.
-modalFiltro.addEventListener('close', () => {
-    // Ações a serem tomadas quando o modal é fechado (por exemplo, resetar o formulário)
-    console.log('Modal de filtro fechado');
-});
-
-formFiltro.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const checkboxes = formFiltro.querySelectorAll('input[name="disciplina"]:checked');
-    const disciplinasSelecionadas = Array.from(checkboxes).map(cb => cb.value);
-
-    // Pega a seção ativa (andamento ou finalizados)
+// Filtro por disciplina (partials/filtroPadrao.ejs): so mexe nos cards da aba ativa
+document.addEventListener('filtro:aplicar', (e) => {
+    const selecionadas = e.detail.valores;
     const secaoAtivaId = document.querySelector('.aba-botao.aba-ativa').dataset.filtro;
     const secaoAtiva = document.getElementById(`secao-${secaoAtivaId}`);
-    const cardsSimulado = secaoAtiva.querySelectorAll('.card-simulado');
 
-    cardsSimulado.forEach(card => {
-        const disciplinaCard = card.dataset.disciplina;
-        if (disciplinasSelecionadas.length === 0 || disciplinasSelecionadas.includes(disciplinaCard)) {
-            card.style.display = 'flex'; // Mostra o card
-        } else {
-            card.style.display = 'none'; // Oculta o card
-        }
-    });
-
-    modalFiltro.close(); // Fecha o modal após aplicar o filtro
-});
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    const modalFiltro = document.getElementById("modalFiltro");
-    const abreModalFiltro = document.getElementById("abreModalFiltro");
-    const fecharModal = modalFiltro.querySelector(".fechar-modal");
-    const formFiltro = document.getElementById("formFiltro");
-    const secaoVideoaulas = document.getElementById("secao-videoaulas");
-    const cardsVideo = secaoVideoaulas.querySelectorAll(".card-video-link");
-
-    // Abrir modal
-    abreModalFiltro.addEventListener("click", () => {
-        modalFiltro.showModal();
-    });
-
-    // Fechar modal
-    fecharModal.addEventListener("click", () => {
-        modalFiltro.close();
-    });
-
-    // Fechar modal ao clicar fora dele
-    modalFiltro.addEventListener("click", (event) => {
-        if (event.target === modalFiltro) {
-            modalFiltro.close();
-        }
-    });
-
-    // Lógica de filtro
-    formFiltro.addEventListener("submit", (event) => {
-        event.preventDefault();
-        const checkboxes = formFiltro.querySelectorAll("input[name=\"disciplina\"]:checked");
-        const disciplinasSelecionadas = Array.from(checkboxes).map(cb => cb.value);
-
-        cardsVideo.forEach(card => {
-            const disciplinaCard = card.dataset.disciplina;
-            if (disciplinasSelecionadas.length === 0 || disciplinasSelecionadas.includes(disciplinaCard)) {
-                card.style.display = "block";
-            } else {
-                card.style.display = "none";
-            }
-        });
-
-        modalFiltro.close();
+    secaoAtiva.querySelectorAll('.card-simulado').forEach(card => {
+        card.style.display = selecionadas.length === 0 || selecionadas.includes(card.dataset.disciplina)
+            ? 'flex'
+            : 'none';
     });
 });

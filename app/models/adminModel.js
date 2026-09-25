@@ -19,9 +19,18 @@ const queries = Object.freeze({
     conteudosRascunho: `SELECT COUNT(*) AS total FROM ${TABELAS.conteudos} WHERE status = 'rascunho'`,
     denunciasPendentes: `SELECT COUNT(*) AS total FROM Denuncia WHERE status = 'aberto'`,
     mensagensPendentes: `SELECT COUNT(*) AS total FROM ${TABELAS.mensagensContato} WHERE status = 'pendente'`,
+    diplomasPendentes: `SELECT COUNT(*) AS total FROM ${TABELAS.professores} WHERE diploma_pendente IS NOT NULL`,
     totalProfessores: `SELECT COUNT(*) AS total FROM ${TABELAS.usuarios} WHERE tipo_usuario = 'professor'`,
   },
   notificacoesAdmin: {
+    diplomasPendentes: `
+      SELECT u.id_usuario AS id, u.nome, p.diploma_pendente_em AS data
+      FROM ${TABELAS.professores} p
+      INNER JOIN ${TABELAS.usuarios} u ON u.id_usuario = p.id_professor
+      WHERE p.diploma_pendente IS NOT NULL
+      ORDER BY p.diploma_pendente_em DESC
+      LIMIT 5
+    `,
     denunciasAbertas: `
       SELECT id_denuncia AS id, motivo, data_denuncia AS data
       FROM Denuncia
@@ -64,7 +73,7 @@ const queries = Object.freeze({
   `,
   listarUsuarios: `
     SELECT u.id_usuario, u.nome, u.email, u.tipo_usuario, u.status, u.criado_em, u.ultimo_login,
-           a.RA, a.serie, m.nome AS materia,
+           a.RA, a.serie, m.nome AS materia, p.diploma LIKE '%|%' AS tem_diploma, p.diploma_pendente IS NOT NULL AS diploma_pendente,
            EXISTS(
              SELECT 1 FROM ${TABELAS.assinaturasPremium} ap
              WHERE ap.id_usuario = u.id_usuario AND ap.status = 'ativa'
@@ -215,36 +224,43 @@ const AdminModel = Object.freeze({
     const bancoUsado = banco(conexao);
     const q = queries.notificacoesAdmin;
 
-    const [denuncias, contatos, conteudos, totalDenuncias, totalContatos, totalConteudos] = await Promise.all([
+    const [denuncias, contatos, conteudos, diplomas, totalDenuncias, totalContatos, totalConteudos, totalDiplomas] = await Promise.all([
       bancoUsado.query(q.denunciasAbertas).then(([linhas]) => linhas),
       bancoUsado.query(q.contatosPendentes).then(([linhas]) => linhas),
       bancoUsado.query(q.conteudosRascunho).then(([linhas]) => linhas),
+      bancoUsado.query(q.diplomasPendentes).then(([linhas]) => linhas),
       contar(queries.pendencias.denunciasPendentes, conexao),
       contar(queries.pendencias.mensagensPendentes, conexao),
       contar(queries.pendencias.conteudosRascunho, conexao),
+      contar(queries.pendencias.diplomasPendentes, conexao),
     ]);
 
     const itens = [
       ...denuncias.map((d) => ({
         texto: `Nova denuncia: ${d.motivo}`,
         data: d.data,
-        link: "/admin/suporte",
+        link: `/admin/suporte?aba=denuncias&destaque=${d.id}`,
       })),
       ...contatos.map((c) => ({
         texto: `Mensagem de contato: ${c.assunto || "Sem assunto"}`,
         data: c.data,
-        link: "/admin/suporte",
+        link: `/admin/suporte?aba=contato&destaque=${c.id}`,
       })),
       ...conteudos.map((c) => ({
         texto: `Conteudo aguardando publicacao: ${c.titulo}`,
         data: c.data,
-        link: "/admin/conteudos",
+        link: `/admin/conteudos?destaque=${c.id}`,
+      })),
+      ...diplomas.map((d) => ({
+        texto: `Professor(a) ${d.nome} pediu a troca do diploma`,
+        data: d.data,
+        link: `/admin/usuarios?destaque=${d.id}&menu=1`,
       })),
     ].sort((a, b) => new Date(b.data) - new Date(a.data));
 
     return {
       itens: itens.slice(0, 8),
-      total: totalDenuncias + totalContatos + totalConteudos,
+      total: totalDenuncias + totalContatos + totalConteudos + totalDiplomas,
     };
   },
 

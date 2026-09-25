@@ -342,7 +342,12 @@
 /* MOBILE */
 @media (max-width: 1023px) {
     .header-acoes {
-        margin-right: 50px; /* ajuste esse valor conforme precisar */
+        margin-right: 16px; /* respiro ate o hamburguer */
+    }
+
+    /* Configuracoes ja esta no menu hamburguer no mobile/tablet. */
+    .nav-config {
+        display: none;
     }
 }
 

@@ -233,6 +233,29 @@ main {
     cursor: not-allowed;
 }
 
+.form-diploma {
+    margin-top: 24px;
+}
+
+.texto-diploma {
+    color: var(--cor-texto-suave);
+    font-size: 0.9rem;
+    margin: 0 0 12px;
+}
+
+.link-diploma {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.link-diploma .input-campo {
+    cursor: pointer;
+}
+
+.link-diploma:hover {
+    border-color: var(--accent-forte, #7b6fb5);
+}
+
 .icone-campo {
     width: 22px;
     height: 22px;
@@ -722,6 +745,9 @@ main {
 @media (max-width: 720px) {
     .config-layout {
         flex-direction: column;
+        /* o base usa flex-start (pro layout lado a lado); em coluna isso
+           encolhe o painel ao conteudo e deixa ele colado na esquerda. */
+        align-items: stretch;
     }
 
     /* As abas quebram em varias linhas em vez de rolarem de lado: com

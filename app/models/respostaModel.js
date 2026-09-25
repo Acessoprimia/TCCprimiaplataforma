@@ -12,6 +12,8 @@ const queries = Object.freeze({
       p.id_professor,
       u.nome AS professor_nome,
       u.perfil_publico AS professor_perfil_publico,
+      u.foto_publica AS professor_foto_publica,
+      u.foto_url AS professor_foto_url,
       m.nome AS materia
     FROM ${TABELAS.respostas} r
     INNER JOIN ${TABELAS.professores} p ON p.id_professor = r.id_professor

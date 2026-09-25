@@ -12,7 +12,7 @@ formConfiguracoes.addEventListener("submit", async (evento) => {
     try {
         const dados = Object.fromEntries(new FormData(formConfiguracoes).entries());
         await chamarApiAdmin("/admin/configuracoes", dados);
-        mostrarAvisoAdmin("Configuracoes salvas.");
+        mostrarAvisoAdmin("Configurações salvas.");
     } catch (erro) {
         mostrarAvisoAdmin(erro.message);
     } finally {

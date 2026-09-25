@@ -27,11 +27,18 @@ const queries = Object.freeze({
       u.email AS email_usuario
     FROM ${TABELAS.logsAuditoria} l
     LEFT JOIN ${TABELAS.usuarios} u ON u.id_usuario = l.id_usuario
-    WHERE (? IS NULL OR l.tipo_usuario = ?)
-      AND (? IS NULL OR l.acao = ?)
-      AND (? IS NULL OR l.entidade = ?)
     ORDER BY l.criado_em DESC, l.id_log DESC
     LIMIT ?
+  `,
+  // Troca o nome guardado por "Conta removida (#id)" nas linhas de quem esta
+  // pra ser excluido: o nome some, mas o numero antigo da conta continua
+  // ligando as linhas da mesma pessoa (pseudonimizacao). Tem que rodar ANTES
+  // do DELETE da conta (o FK zera o id_usuario ao apagar, e depois nao da
+  // mais pra achar as linhas).
+  anonimizar: `
+    UPDATE ${TABELAS.logsAuditoria}
+    SET nome_usuario = CONCAT('Conta removida (#', id_usuario, ')')
+    WHERE id_usuario = ?
   `,
 });
 
@@ -57,16 +64,13 @@ const AuditoriaModel = Object.freeze({
     return resultado.insertId;
   },
 
-  async listar({ tipoUsuario = null, acao = null, entidade = null, limite = 200 } = {}, conexao) {
-    const [logs] = await banco(conexao).query(queries.listar, [
-      tipoUsuario,
-      tipoUsuario,
-      acao,
-      acao,
-      entidade,
-      entidade,
-      limite,
-    ]);
+  async anonimizarUsuario(idUsuario, conexao) {
+    const [resultado] = await banco(conexao).query(queries.anonimizar, [idUsuario]);
+    return resultado.affectedRows;
+  },
+
+  async listar({ limite = 2000 } = {}, conexao) {
+    const [logs] = await banco(conexao).query(queries.listar, [limite]);
     return logs;
   },
 });

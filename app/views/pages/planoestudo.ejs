@@ -118,7 +118,7 @@
         <!-- GRADE SEMANAL -->
         <section class="grade-container">
             <h2 class="titulo-secao">Minha semana</h2>
-            <%- include('../partials/gradecronograma.ejs', { grade: grade }) %>
+            <%- include('../partials/gradecronograma.ejs', { grade: grade, semDatas: true }) %>
             <ul class="grade-legenda">
                 <li><span style="background:#A398D1"></span>Estudo</li>
                 <% if (ehPremium) { %>

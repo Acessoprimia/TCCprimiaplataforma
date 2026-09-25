@@ -25,6 +25,37 @@ const MailService = Object.freeze({
     });
   },
 
+  async enviarRespostaContato({ nome, email, assunto, mensagem, resposta, replyTo }) {
+    const esc = (v) =>
+      String(v ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    const assuntoFinal = assunto || "sem assunto";
+
+    await sgMail.send({
+      from: { email: EMAIL_REMETENTE, name: "Primia" },
+      to: email,
+      ...(replyTo ? { replyTo } : {}),
+      subject: `Re: ${assuntoFinal} - Primia`,
+      text: [
+        `Ola, ${nome}!`,
+        ``,
+        resposta,
+        ``,
+        `--- Sua mensagem original ---`,
+        mensagem,
+      ].join("\n"),
+      html: `
+        <p>Ola, ${esc(nome)}!</p>
+        <p style="white-space:pre-wrap;">${esc(resposta)}</p>
+        <hr>
+        <p style="color:#666;font-size:13px;"><strong>Sua mensagem original</strong></p>
+        <p style="color:#666;font-size:13px;white-space:pre-wrap;">${esc(mensagem)}</p>
+      `,
+    });
+  },
+
   async enviarEmailConfirmacao({ nome, email, token }) {
     const urlBase = process.env.URL_BASE_SITE || `http://localhost:${process.env.PORT || 3000}`;
     const link = `${urlBase}/confirmar-email?token=${token}`;

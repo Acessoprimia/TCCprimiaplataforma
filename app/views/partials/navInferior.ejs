@@ -1,0 +1,48 @@
+<%# Barra de navegacao inferior (so aparece no mobile/tablet, ver navInferior.css).
+    Parametro `tipo`: 'aluno' ou 'professor'. O 4o item abre o mesmo menu
+    do hamburguer do topo (js/navInferior.js). %>
+<link href="/css/navInferior.css" rel="stylesheet">
+
+<nav class="nav-inferior" aria-label="Navegação rápida">
+  <a href="<%= rotaInicioHeader || '/telainicial' %>" class="nav-inferior-item">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3 10.5 12 3l9 7.5"></path>
+      <path d="M5 9.5V21h5v-6h4v6h5V9.5"></path>
+    </svg>
+    <span>Entrada</span>
+  </a>
+
+  <a href="/configuracoes" class="nav-inferior-item" aria-label="Configurações">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+    <span>Ajustes</span>
+  </a>
+
+  <% if (tipo === 'aluno') { %>
+  <a href="/areapremium" class="nav-inferior-item">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="m3 8 4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8z"></path>
+    </svg>
+    <span>Premium</span>
+  </a>
+  <% } else { %>
+  <a href="/contato" class="nav-inferior-item">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+      <path d="m3 7 9 6 9-6"></path>
+    </svg>
+    <span>Contato</span>
+  </a>
+  <% } %>
+
+  <button type="button" class="nav-inferior-item" id="navInferiorMenu" aria-label="Abrir menu">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+      <path d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+    <span>Menu</span>
+  </button>
+</nav>
+
+<script src="/js/navInferior.js"></script>

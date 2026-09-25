@@ -22,6 +22,9 @@ body {
 }
 
 main {
+    /* width:100% - o body e flex column e o main tem margin auto, entao sem
+       isso ele encolhe ao conteudo e o card cresce ao abrir a resposta. */
+    width: 100%;
     max-width: 600px;
     margin: 0 auto;
     padding: 1.5rem;
@@ -35,28 +38,6 @@ main {
     text-align: center;
     margin-bottom: 1.5rem;
     font-weight: 700;
-}
-
-.filtro-section {
-    margin-bottom: 1.5rem;
-}
-
-.filtro-label {
-    display: block;
-    color: var(--c-a0a0a0, #a0a0a0);
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-
-.filtro-select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid var(--c-e0e0e0, #e0e0e0);
-    border-radius: 8px;
-    font-size: 1rem;
-    background: var(--cor-fundo-cartao, white);
-    color: var(--cor-texto, #333);
-    cursor: pointer;
 }
 
 .btn-fazer-pergunta {
@@ -104,6 +85,13 @@ main {
     background: var(--accent-suave, #c5b8e8);
     border-radius: 50%;
     flex-shrink: 0;
+    overflow: hidden;
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .user-info {
@@ -191,6 +179,14 @@ main {
     background: var(--accent-suave, #c5b8e8);
     border-radius: 50%;
     margin-right: 1rem;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.avatar-professor img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .professor-name {

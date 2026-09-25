@@ -79,9 +79,9 @@ function formatarDataConteudo(isoString) {
 
 function textoConteudo(conteudo) {
     return [
-        `Titulo: ${conteudo.titulo}`,
+        `Título: ${conteudo.titulo}`,
         `Tipo: ${ROTULOS_TIPO_CONTEUDO[conteudo.tipo]}`,
-        `Materia: ${conteudo.materia}`,
+        `Matéria: ${conteudo.materia}`,
         `Status: ${STATUS_LABEL_CONTEUDO[conteudo.status]}`,
         `Acesso: ${ACESSO_LABEL_CONTEUDO[conteudo.acesso]}`,
         `Autor: ${conteudo.autor}`,
@@ -129,11 +129,11 @@ function renderizarResumoConteudos() {
     const resumo = calcularResumoConteudos();
 
     resumoConteudos.innerHTML = [
-        cartaoResumoHtml("total", "Total de conteudos", resumo.total, "Todos os itens cadastrados"),
-        cartaoResumoHtml("videoaula", "Videoaulas", resumo.videoaula, "Aulas em video publicadas"),
+        cartaoResumoHtml("total", "Total de conteúdos", resumo.total, "Todos os itens cadastrados"),
+        cartaoResumoHtml("videoaula", "Videoaulas", resumo.videoaula, "Aulas em vídeo publicadas"),
         cartaoResumoHtml("livro", "Livros", resumo.livro, "Materiais de leitura"),
-        cartaoResumoHtml("arquivado", "Arquivados", resumo.arquivado, "Fora de circulacao no momento"),
-        cartaoResumoHtml("premium", "Conteudos premium", resumo.premium, "Acesso exclusivo assinantes"),
+        cartaoResumoHtml("arquivado", "Arquivados", resumo.arquivado, "Fora de circulação no momento"),
+        cartaoResumoHtml("premium", "Conteúdos premium", resumo.premium, "Acesso exclusivo assinantes"),
     ].join("");
 }
 
@@ -151,7 +151,7 @@ function materiaChipHtml(materia) {
                 <span class="materia-chip-contagem">${contarConteudosPorMateria(materia)}</span>
             </div>
             <div class="materia-chip-acoes">
-                <button type="button" data-admin-action="trocar-icone-materia">Trocar icone</button>
+                <button type="button" data-admin-action="trocar-icone-materia">Trocar ícone</button>
                 <button type="button" class="danger" data-admin-action="remover-materia">Remover</button>
             </div>
         </article>
@@ -162,7 +162,7 @@ function renderizarOpcoesFiltroMateria() {
     const valorAtual = filtroMateriaConteudos.value || "todas";
     const materiasOrdenadas = [...MATERIAS_MOCK].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
-    filtroMateriaConteudos.innerHTML = ["<option value=\"todas\">Todas as materias</option>"]
+    filtroMateriaConteudos.innerHTML = ["<option value=\"todas\">Todas as matérias</option>"]
         .concat(materiasOrdenadas.map((materia) => `<option value="${escapeHtml(materia)}">${escapeHtml(materia)}</option>`))
         .join("");
 
@@ -177,7 +177,7 @@ function renderizarOpcoesFiltroMateria() {
 function renderizarMaterias() {
     const materiasOrdenadas = [...MATERIAS_MOCK].sort((a, b) => a.localeCompare(b, "pt-BR"));
     listaMaterias.innerHTML = materiasOrdenadas.map(materiaChipHtml).join("");
-    contagemMaterias.textContent = `${MATERIAS_MOCK.length} materias cadastradas`;
+    contagemMaterias.textContent = `${MATERIAS_MOCK.length} matérias cadastradas`;
     renderizarOpcoesFiltroMateria();
 }
 
@@ -187,8 +187,8 @@ function confirmarRemocaoMateria(nome) {
     }
 
     abrirConfirmacao(
-        "Remover materia",
-        "Tem certeza que deseja remover esta materia? Nao e permitido se houver professor cadastrado nela.",
+        "Remover matéria",
+        "Tem certeza que deseja remover esta matéria? Não é permitido se houver professor cadastrado nela.",
         async () => {
             try {
                 await chamarApiAdmin("/admin/materias/excluir", { nome });
@@ -197,7 +197,7 @@ function confirmarRemocaoMateria(nome) {
                     MATERIAS_MOCK.splice(indice, 1);
                 }
                 renderizarMaterias();
-                mostrarAvisoAdmin("Materia removida.");
+                mostrarAvisoAdmin("Matéria removida.");
             } catch (erro) {
                 mostrarAvisoAdmin(erro.message);
             }
@@ -222,7 +222,7 @@ adminModalHandlers.materia = async function salvarMateria(dados) {
         await chamarApiAdminArquivo("/admin/materias", formData);
         MATERIAS_MOCK.push(nome);
         renderizarMaterias();
-        mostrarAvisoAdmin("Materia adicionada. Ela ja aparece no carrossel da pagina inicial e nas outras telas do site.");
+        mostrarAvisoAdmin("Matéria adicionada. Ela já aparece no carrossel da página inicial e nas outras telas do site.");
     } catch (erro) {
         mostrarAvisoAdmin(erro.message);
     }
@@ -234,7 +234,7 @@ function abrirModalTrocarIcone(nome) {
     }
 
     abrirModal(
-        `Trocar icone de ${nome}`,
+        `Trocar ícone de ${nome}`,
         "icone-materia",
         campoArquivo("icone", "Nova imagem"),
         nome
@@ -253,7 +253,7 @@ adminModalHandlers["icone-materia"] = async function salvarIconeMateria(dados) {
         formData.append("icone", dados.icone);
 
         await chamarApiAdminArquivo("/admin/materias/icone", formData);
-        mostrarAvisoAdmin("Icone atualizado. Ja aparece no carrossel da pagina inicial.");
+        mostrarAvisoAdmin("Ícone atualizado. Já aparece no carrossel da página inicial.");
     } catch (erro) {
         mostrarAvisoAdmin(erro.message);
     }
@@ -275,19 +275,19 @@ function linhaConteudoHtml(conteudo) {
         : `<button type="button" data-admin-action="arquivar-conteudo">Arquivar</button>`;
 
     const tituloHtml = conteudo.destaque
-        ? `<span class="conteudo-destaque-icone" title="Conteudo em destaque">★</span>${escapeHtml(conteudo.titulo)}`
+        ? `<span class="conteudo-destaque-icone" title="Conteúdo em destaque">★</span>${escapeHtml(conteudo.titulo)}`
         : escapeHtml(conteudo.titulo);
 
     return `
         <tr data-conteudo-id="${conteudo.id}" data-tipo="${conteudo.tipo}" data-status="${conteudo.status}" data-acesso="${conteudo.acesso}">
-            <td data-label="Titulo">${tituloHtml}</td>
+            <td data-label="Título">${tituloHtml}</td>
             <td data-label="Tipo"><span class="badge ${conteudo.tipo}">${ROTULOS_TIPO_CONTEUDO[conteudo.tipo]}</span></td>
-            <td data-label="Materia">${escapeHtml(conteudo.materia)}</td>
+            <td data-label="Matéria">${escapeHtml(conteudo.materia)}</td>
             <td data-label="Status"><span class="status ${STATUS_CLASSE_CONTEUDO[conteudo.status]}">${STATUS_LABEL_CONTEUDO[conteudo.status]}</span></td>
             <td data-label="Acesso"><span class="status ${ACESSO_CLASSE_CONTEUDO[conteudo.acesso]}">${ACESSO_LABEL_CONTEUDO[conteudo.acesso]}</span></td>
             <td data-label="Autor">${escapeHtml(conteudo.autor)}</td>
             <td data-label="Data">${formatarDataConteudo(conteudo.data)}</td>
-            <td data-label="Acoes" class="table-actions-cell">
+            <td data-label="Ações" class="table-actions-cell">
                 <div class="table-menu-wrap">
                     <button type="button" class="table-menu-trigger" data-menu-toggle aria-haspopup="true" aria-expanded="false" aria-label="Acoes de ${escapeHtml(conteudo.titulo)}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -312,7 +312,7 @@ function linhaConteudoHtml(conteudo) {
 }
 
 function linhaVaziaConteudosHtml() {
-    return `<tr class="tabela-vazia"><td colspan="8">Nenhum conteudo encontrado para os filtros selecionados.</td></tr>`;
+    return `<tr class="tabela-vazia"><td colspan="8">Nenhum conteúdo encontrado para os filtros selecionados.</td></tr>`;
 }
 
 function renderizarTabelaConteudos(itens) {
@@ -325,12 +325,12 @@ function renderizarPaginacaoConteudos({ totalRegistros, pagina, tamanhoPagina, t
     const inicio = totalRegistros === 0 ? 0 : (pagina - 1) * tamanhoPagina + 1;
     const fim = Math.min(pagina * tamanhoPagina, totalRegistros);
 
-    paginacaoInfoConteudos.textContent = `Mostrando ${inicio}-${fim} de ${totalRegistros.toLocaleString("pt-BR")} conteudos.`;
+    paginacaoInfoConteudos.textContent = `Mostrando ${inicio}-${fim} de ${totalRegistros.toLocaleString("pt-BR")} conteúdos.`;
 
     paginacaoControlesConteudos.innerHTML = `
         <button type="button" data-pagina-acao="anterior" ${pagina <= 1 ? "disabled" : ""}>Anterior</button>
-        <span class="paginacao-atual">Pagina ${pagina} de ${totalPaginas}</span>
-        <button type="button" data-pagina-acao="proxima" ${pagina >= totalPaginas ? "disabled" : ""}>Proxima</button>
+        <span class="paginacao-atual">Página ${pagina} de ${totalPaginas}</span>
+        <button type="button" data-pagina-acao="proxima" ${pagina >= totalPaginas ? "disabled" : ""}>Próxima</button>
     `;
 }
 
@@ -353,11 +353,11 @@ async function atualizarConteudos() {
 
 function abrirModalConteudo(conteudo) {
     abrirModal(
-        "Editar conteudo",
+        "Editar conteúdo",
         "conteudo",
         campoLeitura("Categoria", ROTULOS_TIPO_CONTEUDO[conteudo.tipo]) +
-        campoSelect("materia", "Materia", MATERIAS_MOCK, conteudo.materia) +
-        campoTexto("titulo", "Titulo", conteudo.titulo) +
+        campoSelect("materia", "Matéria", MATERIAS_MOCK, conteudo.materia) +
+        campoTexto("titulo", "Título", conteudo.titulo) +
         campoTexto("autor", "Autor", conteudo.autor) +
         campoSelect("status", "Status", ["Publicado", "Rascunho"], STATUS_LABEL_CONTEUDO[conteudo.status] || "Publicado") +
         campoSelect("acesso", "Acesso", ["Gratuito", "Premium"], ACESSO_LABEL_CONTEUDO[conteudo.acesso]),
@@ -388,7 +388,7 @@ adminModalHandlers.conteudo = async function salvarConteudo(dados) {
             modalOrigem.statusAnterior = statusSlug;
         }
 
-        mostrarAvisoAdmin("Conteudo atualizado.");
+        mostrarAvisoAdmin("Conteúdo atualizado.");
         atualizarConteudos();
     } catch (erro) {
         mostrarAvisoAdmin(erro.message);
@@ -402,7 +402,7 @@ async function alternarDestaqueConteudo(conteudo, valor) {
         await chamarApiAdmin(`/admin/conteudos/${conteudo.id}/destaque`, { destaque: valor });
         conteudo.destaque = valor;
         atualizarConteudos();
-        mostrarAvisoAdmin(valor ? "Conteudo destacado." : "Destaque removido.");
+        mostrarAvisoAdmin(valor ? "Conteúdo destacado." : "Destaque removido.");
     } catch (erro) {
         mostrarAvisoAdmin(erro.message);
     }
@@ -413,7 +413,7 @@ async function alternarAcessoConteudo(conteudo, valor) {
         await chamarApiAdmin(`/admin/conteudos/${conteudo.id}/premium`, { premium: valor === "premium" });
         conteudo.acesso = valor;
         atualizarConteudos();
-        mostrarAvisoAdmin(valor === "premium" ? "Conteudo marcado como premium." : "Conteudo marcado como gratuito.");
+        mostrarAvisoAdmin(valor === "premium" ? "Conteúdo marcado como premium." : "Conteúdo marcado como gratuito.");
     } catch (erro) {
         mostrarAvisoAdmin(erro.message);
     }
@@ -433,17 +433,17 @@ async function duplicarConteudo(conteudo) {
         });
         estadoConsultaConteudos.pagina = 1;
         atualizarConteudos();
-        mostrarAvisoAdmin("Conteudo duplicado.");
+        mostrarAvisoAdmin("Conteúdo duplicado.");
     } catch (erro) {
         mostrarAvisoAdmin(erro.message);
     }
 }
 
 function confirmarArquivarConteudo(conteudo, arquivar) {
-    const titulo = arquivar ? "Arquivar conteudo" : "Desarquivar conteudo";
+    const titulo = arquivar ? "Arquivar conteúdo" : "Desarquivar conteúdo";
     const texto = arquivar
-        ? "Tem certeza que deseja arquivar este conteudo? Ele deixara de aparecer para os usuarios."
-        : "Tem certeza que deseja restaurar este conteudo do arquivo?";
+        ? "Tem certeza que deseja arquivar este conteúdo? Ele deixará de aparecer para os usuários."
+        : "Tem certeza que deseja restaurar este conteúdo do arquivo?";
 
     abrirConfirmacao(titulo, texto, async () => {
         try {
@@ -459,7 +459,7 @@ function confirmarArquivarConteudo(conteudo, arquivar) {
 
             conteudo.arquivado = arquivar;
             atualizarConteudos();
-            mostrarAvisoAdmin(arquivar ? "Conteudo arquivado." : "Conteudo restaurado.");
+            mostrarAvisoAdmin(arquivar ? "Conteúdo arquivado." : "Conteúdo restaurado.");
         } catch (erro) {
             mostrarAvisoAdmin(erro.message);
         }
@@ -467,7 +467,7 @@ function confirmarArquivarConteudo(conteudo, arquivar) {
 }
 
 function confirmarExclusaoConteudo(conteudo) {
-    abrirConfirmacao("Excluir conteudo", "Tem certeza que deseja excluir este conteudo? Essa acao nao pode ser desfeita.", async () => {
+    abrirConfirmacao("Excluir conteúdo", "Tem certeza que deseja excluir este conteúdo? Essa ação não pode ser desfeita.", async () => {
         try {
             await chamarApiAdmin(`/admin/conteudos/${conteudo.id}/excluir`, {});
             const indice = CONTEUDOS_MOCK.findIndex((item) => item.id === conteudo.id);
@@ -475,7 +475,7 @@ function confirmarExclusaoConteudo(conteudo) {
                 CONTEUDOS_MOCK.splice(indice, 1);
             }
             atualizarConteudos();
-            mostrarAvisoAdmin("Conteudo removido.");
+            mostrarAvisoAdmin("Conteúdo removido.");
         } catch (erro) {
             mostrarAvisoAdmin(erro.message);
         }
@@ -487,10 +487,10 @@ function tratarAcaoAdmin(botao) {
 
     if (acao === "adicionar-materia") {
         abrirModal(
-            "Adicionar materia",
+            "Adicionar matéria",
             "materia",
-            campoTexto("nome", "Nome da materia") +
-            campoArquivo("icone", "Icone da materia (opcional)")
+            campoTexto("nome", "Nome da matéria") +
+            campoArquivo("icone", "Ícone da matéria (opcional)")
         );
         return;
     }
@@ -514,7 +514,7 @@ function tratarAcaoAdmin(botao) {
 
     switch (acao) {
         case "visualizar-conteudo":
-            abrirModalVisualizacao("Detalhes do conteudo", textoConteudo(conteudo));
+            abrirModalVisualizacao("Detalhes do conteúdo", textoConteudo(conteudo));
             break;
         case "editar-conteudo":
             abrirModalConteudo(conteudo);
@@ -544,7 +544,7 @@ function tratarAcaoAdmin(botao) {
             confirmarExclusaoConteudo(conteudo);
             break;
         default:
-            mostrarAvisoAdmin("Acao administrativa preparada.");
+            mostrarAvisoAdmin("Ação administrativa preparada.");
     }
 }
 
@@ -611,4 +611,13 @@ paginacaoControlesConteudos.addEventListener("click", (evento) => {
 // ---- Inicializacao ----
 
 renderizarMaterias();
-atualizarConteudos();
+
+atualizarConteudos().then(() =>
+    destacarItemDaUrl({
+        lista: CONTEUDOS_MOCK,
+        estado: estadoConsultaConteudos,
+        atualizar: atualizarConteudos,
+        atributoLinha: "data-conteudo-id",
+        rotulo: "Conteúdo",
+    })
+);

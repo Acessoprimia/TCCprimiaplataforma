@@ -12,6 +12,11 @@ const queries = Object.freeze({
     FROM ${TABELAS.mensagensContato}
     ORDER BY criado_em DESC
   `,
+  buscarPorId: `
+    SELECT id, nome, email, assunto, mensagem
+    FROM ${TABELAS.mensagensContato}
+    WHERE id = ?
+  `,
   marcarRespondido: `
     UPDATE ${TABELAS.mensagensContato}
     SET status = 'respondido'
@@ -63,6 +68,11 @@ const ContatoModel = Object.freeze({
   async responder({ id, resposta }, conexao) {
     const [resultado] = await banco(conexao).query(queries.responder, [resposta, id]);
     return resultado;
+  },
+
+  async buscarPorId(id, conexao) {
+    const [linhas] = await banco(conexao).query(queries.buscarPorId, [id]);
+    return linhas[0] || null;
   },
 
   async resolver(id, conexao) {

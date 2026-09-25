@@ -1,4 +1,4 @@
-<article class="notif-dropdown" id="notif-dropdown">
+<article class="notif-dropdown" id="notif-dropdown" data-notif-admin="true">
     <header class="notif-topo">
         <h3>Alertas admin</h3>
     </header>
@@ -7,7 +7,7 @@
         <% const listaNotificacoesAdmin = typeof notificacoesAdmin !== 'undefined' ? notificacoesAdmin : []; %>
         <% if (!listaNotificacoesAdmin.length) { %>
             <li class="notif-item">
-                <p class="notif-texto">Nenhuma pendencia no momento.</p>
+                <p class="notif-texto">Nenhuma pendência no momento.</p>
                 <time class="notif-tempo">agora</time>
             </li>
         <% } %>
@@ -22,6 +22,6 @@
     </ul>
 
     <footer class="notif-rodape">
-        <a href="/admin/suporte">Ver pendencias</a>
+        <a href="/admin/suporte">Ver pendências</a>
     </footer>
 </article>

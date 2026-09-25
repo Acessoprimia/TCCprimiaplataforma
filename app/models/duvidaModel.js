@@ -16,7 +16,9 @@ const queries = Object.freeze({
       a.serie,
       u.id_usuario AS id_aluno,
       u.nome AS aluno_nome,
-      u.perfil_publico AS aluno_perfil_publico
+      u.perfil_publico AS aluno_perfil_publico,
+      u.foto_publica AS aluno_foto_publica,
+      u.foto_url AS aluno_foto_url
     FROM ${TABELAS.duvidas} d
     INNER JOIN ${TABELAS.forum} f ON f.id_forum = d.id_forum
     INNER JOIN ${TABELAS.materias} m ON m.id_materia = f.id_materia

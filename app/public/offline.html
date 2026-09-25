@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Primia - Sem conexão</title>
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+  <!-- Pagina servida pelo service worker quando nao ha rede, entao tudo
+       que ela precisa fica aqui dentro (nenhum CSS/JS externo). -->
+  <script>
+    (function () {
+      try {
+        var tema = localStorage.getItem("primia-tema");
+        if (tema === "light" || tema === "dark") {
+          document.documentElement.setAttribute("data-theme", tema);
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    :root {
+      --cor-fundo: #f0eff5;
+      --cor-fundo-cartao: #ffffff;
+      --cor-texto: #333333;
+      --cor-texto-suave: #888888;
+      --accent: #A398D1;
+      --on-accent: #ffffff;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --cor-fundo: #15121f;
+        --cor-fundo-cartao: #211c33;
+        --cor-texto: #ece9f7;
+        --cor-texto-suave: #a49dc2;
+        --accent: #b3a6e8;
+        --on-accent: #1c1830;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --cor-fundo: #15121f;
+      --cor-fundo-cartao: #211c33;
+      --cor-texto: #ece9f7;
+      --cor-texto-suave: #a49dc2;
+      --accent: #b3a6e8;
+      --on-accent: #1c1830;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: var(--cor-fundo);
+      color: var(--cor-texto);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      text-align: center;
+    }
+
+    main {
+      width: 100%;
+      max-width: 420px;
+      padding: 2.5rem 1.5rem;
+      border-radius: 16px;
+      background: var(--cor-fundo-cartao);
+    }
+
+    img {
+      width: 88px;
+      height: 88px;
+    }
+
+    h1 {
+      margin: 1rem 0 0.5rem;
+      font-size: 1.5rem;
+    }
+
+    p {
+      margin: 0 0 1.75rem;
+      line-height: 1.5;
+      color: var(--cor-texto-suave);
+    }
+
+    button {
+      padding: 0.8rem 1.75rem;
+      border: none;
+      border-radius: 999px;
+      background: var(--accent);
+      color: var(--on-accent);
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:focus-visible {
+      outline: 3px solid var(--cor-texto);
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="/icons/icon-192.png" alt="Logo Primia">
+    <h1>Você está sem conexão</h1>
+    <p>Não foi possível carregar a página. Verifique sua internet e tente de novo.</p>
+    <button type="button" id="tentarNovamente">Tentar novamente</button>
+  </main>
+
+  <script>
+    document.getElementById("tentarNovamente").addEventListener("click", function () {
+      location.reload();
+    });
+
+    // Recarrega sozinho quando a internet volta.
+    window.addEventListener("online", function () {
+      location.reload();
+    });
+  </script>
+</body>
+</html>

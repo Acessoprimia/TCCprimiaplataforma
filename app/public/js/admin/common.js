@@ -32,7 +32,7 @@ async function chamarApiAdmin(url, corpo) {
     const dados = await resposta.json().catch(() => ({}));
 
     if (!resposta.ok) {
-        throw new Error(dados.erro || "Nao foi possivel completar a acao.");
+        throw new Error(dados.erro || "Não foi possível completar a ação.");
     }
 
     return dados;
@@ -46,7 +46,7 @@ async function chamarApiAdminArquivo(url, formData) {
     const dados = await resposta.json().catch(() => ({}));
 
     if (!resposta.ok) {
-        throw new Error(dados.erro || "Nao foi possivel completar a acao.");
+        throw new Error(dados.erro || "Não foi possível completar a ação.");
     }
 
     return dados;
@@ -113,6 +113,15 @@ function campoTexto(nome, label, valor = "", tipo = "text") {
         <label>
             ${label}
             <input type="${tipo}" name="${nome}" value="${valor}">
+        </label>
+    `;
+}
+
+function campoCheckbox(nome, label, marcado = false) {
+    return `
+        <label class="campo-checkbox">
+            <input type="checkbox" name="${nome}" ${marcado ? "checked" : ""}>
+            <span>${label}</span>
         </label>
     `;
 }
@@ -187,7 +196,44 @@ function confirmarRemocao(botao, titulo, texto, mensagem) {
 }
 
 function abrirModalVisualizacao(titulo, conteudo, origem = null) {
-    abrirModal(titulo, "visualizar", campoLeitura("Informacoes", conteudo), origem);
+    abrirModal(titulo, "visualizar", campoLeitura("Informações", conteudo), origem);
+}
+
+// Chegada vinda do sino: /admin/<tela>?destaque=<id>. Acha o item na lista
+// completa (estado inicial, sem filtros), pula pra pagina dele, rola ate a
+// linha e a destaca. Devolve a linha (ou null) pra tela poder fazer mais.
+async function destacarItemDaUrl({ lista, estado, atualizar, atributoLinha, rotulo }) {
+    const parametros = new URLSearchParams(window.location.search);
+    const id = Number(parametros.get("destaque"));
+
+    if (!id) {
+        return null;
+    }
+
+    // Limpa a URL pra um F5 nao repetir o destaque.
+    window.history.replaceState(null, "", window.location.pathname);
+
+    const indice = lista.findIndex((item) => item.id === id);
+
+    if (indice === -1) {
+        mostrarAvisoAdmin(`${rotulo} não encontrado(a) - talvez já tenha sido resolvido(a) ou removido(a).`);
+        return null;
+    }
+
+    estado.pagina = Math.floor(indice / estado.tamanhoPagina) + 1;
+    await atualizar();
+
+    const linha = document.querySelector(`tr[${atributoLinha}="${id}"]`);
+
+    if (!linha) {
+        return null;
+    }
+
+    linha.scrollIntoView({ behavior: "smooth", block: "center" });
+    linha.classList.add("linha-destaque");
+    window.setTimeout(() => linha.classList.remove("linha-destaque"), 4000);
+
+    return linha;
 }
 
 function escapeHtml(valor) {
@@ -276,7 +322,7 @@ adminModalForm.addEventListener("submit", (evento) => {
     if (handler) {
         handler(dados);
     } else {
-        mostrarAvisoAdmin("Informacao salva visualmente.");
+        mostrarAvisoAdmin("Informação salva visualmente.");
     }
 
     fecharModal();

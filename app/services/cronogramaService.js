@@ -96,6 +96,18 @@ function segundaDaSemana(data) {
   return copia;
 }
 
+// Proxima segunda-feira ESTRITAMENTE depois de hoje (se hoje ja e segunda,
+// vai pra da semana que vem). Usada como inicio da rotina gerada, pra grade
+// sempre sair como uma semana cheia (SEG a SEX) em vez de comecar no meio
+// dela, com colunas vazias de dias que ja passaram.
+function proximaSegunda(dataBase) {
+  const base = dataBase ? new Date(dataBase) : new Date();
+  const copia = new Date(base.getFullYear(), base.getMonth(), base.getDate());
+  const diasAteSegunda = ((8 - copia.getDay()) % 7) || 7;
+  copia.setDate(copia.getDate() + diasAteSegunda);
+  return copia;
+}
+
 function proximosDiasUteis(quantidade, dataBase) {
   const dias = [];
   const cursor = dataBase ? new Date(dataBase) : new Date();
@@ -273,6 +285,7 @@ module.exports = Object.freeze({
   gerarRotinaGenerica,
   gerarBlocosDia,
   proximosDiasUteis,
+  proximaSegunda,
   normalizarHora,
   CORES_ATIVIDADE,
   ROTULOS_ATIVIDADE,

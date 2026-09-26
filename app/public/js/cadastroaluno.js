@@ -1,9 +1,3 @@
-// Mostrar/ocultar senha
-function toggleSenha(idCampo) {
-    const campo = document.getElementById(idCampo);
-    campo.type = campo.type === "password" ? "text" : "password";
-}
-
 // Validação do nome
 function validarNome() {
     const nome = document.getElementById("nome").value.trim();

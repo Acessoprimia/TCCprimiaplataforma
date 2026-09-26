@@ -36,7 +36,7 @@
                         <img src="../image/cadeado.webp" alt="Senha" class="icone">
                     </figure>
                     <input type="password" id="senha" name="senha" placeholder="Senha" class="input-campo">
-                    <button type="button" class="mostrar-senha" onclick="toggleSenha('senha')" aria-label="Mostrar ou ocultar senha">&#128065;</button>
+                    <button type="button" class="mostrar-senha" onclick="toggleSenha('senha')" aria-label="Mostrar ou ocultar senha"><img src="../image/olho_fechado.webp" alt="" class="icone-olho"></button>
                 </label>
                 <p id="erro-senha" class="erro-msg"></p>
 
@@ -53,6 +53,7 @@
 
     <%- include('../partials/cookiebanner.ejs') %>
 
+    <script src="/js/olhinho.js"></script>
     <script src="../js/login.js"></script>
     <script src="/js/cookiebanner.js"></script>
 </body>

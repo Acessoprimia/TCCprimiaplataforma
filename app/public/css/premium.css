@@ -155,6 +155,8 @@ body {
 }
 
 .card-retorno {
+    box-sizing: border-box;
+    width: 100%;
     max-width: 480px;
     margin-bottom: 24px;
     padding: 32px;
@@ -226,7 +228,10 @@ body {
     border-radius: 50px;
     border: 1px solid var(--accent-suave, #b5a9d8);
     font-size: 0.875rem;
-    min-width: 220px;
+    min-width: 0;
+    width: 100%;
+    max-width: 320px;
+    box-sizing: border-box;
 }
 
 .form-reenviar-confirmacao button {
@@ -396,6 +401,11 @@ body {
     .container-premium-assinar,
     .container-premium-retorno {
         padding: 20px 15px;
+    }
+
+    /* o header fixo cobria o topo do card de retorno */
+    .container-premium-retorno {
+        padding-top: 100px;
     }
 
     .container-premium-assinar > header {

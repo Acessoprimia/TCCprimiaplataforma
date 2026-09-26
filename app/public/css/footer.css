@@ -1,5 +1,15 @@
 /* Footer institucional - multi-coluna */
 
+/* Rodape sempre no fim da tela: em paginas curtas o body ocupa a altura toda
+   e o footer (margin-top: auto) desce ate o final. */
+body:has(> .site-footer) {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
 .site-footer {
   position: relative;
   background-color: var(--c-382e64, #382e64);

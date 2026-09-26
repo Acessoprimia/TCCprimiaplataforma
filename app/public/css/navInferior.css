@@ -69,9 +69,19 @@
         bottom: calc(60px + env(safe-area-inset-bottom));
     }
 
-    body:has(.nav-inferior) .btn-add-fixo,
     body:has(.nav-inferior) .site-footer-top-btn {
         bottom: calc(60px + env(safe-area-inset-bottom) + 1rem);
+    }
+
+    /* Botao "+" empilha acima do de voltar ao topo (40px + 1rem de folga). */
+    body:has(.nav-inferior) .btn-add-fixo,
+    body:has(.nav-inferior) .btn-add-flutuante {
+        bottom: calc(60px + env(safe-area-inset-bottom) + 1rem + 40px + 0.75rem);
+    }
+
+    /* Folga no fim da pagina: os botoes flutuantes nao cobrem o ultimo conteudo. */
+    body:has(.nav-inferior):has(.btn-add-fixo, .btn-add-flutuante) {
+        padding-bottom: calc(60px + env(safe-area-inset-bottom) + 7.5rem);
     }
 
     /* O hamburguer do topo sai: o botao "Menu" da barra faz o mesmo papel. */

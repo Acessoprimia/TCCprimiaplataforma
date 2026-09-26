@@ -47,7 +47,7 @@
                         <img src="../image/cadeado.webp" alt="Senha" class="icone">
                     </figure>
                     <input type="password" id="senha" name="senha" placeholder="Senha" class="input-campo">
-                    <button type="button" class="mostrar-senha" onclick="toggleSenha('senha')" aria-label="Mostrar ou ocultar senha">&#128065;</button>
+                    <button type="button" class="mostrar-senha" onclick="toggleSenha('senha')" aria-label="Mostrar ou ocultar senha"><img src="../image/olho_fechado.webp" alt="" class="icone-olho"></button>
                 </label>
                 <ul id="regras-senha" class="regras-senha-modern">
                     <li id="tamanho">8 a 15 caracteres</li>
@@ -64,7 +64,7 @@
                     </figure>
                     <input type="password" id="confirmar_senha" name="confirmar_senha" placeholder="Repetir a senha"
                         class="input-campo">
-                    <button type="button" class="mostrar-senha" onclick="toggleSenha('confirmar_senha')" aria-label="Mostrar ou ocultar senha">&#128065;</button>
+                    <button type="button" class="mostrar-senha" onclick="toggleSenha('confirmar_senha')" aria-label="Mostrar ou ocultar senha"><img src="../image/olho_fechado.webp" alt="" class="icone-olho"></button>
                 </label>
                 <p id="erro-confirmar" class="erro-msg"></p>
 
@@ -109,6 +109,7 @@
 
     <%- include('../partials/cookiebanner.ejs') %>
 
+    <script src="/js/olhinho.js"></script>
     <script src="../js/cadastroaluno.js"></script>
     <script src="/js/cookiebanner.js"></script>
 </body>

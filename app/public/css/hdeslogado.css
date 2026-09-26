@@ -74,6 +74,13 @@
   display: none; /* Escondido por padrão (mobile first) */
 }
 
+/* centraliza o menu no header (igual ao header.css) */
+.nav-desktop {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .nav-desktop ul {
   list-style: none;
   display: flex;

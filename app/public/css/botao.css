@@ -1,8 +1,9 @@
 /* Botão flutuante */
 .btn-add-flutuante {
     position: fixed;
-    bottom: 25rem;
-    right: 2rem;
+    /* acima do botao de voltar ao topo (44px + 24px), sem cobri-lo */
+    bottom: 5.5rem;
+    right: 1rem;
     width: 60px;
     height: 60px;
     background: var(--accent, #A398D1);

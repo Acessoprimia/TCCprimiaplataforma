@@ -371,3 +371,86 @@ html[data-fonte="extra"] {
         --c-eee6f7: #1a0d29;
         --c-ece9f7: #130e26;
 }
+
+/* Olhinho de mostrar/ocultar senha (igual ao de Configuracoes, em todas as telas) */
+.campo-wrapper:has(.mostrar-senha) {
+    position: relative;
+}
+
+.campo-wrapper:has(.mostrar-senha) .input-campo {
+    padding-right: 44px;
+}
+
+.campo-wrapper .mostrar-senha {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    user-select: none;
+    font-family: inherit;
+}
+
+.campo-wrapper .mostrar-senha:focus-visible {
+    outline: 3px solid var(--accent-forte, #8b83ac);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.campo-wrapper .icone-olho {
+    width: 22px;
+    height: 22px;
+    opacity: 0.5;
+    transition: opacity 0.25s;
+}
+
+.campo-wrapper .mostrar-senha:hover .icone-olho {
+    opacity: 0.75;
+}
+
+.campo-wrapper .mostrar-senha.aberto .icone-olho {
+    opacity: 1;
+}
+
+/* Icones do olhinho: WebP transparente e preto; no escuro so inverte para claro. */
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .campo-wrapper .icone-olho {
+        filter: brightness(0) invert(1);
+    }
+}
+
+:root[data-theme="dark"] .campo-wrapper .icone-olho {
+    filter: brightness(0) invert(1);
+}
+
+/* Input dentro de flex nao encolhe abaixo da largura intrinseca (size=20):
+   textos longos, como e-mails, vazavam para fora do campo no celular. */
+.campo-wrapper .input-campo {
+    min-width: 0;
+    width: 100%;
+    text-overflow: ellipsis;
+}
+
+/* Lista aberta de <select> (serie escolar etc.): o navegador desenha o menu
+   por conta propria e, no escuro, ficava fundo branco com texto claro. */
+select option,
+select optgroup {
+    background-color: var(--cor-fundo-cartao, #ffffff);
+    color: var(--cor-texto, #333333);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        color-scheme: dark;
+    }
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+}

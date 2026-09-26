@@ -1,20 +1,3 @@
-// Mostrar/ocultar senha
-function toggleSenha(idCampo) {
-    const campo = document.getElementById(idCampo);
-    const botao = document.getElementById('btn-olhinho-' + (idCampo === 'senha' ? 'senha' : 'confirmar'));
-    const icon = botao.querySelector('.olhinho-icon');
-    
-    if (campo.type === "password") {
-        campo.type = "text";
-        icon.src = "../image/olho_fechado.webp";
-        icon.alt = "Ocultar Senha";
-    } else {
-        campo.type = "password";
-        icon.src = "../image/olho_aberto.webp";
-        icon.alt = "Mostrar Senha";
-    }
-}
-
 // Validação do nome
 function validarNome() {
     const nome = document.getElementById("nomeCompleto").value.trim();

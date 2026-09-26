@@ -28,6 +28,8 @@
   <link href="../css/theme.css" rel="stylesheet">
   <link href="../css/header.css" rel="stylesheet">
   <link rel="stylesheet" href="../css/cookiebanner.css" />
+  <!-- antes do markup do header: senao o botao de aparencia pinta sem estilo -->
+  <link rel="stylesheet" href="../css/aparenciaFlutuante.css">
 </head>
 <body>
   <a class="skip-link" href="#conteudo-principal">Pular para o conteudo</a>
@@ -118,6 +120,7 @@
   <% } %>
 
   <script src="../js/hamburguer.js"></script>
+  <script src="/js/envioUnico.js"></script>
 
   <% if (!usuarioHeader) { %>
     <%- include('./aparenciaFlutuante.ejs') %>

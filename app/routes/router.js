@@ -1012,6 +1012,57 @@ router.get("/app", function (req, res) {
   res.redirect(usuario ? rotaInicialPorTipoUsuario(usuario.tipo_usuario) : "/telainicial");
 });
 
+// Trava contra envio duplicado: se o mesmo usuario manda o mesmo POST (mesma rota,
+// mesmo conteudo) de novo em poucos segundos - clique repetido com servidor
+// lento, F5 depois de enviar - o segundo e descartado em vez de criar outro
+// registro. O botao desativado no navegador (js/envioUnico.js) evita o caso
+// comum; isto cobre quem burla o botao e as requisicoes que chegam juntas.
+const JANELA_ENVIO_DUPLICADO_MS = 8000;
+const ENVIOS_RECENTES = new Map();
+// Rotas em que repetir o mesmo POST e legitimo (alternar estado, tentar login de novo).
+const ROTAS_SEM_TRAVA_DUPLICADO = /^\/(login$|planoestudo\/[^/]+\/(concluido|prioridade)$|admin\/.*\/(status|destaque|premium|arquivar)$)/;
+
+function limparEnviosRecentes(agora) {
+  for (const [chave, instante] of ENVIOS_RECENTES) {
+    if (agora - instante > JANELA_ENVIO_DUPLICADO_MS) ENVIOS_RECENTES.delete(chave);
+  }
+}
+
+function bloquearEnvioDuplicado(req, res, next) {
+  if (req.method !== "POST") return next();
+  if (req.path.startsWith("/api/") || req.path.startsWith("/webhooks/")) return next();
+  if (ROTAS_SEM_TRAVA_DUPLICADO.test(req.path)) return next();
+
+  const usuario = lerCookieUsuario(req);
+  const quem = usuario ? `${usuario.tipo_usuario}:${usuario.id}` : `ip:${req.ip}`;
+  const multipart = String(req.headers["content-type"] || "").startsWith("multipart/");
+  // multipart ainda nao foi lido aqui (multer roda por rota); o tamanho serve de digital.
+  const conteudo = multipart
+    ? `multipart:${req.headers["content-length"] || ""}`
+    : JSON.stringify(req.body || {});
+  const chave = crypto
+    .createHash("sha256")
+    .update(`${quem}|${req.path}|${conteudo}`)
+    .digest("hex");
+
+  const agora = Date.now();
+  if (ENVIOS_RECENTES.size > 500) limparEnviosRecentes(agora);
+
+  const anterior = ENVIOS_RECENTES.get(chave);
+  if (anterior && agora - anterior < JANELA_ENVIO_DUPLICADO_MS) {
+    console.warn(`Envio duplicado descartado: ${req.path} (${quem})`);
+    if (req.accepts(["html", "json"]) === "json") {
+      return res.status(429).json({ erro: "Envio repetido. Aguarde um instante." });
+    }
+    return res.redirect(303, req.get("referer") || "/");
+  }
+
+  ENVIOS_RECENTES.set(chave, agora);
+  return next();
+}
+
+router.use(bloquearEnvioDuplicado);
+
 router.use(carregarNotificacoes);
 
 async function renderizarTelaInicial(res) {

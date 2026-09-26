@@ -50,8 +50,8 @@
           <img src="../image/cadeado.webp" alt="" class="icone" aria-hidden="true">
         </span>
         <input type="password" id="senha" name="senha" class="input-campo" placeholder="Senha" required aria-label="Senha" aria-describedby="regras-senha">
-        <button type="button" class="btn-olhinho" id="btn-olhinho-senha" onclick="toggleSenha('senha')" aria-label="Mostrar ou ocultar senha">
-          <img src="../image/olho_aberto.webp" alt="Mostrar Senha" class="olhinho-icon" aria-hidden="true">
+        <button type="button" class="mostrar-senha" onclick="toggleSenha('senha')" aria-label="Mostrar ou ocultar senha">
+          <img src="../image/olho_fechado.webp" alt="" class="icone-olho">
         </button>
       </fieldset>
 
@@ -71,8 +71,8 @@
           <img src="../image/cadeado.webp" alt="" class="icone" aria-hidden="true">
         </span>
         <input type="password" id="confirmarSenha" name="confirmarSenha" class="input-campo" placeholder="Repetir a senha" required aria-label="Repetir a senha">
-        <button type="button" class="btn-olhinho" id="btn-olhinho-confirmar" onclick="toggleSenha('confirmarSenha')" aria-label="Mostrar ou ocultar senha">
-          <img src="../image/olho_aberto.webp" alt="Mostrar Senha" class="olhinho-icon" aria-hidden="true">
+        <button type="button" class="mostrar-senha" onclick="toggleSenha('confirmarSenha')" aria-label="Mostrar ou ocultar senha">
+          <img src="../image/olho_fechado.webp" alt="" class="icone-olho">
         </button>
       </fieldset>
       <small id="erro-confirmar" class="erro-msg" role="alert"></small>
@@ -118,6 +118,7 @@
 
   <%- include('../partials/cookiebanner.ejs') %>
 
+  <script src="/js/olhinho.js"></script>
   <script src="../js/cadastroprofessor.js"></script>
   <script src="/js/cookiebanner.js"></script>
 </body>

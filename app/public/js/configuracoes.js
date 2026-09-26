@@ -131,26 +131,6 @@ function iniciarFonte() {
 }
 
 // =============================================
-// MOSTRAR/OCULTAR SENHA
-// =============================================
-function toggleSenha(idCampo) {
-    const campo = document.getElementById(idCampo);
-    if (!campo) return;
-    const olhinho = campo.parentElement.querySelector(".mostrar-senha");
-    const img = olhinho.querySelector(".icone-olho");
-
-    if (campo.type === "password") {
-        campo.type = "text";
-        olhinho.classList.add("aberto");
-        img.src = img.src.replace("olho_fechado.webp", "olho_aberto.webp");
-    } else {
-        campo.type = "password";
-        olhinho.classList.remove("aberto");
-        img.src = img.src.replace("olho_aberto.webp", "olho_fechado.webp");
-    }
-}
-
-// =============================================
 // VALIDAÇÃO - ABA PERFIL
 // =============================================
 function validarNome() {

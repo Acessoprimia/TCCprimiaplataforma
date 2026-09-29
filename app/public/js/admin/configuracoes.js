@@ -1,5 +1,4 @@
 // Interacoes da pagina /admin/configuracoes.
-// Depende das funcoes compartilhadas definidas em common.js.
 
 const formConfiguracoes = document.getElementById("formConfiguracoes");
 const formBannerConfiguracoes = document.getElementById("formBannerConfiguracoes");

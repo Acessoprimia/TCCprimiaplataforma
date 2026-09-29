@@ -1,155 +1,287 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plano de Estudos</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
-    <link href="../css/planoestudo.css" rel="stylesheet">
-    <link href="../css/gradecronograma.css" rel="stylesheet">
-    <link href="../css/excluiritem.css" rel="stylesheet">
-    <%- include('../partials/header.ejs') %>
+
+```
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Plano de Estudos</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+
+<link href="../css/planoestudo.css" rel="stylesheet">
+
+<link href="../css/gradecronograma.css" rel="stylesheet">
+
+<link href="../css/excluiritem.css" rel="stylesheet">
+
+<%- include('../partials/header.ejs') %>
+```
+
 </head>
 
 <body>
-    <main class="com-grade">
-        <section class="plano-estudos">
-            <h1 class="titulo-principal">Meu Plano de Estudos</h1>
+
+```
+<main class="com-grade">
+
+    <section class="plano-estudos">
+
+        <h1 class="titulo-principal">Meu Plano de Estudos</h1>
+
+    </section>
+
+    <% if (aviso) { %>
+
+        <p class="aviso-plano aviso-plano-<%= aviso.tipo %>" role="status"><%= aviso.texto %></p>
+
+    <% } %>
+
+    <% if (ehPremium) { %>
+
+        <!-- GERAR COM IA -->
+
+        <section class="gerar-simulado-container">
+
+            <h2>Gerar cronograma com IA</h2>
+
+            <form action="/planoestudo/gerar" method="POST" class="gerar-simulado-form">
+
+                <input type="text" name="tema" placeholder="Sobre qual tema? Ex: Frações" required>
+
+                <select name="materia_id" required>
+
+                    <option value="" disabled selected>Matéria</option>
+
+                    <% materias.forEach(function (materia) { %>
+
+                        <option value="<%= materia.id_materia %>"><%= materia.nome %></option>
+
+                    <% }) %>
+
+                </select>
+
+                <select name="tipo">
+
+                    <option value="diario">Diário (horários de estudo)</option>
+
+                    <option value="semanal" selected>Semanal</option>
+
+                </select>
+
+                <select name="quantidade">
+
+                    <% [5, 10, 15, 20, 25, 30].forEach(function (n) { %>
+
+                        <option value="<%= n %>" <%= n === 10 ? 'selected' : '' %>><%= n %> eventos</option>
+
+                    <% }) %>
+
+                </select>
+
+                <input type="date" name="data_inicio" required>
+
+                <button type="submit">Gerar</button>
+
+            </form>
+
+            <p class="aviso-materia-simulado">No tipo diário, o máximo é 8 eventos (cabem num dia só) — a quantidade é ajustada automaticamente.</p>
+
         </section>
 
-        <% if (aviso) { %>
-            <p class="aviso-plano aviso-plano-<%= aviso.tipo %>" role="status"><%= aviso.texto %></p>
+        <!-- MONTAR NA MAO -->
+
+        <section class="montar-simulado-container">
+
+            <h2>Ou monte na mão</h2>
+
+            <form id="form-cronograma-manual" action="/planoestudo/gerar-manual" method="POST">
+
+                <input type="text" name="titulo" placeholder="Título do cronograma" class="input-titulo-manual" required>
+
+                <select name="materia_id" required class="input-titulo-manual">
+
+                    <option value="" disabled selected>Matéria</option>
+
+                    <% materias.forEach(function (materia) { %>
+
+                        <option value="<%= materia.id_materia %>"><%= materia.nome %></option>
+
+                    <% }) %>
+
+                </select>
+
+                <section id="eventos-manual-container"></section>
+
+                <section class="acoes-simulado-manual">
+
+                    <button type="button" id="btn-add-evento" class="btn-add-pergunta">+ Adicionar evento</button>
+
+                    <button type="submit" class="btn-salvar-manual">Salvar cronograma</button>
+
+                </section>
+
+            </form>
+
+        </section>
+
+        <template id="template-evento-manual">
+
+            <article class="pergunta-manual">
+
+                <header class="pergunta-manual-header">
+
+                    <span class="pergunta-manual-numero"></span>
+
+                    <button type="button" class="btn-remover-pergunta">Remover</button>
+
+                </header>
+
+                <input type="text" class="campo-titulo-evento" placeholder="Título" required>
+
+                <input type="text" class="campo-descricao-evento" placeholder="Descrição (opcional)">
+
+                <section class="campos-data-hora">
+
+                    <input type="date" class="campo-data-evento" required>
+
+                    <input type="time" class="campo-hora-inicio-evento" required>
+
+                    <input type="time" class="campo-hora-fim-evento" required>
+
+                </section>
+
+            </article>
+
+        </template>
+
+        <!-- MEUS CRONOGRAMAS GERADOS -->
+
+        <section class="cards-container">
+
+            <h2>Meus cronogramas</h2>
+
+            <% if (meusCronogramasGerados.length === 0) { %>
+
+                <p class="cronogramas-vazio">Você ainda não gerou nenhum cronograma próprio.</p>
+
+            <% } %>
+
+            <% meusCronogramasGerados.forEach(function (cronograma) { %>
+
+                <article class="cronograma-item">
+
+                    <a href="/planoestudo/<%= cronograma.codigo_lote %>" class="cronograma-link">
+
+                        <article class="cronograma-card">
+
+                            <h3><%= cronograma.titulo_cronograma %></h3>
+
+                            <p class="cronograma-card-info"><%= cronograma.materia %></p>
+
+                            <p class="cronograma-card-info"><%= cronograma.total_eventos %> evento<%= cronograma.total_eventos > 1 ? 's' : '' %></p>
+
+                        </article>
+
+                    </a>
+
+                    <form action="/planoestudo/<%= cronograma.codigo_lote %>/excluir" method="POST" class="form-excluir-item"
+
+                        onsubmit="return confirm('Excluir o cronograma &quot;<%= cronograma.titulo_cronograma %>&quot; e seus <%= cronograma.total_eventos %> evento(s)?');">
+
+                        <button type="submit" class="botao-excluir-item">Excluir</button>
+
+                    </form>
+
+                </article>
+
+            <% }) %>
+
+        </section>
+
+    <% } else { %>
+
+        <section class="upsell-premium-cronograma">
+
+            <p>✨ Assinantes premium podem gerar o próprio cronograma com IA (ou montar na mão) e recebem cronogramas exclusivos dos professores.</p>
+
+            <a href="/partepremium">Conhecer o premium</a>
+
+        </section>
+
+    <% } %>
+
+    <!-- GRADE SEMANAL -->
+
+    <section class="grade-container">
+
+        <h2 class="titulo-secao">Minha semana</h2>
+
+        <%- include('../partials/gradecronograma.ejs', { grade: grade, semDatas: true }) %>
+
+        <ul class="grade-legenda">
+
+            <li><span style="background:#A398D1"></span>Estudo</li>
+
+            <% if (ehPremium) { %>
+
+                <li><span style="background:#FF9466"></span>Exercícios</li>
+
+            <% } %>
+
+            <li><span style="background:#63C7B2"></span>Revisão</li>
+
+            <% if (ehPremium) { %>
+
+                <li><span style="background:#EF4444"></span>Simulado</li>
+
+            <% } %>
+
+        </ul>
+
+        <p class="grade-nota">A barra colorida à esquerda de cada atividade mostra a prioridade que você definiu abaixo.</p>
+
+        <% if (!ehPremium) { %>
+
+            <p class="grade-nota">Exercícios e simulados fazem parte do plano premium — sua rotina gratuita foca em estudo e revisão.</p>
+
         <% } %>
 
         <% if (ehPremium) { %>
-            <!-- GERAR COM IA -->
-            <section class="gerar-simulado-container">
-                <h2>Gerar cronograma com IA</h2>
-                <form action="/planoestudo/gerar" method="POST" class="gerar-simulado-form">
-                    <input type="text" name="tema" placeholder="Sobre qual tema? Ex: Frações" required>
-                    <select name="materia_id" required>
-                        <option value="" disabled selected>Matéria</option>
-                        <% materias.forEach(function (materia) { %>
-                            <option value="<%= materia.id_materia %>"><%= materia.nome %></option>
-                        <% }) %>
-                    </select>
-                    <select name="tipo">
-                        <option value="diario">Diário (horários de estudo)</option>
-                        <option value="semanal" selected>Semanal</option>
-                    </select>
-                    <select name="quantidade">
-                        <% [5, 10, 15, 20, 25, 30].forEach(function (n) { %>
-                            <option value="<%= n %>" <%= n === 10 ? 'selected' : '' %>><%= n %> eventos</option>
-                        <% }) %>
-                    </select>
-                    <input type="date" name="data_inicio" required>
-                    <button type="submit">Gerar</button>
-                </form>
-                <p class="aviso-materia-simulado">No tipo diário, o máximo é 8 eventos (cabem num dia só) — a quantidade é ajustada automaticamente.</p>
-            </section>
 
-            <!-- MONTAR NA MAO -->
-            <section class="montar-simulado-container">
-                <h2>Ou monte na mão</h2>
-                <form id="form-cronograma-manual" action="/planoestudo/gerar-manual" method="POST">
-                    <input type="text" name="titulo" placeholder="Título do cronograma" class="input-titulo-manual" required>
-                    <select name="materia_id" required class="input-titulo-manual">
-                        <option value="" disabled selected>Matéria</option>
-                        <% materias.forEach(function (materia) { %>
-                            <option value="<%= materia.id_materia %>"><%= materia.nome %></option>
-                        <% }) %>
-                    </select>
+            <form action="/planoestudo/regerar" method="POST" class="form-regerar">
 
-                    <div id="eventos-manual-container"></div>
+                <button type="submit" class="btn-regerar">Regerar rotina da semana</button>
 
-                    <div class="acoes-simulado-manual">
-                        <button type="button" id="btn-add-evento" class="btn-add-pergunta">+ Adicionar evento</button>
-                        <button type="submit" class="btn-salvar-manual">Salvar cronograma</button>
-                    </div>
-                </form>
-            </section>
+                <span class="aviso-regerar">Refaz a rotina padrão para os próximos dias úteis. Suas prioridades e itens concluídos são reiniciados; cronogramas que você gerou não são afetados.</span>
 
-            <template id="template-evento-manual">
-                <article class="pergunta-manual">
-                    <div class="pergunta-manual-header">
-                        <span class="pergunta-manual-numero"></span>
-                        <button type="button" class="btn-remover-pergunta">Remover</button>
-                    </div>
-                    <input type="text" class="campo-titulo-evento" placeholder="Título" required>
-                    <input type="text" class="campo-descricao-evento" placeholder="Descrição (opcional)">
-                    <div class="campos-data-hora">
-                        <input type="date" class="campo-data-evento" required>
-                        <input type="time" class="campo-hora-inicio-evento" required>
-                        <input type="time" class="campo-hora-fim-evento" required>
-                    </div>
-                </article>
-            </template>
+            </form>
 
-            <!-- MEUS CRONOGRAMAS GERADOS -->
-            <section class="cards-container">
-                <h2>Meus cronogramas</h2>
-                <% if (meusCronogramasGerados.length === 0) { %>
-                    <p class="cronogramas-vazio">Você ainda não gerou nenhum cronograma próprio.</p>
-                <% } %>
-                <% meusCronogramasGerados.forEach(function (cronograma) { %>
-                    <section class="cronograma-item">
-                        <a href="/planoestudo/<%= cronograma.codigo_lote %>" class="cronograma-link">
-                            <article class="cronograma-card">
-                                <h3><%= cronograma.titulo_cronograma %></h3>
-                                <p class="cronograma-card-info"><%= cronograma.materia %></p>
-                                <p class="cronograma-card-info"><%= cronograma.total_eventos %> evento<%= cronograma.total_eventos > 1 ? 's' : '' %></p>
-                            </article>
-                        </a>
-                        <form action="/planoestudo/<%= cronograma.codigo_lote %>/excluir" method="POST" class="form-excluir-item"
-                            onsubmit="return confirm('Excluir o cronograma &quot;<%= cronograma.titulo_cronograma %>&quot; e seus <%= cronograma.total_eventos %> evento(s)?');">
-                            <button type="submit" class="botao-excluir-item">Excluir</button>
-                        </form>
-                    </section>
-                <% }) %>
-            </section>
-        <% } else { %>
-            <section class="upsell-premium-cronograma">
-                <p>✨ Assinantes premium podem gerar o próprio cronograma com IA (ou montar na mão) e recebem cronogramas exclusivos dos professores.</p>
-                <a href="/partepremium">Conhecer o premium</a>
-            </section>
         <% } %>
 
-        <!-- GRADE SEMANAL -->
-        <section class="grade-container">
-            <h2 class="titulo-secao">Minha semana</h2>
-            <%- include('../partials/gradecronograma.ejs', { grade: grade, semDatas: true }) %>
-            <ul class="grade-legenda">
-                <li><span style="background:#A398D1"></span>Estudo</li>
-                <% if (ehPremium) { %>
-                    <li><span style="background:#FF9466"></span>Exercícios</li>
-                <% } %>
-                <li><span style="background:#63C7B2"></span>Revisão</li>
-                <% if (ehPremium) { %>
-                    <li><span style="background:#EF4444"></span>Simulado</li>
-                <% } %>
-            </ul>
-            <p class="grade-nota">A barra colorida à esquerda de cada atividade mostra a prioridade que você definiu abaixo.</p>
-            <% if (!ehPremium) { %>
-                <p class="grade-nota">Exercícios e simulados fazem parte do plano premium — sua rotina gratuita foca em estudo e revisão.</p>
-            <% } %>
-            <% if (ehPremium) { %>
-                <form action="/planoestudo/regerar" method="POST" class="form-regerar">
-                    <button type="submit" class="btn-regerar">Regerar rotina da semana</button>
-                    <span class="aviso-regerar">Refaz a rotina padrão para os próximos dias úteis. Suas prioridades e itens concluídos são reiniciados; cronogramas que você gerou não são afetados.</span>
-                </form>
-            <% } %>
-        </section>
+    </section>
 
-        <section class="prioridades">
-            <h2 class="titulo-secao">Meus itens</h2>
-            <%- include('../partials/listaprioridades.ejs', { itens: itens, voltarPara: '/planoestudo' }) %>
-        </section>
-    </main>
+    <section class="prioridades">
 
-    <%- include('../partials/footer.ejs') %>
-    <script src="../js/planoestudo.js"></script>
-    <script src="../js/cronogramamanual.js"></script>
+        <h2 class="titulo-secao">Meus itens</h2>
+
+        <%- include('../partials/listaprioridades.ejs', { itens: itens, voltarPara: '/planoestudo' }) %>
+
+    </section>
+
+</main>
+
+<%- include('../partials/footer.ejs') %>
+
+<script src="../js/planoestudo.js"></script>
+
+<script src="../js/cronogramamanual.js"></script>
+```
+
 </body>
 
 </html>

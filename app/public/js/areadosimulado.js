@@ -19,7 +19,7 @@ abaBotoes.forEach(botao => {
     });
 });
 
-// Filtro por disciplina (partials/filtroPadrao.ejs): so mexe nos cards da aba ativa
+
 document.addEventListener('filtro:aplicar', (e) => {
     const selecionadas = e.detail.valores;
     const secaoAtivaId = document.querySelector('.aba-botao.aba-ativa').dataset.filtro;

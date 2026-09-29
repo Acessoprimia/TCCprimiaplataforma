@@ -44,7 +44,6 @@ formFiltro.addEventListener('submit', (event) => {
     const checkboxes = formFiltro.querySelectorAll('input[name="disciplina"]:checked');
     const disciplinasSelecionadas = Array.from(checkboxes).map(cb => cb.value);
 
-    // Pega a seção ativa (andamento ou finalizados)
     const secaoAtivaId = document.querySelector('.aba-botao.aba-ativa').dataset.filtro;
     const secaoAtiva = document.getElementById(`secao-${secaoAtivaId}`);
     const cardsSimulado = secaoAtiva.querySelectorAll('.card-simulado');

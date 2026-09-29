@@ -1,6 +1,3 @@
-// Impede envio duplo de formularios: no primeiro envio valido os botoes de
-// submit ficam desativados ("Enviando..."), entao clicar de novo com o servidor
-// lento nao cria outro registro. Formularios GET e com target/nova aba ficam de fora.
 (function () {
     const TEXTO_ENVIANDO = "Enviando...";
 
@@ -42,14 +39,12 @@
 
         const botoes = Array.from(form.querySelectorAll('button[type="submit"], button:not([type]), input[type="submit"]'));
 
-        // Roda depois dos outros handlers: se algum validou e cancelou o envio, nao trava.
         setTimeout(() => {
             if (evento.defaultPrevented) return;
             desativar(form, botoes);
         }, 0);
     });
 
-    // Voltar pelo historico (bfcache) traria a pagina com o botao ainda travado.
     window.addEventListener("pageshow", (evento) => {
         if (!evento.persisted) return;
         document.querySelectorAll("form[data-enviando]").forEach(reativar);

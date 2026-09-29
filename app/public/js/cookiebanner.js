@@ -8,7 +8,6 @@
   var banner = document.getElementById("cookieBanner");
   var acceptBtn = document.getElementById("cookieAcceptBtn");
 
-  // Verifica se o usuário já escolheu (aceitou ou rejeitou)
   function hasChoice() {
     var cookie = document.cookie.split(";").map(function (c) {
       return c.trim();
@@ -19,7 +18,6 @@
     return !!cookie;
   }
 
-  // Define cookie com escolha (dura 1 ano)
   function setChoiceCookie(choice) {
     var expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + COOKIE_EXPIRY_DAYS);
@@ -40,13 +38,10 @@
     }
   }
 
-  // Apaga a escolha salva (usado quando a pessoa pede pra rever o aviso)
   function apagarEscolha() {
     document.cookie = COOKIE_NAME + "=; Path=/; SameSite=Strict; Max-Age=0";
   }
 
-  // Exposto globalmente pra Configuracoes > Privacidade poder reabrir o
-  // aviso sob demanda, sem precisar esperar o cookie expirar sozinho.
   window.primiaReabrirAvisoCookies = function () {
     apagarEscolha();
     showBanner();

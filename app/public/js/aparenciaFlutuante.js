@@ -1,13 +1,8 @@
-// Popover de Aparencia (tema + fonte) pra visitante deslogado - aberto pelo
-// icone no header (desktop) ou pelo item "Aparencia" dentro do menu
-// hamburguer (mobile), os dois controlando o mesmo painel. Mesma logica e
-// mesmas chaves de localStorage da aba Aparencia em /configuracoes (ver
-// public/js/configuracoes.js).
+
 
 const aparenciaFlutuantePainel = document.getElementById("aparenciaFlutuantePainel");
 const aparenciaFlutuanteFechar = document.getElementById("aparenciaFlutuanteFechar");
-// Cada header (header.ejs, hdeslogado.ejs) declara o seu - so os que
-// existirem na pagina atual entram na lista.
+
 const aparenciaFlutuanteGatilhos = [
     document.getElementById("aparenciaFlutuanteBtn"),
     document.getElementById("aparenciaFlutuanteBtnMobile"),
@@ -17,9 +12,7 @@ function abrirAparenciaFlutuante() {
     aparenciaFlutuantePainel.hidden = false;
     aparenciaFlutuanteGatilhos.forEach((botao) => botao.setAttribute("aria-expanded", "true"));
 
-    // Se veio do item do menu hamburguer, fecha o menu pra nao competir
-    // com o popover na tela. toggleMenu() e global (hamburguer.js carrega
-    // antes deste script).
+  
     if (
         typeof navMobile !== "undefined" &&
         navMobile?.classList.contains("active") &&
@@ -75,8 +68,6 @@ function aplicarTemaFlutuante(tema) {
             document.documentElement.removeAttribute("data-theme");
         }
     } catch (e) {
-        // localStorage indisponivel (modo privado, navegador bloqueando) -
-        // o tema so nao fica salvo entre visitas, mas a troca ainda funciona.
     }
 
     document.querySelectorAll(".tema-botao[data-tema]").forEach((botao) => {
@@ -115,7 +106,6 @@ function aplicarFonteFlutuante(fonte) {
             document.documentElement.removeAttribute("data-fonte");
         }
     } catch (e) {
-        // localStorage indisponivel - a troca ainda funciona, so nao fica salva.
     }
 
     document.querySelectorAll(".fonte-botao[data-fonte]").forEach((botao) => {

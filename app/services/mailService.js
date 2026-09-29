@@ -1,8 +1,6 @@
 const sgMail = require("@sendgrid/mail");
 
-// SMTP puro (porta 465/587) fica bloqueado no plano gratuito do Render, entao
-// o envio de e-mail usa a API HTTPS do SendGrid (porta 443) em vez de conexao
-// SMTP direta - isso evita o bloqueio de porta do provedor de hospedagem.
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const EMAIL_REMETENTE = process.env.SENDGRID_FROM_EMAIL || process.env.GMAIL_USER;

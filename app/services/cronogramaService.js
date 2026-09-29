@@ -29,7 +29,6 @@ const ROTULOS_ATIVIDADE = Object.freeze({
 });
 
 // Rotina base do cronograma generico: manha e tarde, com o intervalo de
-// almoco (12h-14h) ficando naturalmente vazio na grade.
 const BLOCOS_ROTINA_GENERICA = Object.freeze([
   { inicio: "08:00", fim: "09:00" },
   { inicio: "09:00", fim: "10:00" },
@@ -73,8 +72,7 @@ function formatarCurta(data) {
   return `${dia}/${mes}`;
 }
 
-// Corta "08:00:00" (TIME do MySQL) pra "08:00", que e o formato usado
-// como chave de linha da grade.
+
 function normalizarHora(hora) {
   if (!hora) return null;
   const partes = String(hora).split(":");
@@ -96,10 +94,7 @@ function segundaDaSemana(data) {
   return copia;
 }
 
-// Proxima segunda-feira ESTRITAMENTE depois de hoje (se hoje ja e segunda,
-// vai pra da semana que vem). Usada como inicio da rotina gerada, pra grade
-// sempre sair como uma semana cheia (SEG a SEX) em vez de comecar no meio
-// dela, com colunas vazias de dias que ja passaram.
+
 function proximaSegunda(dataBase) {
   const base = dataBase ? new Date(dataBase) : new Date();
   const copia = new Date(base.getFullYear(), base.getMonth(), base.getDate());
@@ -123,8 +118,7 @@ function proximosDiasUteis(quantidade, dataBase) {
   return dias;
 }
 
-// eventos: [{ data:'YYYY-MM-DD', horaInicio, horaFim, materia, atividade,
-//             tipoAtividade, corPrioridade }]
+
 function montarGrade(eventos) {
   const normalizados = [];
 
@@ -146,7 +140,7 @@ function montarGrade(eventos) {
     return { horarios: [], semanas: [], vazia: true };
   }
 
-  // LINHAS: todos os horarios de inicio que existem de verdade nos dados.
+
   const horariosMap = new Map();
   for (const evento of normalizados) {
     const atual = horariosMap.get(evento.horaInicio);
@@ -159,8 +153,6 @@ function montarGrade(eventos) {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([inicio, fim]) => ({ inicio, fim, rotulo: `${inicio} – ${fim}` }));
 
-  // COLUNAS: agrupadas por semana, pra cronograma que passa de 5 dias
-  // nao esconder nada.
   const semanasMap = new Map();
 
   for (const evento of normalizados) {
@@ -186,8 +178,6 @@ function montarGrade(eventos) {
     .map(([chaveSemana, dados]) => {
       const segunda = paraDataLocal(chaveSemana);
 
-      // Segunda a sexta sempre aparecem (visual de grade escolar); fim de
-      // semana so entra na grade se tiver evento de verdade nele.
       const dias = [];
       for (let i = 0; i < 7; i++) {
         const dia = new Date(segunda.getFullYear(), segunda.getMonth(), segunda.getDate() + i);
@@ -219,13 +209,7 @@ function montarGrade(eventos) {
   return { horarios, semanas, vazia: false, mostrarRotuloSemana: semanas.length > 1 };
 }
 
-// Distribui as materias por dia util E por bloco de horario, variando o
-// tipo de atividade. O stride (blocos+1) evita que uma materia caia
-// sempre no mesmo bloco/tipo quando a quantidade de materias e multipla
-// da quantidade de blocos.
-//
-// ehPremium controla QUAIS tipos de atividade podem aparecer: exercicios
-// e simulado sao premium, entao o aluno gratuito so recebe estudo/revisao.
+
 function gerarRotinaGenerica(materias, diasUteis, ehPremium) {
   if (materias.length === 0) return [];
 
@@ -243,8 +227,6 @@ function gerarRotinaGenerica(materias, diasUteis, ehPremium) {
       const ocorrencia = ocorrenciasPorMateria.get(materia.id_materia) || 0;
       ocorrenciasPorMateria.set(materia.id_materia, ocorrencia + 1);
 
-      // Fecha a semana com um simulado no ultimo bloco da sexta (so pra
-      // quem tem simulado no plano).
       const ehUltimoBloco = indiceBloco === BLOCOS_ROTINA_GENERICA.length - 1;
       const tipo =
         ehPremium && ehSexta && ehUltimoBloco
@@ -266,11 +248,7 @@ function gerarRotinaGenerica(materias, diasUteis, ehPremium) {
   return itens;
 }
 
-// Gera N blocos de horario sequenciais e sem sobreposicao (limitados
-// pela janela do dia), com o tipo de atividade variando em ciclo. Usado
-// pra distribuir a quantidade de eventos que o professor/aluno escolheu
-// na geracao por IA, sem deixar o horario "bugado" (sobreposto ou fora
-// de uma janela realista).
+
 function gerarBlocosDia(quantidade) {
   const n = Math.max(1, Math.min(quantidade, JANELA_HORARIOS_IA.length));
 

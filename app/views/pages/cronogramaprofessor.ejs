@@ -1,109 +1,199 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronogramas</title>
-    <link href="../css/cronogramaprofessor.css" rel="stylesheet">
-    <link href="../css/excluiritem.css" rel="stylesheet">
-    <%- include("../partials/headerprofessorpremium.ejs") %>
+
+```
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cronogramas</title>
+
+<link href="../css/cronogramaprofessor.css" rel="stylesheet">
+
+<link href="../css/excluiritem.css" rel="stylesheet">
+
+<%- include("../partials/headerprofessorpremium.ejs") %>
+```
+
 </head>
 
 <body>
-    <main>
-        <h1>Cronogramas</h1>
-        <p class="subtitulo-cronograma">Cronogramas publicados aqui ficam disponíveis para todos os alunos premium.</p>
 
-        <% if (aviso) { %>
-            <p class="aviso-plano aviso-plano-<%= aviso.tipo %>" role="status"><%= aviso.texto %></p>
+```
+<main>
+
+    <h1>Cronogramas</h1>
+
+    <p class="subtitulo-cronograma">Cronogramas publicados aqui ficam disponíveis para todos os alunos premium.</p>
+
+    <% if (aviso) { %>
+
+        <p class="aviso-plano aviso-plano-<%= aviso.tipo %>" role="status"><%= aviso.texto %></p>
+
+    <% } %>
+
+    <!-- GERAR COM IA -->
+
+    <section class="criar-cronograma-container">
+
+        <h2>Gerar cronograma com IA</h2>
+
+        <form action="/cronogramaprofessor/gerar" method="POST" class="form-criar-cronograma">
+
+            <label>Tema
+
+                <input type="text" name="tema" placeholder="Ex: Revolução Francesa" required>
+
+            </label>
+
+            <label>Tipo
+
+                <select name="tipo">
+
+                    <option value="diario">Diário (horários de estudo)</option>
+
+                    <option value="semanal" selected>Semanal</option>
+
+                </select>
+
+            </label>
+
+            <label>Quantos eventos
+
+                <select name="quantidade">
+
+                    <% [5, 10, 15, 20, 25, 30].forEach(function (n) { %>
+
+                        <option value="<%= n %>" <%= n == 10 ? 'selected' : '' %>><%= n %></option>
+
+                    <% }) %>
+
+                </select>
+
+            </label>
+
+            <label>Data início
+
+                <input type="date" name="data_inicio" required>
+
+            </label>
+
+            <button type="submit">Gerar</button>
+
+        </form>
+
+        <p class="aviso-materia-simulado">A matéria usada é sempre a sua própria matéria cadastrada. Fica disponível só para alunos premium. No tipo diário, o máximo é 8 eventos.</p>
+
+    </section>
+
+    <!-- MONTAR NA MAO -->
+
+    <section class="montar-simulado-container">
+
+        <h2>Ou monte na mão</h2>
+
+        <form id="form-cronograma-manual" action="/cronogramaprofessor/gerar-manual" method="POST">
+
+            <input type="text" name="titulo" placeholder="Título do cronograma" class="input-titulo-manual" required>
+
+            <section id="eventos-manual-container"></section>
+
+            <section class="acoes-simulado-manual">
+
+                <button type="button" id="btn-add-evento" class="btn-add-pergunta">+ Adicionar evento</button>
+
+                <button type="submit" class="btn-salvar-manual">Publicar cronograma</button>
+
+            </section>
+
+        </form>
+
+    </section>
+
+    <template id="template-evento-manual">
+
+        <article class="pergunta-manual">
+
+            <header class="pergunta-manual-header">
+
+                <span class="pergunta-manual-numero"></span>
+
+                <button type="button" class="btn-remover-pergunta">Remover</button>
+
+            </header>
+
+            <input type="text" class="campo-titulo-evento" placeholder="Objetivo da aula" required>
+
+            <input type="text" class="campo-descricao-evento" placeholder="Conteúdo abordado">
+
+            <section class="campos-data-hora">
+
+                <input type="date" class="campo-data-evento" required>
+
+                <input type="time" class="campo-hora-inicio-evento" required>
+
+                <input type="time" class="campo-hora-fim-evento" required>
+
+            </section>
+
+        </article>
+
+    </template>
+
+    <!-- LISTA DE CRONOGRAMAS PUBLICADOS -->
+
+    <section class="cards-container">
+
+        <h2>Meus cronogramas publicados</h2>
+
+        <% if (meusCronogramas.length === 0) { %>
+
+            <p class="cronogramas-vazio">Nenhum cronograma publicado ainda. Gere um acima!</p>
+
         <% } %>
 
-        <!-- GERAR COM IA -->
-        <section class="criar-cronograma-container">
-            <h2>Gerar cronograma com IA</h2>
-            <form action="/cronogramaprofessor/gerar" method="POST" class="form-criar-cronograma">
-                <label>Tema
-                    <input type="text" name="tema" placeholder="Ex: Revolução Francesa" required>
-                </label>
-                <label>Tipo
-                    <select name="tipo">
-                        <option value="diario">Diário (horários de estudo)</option>
-                        <option value="semanal" selected>Semanal</option>
-                    </select>
-                </label>
-                <label>Quantos eventos
-                    <select name="quantidade">
-                        <% [5, 10, 15, 20, 25, 30].forEach(function (n) { %>
-                            <option value="<%= n %>" <%= n === 10 ? 'selected' : '' %>><%= n %></option>
-                        <% }) %>
-                    </select>
-                </label>
-                <label>Data início
-                    <input type="date" name="data_inicio" required>
-                </label>
-                <button type="submit">Gerar</button>
-            </form>
-            <p class="aviso-materia-simulado">A matéria usada é sempre a sua própria matéria cadastrada. Fica disponível só para alunos premium. No tipo diário, o máximo é 8 eventos.</p>
-        </section>
+        <% meusCronogramas.forEach(function (cronograma) { %>
 
-        <!-- MONTAR NA MAO -->
-        <section class="montar-simulado-container">
-            <h2>Ou monte na mão</h2>
-            <form id="form-cronograma-manual" action="/cronogramaprofessor/gerar-manual" method="POST">
-                <input type="text" name="titulo" placeholder="Título do cronograma" class="input-titulo-manual" required>
+            <article class="cronograma-item">
 
-                <div id="eventos-manual-container"></div>
-                <div class="acoes-simulado-manual">
-                    <button type="button" id="btn-add-evento" class="btn-add-pergunta">+ Adicionar evento</button>
-                    <button type="submit" class="btn-salvar-manual">Publicar cronograma</button>
-                </div>
-            </form>
-        </section>
+                <a href="/cronograma/<%= cronograma.codigo_lote %>" class="cronograma-link">
 
-        <template id="template-evento-manual">
-            <article class="pergunta-manual">
-                <div class="pergunta-manual-header">
-                    <span class="pergunta-manual-numero"></span>
-                    <button type="button" class="btn-remover-pergunta">Remover</button>
-                </div>
-                <input type="text" class="campo-titulo-evento" placeholder="Objetivo da aula" required>
-                <input type="text" class="campo-descricao-evento" placeholder="Conteúdo abordado">
-                <div class="campos-data-hora">
-                    <input type="date" class="campo-data-evento" required>
-                    <input type="time" class="campo-hora-inicio-evento" required>
-                    <input type="time" class="campo-hora-fim-evento" required>
-                </div>
+                    <article class="cronograma-card">
+
+                        <h3><%= cronograma.titulo_cronograma %></h3>
+
+                        <p class="cronograma-card-info"><%= cronograma.materia %></p>
+
+                        <p class="cronograma-card-info"><%= cronograma.total_eventos %> evento<%= cronograma.total_eventos > 1 ? 's' : '' %></p>
+
+                    </article>
+
+                </a>
+
+                <form action="/cronogramaprofessor/<%= cronograma.codigo_lote %>/excluir" method="POST" class="form-excluir-item"
+
+                    onsubmit="return confirm('Excluir o cronograma &quot;<%= cronograma.titulo_cronograma %>&quot; e seus <%= cronograma.total_eventos %> evento(s)?');">
+
+                    <button type="submit" class="botao-excluir-item">Excluir</button>
+
+                </form>
+
             </article>
-        </template>
 
-        <!-- LISTA DE CRONOGRAMAS PUBLICADOS -->
-        <section class="cards-container">
-            <h2>Meus cronogramas publicados</h2>
-            <% if (meusCronogramas.length === 0) { %>
-                <p class="cronogramas-vazio">Nenhum cronograma publicado ainda. Gere um acima!</p>
-            <% } %>
-            <% meusCronogramas.forEach(function (cronograma) { %>
-                <section class="cronograma-item">
-                    <a href="/cronograma/<%= cronograma.codigo_lote %>" class="cronograma-link">
-                        <article class="cronograma-card">
-                            <h3><%= cronograma.titulo_cronograma %></h3>
-                            <p class="cronograma-card-info"><%= cronograma.materia %></p>
-                            <p class="cronograma-card-info"><%= cronograma.total_eventos %> evento<%= cronograma.total_eventos > 1 ? 's' : '' %></p>
-                        </article>
-                    </a>
-                    <form action="/cronogramaprofessor/<%= cronograma.codigo_lote %>/excluir" method="POST" class="form-excluir-item"
-                        onsubmit="return confirm('Excluir o cronograma &quot;<%= cronograma.titulo_cronograma %>&quot; e seus <%= cronograma.total_eventos %> evento(s)?');">
-                        <button type="submit" class="botao-excluir-item">Excluir</button>
-                    </form>
-                </section>
-            <% }) %>
-        </section>
-    </main>
+        <% }) %>
 
-    <%- include("../partials/footer.ejs") %>
+    </section>
 
-        <script src="../js/cronogramamanual.js"></script>
+</main>
+
+<%- include("../partials/footer.ejs") %>
+
+    <script src="../js/cronogramamanual.js"></script>
+```
+
 </body>
 
 </html>

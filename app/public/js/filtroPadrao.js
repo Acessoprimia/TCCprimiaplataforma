@@ -1,5 +1,3 @@
-// Comportamento do filtro padrao (partials/filtroPadrao.ejs): abre/fecha o
-// modal e, no "Buscar", avisa a pagina com o evento "filtro:aplicar".
 (function () {
     const abrir = document.getElementById('openFilter');
     const fechar = document.getElementById('closeModal');

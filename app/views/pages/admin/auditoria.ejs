@@ -1,97 +1,171 @@
+```html
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Auditoria - Painel Administrativo Primia</title>
+
     <link href="/css/admin.css" rel="stylesheet">
+
     <%- include('../../partials/headeradmin.ejs') %>
+
 </head>
 
 <body>
+
     <main class="admin-page">
+
         <section class="admin-mobile-intro">
+
             <p class="admin-kicker">Painel Administrativo</p>
+
             <h1>Auditoria</h1>
+
             <p>Histórico do que alunos, professores e administradores fizeram na plataforma.</p>
+
         </section>
 
         <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'auditoria' }) %>
 
         <section class="admin-content">
+
             <section class="admin-panel" id="auditoria">
+
                 <header class="panel-header">
+
                     <article>
+
                         <h2>Registro de atividades</h2>
+
                         <p>Criações, edições e exclusões feitas por alunos, professores e administradores, da mais recente para a mais antiga.</p>
+
                     </article>
+
                 </header>
 
-                <div class="admin-search-bar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <input type="search" id="auditoriaBusca" placeholder="Buscar por nome, email ou descrição..." aria-label="Buscar atividades">
-                </div>
+                <form class="admin-search-bar">
 
-                <div class="admin-filtros-group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
+                        <circle cx="11" cy="11" r="8"></circle>
+
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+
+                    </svg>
+
+                    <input type="search" id="auditoriaBusca" placeholder="Buscar por nome, email ou descrição..." aria-label="Buscar atividades">
+
+                </form>
+
+                <section class="admin-filtros-group">
+
                     <nav class="admin-filtros" aria-label="Filtrar por tipo de usuário">
+
                         <button type="button" class="filtro-btn ativo" data-filtro-tipo="todos">Todos</button>
+
                         <button type="button" class="filtro-btn" data-filtro-tipo="aluno">Alunos</button>
+
                         <button type="button" class="filtro-btn" data-filtro-tipo="professor">Professores</button>
+
                         <button type="button" class="filtro-btn" data-filtro-tipo="admin">Administradores</button>
+
                     </nav>
 
                     <nav class="admin-filtros" aria-label="Filtrar por ação">
+
                         <button type="button" class="filtro-btn ativo" data-filtro-acao="todos">Todas as ações</button>
+
                         <button type="button" class="filtro-btn" data-filtro-acao="criou">Criou</button>
+
                         <button type="button" class="filtro-btn" data-filtro-acao="editou">Editou</button>
+
                         <button type="button" class="filtro-btn" data-filtro-acao="excluiu">Excluiu</button>
+
                     </nav>
 
                     <nav class="admin-filtros" aria-label="Filtrar por entidade">
+
                         <button type="button" class="filtro-btn ativo" data-filtro-entidade="todos">Todas as entidades</button>
+
                         <button type="button" class="filtro-btn" data-filtro-entidade="duvida">Dúvida</button>
+
                         <button type="button" class="filtro-btn" data-filtro-entidade="resposta">Resposta</button>
+
                         <button type="button" class="filtro-btn" data-filtro-entidade="conteudo">Conteúdo</button>
+
                         <button type="button" class="filtro-btn" data-filtro-entidade="formulario">Formulário</button>
+
                         <button type="button" class="filtro-btn" data-filtro-entidade="cronograma">Cronograma</button>
+
                         <button type="button" class="filtro-btn" data-filtro-entidade="redacao">Redação</button>
+
                         <button type="button" class="filtro-btn" data-filtro-entidade="conta">Conta</button>
+
                     </nav>
-                </div>
+
+                </section>
 
                 <% // Populada por auditoria.js a partir de #dados-auditoria; busca, filtros %>
+
                 <% // e paginacao sao client-side, no mesmo esquema de /admin/usuarios. %>
+
                 <section class="table-scroll">
+
                     <table class="admin-table">
+
                         <thead>
+
                             <tr>
+
                                 <th>Quando</th>
+
                                 <th>Quem</th>
+
                                 <th>Tipo</th>
+
                                 <th>Ação</th>
+
                                 <th>Entidade</th>
+
                                 <th>Descrição</th>
+
                             </tr>
+
                         </thead>
+
                         <tbody id="auditoriaTabela"></tbody>
+
                     </table>
+
                 </section>
 
                 <footer class="admin-pagination">
+
                     <p class="admin-pagination-info" id="auditoriaPaginacaoInfo">Carregando atividades...</p>
-                    <div class="admin-pagination-controles" id="auditoriaPaginacaoControles"></div>
+
+                    <nav class="admin-pagination-controles" id="auditoriaPaginacaoControles" aria-label="Paginação"></nav>
+
                 </footer>
+
             </section>
+
         </section>
+
     </main>
 
     <script id="dados-auditoria" type="application/json"><%- jsonParaScript(logs) %></script>
+
     <script src="/js/admin/auditoria.js"></script>
+
     <%- include('../../partials/footer.ejs') %>
+
 </body>
 
 </html>
+```

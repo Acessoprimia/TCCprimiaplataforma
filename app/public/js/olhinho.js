@@ -1,5 +1,3 @@
-// Mostrar/ocultar senha. Compartilhado por todas as telas com campo de senha:
-// o botao .mostrar-senha fica no mesmo .campo-wrapper do input.
 function toggleSenha(idCampo) {
     const campo = document.getElementById(idCampo);
     if (!campo) return;

@@ -1,8 +1,4 @@
 // Interacoes da pagina /admin/relatorios (cards, graficos, resumo mensal e filtro de periodo).
-// REGISTROS_DIARIOS_RELATORIOS_MOCK e MATERIAS_RELATORIO_MOCK vem dos dados reais embutidos
-// pelo servidor (ver relatorios.ejs) - nomes mantidos, conteudo real agora. DATA_REFERENCIA_
-// RELATORIOS agora e "hoje" de verdade, nao mais uma data fixa de mock. Esta pagina nao
-// depende de common.js: nao usa modais nem menus de acao, so o utilitario de escape.
 const REGISTROS_DIARIOS_RELATORIOS_MOCK = JSON.parse(document.getElementById("dados-relatorios").textContent);
 const MATERIAS_RELATORIO_MOCK = JSON.parse(document.getElementById("dados-materias-relatorio").textContent);
 const DATA_REFERENCIA_RELATORIOS = new Date();
@@ -175,10 +171,6 @@ function rotulosPorGranularidade(grupos, granularidade) {
 }
 
 // ---- Camada de dados: cards, series dos graficos e tabela ----
-// Cada funcao abaixo recebe registros diarios ja filtrados pelo periodo e devolve a
-// forma pronta para a interface. Quando a integracao real entrar, REGISTROS_DIARIOS_
-// RELATORIOS_MOCK sera substituido pela resposta da API e estas funcoes de agregacao
-// deixam de rodar no navegador, passando a vir prontas do backend.
 
 function calcularCardsRelatorios(registrosPeriodo, registrosPeriodoAnterior) {
     const usuariosAtual = somarCampo(registrosPeriodo, "novosAlunos") + somarCampo(registrosPeriodo, "novosProfessores");
@@ -258,9 +250,7 @@ function construirTabelaMensal(registrosPeriodo) {
         }));
 }
 
-// Assinatura pronta para virar uma chamada de API: quando o backend estiver disponivel,
-// o corpo desta funcao vira um fetch("/api/admin/relatorios?periodo=...") mantendo o
-// mesmo formato de retorno usado pela renderizacao abaixo.
+
 async function consultarRelatorios(estado) {
     const { inicio, fim, inicioAnterior, fimAnterior, granularidade } = resolverIntervaloPeriodo(estado);
     const registrosPeriodo = filtrarRegistrosPorIntervalo(REGISTROS_DIARIOS_RELATORIOS_MOCK, inicio, fim);
@@ -304,9 +294,6 @@ function renderizarCardsRelatorios(cartoes) {
 }
 
 // ---- Renderizacao: graficos ----
-// Os dois renderizadores abaixo produzem o mesmo SVG (classes de admin.css) que o
-// grafico de crescimento do dashboard, mas montado em JS para poder ser recalculado a
-// cada troca de periodo sem recarregar a pagina.
 
 function renderizarGraficoLinhas({ frameEl, legendaEl, labels, series, idGradiente }) {
     if (!labels.length) {
@@ -533,8 +520,6 @@ botaoAplicarPersonalizado.addEventListener("click", () => {
 });
 
 // ---- Inicializacao ----
-// Limita o seletor de datas personalizado ao intervalo coberto pelos dados mockados,
-// e pre-preenche com os ultimos 30 dias para dar um ponto de partida sensato.
 
 (function inicializarSeletorPersonalizado() {
     const chaveHoje = formatarChaveDia(DATA_REFERENCIA_RELATORIOS);

@@ -34,6 +34,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     btnAdicionar.addEventListener('click', adicionarEvento);
 
-    // Comeca com um evento ja visivel, pra nao precisar clicar antes de usar
+
     adicionarEvento();
 });

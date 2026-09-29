@@ -60,8 +60,6 @@ function aplicarTema(tema) {
             document.documentElement.removeAttribute("data-theme");
         }
     } catch (e) {
-        // localStorage indisponivel (modo privado, navegador bloqueando) -
-        // o tema so nao fica salvo entre visitas, mas a troca ainda funciona.
     }
 
     document.querySelectorAll(".tema-botao[data-tema]").forEach((botao) => {
@@ -103,7 +101,6 @@ function aplicarFonte(fonte) {
             document.documentElement.removeAttribute("data-fonte");
         }
     } catch (e) {
-        // localStorage indisponivel - a troca ainda funciona, so nao fica salva.
     }
 
     document.querySelectorAll(".fonte-botao[data-fonte]").forEach((botao) => {

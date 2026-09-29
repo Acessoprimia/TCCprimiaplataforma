@@ -22,14 +22,12 @@ function handleRoleSelection(event) {
     link.classList.remove('selected');
   });
 
-  // Adicionar classe 'selected' ao link clicado
+
   selectedLink.classList.add('selected');
 
-  // O link vai navegar naturalmente para a URL definida em href
-  // Se você quiser fazer algo antes de navegar, pode fazer aqui
 }
 
-// Suporte a navegação por teclado (Enter)
+
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Enter' && document.activeElement.classList.contains('link')) {
     document.activeElement.click();

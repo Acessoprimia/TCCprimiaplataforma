@@ -1,13 +1,4 @@
-// Service worker do PWA. Precisa morar na raiz (/sw.js) pra ter escopo
-// sobre o site inteiro.
-//
-// Regra principal: HTML NUNCA e cacheado. As paginas sao renderizadas no
-// servidor com dados da sessao (notificacoes, premium, admin...), entao
-// servir uma copia antiga poderia mostrar dado velho ou de outra conta.
-// Sem rede, a navegacao cai na /offline.html.
-//
-// Ao mudar a lista de PRECACHE ou a estrategia, suba a versao: o activate
-// apaga os caches antigos e todo mundo recebe a versao nova.
+
 const VERSAO_CACHE = "primia-v1";
 
 const PRECACHE = [
@@ -38,12 +29,10 @@ self.addEventListener("activate", (evento) => {
 self.addEventListener("fetch", (evento) => {
   const requisicao = evento.request;
 
-  // POST/PUT/DELETE (login, formularios, APIs) passam direto pro servidor.
   if (requisicao.method !== "GET") return;
 
   const url = new URL(requisicao.url);
 
-  // Cloudinary, Mercado Pago, fontes externas... nao sao nossos pra cachear.
   if (url.origin !== self.location.origin) return;
 
   if (requisicao.mode === "navigate") {
@@ -53,15 +42,13 @@ self.addEventListener("fetch", (evento) => {
     return;
   }
 
-  // CSS/JS: rede primeiro, pra alteracao no codigo aparecer no proximo F5
-  // (com cache primeiro o navegador mostraria o arquivo velho uma vez).
+
   if (url.pathname.startsWith("/css/") || url.pathname.startsWith("/js/")) {
     evento.respondWith(redePrimeiro(requisicao));
     return;
   }
 
-  // Imagens e icones quase nunca mudam: responde do cache na hora e
-  // atualiza em segundo plano.
+ 
   if (
     url.pathname.startsWith("/image/") ||
     url.pathname.startsWith("/icons/") ||
@@ -70,7 +57,6 @@ self.addEventListener("fetch", (evento) => {
     evento.respondWith(cachePrimeiro(requisicao, evento));
   }
 
-  // Todo o resto (rotas JSON, /health...) segue direto pra rede.
 });
 
 function guardarNoCache(requisicao, resposta) {
@@ -99,7 +85,6 @@ async function cachePrimeiro(requisicao, evento) {
   });
 
   if (doCache) {
-    // Mantem o SW vivo ate a atualizacao em segundo plano terminar.
     evento.waitUntil(daRede.catch(() => {}));
     return doCache;
   }

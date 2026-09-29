@@ -1,11 +1,5 @@
 // Interacoes da pagina /admin/conteudos (materias, livros e videoaulas).
-// Simulados, cronogramas e planos de estudo continuam geridos nas
-// telas proprias de cada professor - nao fazem parte desta pagina
-// porque nao moram na tabela Conteudo e nao tem upload de arquivo por
-// aqui, entao criar/editar esses tipos aqui deixaria dado inconsistente.
-// MATERIAS_MOCK e CONTEUDOS_MOCK vem dos dados reais embutidos pelo
-// servidor (ver conteudos.ejs) - nomes mantidos, conteudo real agora.
-// Depende das funcoes compartilhadas definidas em common.js.
+
 const CONTEUDOS_MOCK = JSON.parse(document.getElementById("dados-conteudos").textContent);
 const MATERIAS_MOCK = JSON.parse(document.getElementById("dados-materias").textContent);
 
@@ -39,9 +33,7 @@ const listaMaterias = document.getElementById("materiasLista");
 const contagemMaterias = document.getElementById("materiasContagem");
 
 // ---- Camada de dados ----
-// Assinatura pronta para virar uma chamada de API: quando o backend estiver
-// disponivel, o corpo desta funcao vira um fetch("/api/admin/conteudos?...")
-// mantendo os mesmos parametros de entrada e o mesmo formato de retorno.
+
 async function consultarConteudos({ busca, tipo, materia, status, acesso, pagina, tamanhoPagina }) {
     const buscaNormalizada = busca.trim().toLowerCase();
 
@@ -345,11 +337,7 @@ async function atualizarConteudos() {
 }
 
 // ---- Modal de conteudo (edicao de metadados) ----
-// So edita: titulo, autor, materia, status e acesso. Categoria (tipo) e
-// data de criacao nao sao editaveis - trocar o tipo de um conteudo ja
-// publicado deixaria arquivo_url incoerente (livro tem PDF, video tem
-// link do YouTube), e criar conteudo novo exige upload de arquivo, que
-// esta pagina nao faz (isso continua pelas telas do proprio professor).
+
 
 function abrirModalConteudo(conteudo) {
     abrirModal(

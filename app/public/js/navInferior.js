@@ -1,5 +1,3 @@
-// Barra de navegacao inferior: marca o item da pagina atual e faz o botao
-// "Menu" abrir o mesmo menu lateral do hamburguer do topo.
 (function () {
     const barra = document.querySelector('.nav-inferior');
     if (!barra) return;
@@ -19,8 +17,7 @@
         botaoMenu.addEventListener('click', () => hamburger.click());
     }
 
-    // O hamburguer do topo fica escondido (navInferior.css), entao o menu
-    // lateral precisa de um jeito proprio de fechar.
+
     const menuLateral = document.getElementById('navMobile');
     if (menuLateral && hamburger) {
         const fechar = document.createElement('button');

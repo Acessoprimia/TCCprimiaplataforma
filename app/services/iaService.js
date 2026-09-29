@@ -2,15 +2,7 @@ const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const { PDFParse } = require("pdf-parse");
 const CronogramaService = require("./cronogramaService");
 
-// Fixo, nao "-latest": o alias "-latest" e trocado pelo Google sem
-// aviso a cada lancamento novo e concentra o trafego de todo mundo que
-// nao fixou versao - e um dos fatores que mais gera 503 "high demand".
-// Usa 3.5 (nao a versao mais nova, 3.7) de proposito: testamos na mao e
-// o 3.7-flash tem cota gratuita diaria minuscula por ser recem-lancado
-// (20 requisicoes/dia por chave - estourou so com os testes desta
-// sessao). O 3.5 e estabelecido, com cota bem mais folgada, e continua
-// sendo uma versao fixa (nao muda sozinha). Pra atualizar de proposito
-// no futuro, so mudar esta constante (ou setar GEMINI_MODEL no .env).
+
 const nomeModelo = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
 const LIMITE_CARACTERES_PDF = 40000;
@@ -23,14 +15,10 @@ const QUANTIDADE_MAXIMA_EVENTOS = 30;
 const REGEX_DATA = /^\d{4}-\d{2}-\d{2}$/;
 const REGEX_HORA = /^([01]\d|2[0-3]):[0-5]\d$/;
 const NOTA_MAXIMA_COMPETENCIA = 200;
-const TAMANHO_MINIMO_REDACAO = 50; // caracteres - evita gastar cota da IA com texto vazio/lixo
-const TAMANHO_MAXIMO_REDACAO = 6000; // ~800-1000 palavras, folga generosa sobre o limite do ENEM
+const TAMANHO_MINIMO_REDACAO = 50; 
+const TAMANHO_MAXIMO_REDACAO = 6000; 
 
-// Le GEMINI_API_KEY (compatibilidade com o formato antigo, usado ainda
-// no deploy) mais GEMINI_API_KEY_1, _2, _3... A cota diaria do free
-// tier e por PROJETO do Google Cloud, entao cada chave de um projeto
-// diferente da direito a cota propria - e isso que permite rotacionar
-// quando uma estoura.
+
 function coletarChavesGemini() {
   const chaves = [];
 
@@ -166,9 +154,7 @@ const SCHEMA_ANALISE_DESEMPENHO = {
 
 const LIMITE_MATERIAS_FRACAS = 3;
 
-// Um "cliente" por chave, cada um com os 5 modelos que o servico usa.
-// getGenerativeModel(...) so monta a config, nao faz nenhuma chamada de
-// rede, entao criar N clientes de uma vez e barato.
+
 const clientesGemini = coletarChavesGemini().map((chave) => {
   const genAI = new GoogleGenerativeAI(chave);
   return {
@@ -180,11 +166,7 @@ const clientesGemini = coletarChavesGemini().map((chave) => {
   };
 });
 
-// Indice da chave em uso agora. Fica "grudado" na proxima chave depois
-// que uma estoura, pra nao ficar testando de novo uma chave ja sabida
-// como esgotada a cada chamada - so volta pra primeira quando o
-// processo reinicia (deploy novo, nodemon, etc), que e quando a cota
-// diaria tende a ja ter resetado de qualquer forma.
+
 let indiceChaveAtual = 0;
 
 function ehErroDeCota(erro) {
@@ -192,19 +174,12 @@ function ehErroDeCota(erro) {
   return /429|quota|Too Many Requests/i.test(mensagem);
 }
 
-// 503 "model overloaded" e sobrecarga temporaria do lado do Google, sem
-// relacao com cota - trocar de chave nao ajuda em nada (o modelo fica
-// sobrecarregado pra todo mundo, nao so pra uma chave). A propria
-// mensagem de erro deles recomenda tentar de novo em instantes, entao e
-// isso que MAX_TENTATIVAS_ERRO_TEMPORARIO faz, na mesma chave.
+
 function ehErroTemporario(erro) {
   return erro?.status === 503 || /Service Unavailable|overloaded|high demand/i.test(String(erro?.message || ""));
 }
 
-// Backoff exponencial: 1.5s, 3s, 6s, 12s (~22.5s de espera total, mais
-// o tempo das proprias chamadas) - cobre picos de sobrecarga mais
-// longos que os ~4.5s de antes, sem deixar a espera descontrolada (o
-// hosting costuma cortar requisicao em ~30s).
+
 const MAX_TENTATIVAS_ERRO_TEMPORARIO = 4;
 const ESPERA_BASE_MS = 1500;
 
@@ -212,12 +187,7 @@ function aguardar(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Chama generateContent no modelo indicado (por nome: "modelo",
-// "modeloSimulado" ou "modeloCronograma"), tentando as chaves
-// disponiveis em sequencia quando uma delas estoura a cota, e re-
-// tentando a mesma chave (com espera curta) em erro temporario (503).
-// Qualquer outro erro (chave invalida, rede, etc) sobe na hora, sem
-// mascarar o problema real.
+
 async function gerarComRotacaoDeChave(nomeModeloLogico, args) {
   let ultimoErro;
   let tentativasTemporariasRestantes = MAX_TENTATIVAS_ERRO_TEMPORARIO;
@@ -236,7 +206,7 @@ async function gerarComRotacaoDeChave(nomeModeloLogico, args) {
         tentativasTemporariasRestantes--;
         console.error(`Gemini sobrecarregado (503), tentando de novo em ${espera}ms...`);
         await aguardar(espera);
-        tentativa--; // nao consome tentativa de chave - e a mesma chave de novo
+        tentativa--; 
         continue;
       }
 
@@ -254,9 +224,7 @@ async function gerarComRotacaoDeChave(nomeModeloLogico, args) {
   throw ultimoErro;
 }
 
-// Mesma logica de nunca confiar direto no JSON: valida formato de data
-// (YYYY-MM-DD) e hora (HH:MM), limita tamanho de texto e quantidade de
-// eventos antes de virar linha no banco / aparecer no calendario.
+
 function validarCronogramaGerado(json, quantidadeMaxima) {
   if (!json || !Array.isArray(json.eventos)) {
     throw new Error("Formato invalido retornado pela IA.");
@@ -289,9 +257,7 @@ function validarCronogramaGerado(json, quantidadeMaxima) {
   return { eventos };
 }
 
-// Nunca confiar direto no JSON que a IA devolve: valida tipo, tamanho e
-// limites de cada campo antes de deixar isso virar um Formulario salvo
-// no banco / renderizado pro aluno.
+
 function validarFormularioGerado(json, quantidadeEsperada) {
   if (!json || !Array.isArray(json.perguntas)) {
     throw new Error("Formato invalido retornado pela IA.");
@@ -332,12 +298,7 @@ function validarFormularioGerado(json, quantidadeEsperada) {
 
 const SLUG_ENEM = "enem_dissertativo_argumentativo";
 
-// Catalogo dos generos de redacao suportados. As 5 colunas nota_c1..c5/
-// comentario_c1..c5 no banco sao genericas (servem pra qualquer genero)
-// - so o CONTEUDO de cada slot (nome do criterio + instrucao de prompt)
-// muda por genero aqui. VARCHAR no banco em vez de ENUM porque essa
-// lista vive so aqui - manter um enum sincronizado no banco seria uma
-// segunda fonte de verdade (ver comentario em schema.sql).
+
 const PERFIS_REDACAO = Object.freeze({
   [SLUG_ENEM]: {
     rotulo: "📝 ENEM — Dissertativo-argumentativa",
@@ -455,9 +416,7 @@ function resolverTipoRedacao(tipoRedacao) {
   return PERFIS_REDACAO[tipoRedacao] ? tipoRedacao : SLUG_ENEM;
 }
 
-// Fallback pro ENEM cobre tanto slug ausente/invalido quanto um slug
-// orfao (redacao antiga referenciando um genero que um dia deixe de
-// existir no catalogo) - nunca deixa a tela de resultado quebrar.
+
 function buscarPerfilRedacao(tipoRedacao) {
   const slug = resolverTipoRedacao(tipoRedacao);
   return { slug, ...PERFIS_REDACAO[slug] };
@@ -475,9 +434,7 @@ function validarCompetencia(json, chave, indice, competencias) {
     throw new Error(`Competencia ${indice + 1} sem nota valida retornada pela IA.`);
   }
 
-  // Clampa em vez de rejeitar: a IA as vezes extrapola por 1-2 pontos, e
-  // o formato so aceita multiplos de 20 (0,20,40...200) - arredonda pro
-  // multiplo de 20 mais proximo dentro do range.
+ 
   const notaClampada = Math.min(
     Math.max(Math.round(notaBruta / 20) * 20, 0),
     NOTA_MAXIMA_COMPETENCIA
@@ -492,9 +449,7 @@ function validarCompetencia(json, chave, indice, competencias) {
   };
 }
 
-// Nunca confia na soma que a IA disser (nem existe campo pra isso no
-// schema, de proposito) - a nota total e sempre recalculada aqui a
-// partir das 5 notas ja validadas/clampadas.
+
 function validarCorrecaoGerada(json, competencias) {
   const c1 = validarCompetencia(json, "competencia1", 0, competencias);
   const c2 = validarCompetencia(json, "competencia2", 1, competencias);
@@ -546,12 +501,7 @@ function montarPromptAnaliseDesempenho(resumo, materiasDisponiveis) {
   ].join(" ");
 }
 
-// Nunca confia direto no JSON: filtra materiasFracas mantendo SO o que
-// bate (case-insensitive/trim) com materiasDisponiveis - nome inventado
-// pela IA e descartado em silencio (nunca vira erro visivel, so reduz a
-// lista). Devolve os OBJETOS {id_materia, nome} casados, nao a string
-// crua da IA - o codigo que usa o resultado precisa do id pra buscar
-// Conteudo de verdade (nunca a IA cita titulo de conteudo).
+
 function validarAnaliseGerada(json, materiasDisponiveis) {
   if (!json || typeof json !== "object") {
     throw new Error("Formato invalido retornado pela IA.");
@@ -581,12 +531,11 @@ function validarAnaliseGerada(json, materiasDisponiveis) {
     diagnostico: textoOuFallback(json.diagnostico, "Análise gerada sem diagnóstico detalhado.", 1500),
     pontosFortes: textoOuFallback(json.pontosFortes, "Análise gerada sem pontos fortes detalhados.", 1000),
     recomendacaoGeral: textoOuFallback(json.recomendacaoGeral, "Continue praticando simulados e redações.", 1000),
-    materiasFracas, // [{id_materia, nome}]
+    materiasFracas, 
   };
 }
 
-// Calcula datas de verdade em vez de deixar a IA fazer conta de dia da
-// semana (erra com frequencia) - comeca em dataBase e pula sabado/domingo.
+
 function calcularProximosDiasUteis(dataBase, quantidade) {
   const dias = [];
   const cursor = new Date(`${dataBase}T00:00:00`);
@@ -594,8 +543,6 @@ function calcularProximosDiasUteis(dataBase, quantidade) {
   while (dias.length < quantidade) {
     const diaSemana = cursor.getDay();
     if (diaSemana !== 0 && diaSemana !== 6) {
-      // Formata pelo horario local: toISOString converte pra UTC e
-      // devolvia o dia anterior em fuso positivo.
       const ano = cursor.getFullYear();
       const mes = String(cursor.getMonth() + 1).padStart(2, "0");
       const dia = String(cursor.getDate()).padStart(2, "0");
@@ -607,10 +554,7 @@ function calcularProximosDiasUteis(dataBase, quantidade) {
   return dias;
 }
 
-// A IA promete "horarios diferentes e sem sobreposicao" mas nem sempre
-// cumpre (mesmo problema que ja acontecia com as datas). A gente ja sabe
-// quais blocos de horario fazem sentido pra quantidade pedida, entao
-// forca isso no codigo em vez de confiar na IA - ver gerarBlocosDia().
+
 const QUANTIDADE_PADRAO_DIARIO = 4;
 const QUANTIDADE_PADRAO_SEMANAL = 10;
 const QUANTIDADE_MINIMA_EVENTOS = 3;
@@ -716,9 +660,7 @@ const IaService = Object.freeze({
     return validarFormularioGerado(json, qtd);
   },
 
-  // Exposta pra reaproveitar a mesma validacao rigorosa quando o
-  // professor monta o simulado na mao (nunca confiar em dado vindo de
-  // formulario tambem, do mesmo jeito que nao se confia na IA).
+
   validarFormulario(json, quantidadeMaxima) {
     return validarFormularioGerado(json, quantidadeMaxima ?? QUANTIDADE_MAXIMA_PERGUNTAS);
   },
@@ -735,10 +677,7 @@ const IaService = Object.freeze({
     }
 
     const perfil = buscarPerfilRedacao(tipoRedacao);
-    // As instrucoes de cada perfil guardam "${tema}" como texto literal
-    // (nao interpolado - o tema so existe aqui, em tempo de chamada),
-    // substituido na mao pra nao precisar transformar cada entrada do
-    // catalogo numa funcao.
+  
     const instrucoesComTema = perfil.instrucoes.replace(/\$\{tema\}/g, temaLimpo);
 
     const prompt = [
@@ -774,14 +713,10 @@ const IaService = Object.freeze({
     return validarAnaliseGerada(json, materiasDisponiveis);
   },
 
-  // Exposta pro teste isolado da defesa anti-alucinacao (mesmo padrao
-  // de validarFormulario/validarCronograma, ja expostas justamente pra
-  // permitir reuso/teste).
+
   validarAnaliseGerada,
 
-  // Expostas pro router/views montarem o seletor de genero e resolverem
-  // o rotulo/competencias de uma redacao ja salva, sem duplicar o
-  // catalogo PERFIS_REDACAO em outro arquivo.
+
   resolverTipoRedacao,
   buscarPerfilRedacao,
   listarPerfisRedacao,
@@ -794,10 +729,7 @@ const IaService = Object.freeze({
 
     const diasUteis = calcularProximosDiasUteis(dataBase, 5);
 
-    // "diario" cabe tudo num dia so, entao o teto e MAX_BLOCOS_POR_DIA.
-    // "semanal" espalha pelos 5 dias uteis, entao o teto e por dia
-    // tambem (senao um numero grande vira um dia absurdo de cheio) - o
-    // total fica limitado por QUANTIDADE_MAXIMA_EVENTOS la embaixo.
+ 
     const blocosDia =
       tipoValido === "diario"
         ? CronogramaService.gerarBlocosDia(
@@ -845,10 +777,7 @@ const IaService = Object.freeze({
 
     const cronogramaValidado = validarCronogramaGerado(json, QUANTIDADE_MAXIMA_EVENTOS);
 
-    // A IA as vezes ignora a instrucao e repete a mesma data/horario em
-    // varios eventos (mesmo pedindo explicitamente datas diferentes). A
-    // gente ja sabe exatamente quais datas e blocos de horario devem ser
-    // usados, entao forca isso no codigo em vez de confiar na IA.
+
     if (tipoValido === "diario") {
       cronogramaValidado.eventos = cronogramaValidado.eventos
         .slice(0, blocosDia.length)
@@ -870,8 +799,7 @@ const IaService = Object.freeze({
     return cronogramaValidado;
   },
 
-  // Exposta pra reaproveitar a mesma validacao quando o professor monta
-  // o cronograma na mao, mesmo principio do validarFormulario.
+
   validarCronograma(json, quantidadeMaxima) {
     return validarCronogramaGerado(json, quantidadeMaxima ?? QUANTIDADE_MAXIMA_EVENTOS);
   },

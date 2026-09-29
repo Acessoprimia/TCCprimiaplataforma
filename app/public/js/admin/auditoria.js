@@ -1,12 +1,7 @@
-// Interacoes da pagina /admin/auditoria. Mesmo esquema de usuarios.js:
-// os logs vem embutidos pelo servidor no script #dados-auditoria e busca,
-// filtros e paginacao rodam no navegador. Nao carrega common.js porque a
-// pagina nao tem modais (common.js depende deles).
 const LOGS_AUDITORIA = JSON.parse(document.getElementById("dados-auditoria").textContent);
 
 const TAMANHO_PAGINA_DESKTOP_AUDITORIA = 20;
 const TAMANHO_PAGINA_MOBILE_AUDITORIA = 10;
-// Mesmo breakpoint usado em admin.css para empilhar a tabela em telas pequenas.
 const MEDIA_QUERY_MOBILE_AUDITORIA = window.matchMedia("(max-width: 559px)");
 
 function tamanhoPaginaAuditoria() {
@@ -127,8 +122,7 @@ campoBuscaAuditoria.addEventListener("input", () => {
     }, 250);
 });
 
-// Cada grupo de pilulas (data-filtro-tipo / -acao / -entidade) controla a
-// chave de mesmo nome em estadoConsultaAuditoria.
+
 ["tipo", "acao", "entidade"].forEach((chave) => {
     const seletor = `[data-filtro-${chave}]`;
 
@@ -154,7 +148,6 @@ paginacaoControlesAuditoria.addEventListener("click", (evento) => {
     atualizarTabelaAuditoria();
 });
 
-// No mobile a tabela empilha em cards, entao cada pagina fica menor.
 function sincronizarTamanhoPaginaAuditoria() {
     const novoTamanho = tamanhoPaginaAuditoria();
 

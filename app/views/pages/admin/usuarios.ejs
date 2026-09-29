@@ -1,93 +1,161 @@
+```html
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Usuários - Painel Administrativo Primia</title>
+
     <link href="/css/admin.css" rel="stylesheet">
+
     <%- include('../../partials/headeradmin.ejs') %>
+
 </head>
 
 <body>
+
     <main class="admin-page">
+
         <section class="admin-mobile-intro">
+
             <p class="admin-kicker">Painel Administrativo</p>
+
             <h1>Usuários</h1>
+
             <p>Alunos, professores, administradores e assinaturas premium em um único lugar.</p>
+
         </section>
 
         <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'usuarios' }) %>
 
         <section class="admin-content">
+
             <section class="admin-panel" id="usuarios">
+
                 <header class="panel-header panel-header-actions">
+
                     <article>
+
                         <h2>Usuários da plataforma</h2>
+
                         <p>Visualização de dados de login, tipo de conta, status e acesso premium.</p>
+
                     </article>
+
                 </header>
 
-                <div class="admin-search-bar">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                    <input type="search" id="usuariosBusca" placeholder="Buscar por nome, email ou ID de acesso..." aria-label="Buscar usuários">
-                </div>
+                <form class="admin-search-bar">
 
-                <div class="admin-filtros-group">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
+                        <circle cx="11" cy="11" r="8"></circle>
+
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+
+                    </svg>
+
+                    <input type="search" id="usuariosBusca" placeholder="Buscar por nome, email ou ID de acesso..." aria-label="Buscar usuários">
+
+                </form>
+
+                <section class="admin-filtros-group">
+
                     <nav class="admin-filtros" aria-label="Filtrar por tipo de conta">
+
                         <button type="button" class="filtro-btn ativo" data-filtro-usuarios="todos">Todos</button>
+
                         <button type="button" class="filtro-btn" data-filtro-usuarios="aluno">Alunos</button>
+
                         <button type="button" class="filtro-btn" data-filtro-usuarios="professor">Professores</button>
+
                         <button type="button" class="filtro-btn" data-filtro-usuarios="admin">Administradores</button>
+
                         <button type="button" class="filtro-btn" data-filtro-usuarios="premium">Premium</button>
+
                     </nav>
 
                     <nav class="admin-filtros" aria-label="Filtrar por status">
+
                         <button type="button" class="filtro-btn ativo" data-filtro-status="todos">Todos os status</button>
+
                         <button type="button" class="filtro-btn" data-filtro-status="ativo">Ativo</button>
+
                         <button type="button" class="filtro-btn" data-filtro-status="bloqueado">Bloqueado</button>
+
                         <button type="button" class="filtro-btn" data-filtro-status="inativo">Inativo</button>
+
                     </nav>
-                </div>
+
+                </section>
 
                 <% // A tabela abaixo e populada em tempo de execucao por usuarios.js a partir de %>
                 <% // USUARIOS_MOCK, que agora vem dos dados reais embutidos no script abaixo em %>
                 <% // vez do gerador de fake data. Busca, filtros e paginacao continuam client-side. %>
+
                 <section class="table-scroll">
+
                     <table class="admin-table">
+
                         <thead>
+
                             <tr>
+
                                 <th>Nome</th>
+
                                 <th>Email</th>
+
                                 <th>Tipo</th>
+
                                 <th>Status</th>
+
                                 <th>Premium</th>
+
                                 <th>Último acesso</th>
+
                                 <th>ID</th>
+
                                 <th>Ações</th>
+
                             </tr>
+
                         </thead>
+
                         <tbody id="usuariosTabela"></tbody>
+
                     </table>
+
                 </section>
 
                 <footer class="admin-pagination">
+
                     <p class="admin-pagination-info" id="usuariosPaginacaoInfo">Carregando usuários...</p>
-                    <div class="admin-pagination-controles" id="usuariosPaginacaoControles"></div>
+
+                    <nav class="admin-pagination-controles" id="usuariosPaginacaoControles" aria-label="Paginação"></nav>
+
                 </footer>
+
             </section>
+
         </section>
+
     </main>
 
     <%- include('../../partials/adminModals.ejs') %>
 
     <script id="dados-usuarios" type="application/json"><%- jsonParaScript(usuarios) %></script>
+
     <script src="/js/admin/common.js"></script>
+
     <script src="/js/admin/usuarios.js"></script>
+
     <%- include('../../partials/footer.ejs') %>
+
 </body>
 
 </html>
+```

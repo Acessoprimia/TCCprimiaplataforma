@@ -1,108 +1,201 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Simulados - Primia</title>
 
-    <link href="../css/simuladoprofessor.css" rel="stylesheet">
-    <link href="../css/excluiritem.css" rel="stylesheet">
-    <%- include('../partials/headerprofessorpremium.ejs') %>
+```
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Meus Simulados - Primia</title>
+
+<link href="../css/simuladoprofessor.css" rel="stylesheet">
+
+<link href="../css/excluiritem.css" rel="stylesheet">
+
+<%- include('../partials/headerprofessorpremium.ejs') %>
+```
+
 </head>
 
 <body>
-    <!-- SEÇÃO PRINCIPAL -->
-    <main class="container-simulados">
-        <!-- TÍTULO -->
+
+```
+<!-- SEÇÃO PRINCIPAL -->
+
+<main class="container-simulados">
+
+    <!-- TÍTULO -->
+
+    <header>
+
         <h1 class="titulo-simulados">Meus simulados</h1>
+
         <p class="subtitulo-simulados">Simulados publicados aqui ficam disponíveis para todos os alunos premium.</p>
 
-        <!-- GERAR NOVO SIMULADO -->
-        <section class="gerar-simulado-container">
-            <h2>Gerar simulado com IA</h2>
-            <form action="/simuladoprofessor/gerar" method="POST" class="gerar-simulado-form">
-                <input type="text" name="tema" placeholder="Sobre qual tema? Ex: Revolução Francesa" required>
-                <select name="quantidade">
-                    <% for (let i = 1; i <= 10; i++) { %>
-                        <option value="<%= i %>" <%= i === 5 ? 'selected' : '' %>><%= i %> pergunta<%= i > 1 ? 's' : '' %></option>
-                    <% } %>
-                </select>
-                <select name="dificuldade">
-                    <option value="facil">Fácil</option>
-                    <option value="medio" selected>Médio</option>
-                    <option value="dificil">Difícil</option>
-                </select>
-                <button type="submit">Gerar</button>
-            </form>
-            <p class="aviso-materia-simulado">A matéria usada é sempre a sua própria matéria cadastrada.</p>
-        </section>
+    </header>
 
-        <!-- MONTAR SIMULADO NA MAO -->
-        <section class="montar-simulado-container">
-            <h2>Ou monte na mão</h2>
-            <form id="form-simulado-manual" action="/simuladoprofessor/manual" method="POST">
-                <input type="text" name="titulo" placeholder="Título do simulado" required class="input-titulo-manual">
+    <!-- GERAR NOVO SIMULADO -->
 
-                <div id="perguntas-manual-container"></div>
+    <section class="gerar-simulado-container">
 
-                <div class="acoes-simulado-manual">
-                    <button type="button" id="btn-add-pergunta" class="btn-add-pergunta">+ Adicionar pergunta</button>
-                    <button type="submit" class="btn-salvar-manual">Salvar simulado</button>
-                </div>
-            </form>
-        </section>
+        <h2>Gerar simulado com IA</h2>
 
-        <template id="template-pergunta-manual">
-            <article class="pergunta-manual">
-                <div class="pergunta-manual-header">
-                    <span class="pergunta-manual-numero"></span>
-                    <button type="button" class="btn-remover-pergunta">Remover</button>
-                </div>
-                <input type="text" class="campo-enunciado" placeholder="Enunciado da pergunta" required>
-                <div class="alternativas-manual">
-                    <label class="alternativa-manual-item">
-                        <input type="radio" class="radio-correta" required>
-                        <input type="text" class="campo-alternativa" placeholder="Alternativa 1" required>
-                    </label>
-                    <label class="alternativa-manual-item">
-                        <input type="radio" class="radio-correta" required>
-                        <input type="text" class="campo-alternativa" placeholder="Alternativa 2" required>
-                    </label>
-                    <label class="alternativa-manual-item">
-                        <input type="radio" class="radio-correta" required>
-                        <input type="text" class="campo-alternativa" placeholder="Alternativa 3" required>
-                    </label>
-                    <label class="alternativa-manual-item">
-                        <input type="radio" class="radio-correta" required>
-                        <input type="text" class="campo-alternativa" placeholder="Alternativa 4" required>
-                    </label>
-                </div>
-                <input type="text" class="campo-explicacao" placeholder="Explicação da resposta certa (opcional)">
+        <form action="/simuladoprofessor/gerar" method="POST" class="gerar-simulado-form">
+
+            <input type="text" name="tema" placeholder="Sobre qual tema? Ex: Revolução Francesa" required>
+
+            <select name="quantidade">
+
+                <% for (let i = 1; i <= 10; i++) { %>
+
+                    <option value="<%= i %>" <%= i === 5 ? 'selected' : '' %>><%= i %> pergunta<%= i > 1 ? 's' : '' %></option>
+
+                <% } %>
+
+            </select>
+
+            <select name="dificuldade">
+
+                <option value="facil">Fácil</option>
+
+                <option value="medio" selected>Médio</option>
+
+                <option value="dificil">Difícil</option>
+
+            </select>
+
+            <button type="submit">Gerar</button>
+
+        </form>
+
+        <p class="aviso-materia-simulado">A matéria usada é sempre a sua própria matéria cadastrada.</p>
+
+    </section>
+
+    <!-- MONTAR SIMULADO NA MAO -->
+
+    <section class="montar-simulado-container">
+
+        <h2>Ou monte na mão</h2>
+
+        <form id="form-simulado-manual" action="/simuladoprofessor/manual" method="POST">
+
+            <input type="text" name="titulo" placeholder="Título do simulado" required class="input-titulo-manual">
+
+            <section id="perguntas-manual-container"></section>
+
+            <section class="acoes-simulado-manual">
+
+                <button type="button" id="btn-add-pergunta" class="btn-add-pergunta">+ Adicionar pergunta</button>
+
+                <button type="submit" class="btn-salvar-manual">Salvar simulado</button>
+
+            </section>
+
+        </form>
+
+    </section>
+
+    <template id="template-pergunta-manual">
+
+        <article class="pergunta-manual">
+
+            <header class="pergunta-manual-header">
+
+                <span class="pergunta-manual-numero"></span>
+
+                <button type="button" class="btn-remover-pergunta">Remover</button>
+
+            </header>
+
+            <input type="text" class="campo-enunciado" placeholder="Enunciado da pergunta" required>
+
+            <fieldset class="alternativas-manual">
+
+                <label class="alternativa-manual-item">
+
+                    <input type="radio" class="radio-correta" required>
+
+                    <input type="text" class="campo-alternativa" placeholder="Alternativa 1" required>
+
+                </label>
+
+                <label class="alternativa-manual-item">
+
+                    <input type="radio" class="radio-correta" required>
+
+                    <input type="text" class="campo-alternativa" placeholder="Alternativa 2" required>
+
+                </label>
+
+                <label class="alternativa-manual-item">
+
+                    <input type="radio" class="radio-correta" required>
+
+                    <input type="text" class="campo-alternativa" placeholder="Alternativa 3" required>
+
+                </label>
+
+                <label class="alternativa-manual-item">
+
+                    <input type="radio" class="radio-correta" required>
+
+                    <input type="text" class="campo-alternativa" placeholder="Alternativa 4" required>
+
+                </label>
+
+            </fieldset>
+
+            <input type="text" class="campo-explicacao" placeholder="Explicação da resposta certa (opcional)">
+
+        </article>
+
+    </template>
+
+    <!-- LISTA DE SIMULADOS -->
+
+    <section class="secao-simulados" id="secao-andamento">
+
+        <% if (meusFormularios.length === 0) { %>
+
+            <p class="simulados-vazio">Nenhum simulado publicado ainda. Gere um acima!</p>
+
+        <% } %>
+
+        <% meusFormularios.forEach(function (formulario) { %>
+
+            <article class="card-simulado" data-status="andamento" data-disciplina="<%= formulario.materia || '' %>">
+
+                <h2 class="titulo-simulado"><%= formulario.titulo %></h2>
+
+                <p class="origem-simulado"><% if (formulario.materia) { %><%= formulario.materia %><% } %></p>
+
+                <a href="/simulado/<%= formulario.id_formulario %>" class="botao-simulado botao-andamento">Ver</a>
+
+                <form action="/simuladoprofessor/<%= formulario.id_formulario %>/excluir" method="POST" class="form-excluir-item"
+
+                    onsubmit="return confirm('Excluir o simulado &quot;<%= formulario.titulo %>&quot;? As respostas dos alunos também serão apagadas.');">
+
+                    <button type="submit" class="botao-excluir-item">Excluir</button>
+
+                </form>
+
             </article>
-        </template>
 
-        <!-- LISTA DE SIMULADOS -->
-        <section class="secao-simulados" id="secao-andamento">
-            <% if (meusFormularios.length === 0) { %>
-                <p class="simulados-vazio">Nenhum simulado publicado ainda. Gere um acima!</p>
-            <% } %>
-            <% meusFormularios.forEach(function (formulario) { %>
-                <article class="card-simulado" data-status="andamento" data-disciplina="<%= formulario.materia || '' %>">
-                    <h2 class="titulo-simulado"><%= formulario.titulo %></h2>
-                    <p class="origem-simulado"><% if (formulario.materia) { %><%= formulario.materia %><% } %></p>
-                    <a href="/simulado/<%= formulario.id_formulario %>" class="botao-simulado botao-andamento">Ver</a>
-                    <form action="/simuladoprofessor/<%= formulario.id_formulario %>/excluir" method="POST" class="form-excluir-item"
-                        onsubmit="return confirm('Excluir o simulado &quot;<%= formulario.titulo %>&quot;? As respostas dos alunos também serão apagadas.');">
-                        <button type="submit" class="botao-excluir-item">Excluir</button>
-                    </form>
-                </article>
-            <% }) %>
-        </section>
-    </main>
+        <% }) %>
 
-    <%- include('../partials/footer.ejs') %>
-    <script src="../js/simuladomanual.js"></script>
+    </section>
+
+</main>
+
+<%- include('../partials/footer.ejs') %>
+
+<script src="../js/simuladomanual.js"></script>
+```
+
 </body>
 
 </html>

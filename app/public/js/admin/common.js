@@ -1,5 +1,5 @@
 // Funcoes e estado compartilhados entre as paginas do painel administrativo.
-// Cada pagina define sua propria tratarAcaoAdmin(botao) e registra handlers em adminModalHandlers.
+
 
 let modalModo = "";
 let modalOrigem = null;
@@ -19,9 +19,7 @@ const confirmFechar = document.getElementById("confirmFechar");
 const confirmCancelar = document.getElementById("confirmCancelar");
 const confirmExecutar = document.getElementById("confirmExecutar");
 
-// Chamada generica pras rotas /admin/... que ja persistem no banco.
-// Lanca erro com a mensagem que o servidor mandou (pra virar toast),
-// em vez de um "Failed to fetch" generico.
+
 async function chamarApiAdmin(url, corpo) {
     const resposta = await fetch(url, {
         method: "POST",
@@ -38,9 +36,7 @@ async function chamarApiAdmin(url, corpo) {
     return dados;
 }
 
-// Mesma coisa, mas pra quando o formulario tem upload de arquivo -
-// FormData em vez de JSON, sem "Content-Type" manual (o browser define
-// o boundary do multipart sozinho).
+
 async function chamarApiAdminArquivo(url, formData) {
     const resposta = await fetch(url, { method: "POST", body: formData });
     const dados = await resposta.json().catch(() => ({}));
@@ -199,9 +195,7 @@ function abrirModalVisualizacao(titulo, conteudo, origem = null) {
     abrirModal(titulo, "visualizar", campoLeitura("Informações", conteudo), origem);
 }
 
-// Chegada vinda do sino: /admin/<tela>?destaque=<id>. Acha o item na lista
-// completa (estado inicial, sem filtros), pula pra pagina dele, rola ate a
-// linha e a destaca. Devolve a linha (ou null) pra tela poder fazer mais.
+
 async function destacarItemDaUrl({ lista, estado, atualizar, atributoLinha, rotulo }) {
     const parametros = new URLSearchParams(window.location.search);
     const id = Number(parametros.get("destaque"));
@@ -210,7 +204,6 @@ async function destacarItemDaUrl({ lista, estado, atualizar, atributoLinha, rotu
         return null;
     }
 
-    // Limpa a URL pra um F5 nao repetir o destaque.
     window.history.replaceState(null, "", window.location.pathname);
 
     const indice = lista.findIndex((item) => item.id === id);
@@ -251,9 +244,6 @@ function fecharTodosMenus() {
     document.querySelectorAll('[data-menu-toggle][aria-expanded="true"]').forEach((botao) => botao.setAttribute("aria-expanded", "false"));
 }
 
-// O menu e position: fixed pra nao ser recortado pelo overflow-x da tabela,
-// entao as coordenadas precisam ser calculadas na mao. Alinha pela direita do
-// botao e vira pra cima/esquerda quando nao cabe na janela.
 function posicionarMenu(menu, gatilho) {
     const botao = gatilho.getBoundingClientRect();
     menu.style.visibility = "hidden";
@@ -308,9 +298,6 @@ document.addEventListener("click", (evento) => {
     }
 });
 
-// Menu fixed nao acompanha a rolagem: se a pagina (ou a tabela) rolar, ele
-// ficaria flutuando longe do botao que o abriu. Fechar e o comportamento
-// esperado e evita ter que reposicionar a cada frame.
 window.addEventListener("scroll", fecharTodosMenus, true);
 window.addEventListener("resize", fecharTodosMenus);
 

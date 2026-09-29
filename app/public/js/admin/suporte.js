@@ -1,13 +1,10 @@
 // Interacoes da pagina /admin/suporte (denuncias + mensagens de contato).
-// DENUNCIAS_MOCK e CONTATOS_MOCK vem dos dados reais embutidos pelo
-// servidor (ver suporte.ejs) - nomes mantidos, conteudo real agora.
-// Depende das funcoes compartilhadas definidas em common.js.
+
 const DENUNCIAS_MOCK = JSON.parse(document.getElementById("dados-denuncias").textContent);
 const CONTATOS_MOCK = JSON.parse(document.getElementById("dados-contatos").textContent);
 
 const TAMANHO_PAGINA_DESKTOP_SUPORTE = 10;
 const TAMANHO_PAGINA_MOBILE_SUPORTE = 5;
-// Mesmo breakpoint usado em admin.css para empilhar a tabela em telas pequenas.
 const MEDIA_QUERY_MOBILE_SUPORTE = window.matchMedia("(max-width: 559px)");
 
 function tamanhoPaginaAtualSuporte() {
@@ -118,9 +115,6 @@ const estadoConsultaDenuncias = {
     tamanhoPagina: tamanhoPaginaAtualSuporte(),
 };
 
-// Assinatura pronta para virar uma chamada de API: quando o backend estiver
-// disponivel, o corpo desta funcao vira um fetch("/api/admin/denuncias?...")
-// mantendo os mesmos parametros de entrada e o mesmo formato de retorno.
 async function consultarDenuncias({ busca, status, prioridade, tipo, pagina, tamanhoPagina }) {
     const buscaNormalizada = busca.trim().toLowerCase();
 
@@ -392,8 +386,6 @@ function sincronizarTamanhoPaginaSuporte() {
 
 MEDIA_QUERY_MOBILE_SUPORTE.addEventListener("change", sincronizarTamanhoPaginaSuporte);
 
-// Alguns ambientes nao disparam o evento "change" do matchMedia ao redimensionar;
-// o listener de resize (com debounce) garante que a pagina se ajuste de qualquer forma.
 let temporizadorResizeSuporte = null;
 window.addEventListener("resize", () => {
     window.clearTimeout(temporizadorResizeSuporte);
@@ -510,9 +502,6 @@ function confirmarDesfechoDenuncia(denuncia, resolucao, titulo, texto, mensagem)
     });
 }
 
-// Diferente de confirmarDesfechoDenuncia: essa apaga o conteudo
-// denunciado de verdade (Conteudo/Formulario/Duvida), nao so troca um
-// rotulo. Por isso o texto de confirmacao avisa que nao da pra desfazer.
 function confirmarRemocaoConteudoDenuncia(denuncia) {
     abrirConfirmacao(
         "Remover conteúdo denunciado",
@@ -646,8 +635,6 @@ adminModalHandlers["resposta-contato"] = async function registrarRespostaContato
 
 renderizarResumoSuporte();
 
-// Vindo do sino: ?aba=denuncias|contato&destaque=<id> abre a aba certa e
-// destaca a linha. A aba padrao continua sendo denuncias.
 const abaDoAlerta = new URLSearchParams(window.location.search).get("aba");
 const tabelasSuporte = Promise.all([atualizarTabelaDenuncias(), atualizarTabelaContato()]);
 

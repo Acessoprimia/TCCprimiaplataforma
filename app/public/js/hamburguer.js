@@ -49,13 +49,10 @@ function atualizarContador(total) {
   }
 }
 
-// Quem manda e o proprio dropdown (notificacoesadmin.ejs): paginas compartilhadas
-// como /configuracoes usam o header admin mas nao tem .admin-page.
+
 const ehPaginaAdmin = !!(notifDropdown && notifDropdown.dataset.notifAdmin === "true");
 
-// Itens do sino admin sao agregados de 3 tabelas diferentes (denuncia,
-// contato, conteudo em rascunho) - nao tem id_notificacao nem conceito
-// de "lida" como as notificacoes normais, entao o item so navega.
+
 function montarItemNotificacaoAdmin(item) {
   const li = document.createElement("li");
   li.className = "notif-item nova";

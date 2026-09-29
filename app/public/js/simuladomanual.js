@@ -40,6 +40,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     btnAdicionar.addEventListener('click', adicionarPergunta);
 
-    // Comeca com uma pergunta ja visivel, pra nao precisar clicar antes de usar
     adicionarPergunta();
 });

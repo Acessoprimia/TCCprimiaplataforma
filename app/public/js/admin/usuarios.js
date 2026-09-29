@@ -1,8 +1,5 @@
 // Interacoes da pagina /admin/usuarios (alunos, professores, admins e premium).
-// USUARIOS_MOCK vem dos dados reais embutidos pelo servidor no script
-// #dados-usuarios (ver usuarios.ejs) - o nome ficou o mesmo de quando
-// era gerado fake, mas o conteudo agora e o retorno real do banco.
-// Depende das funcoes compartilhadas definidas em common.js.
+
 const USUARIOS_MOCK = JSON.parse(document.getElementById("dados-usuarios").textContent);
 
 const TAMANHO_PAGINA_DESKTOP = 20;

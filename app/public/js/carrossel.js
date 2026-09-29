@@ -24,18 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
   lista.insertBefore(prefixo, lista.firstChild);
   lista.appendChild(sufixo);
 
-  // indice = posicao do slide "atual" dentro de lista.children (0-based).
-  // Os slides tem larguras diferentes (o texto varia), entao a posicao de
-  // rolagem e sempre calculada a partir da posicao real do elemento
-  // (offsetLeft), nunca de "indice * largura fixa".
-  let indice = totalSlides; // primeiro slide original
+
+  let indice = totalSlides; 
   let autoplayId = null;
   let retomarAutoplayId = null;
 
-  // offsetLeft e relativo ao offsetParent do elemento (aqui, o <nav> externo
-  // com position:relative, nao o proprio container de rolagem #carrossel).
-  // Por isso a posicao e sempre medida via getBoundingClientRect(), relativa
-  // ao próprio #carrossel, para nao herdar o padding/gap/botoes do <nav>.
+ 
   function posicaoRelativa(elemento) {
     const retElemento = elemento.getBoundingClientRect();
     const retCarrossel = carrossel.getBoundingClientRect();
@@ -46,9 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const centroAlvo = posicaoRelativa(elemento) + elemento.offsetWidth / 2;
     const destino = centroAlvo - carrossel.clientWidth / 2;
 
-    // Pulo instantaneo (fim do loop infinito): atribuir scrollLeft direto
-    // evita qualquer disputa com o scroll-snap nativo que "scrollTo(auto)"
-    // pode sofrer quando chamado de dentro do proprio handler de scroll.
+    
     if (reduzMovimento || !comAnimacao) {
       carrossel.scrollLeft = destino;
       return;
@@ -98,8 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function atualizarDestaque() {
-    // Recalcula a partir da posicao real de rolagem em vez de confiar so na
-    // variavel "indice", que pode dessincronizar entre resize e autoplay.
     indice = slideMaisProximoDoCentro();
     lista.querySelectorAll('.slide').forEach((slide, i) => {
       slide.classList.toggle('slide-ativo', i === indice);
@@ -152,8 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
     scrollTimeout = setTimeout(() => {
       indice = slideMaisProximoDoCentro();
 
-      // Chegou numa copia clonada da ponta: pula sem animar para o
-      // equivalente no bloco original, mantendo a ilusao de loop infinito.
+
       if (indice < totalSlides) {
         indice += totalSlides;
         centralizar(lista.children[indice], false);

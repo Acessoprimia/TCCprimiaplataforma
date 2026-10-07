@@ -72,6 +72,17 @@ body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 16px;
+    list-style: none;
+}
+
+/* Lista de numeros: o <li> e o item do grid e o cartao ocupa a altura toda dele. */
+.grade-stats-resultados > li {
+    display: flex;
+    flex-direction: column;
+}
+
+.grade-stats-resultados > li > * {
+    flex: 1 1 auto;
 }
 
 .card-stat {

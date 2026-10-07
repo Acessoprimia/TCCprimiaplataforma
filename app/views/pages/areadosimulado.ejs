@@ -43,10 +43,10 @@
                 </form>
             </section>
         <% } else { %>
-            <section class="upsell-premium-simulado">
+            <aside class="upsell-premium-simulado">
                 <p>✨ Assinantes premium podem gerar o próprio simulado com IA e acessam simulados exclusivos publicados pelos professores.</p>
                 <a href="/partepremium">Conhecer o premium</a>
-            </section>
+            </aside>
         <% } %>
 
         <!-- ABAS DE FILTRO -->
@@ -62,12 +62,12 @@
         <%- include('../partials/filtroPadrao.ejs', { opcoesFiltro: materias.map(function (m) { return { valor: m.nome, nome: m.nome }; }) }) %>
 
         <!-- SEÇÃO DE SIMULADOS EM ANDAMENTO -->
-        <section class="secao-simulados" id="secao-andamento">
+        <ul class="secao-simulados" id="secao-andamento">
             <% if (emAndamento.length === 0) { %>
-                <p class="simulados-vazio">Nenhum simulado em andamento. Gere um acima!</p>
+                <li><p class="simulados-vazio">Nenhum simulado em andamento. Gere um acima!</p></li>
             <% } %>
             <% emAndamento.forEach(function (formulario) { %>
-                <article class="card-simulado" data-status="andamento" data-disciplina="<%= formulario.materia || '' %>">
+                <li><article class="card-simulado" data-status="andamento" data-disciplina="<%= formulario.materia || '' %>">
                     <h2 class="titulo-simulado"><%= formulario.titulo %></h2>
                     <p class="origem-simulado"><%= formulario.origem %><% if (formulario.materia) { %> · <%= formulario.materia %><% } %></p>
                     <a href="/simulado/<%= formulario.id_formulario %>" class="botao-simulado botao-andamento">Faça</a>
@@ -77,17 +77,17 @@
                             <button type="submit" class="botao-excluir-item">Excluir</button>
                         </form>
                     <% } %>
-                </article>
+                </article></li>
             <% }) %>
-        </section>
+        </ul>
 
         <!-- SEÇÃO DE SIMULADOS FINALIZADOS (OCULTA POR PADRÃO) -->
-        <section class="secao-simulados oculta" id="secao-finalizados">
+        <ul class="secao-simulados oculta" id="secao-finalizados">
             <% if (finalizados.length === 0) { %>
-                <p class="simulados-vazio">Nenhum simulado finalizado ainda.</p>
+                <li><p class="simulados-vazio">Nenhum simulado finalizado ainda.</p></li>
             <% } %>
             <% finalizados.forEach(function (formulario) { %>
-                <article class="card-simulado" data-status="finalizados" data-disciplina="<%= formulario.materia || '' %>">
+                <li><article class="card-simulado" data-status="finalizados" data-disciplina="<%= formulario.materia || '' %>">
                     <h2 class="titulo-simulado"><%= formulario.titulo %></h2>
                     <p class="origem-simulado"><%= formulario.origem %><% if (formulario.materia) { %> · <%= formulario.materia %><% } %></p>
                     <a href="/simulado/<%= formulario.id_formulario %>" class="botao-simulado botao-finalizado">Ver resultado</a>
@@ -97,9 +97,9 @@
                             <button type="submit" class="botao-excluir-item">Excluir</button>
                         </form>
                     <% } %>
-                </article>
+                </article></li>
             <% }) %>
-        </section>
+        </ul>
     </main>
 
     <script src="../js/areadosimulado.js"></script>

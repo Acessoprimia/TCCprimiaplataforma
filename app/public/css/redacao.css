@@ -269,6 +269,17 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 18px;
     margin-bottom: 30px;
+    list-style: none;
+}
+
+/* Lista de competencias: o <li> e o item do grid e o cartao ocupa a altura toda dele. */
+.competencias-grid > li {
+    display: flex;
+    flex-direction: column;
+}
+
+.competencias-grid > li > * {
+    flex: 1 1 auto;
 }
 
 .card-competencia {

@@ -123,3 +123,8 @@ body {
     color: var(--c-666, #666);
     font-style: italic;
 }
+
+/* Perguntas corrigidas: lista ordenada (o numero ja vem no titulo de cada uma). */
+.simulado-resultado-lista {
+    list-style: none;
+}

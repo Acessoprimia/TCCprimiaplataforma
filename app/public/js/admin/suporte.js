@@ -155,22 +155,20 @@ function linhaDenunciaHtml(denuncia) {
             <td data-label="Status"><span class="status ${CLASSES_STATUS_DENUNCIA[denuncia.status]}">${ROTULOS_STATUS_DENUNCIA[denuncia.status]}</span></td>
             <td data-label="Data">${formatarDataSuporte(denuncia.criadoEm)}</td>
             <td data-label="Ações" class="table-actions-cell">
-                <div class="table-menu-wrap">
-                    <button type="button" class="table-menu-trigger" data-menu-toggle aria-haspopup="true" aria-expanded="false" aria-label="Acoes da denuncia ${denuncia.codigo}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="1"></circle>
-                            <circle cx="12" cy="5" r="1"></circle>
-                            <circle cx="12" cy="19" r="1"></circle>
-                        </svg>
-                    </button>
-                    <div class="table-menu" role="menu">
-                        <button type="button" data-admin-action="visualizar-denuncia">Visualizar</button>
-                        <button type="button" data-admin-action="responder-denuncia">Responder</button>
-                        <button type="button" data-admin-action="resolver-denuncia">Resolver</button>
-                        <button type="button" data-admin-action="ignorar-denuncia">Ignorar</button>
-                        <button type="button" class="danger" data-admin-action="remover-conteudo-denuncia">Remover conteúdo</button>
-                    </div>
-                </div>
+                <button type="button" class="table-menu-trigger" data-menu-toggle aria-expanded="false" aria-label="Acoes da denuncia ${denuncia.codigo}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="12" cy="5" r="1"></circle>
+                        <circle cx="12" cy="19" r="1"></circle>
+                    </svg>
+                </button>
+                <menu class="table-menu">
+                    <li><button type="button" data-admin-action="visualizar-denuncia">Visualizar</button></li>
+                    <li><button type="button" data-admin-action="responder-denuncia">Responder</button></li>
+                    <li><button type="button" data-admin-action="resolver-denuncia">Resolver</button></li>
+                    <li><button type="button" data-admin-action="ignorar-denuncia">Ignorar</button></li>
+                    <li><button type="button" class="danger" data-admin-action="remover-conteudo-denuncia">Remover conteúdo</button></li>
+                </menu>
             </td>
         </tr>
     `;
@@ -297,21 +295,19 @@ function linhaContatoHtml(contato) {
             <td data-label="Status"><span class="status ${CLASSES_STATUS_CONTATO[contato.status]}">${ROTULOS_STATUS_CONTATO[contato.status]}</span></td>
             <td data-label="Data">${formatarDataSuporte(contato.criadoEm)}</td>
             <td data-label="Ações" class="table-actions-cell">
-                <div class="table-menu-wrap">
-                    <button type="button" class="table-menu-trigger" data-menu-toggle aria-haspopup="true" aria-expanded="false" aria-label="Acoes da mensagem de ${escapeHtml(contato.nome)}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="1"></circle>
-                            <circle cx="12" cy="5" r="1"></circle>
-                            <circle cx="12" cy="19" r="1"></circle>
-                        </svg>
-                    </button>
-                    <div class="table-menu" role="menu">
-                        <button type="button" data-admin-action="visualizar-contato">Visualizar</button>
-                        <button type="button" data-admin-action="responder-contato">Responder</button>
-                        <button type="button" data-admin-action="resolver-contato">Marcar resolvido</button>
-                        <button type="button" class="danger" data-admin-action="excluir-contato">Excluir</button>
-                    </div>
-                </div>
+                <button type="button" class="table-menu-trigger" data-menu-toggle aria-expanded="false" aria-label="Acoes da mensagem de ${escapeHtml(contato.nome)}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="12" cy="5" r="1"></circle>
+                        <circle cx="12" cy="19" r="1"></circle>
+                    </svg>
+                </button>
+                <menu class="table-menu">
+                    <li><button type="button" data-admin-action="visualizar-contato">Visualizar</button></li>
+                    <li><button type="button" data-admin-action="responder-contato">Responder</button></li>
+                    <li><button type="button" data-admin-action="resolver-contato">Marcar resolvido</button></li>
+                    <li><button type="button" class="danger" data-admin-action="excluir-contato">Excluir</button></li>
+                </menu>
             </td>
         </tr>
     `;

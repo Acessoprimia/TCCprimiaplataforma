@@ -45,11 +45,11 @@
             </form>
         <% } else { %>
             <!-- RESULTADO / PREVIEW -->
-            <section class="simulado-resultado-lista">
+            <ol class="simulado-resultado-lista">
                 <% formulario.schema_json.perguntas.forEach(function (pergunta, indice) {
                     const resposta = !modoPreview && respostas ? respostas[pergunta.id] : null;
                 %>
-                    <article class="simulado-pergunta-resultado">
+                    <li><article class="simulado-pergunta-resultado">
                         <h2><%= indice + 1 %>. <%= pergunta.enunciado %></h2>
                         <ul class="simulado-alternativas-resultado">
                             <% pergunta.alternativas.forEach(function (alternativa, indiceAlt) {
@@ -66,9 +66,9 @@
                         <% if (pergunta.explicacao) { %>
                             <p class="simulado-explicacao"><%= pergunta.explicacao %></p>
                         <% } %>
-                    </article>
+                    </article></li>
                 <% }) %>
-            </section>
+            </ol>
         <% } %>
     </main>
     <%- include('../partials/footer.ejs') %>

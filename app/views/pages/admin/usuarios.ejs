@@ -33,115 +33,113 @@
 
         <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'usuarios' }) %>
 
-        <section class="admin-content">
 
-            <section class="admin-panel" id="usuarios">
+        <section class="admin-panel" id="usuarios">
 
-                <header class="panel-header panel-header-actions">
+            <header class="panel-header panel-header-actions">
 
-                    <article>
+                <hgroup>
 
-                        <h2>Usuários da plataforma</h2>
+                    <h2>Usuários da plataforma</h2>
 
-                        <p>Visualização de dados de login, tipo de conta, status e acesso premium.</p>
+                    <p>Visualização de dados de login, tipo de conta, status e acesso premium.</p>
 
-                    </article>
+                </hgroup>
 
-                </header>
+            </header>
 
-                <form class="admin-search-bar">
+            <form class="admin-search-bar">
 
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 
-                        <circle cx="11" cy="11" r="8"></circle>
+                    <circle cx="11" cy="11" r="8"></circle>
 
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
 
-                    </svg>
+                </svg>
 
-                    <input type="search" id="usuariosBusca" placeholder="Buscar por nome, email ou ID de acesso..." aria-label="Buscar usuários">
+                <input type="search" id="usuariosBusca" placeholder="Buscar por nome, email ou ID de acesso..." aria-label="Buscar usuários">
 
-                </form>
+            </form>
 
-                <section class="admin-filtros-group">
+            <search class="admin-filtros-group">
 
-                    <nav class="admin-filtros" aria-label="Filtrar por tipo de conta">
+                <nav class="admin-filtros" aria-label="Filtrar por tipo de conta">
 
-                        <button type="button" class="filtro-btn ativo" data-filtro-usuarios="todos">Todos</button>
+                    <button type="button" class="filtro-btn ativo" data-filtro-usuarios="todos">Todos</button>
 
-                        <button type="button" class="filtro-btn" data-filtro-usuarios="aluno">Alunos</button>
+                    <button type="button" class="filtro-btn" data-filtro-usuarios="aluno">Alunos</button>
 
-                        <button type="button" class="filtro-btn" data-filtro-usuarios="professor">Professores</button>
+                    <button type="button" class="filtro-btn" data-filtro-usuarios="professor">Professores</button>
 
-                        <button type="button" class="filtro-btn" data-filtro-usuarios="admin">Administradores</button>
+                    <button type="button" class="filtro-btn" data-filtro-usuarios="admin">Administradores</button>
 
-                        <button type="button" class="filtro-btn" data-filtro-usuarios="premium">Premium</button>
+                    <button type="button" class="filtro-btn" data-filtro-usuarios="premium">Premium</button>
 
-                    </nav>
+                </nav>
 
-                    <nav class="admin-filtros" aria-label="Filtrar por status">
+                <nav class="admin-filtros" aria-label="Filtrar por status">
 
-                        <button type="button" class="filtro-btn ativo" data-filtro-status="todos">Todos os status</button>
+                    <button type="button" class="filtro-btn ativo" data-filtro-status="todos">Todos os status</button>
 
-                        <button type="button" class="filtro-btn" data-filtro-status="ativo">Ativo</button>
+                    <button type="button" class="filtro-btn" data-filtro-status="ativo">Ativo</button>
 
-                        <button type="button" class="filtro-btn" data-filtro-status="bloqueado">Bloqueado</button>
+                    <button type="button" class="filtro-btn" data-filtro-status="bloqueado">Bloqueado</button>
 
-                        <button type="button" class="filtro-btn" data-filtro-status="inativo">Inativo</button>
+                    <button type="button" class="filtro-btn" data-filtro-status="inativo">Inativo</button>
 
-                    </nav>
+                </nav>
 
-                </section>
+            </search>
 
-                <% // A tabela abaixo e populada em tempo de execucao por usuarios.js a partir de %>
-                <% // USUARIOS_MOCK, que agora vem dos dados reais embutidos no script abaixo em %>
-                <% // vez do gerador de fake data. Busca, filtros e paginacao continuam client-side. %>
+            <% // A tabela abaixo e populada em tempo de execucao por usuarios.js a partir de %>
+            <% // USUARIOS_MOCK, que agora vem dos dados reais embutidos no script abaixo em %>
+            <% // vez do gerador de fake data. Busca, filtros e paginacao continuam client-side. %>
 
-                <section class="table-scroll">
+            <figure class="table-scroll">
 
-                    <table class="admin-table">
+                <table class="admin-table">
 
-                        <thead>
+                    <thead>
 
-                            <tr>
+                        <tr>
 
-                                <th>Nome</th>
+                            <th>Nome</th>
 
-                                <th>Email</th>
+                            <th>Email</th>
 
-                                <th>Tipo</th>
+                            <th>Tipo</th>
 
-                                <th>Status</th>
+                            <th>Status</th>
 
-                                <th>Premium</th>
+                            <th>Premium</th>
 
-                                <th>Último acesso</th>
+                            <th>Último acesso</th>
 
-                                <th>ID</th>
+                            <th>ID</th>
 
-                                <th>Ações</th>
+                            <th>Ações</th>
 
-                            </tr>
+                        </tr>
 
-                        </thead>
+                    </thead>
 
-                        <tbody id="usuariosTabela"></tbody>
+                    <tbody id="usuariosTabela"></tbody>
 
-                    </table>
+                </table>
 
-                </section>
+            </figure>
 
-                <footer class="admin-pagination">
+            <footer class="admin-pagination">
 
-                    <p class="admin-pagination-info" id="usuariosPaginacaoInfo">Carregando usuários...</p>
+                <p class="admin-pagination-info" id="usuariosPaginacaoInfo">Carregando usuários...</p>
 
-                    <nav class="admin-pagination-controles" id="usuariosPaginacaoControles" aria-label="Paginação"></nav>
+                <nav class="admin-pagination-controles" id="usuariosPaginacaoControles" aria-label="Paginação"></nav>
 
-                </footer>
-
-            </section>
+            </footer>
 
         </section>
+
 
     </main>
 

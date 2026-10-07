@@ -21,9 +21,9 @@
 </head>
 
 <body>
-    <section class="page-content-wrapper">
-        <!-- MAIN: INSCRIÇÃO + IMAGEM -->
-        <main>
+    <main class="home">
+        <!-- ABERTURA: INSCRIÇÃO + IMAGEM -->
+        <header class="hero">
         <h1 class="sr-only">Primia - pagina inicial</h1>
             <aside>
                 <h2><span>Inscreva-se agora</span></h2>
@@ -40,35 +40,31 @@
             <article>
                 <img src="<%= (typeof configuracoesSite !== 'undefined' && configuracoesSite.banner_principal_url) || '../image/roxoestudo.webp' %>" alt="homem em dúvida">
             </article>
-        </main>
-    </section>
+        </header>
 
-    <!-- JORNADA COLABORATIVA -->
-    <section id="jornada">
-        <article class="jornada-card">
-            <nav class="jornada-content">
+        <!-- JORNADA COLABORATIVA -->
+        <section id="jornada" class="jornada-card">
+            <header class="jornada-content">
                 <h2 class="jornada-title">Uma jornada de aprendizagem colaborativa...</h2>
                 <p class="jornada-text">
                     Valorizar cada estudante como único(a) foi o que nos permitiu desenvolver uma
                     solução completa e que promove a personalização do processo de aprendizado
                     em cada segmento de ensino.
                 </p>
-            </nav>
+            </header>
             <nav class="jornada-buttons">
                 <button class="jornada-btn">Dúvidas</button>
                 <button class="jornada-btn">Interação</button>
                 <button class="jornada-btn">Perfis</button>
             </nav>
-        </article>
-    </section>
+        </section>
 
-    <section class="page-content-wrapper">
         <!-- RECURSOS PARA ESCOLA -->
         <section id="recursos">
             <figure class="recursos-image">
                 <img src="../image/escolab.webp" alt="Estudantes em sala de aula">
             </figure>
-            <article class="recursos-content">
+            <header class="recursos-content">
                 <h2 class="recursos-title">E ainda os melhores <span class="destaque">recursos para sua escola
                         brilhar!</span></h2>
                 <p class="recursos-text">
@@ -77,7 +73,7 @@
                        de crescimento. Explore oportunidades de retenção e captação de novas matrículas, 
                        posicionamento e muito mais!
                 </p>
-            </article>
+            </header>
         </section>
 
         <!-- MATERIAS - CARROSSEL -->
@@ -100,23 +96,21 @@
             <h2 class="material">Explore as matérias:</h2>
             <nav class="carrossel">
                 <button class="pass" id="prev">&lt;&lt;</button>
-                <section class="conteudo" id="carrossel">
-                    <ul class="lista" id="lista">
-                        <% materias.forEach(function (materia) { %>
-                            <li class="slide" data-materia="<%= materia.nome %>">
-                                <a href="#" aria-label="<%= materia.nome %>" title="<%= materia.nome %>">
-                                    <% if (materia.icone_svg) { %>
-                                        <%- materia.icone_svg %>
-                                    <% } else if (materia.icone_url) { %>
-                                        <img src="<%= materia.icone_url %>" alt="" class="materia-icone-upload">
-                                    <% } else { %>
-                                        <%- iconesConhecidos[materia.nome] || iconeGenerico %>
-                                    <% } %>
-                                </a>
-                            </li>
-                        <% }) %>
-                    </ul>
-                </section>
+                <ul class="lista" id="lista">
+                    <% materias.forEach(function (materia) { %>
+                        <li class="slide" data-materia="<%= materia.nome %>">
+                            <a href="#" aria-label="<%= materia.nome %>" title="<%= materia.nome %>">
+                                <% if (materia.icone_svg) { %>
+                                    <%- materia.icone_svg %>
+                                <% } else if (materia.icone_url) { %>
+                                    <img src="<%= materia.icone_url %>" alt="" class="materia-icone-upload">
+                                <% } else { %>
+                                    <%- iconesConhecidos[materia.nome] || iconeGenerico %>
+                                <% } %>
+                            </a>
+                        </li>
+                    <% }) %>
+                </ul>
                 <button class="pass" id="next">&gt;&gt;</button>
             </nav>
             <article class="materias-dots" id="materias-dots"></article>
@@ -125,25 +119,25 @@
         <!-- ACESSO -->
         <section id="acesso">
             <h2 class="areas">Áreas de Acesso</h2>
-            <section class="acesso-container">
-                <article class="acesso-card1">
+            <ul class="acesso-container">
+                <li><article class="acesso-card1">
                     <h3>Alunos</h3>
                     <p>Esclareça suas dúvidas e participe das discussões.</p>
                     <a href="/cadastro">
                         <p>Cadastre-se >></p>
                     </a>
-                </article>
+                </article></li>
 
-                <article class="acesso-card3">
+                <li><article class="acesso-card3">
                     <h3>Professor</h3>
                     <p>Tire dúvidas, dê suporte aos alunos e acompanhe atividades.</p>
                     <a href="/cadastroprofessor">
                         <p>Cadastre-se >></p>
                     </a>
-                </article>
-            </section>
+                </article></li>
+            </ul>
         </section>
-    </section>
+    </main>
 
     <script src="../js/carrossel.js"></script>
 

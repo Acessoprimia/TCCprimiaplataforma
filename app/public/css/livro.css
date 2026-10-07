@@ -31,13 +31,13 @@ body {
         }
 
         /* Seção do cabeçalho da página com imagem do livro */
-        section.book-header {
+        header.book-header {
             position: relative;
             padding: 60px 20px 30px;
             text-align: center;
         }
 
-        section.book-header::before {
+        header.book-header::before {
             content: '';
             position: absolute;
             top: 0;
@@ -148,7 +148,7 @@ body {
             margin-bottom: 12px;
         }
 
-        section.book-header {
+        header.book-header {
     padding-top: 80px; /* Ajuste este valor conforme a altura do seu header + um pouco de espaço */
 }
 

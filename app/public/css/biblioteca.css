@@ -85,12 +85,11 @@ body {
     object-fit: cover;
 }
 
-.livro-info {
+/* O titulo fica direto no cartao (antes dentro de um invólucro .livro-info
+   que so dava o padding e a centralizacao). */
+.livro-titulo {
     padding: 15px;
     text-align: center;
-}
-
-.livro-titulo {
     font-size: 0.875rem;
     color: var(--accent, #A398D1);
     font-weight: 600;

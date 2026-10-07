@@ -31,9 +31,7 @@
                         <span class="badge-premium">Premium</span>
                     <% } %>
                     <img class="livro-cover" src="<%= livro.imagem_url || '../image/escolab.webp' %>" alt="<%= livro.titulo %>">
-                    <section class="livro-info">
-                        <p class="livro-titulo"><%= livro.titulo %></p>
-                    </section>
+                    <p class="livro-titulo"><%= livro.titulo %></p>
                 </article>
             </a>
         <% }) %>

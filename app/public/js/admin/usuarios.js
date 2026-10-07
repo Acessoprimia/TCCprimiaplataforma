@@ -98,12 +98,12 @@ function linhaUsuarioHtml(usuario) {
         : `<span class="status inativo">Não</span>`;
 
     const acaoBloquear = usuario.status === "bloqueado"
-        ? `<button type="button" data-admin-action="ativar-conta">Ativar conta</button>`
-        : `<button type="button" data-admin-action="bloquear-conta">Bloquear</button>`;
+        ? `<li><button type="button" data-admin-action="ativar-conta">Ativar conta</button></li>`
+        : `<li><button type="button" data-admin-action="bloquear-conta">Bloquear</button></li>`;
 
     const acaoPremium = usuario.premium.ativo
-        ? `<button type="button" data-admin-action="remover-premium">Remover premium</button>`
-        : `<button type="button" data-admin-action="liberar-premium">Conceder premium</button>`;
+        ? `<li><button type="button" data-admin-action="remover-premium">Remover premium</button></li>`
+        : `<li><button type="button" data-admin-action="liberar-premium">Conceder premium</button></li>`;
 
     return `
         <tr data-usuario-id="${usuario.id}" data-tipo="${usuario.tipoUsuario}" data-status="${usuario.status}" data-premium="${usuario.premium.ativo ? "sim" : "nao"}">
@@ -115,25 +115,23 @@ function linhaUsuarioHtml(usuario) {
             <td data-label="Último acesso">${formatarDataHora(usuario.ultimoAcesso)}</td>
             <td data-label="ID">${usuario.idAcesso}</td>
             <td data-label="Ações" class="table-actions-cell">
-                <div class="table-menu-wrap">
-                    <button type="button" class="table-menu-trigger" data-menu-toggle aria-haspopup="true" aria-expanded="false" aria-label="Acoes de ${escapeHtml(usuario.nome)}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="1"></circle>
-                            <circle cx="12" cy="5" r="1"></circle>
-                            <circle cx="12" cy="19" r="1"></circle>
-                        </svg>
-                    </button>
-                    <div class="table-menu" role="menu">
-                        <button type="button" data-admin-action="ver-perfil">Ver perfil</button>
-                        ${usuario.temDiploma ? '<button type="button" data-admin-action="ver-diploma">Ver diploma</button>' : ""}
-                        ${usuario.diplomaPendente ? '<button type="button" data-admin-action="ver-diploma-pendente">Ver novo diploma (pendente)</button><button type="button" data-admin-action="aprovar-diploma">Aprovar novo diploma</button><button type="button" class="danger" data-admin-action="recusar-diploma">Recusar novo diploma</button>' : ""}
-                        <button type="button" data-admin-action="editar-usuario">Editar usuário</button>
-                        <button type="button" data-admin-action="alterar-tipo-conta">Alterar tipo</button>
-                        ${acaoBloquear}
-                        ${acaoPremium}
-                        <button type="button" class="danger" data-admin-action="excluir-conta">Excluir</button>
-                    </div>
-                </div>
+                <button type="button" class="table-menu-trigger" data-menu-toggle aria-expanded="false" aria-label="Acoes de ${escapeHtml(usuario.nome)}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="12" cy="5" r="1"></circle>
+                        <circle cx="12" cy="19" r="1"></circle>
+                    </svg>
+                </button>
+                <menu class="table-menu">
+                    <li><button type="button" data-admin-action="ver-perfil">Ver perfil</button></li>
+                    ${usuario.temDiploma ? '<li><button type="button" data-admin-action="ver-diploma">Ver diploma</button></li>' : ""}
+                    ${usuario.diplomaPendente ? '<li><button type="button" data-admin-action="ver-diploma-pendente">Ver novo diploma (pendente)</button></li><li><button type="button" data-admin-action="aprovar-diploma">Aprovar novo diploma</button></li><li><button type="button" class="danger" data-admin-action="recusar-diploma">Recusar novo diploma</button></li>' : ""}
+                    <li><button type="button" data-admin-action="editar-usuario">Editar usuário</button></li>
+                    <li><button type="button" data-admin-action="alterar-tipo-conta">Alterar tipo</button></li>
+                    ${acaoBloquear}
+                    ${acaoPremium}
+                    <li><button type="button" class="danger" data-admin-action="excluir-conta">Excluir</button></li>
+                </menu>
             </td>
         </tr>
     `;

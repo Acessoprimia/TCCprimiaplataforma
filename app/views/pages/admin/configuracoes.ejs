@@ -19,55 +19,53 @@
 
         <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'configuracoes' }) %>
 
-        <section class="admin-content">
-            <section class="admin-panel" id="configuracoes">
-                <header class="panel-header">
-                    <article>
-                        <h2>Configurações gerais</h2>
-                        <p>Esses valores aparecem em páginas públicas do site (aviso no topo, texto e imagem da home, área premium) e no e-mail de "Fale conosco".</p>
-                    </article>
-                </header>
+        <section class="admin-panel" id="configuracoes">
+            <header class="panel-header">
+                <hgroup>
+                    <h2>Configurações gerais</h2>
+                    <p>Esses valores aparecem em páginas públicas do site (aviso no topo, texto e imagem da home, área premium) e no e-mail de "Fale conosco".</p>
+                </hgroup>
+            </header>
 
-                <form class="settings-form" id="formConfiguracoes">
-                    <label>
-                        Texto institucional
-                        <textarea name="texto_institucional" rows="4" placeholder="Texto exibido na página inicial"><%= config.texto_institucional %></textarea>
-                    </label>
-                    <label>
-                        Aviso do site
-                        <input type="text" name="aviso_site" value="<%= config.aviso_site %>" placeholder="Ex: Novos simulados disponíveis esta semana">
-                    </label>
-                    <label>
-                        Recurso premium em destaque
-                        <select name="recurso_premium_destaque">
-                            <option value="">Nenhum</option>
-                            <option value="Simulados exclusivos" <%= config.recurso_premium_destaque === 'Simulados exclusivos' ? 'selected' : '' %>>Simulados exclusivos</option>
-                            <option value="Videoaulas premium" <%= config.recurso_premium_destaque === 'Videoaulas premium' ? 'selected' : '' %>>Videoaulas premium</option>
-                            <option value="Planos personalizados" <%= config.recurso_premium_destaque === 'Planos personalizados' ? 'selected' : '' %>>Planos personalizados</option>
-                        </select>
-                    </label>
-                    <label>
-                        Período de teste premium
-                        <input type="text" name="periodo_teste_premium" value="<%= config.periodo_teste_premium %>" placeholder="Ex: Teste uma semana grátis">
-                    </label>
-                    <label>
-                        E-mail de contato
-                        <input type="email" name="email_contato_destino" value="<%= config.email_contato_destino %>" placeholder="Recebe as mensagens de Fale conosco">
-                    </label>
-                    <button class="admin-button primary" type="submit">Salvar configurações</button>
-                </form>
+            <form class="settings-form" id="formConfiguracoes">
+                <label>
+                    Texto institucional
+                    <textarea name="texto_institucional" rows="4" placeholder="Texto exibido na página inicial"><%= config.texto_institucional %></textarea>
+                </label>
+                <label>
+                    Aviso do site
+                    <input type="text" name="aviso_site" value="<%= config.aviso_site %>" placeholder="Ex: Novos simulados disponíveis esta semana">
+                </label>
+                <label>
+                    Recurso premium em destaque
+                    <select name="recurso_premium_destaque">
+                        <option value="">Nenhum</option>
+                        <option value="Simulados exclusivos" <%= config.recurso_premium_destaque === 'Simulados exclusivos' ? 'selected' : '' %>>Simulados exclusivos</option>
+                        <option value="Videoaulas premium" <%= config.recurso_premium_destaque === 'Videoaulas premium' ? 'selected' : '' %>>Videoaulas premium</option>
+                        <option value="Planos personalizados" <%= config.recurso_premium_destaque === 'Planos personalizados' ? 'selected' : '' %>>Planos personalizados</option>
+                    </select>
+                </label>
+                <label>
+                    Período de teste premium
+                    <input type="text" name="periodo_teste_premium" value="<%= config.periodo_teste_premium %>" placeholder="Ex: Teste uma semana grátis">
+                </label>
+                <label>
+                    E-mail de contato
+                    <input type="email" name="email_contato_destino" value="<%= config.email_contato_destino %>" placeholder="Recebe as mensagens de Fale conosco">
+                </label>
+                <button class="admin-button primary" type="submit">Salvar configurações</button>
+            </form>
 
-                <form class="settings-form" id="formBannerConfiguracoes" style="margin-top: 24px;">
-                    <label>
-                        Banner principal
-                        <% if (config.banner_principal_url) { %>
-                            <img src="<%= config.banner_principal_url %>" alt="Banner principal atual" style="max-width: 240px; border-radius: 12px; margin-bottom: 8px;">
-                        <% } %>
-                        <input type="file" name="banner" accept="image/*">
-                    </label>
-                    <button class="admin-button primary" type="submit">Atualizar banner</button>
-                </form>
-            </section>
+            <form class="settings-form" id="formBannerConfiguracoes" style="margin-top: 24px;">
+                <label>
+                    Banner principal
+                    <% if (config.banner_principal_url) { %>
+                        <img src="<%= config.banner_principal_url %>" alt="Banner principal atual" style="max-width: 240px; border-radius: 12px; margin-bottom: 8px;">
+                    <% } %>
+                    <input type="file" name="banner" accept="image/*">
+                </label>
+                <button class="admin-button primary" type="submit">Atualizar banner</button>
+            </form>
         </section>
     </main>
 

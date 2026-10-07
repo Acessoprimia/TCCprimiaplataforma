@@ -17,14 +17,14 @@
 <body>
     <main>
         <!-- Seção do cabeçalho com imagem do livro -->
-        <section class="book-header">
+        <header class="book-header">
             <button class="back-button" onclick="goBack()" aria-label="Voltar"></button>
             <button class="menu-button" onclick="toggleMenu()" aria-label="Menu de opções"></button>
 
             <figure class="book-cover">
                 <img src="<%= livro.imagem_url || '../image/escolab.webp' %>" alt="Capa do livro <%= livro.titulo %>">
             </figure>
-        </section>
+        </header>
 
         <!-- Informações do livro -->
         <section class="book-info">

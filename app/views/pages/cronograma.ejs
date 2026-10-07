@@ -14,20 +14,20 @@
         <h1>Cronogramas</h1>
         <p class="subtitulo-cronograma">Cronogramas publicados pelos professores para alunos premium.</p>
 
-        <section class="cards-container">
+        <ul class="cards-container">
             <% if (cronogramas.length === 0) { %>
-                <p class="cronogramas-vazio">Nenhum cronograma publicado ainda.</p>
+                <li><p class="cronogramas-vazio">Nenhum cronograma publicado ainda.</p></li>
             <% } %>
             <% cronogramas.forEach(function (cronograma) { %>
-                <a href="/cronograma/<%= cronograma.codigo_lote %>" class="cronograma-link">
+                <li><a href="/cronograma/<%= cronograma.codigo_lote %>" class="cronograma-link">
                     <article class="cronograma-card">
                         <h2><%= cronograma.titulo_cronograma %></h2>
                         <p class="cronograma-card-info"><%= cronograma.materia %> · Prof. <%= cronograma.professor %></p>
                         <p class="cronograma-card-info"><%= cronograma.total_eventos %> evento<%= cronograma.total_eventos > 1 ? 's' : '' %></p>
                     </article>
-                </a>
+                </a></li>
             <% }) %>
-        </section>
+        </ul>
     </main>
 
     <%- include("../partials/footer.ejs") %>

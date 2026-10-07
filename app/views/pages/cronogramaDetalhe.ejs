@@ -20,9 +20,9 @@
         <h1><%= titulo %></h1>
         <p class="subtitulo-cronograma"><%= materia %><%= professor ? ' · Prof. ' + professor : '' %></p>
 
-        <section class="grade-container">
+        <figure class="grade-container">
             <%- include("../partials/gradecronograma.ejs", { grade: grade }) %>
-        </section>
+        </figure>
 
         <% if (ehProprio) { %>
             <section class="prioridades">

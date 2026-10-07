@@ -33,205 +33,203 @@
 
         <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'relatorios' }) %>
 
-        <section class="admin-content">
 
-            <section class="admin-panel" id="relatorios">
+        <section class="admin-panel" id="relatorios">
 
-                <header class="panel-header">
+            <header class="panel-header">
 
-                    <article>
+                <hgroup>
 
-                        <h2>Relatórios administrativos</h2>
+                    <h2>Relatórios administrativos</h2>
 
-                        <p>Indicadores, gráficos e resumo mensal de crescimento e engajamento.</p>
+                    <p>Indicadores, gráficos e resumo mensal de crescimento e engajamento.</p>
 
-                    </article>
+                </hgroup>
 
-                </header>
+            </header>
 
-                <% // Filtro de periodo: controla o intervalo usado para calcular os cards, os %>
-                <% // graficos e a tabela abaixo. "Personalizado" revela o seletor de datas. %>
+            <% // Filtro de periodo: controla o intervalo usado para calcular os cards, os %>
+            <% // graficos e a tabela abaixo. "Personalizado" revela o seletor de datas. %>
 
-                <section class="admin-filtros-painel">
+            <search class="admin-filtros-painel">
 
-                    <fieldset class="admin-filtro-bloco">
+                <fieldset class="admin-filtro-bloco">
 
-                        <legend class="admin-filtros-label">Período</legend>
+                    <legend class="admin-filtros-label">Período</legend>
 
-                        <nav class="admin-filtros" aria-label="Filtrar relatórios por período">
+                    <nav class="admin-filtros" aria-label="Filtrar relatórios por período">
 
-                            <button type="button" class="filtro-btn" data-filtro-periodo="7d">Últimos 7 dias</button>
+                        <button type="button" class="filtro-btn" data-filtro-periodo="7d">Últimos 7 dias</button>
 
-                            <button type="button" class="filtro-btn ativo" data-filtro-periodo="30d">Últimos 30 dias</button>
+                        <button type="button" class="filtro-btn ativo" data-filtro-periodo="30d">Últimos 30 dias</button>
 
-                            <button type="button" class="filtro-btn" data-filtro-periodo="12m">Últimos 12 meses</button>
+                        <button type="button" class="filtro-btn" data-filtro-periodo="12m">Últimos 12 meses</button>
 
-                            <button type="button" class="filtro-btn" data-filtro-periodo="personalizado">Personalizado</button>
+                        <button type="button" class="filtro-btn" data-filtro-periodo="personalizado">Personalizado</button>
 
-                        </nav>
+                    </nav>
 
-                    </fieldset>
+                </fieldset>
 
-                    <form class="admin-filtro-periodo-personalizado oculto" id="periodoPersonalizado">
+                <form class="admin-filtro-periodo-personalizado oculto" id="periodoPersonalizado">
 
-                        <label>
+                    <label>
 
-                            De
+                        De
 
-                            <input type="date" id="periodoDataInicio">
+                        <input type="date" id="periodoDataInicio">
 
-                        </label>
+                    </label>
 
-                        <label>
+                    <label>
 
-                            Até
+                        Até
 
-                            <input type="date" id="periodoDataFim">
+                        <input type="date" id="periodoDataFim">
 
-                        </label>
+                    </label>
 
-                        <button type="button" class="admin-button primary" id="periodoAplicar">Aplicar</button>
+                    <button type="button" class="admin-button primary" id="periodoAplicar">Aplicar</button>
 
-                    </form>
+                </form>
 
-                </section>
+            </search>
 
-                <% // Os cards abaixo sao calculados a partir de REGISTROS_DIARIOS_RELATORIOS_MOCK em %>
-                <% // tempo de execucao, comparando o periodo selecionado com o periodo anterior de %>
-                <% // mesma duracao. O array agora vem pronto do banco (registrosDiarios abaixo), so %>
-                <% // o nome da variavel client-side ficou igual pra nao mudar a logica de agregacao. %>
+            <% // Os cards abaixo sao calculados a partir de REGISTROS_DIARIOS_RELATORIOS_MOCK em %>
+            <% // tempo de execucao, comparando o periodo selecionado com o periodo anterior de %>
+            <% // mesma duracao. O array agora vem pronto do banco (registrosDiarios abaixo), so %>
+            <% // o nome da variavel client-side ficou igual pra nao mudar a logica de agregacao. %>
 
-                <aside class="resumo-cards" id="relatoriosResumo"></aside>
+            <aside class="resumo-cards" id="relatoriosResumo"></aside>
 
-                <section class="charts-grid">
+            <ul class="charts-grid">
 
-                    <article class="admin-panel chart-panel">
-
-                        <header class="panel-header">
-
-                            <article>
-
-                                <h2>Crescimento de usuários</h2>
-
-                                <p>Novos alunos e professores por período.</p>
-
-                            </article>
-
-                        </header>
-
-                        <figure class="chart-frame" id="graficoUsuariosFrame"></figure>
-
-                        <figcaption class="chart-caption" id="graficoUsuariosLegenda"></figcaption>
-
-                    </article>
-
-                    <article class="admin-panel chart-panel">
-
-                        <header class="panel-header">
-
-                            <article>
-
-                                <h2>Conteúdos publicados</h2>
-
-                                <p>Volume de publicações por período.</p>
-
-                            </article>
-
-                        </header>
-
-                        <figure class="chart-frame" id="graficoConteudosFrame"></figure>
-
-                    </article>
-
-                </section>
-
-                <section class="charts-grid">
-
-                    <article class="admin-panel chart-panel">
-
-                        <header class="panel-header">
-
-                            <article>
-
-                                <h2>Assinaturas Premium</h2>
-
-                                <p>Novas assinaturas premium ao longo do tempo.</p>
-
-                            </article>
-
-                        </header>
-
-                        <figure class="chart-frame" id="graficoPremiumFrame"></figure>
-
-                    </article>
-
-                    <article class="admin-panel">
-
-                        <header class="panel-header">
-
-                            <article>
-
-                                <h2>Conteúdos publicados por matéria</h2>
-
-                                <p>Não existe rastreamento de acesso no banco ainda - isto mostra volume de material publicado por matéria no período, uma medida indireta de popularidade.</p>
-
-                            </article>
-
-                        </header>
-
-                        <figure id="graficoMateriasFrame"></figure>
-
-                    </article>
-
-                </section>
-
-                <section class="admin-panel">
+                <li><article class="admin-panel chart-panel">
 
                     <header class="panel-header">
 
-                        <article>
+                        <hgroup>
 
-                            <h2>Resumo mensal</h2>
+                            <h2>Crescimento de usuários</h2>
 
-                            <p>Novos alunos, professores, conteúdos e premiums vendidos, mês a mês.</p>
+                            <p>Novos alunos e professores por período.</p>
 
-                        </article>
+                        </hgroup>
 
                     </header>
 
-                    <section class="table-scroll">
+                    <figure class="chart-frame" id="graficoUsuariosFrame"></figure>
 
-                        <table class="admin-table">
+                    <ul class="chart-caption" id="graficoUsuariosLegenda"></ul>
 
-                            <thead>
+                </article></li>
 
-                                <tr>
+                <li><article class="admin-panel chart-panel">
 
-                                    <th>Mês</th>
+                    <header class="panel-header">
 
-                                    <th>Novos alunos</th>
+                        <hgroup>
 
-                                    <th>Novos professores</th>
+                            <h2>Conteúdos publicados</h2>
 
-                                    <th>Conteúdos publicados</th>
+                            <p>Volume de publicações por período.</p>
 
-                                    <th>Premiums vendidos</th>
+                        </hgroup>
 
-                                </tr>
+                    </header>
 
-                            </thead>
+                    <figure class="chart-frame" id="graficoConteudosFrame"></figure>
 
-                            <tbody id="relatoriosTabela"></tbody>
+                </article></li>
 
-                        </table>
+            </ul>
 
-                    </section>
+            <ul class="charts-grid">
 
-                </section>
+                <li><article class="admin-panel chart-panel">
+
+                    <header class="panel-header">
+
+                        <hgroup>
+
+                            <h2>Assinaturas Premium</h2>
+
+                            <p>Novas assinaturas premium ao longo do tempo.</p>
+
+                        </hgroup>
+
+                    </header>
+
+                    <figure class="chart-frame" id="graficoPremiumFrame"></figure>
+
+                </article></li>
+
+                <li><article class="admin-panel">
+
+                    <header class="panel-header">
+
+                        <hgroup>
+
+                            <h2>Conteúdos publicados por matéria</h2>
+
+                            <p>Não existe rastreamento de acesso no banco ainda - isto mostra volume de material publicado por matéria no período, uma medida indireta de popularidade.</p>
+
+                        </hgroup>
+
+                    </header>
+
+                    <figure id="graficoMateriasFrame"></figure>
+
+                </article></li>
+
+            </ul>
+
+            <section class="admin-panel">
+
+                <header class="panel-header">
+
+                    <hgroup>
+
+                        <h2>Resumo mensal</h2>
+
+                        <p>Novos alunos, professores, conteúdos e premiums vendidos, mês a mês.</p>
+
+                    </hgroup>
+
+                </header>
+
+                <figure class="table-scroll">
+
+                    <table class="admin-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Mês</th>
+
+                                <th>Novos alunos</th>
+
+                                <th>Novos professores</th>
+
+                                <th>Conteúdos publicados</th>
+
+                                <th>Premiums vendidos</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="relatoriosTabela"></tbody>
+
+                    </table>
+
+                </figure>
 
             </section>
 
         </section>
+
 
     </main>
 

@@ -38,9 +38,9 @@
                 <h2 id="titulo-planos" class="titulo-planos">Planos Premium</h2>
             </header>
 
-            <section class="grade-planos" aria-label="Planos Premium disponíveis">
+            <ul class="grade-planos" aria-label="Planos Premium disponíveis">
                 <% planos.forEach(function (plano) { %>
-                    <article class="card-plano">
+                    <li><article class="card-plano">
                         <header>
                             <h3><%= plano.rotulo %></h3>
                         </header>
@@ -62,9 +62,9 @@
                                 Pagar com Mercado Pago
                             </button>
                         </form>
-                    </article>
+                    </article></li>
                 <% }) %>
-            </section>
+            </ul>
         </section>
     </main>
 

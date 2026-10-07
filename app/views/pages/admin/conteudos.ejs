@@ -33,176 +33,174 @@
 
         <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'conteudos' }) %>
 
-        <section class="admin-content">
 
-            <section class="admin-panel" id="materias">
+        <section class="admin-panel" id="materias">
 
-                <header class="panel-header panel-header-actions">
+            <header class="panel-header panel-header-actions">
 
-                    <article>
+                <hgroup>
 
-                        <h2>Matérias da plataforma</h2>
+                    <h2>Matérias da plataforma</h2>
 
-                        <p>Controle as matérias usadas em biblioteca, simulados, fórum e planos.</p>
+                    <p>Controle as matérias usadas em biblioteca, simulados, fórum e planos.</p>
 
-                    </article>
+                </hgroup>
 
-                    <button class="admin-button primary" type="button" data-admin-action="adicionar-materia">Adicionar matéria</button>
+                <button class="admin-button primary" type="button" data-admin-action="adicionar-materia">Adicionar matéria</button>
 
-                </header>
+            </header>
 
-                <% // A lista abaixo e populada por conteudos.js a partir de MATERIAS_MOCK (agora os %>
-                <% // nomes reais da tabela Materia). Remover so e permitido se nao houver professor %>
-                <% // vinculado - o servidor recusa e explica o motivo quando bloqueado. %>
+            <% // A lista abaixo e populada por conteudos.js a partir de MATERIAS_MOCK (agora os %>
+            <% // nomes reais da tabela Materia). Remover so e permitido se nao houver professor %>
+            <% // vinculado - o servidor recusa e explica o motivo quando bloqueado. %>
 
-                <p class="materias-resumo" id="materiasContagem"></p>
+            <p class="materias-resumo" id="materiasContagem"></p>
 
-                <section class="materias-lista" id="materiasLista"></section>
-
-            </section>
-
-            <section class="admin-panel" id="conteudos">
-
-                <header class="panel-header panel-header-actions">
-
-                    <article>
-
-                        <h2>Gerenciamento de conteúdos</h2>
-
-                        <p>Livros e videoaulas publicados pelos professores na biblioteca. Simulados e cronogramas são gerenciados nas telas próprias de cada professor.</p>
-
-                    </article>
-
-                </header>
-
-                <% // Os cards abaixo sao calculados a partir de CONTEUDOS_MOCK (dados reais) em tempo %>
-                <% // de execucao, pra refletir edicoes/exclusoes/mudancas de acesso feitas na tabela. %>
-
-                <aside class="resumo-cards" id="conteudosResumo"></aside>
-
-                <form class="admin-search-bar">
-
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-
-                        <circle cx="11" cy="11" r="8"></circle>
-
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-
-                    </svg>
-
-                    <input type="search" id="conteudosBusca" placeholder="Buscar por título ou autor..." aria-label="Buscar conteúdos">
-
-                </form>
-
-                <nav class="admin-filtros" aria-label="Filtrar por tipo de conteúdo">
-
-                    <button type="button" class="filtro-btn ativo" data-filtro-conteudos="todos">Todos</button>
-
-                    <button type="button" class="filtro-btn" data-filtro-conteudos="livro">Livros</button>
-
-                    <button type="button" class="filtro-btn" data-filtro-conteudos="videoaula">Videoaulas</button>
-
-                </nav>
-
-                <section class="admin-filtros-painel">
-
-                    <fieldset class="admin-filtro-bloco">
-
-                        <legend class="admin-filtros-label">Matéria</legend>
-
-                        <select class="filtro-select" id="conteudosFiltroMateria" aria-label="Filtrar por matéria">
-
-                            <option value="todas">Todas as matérias</option>
-
-                        </select>
-
-                    </fieldset>
-
-                    <fieldset class="admin-filtro-bloco">
-
-                        <legend class="admin-filtros-label">Status</legend>
-
-                        <nav class="admin-filtros" aria-label="Filtrar por status">
-
-                            <button type="button" class="filtro-btn ativo" data-filtro-status-conteudo="todos">Todos</button>
-
-                            <button type="button" class="filtro-btn" data-filtro-status-conteudo="publicado">Publicado</button>
-
-                            <button type="button" class="filtro-btn" data-filtro-status-conteudo="rascunho">Rascunho</button>
-
-                            <button type="button" class="filtro-btn" data-filtro-status-conteudo="arquivado">Arquivado</button>
-
-                        </nav>
-
-                    </fieldset>
-
-                    <fieldset class="admin-filtro-bloco">
-
-                        <legend class="admin-filtros-label">Acesso</legend>
-
-                        <nav class="admin-filtros" aria-label="Filtrar por acesso">
-
-                            <button type="button" class="filtro-btn ativo" data-filtro-acesso-conteudo="todos">Todos</button>
-
-                            <button type="button" class="filtro-btn" data-filtro-acesso-conteudo="gratuito">Gratuito</button>
-
-                            <button type="button" class="filtro-btn" data-filtro-acesso-conteudo="premium">Premium</button>
-
-                        </nav>
-
-                    </fieldset>
-
-                </section>
-
-                <% // A tabela abaixo e populada em tempo de execucao por conteudos.js a partir de %>
-                <% // CONTEUDOS_MOCK, que agora vem dos dados reais embutidos abaixo em vez do %>
-                <% // gerador de fake data. Busca, filtros e paginacao continuam client-side. %>
-
-                <section class="table-scroll">
-
-                    <table class="admin-table">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Título</th>
-
-                                <th>Tipo</th>
-
-                                <th>Matéria</th>
-
-                                <th>Status</th>
-
-                                <th>Acesso</th>
-
-                                <th>Autor</th>
-
-                                <th>Data</th>
-
-                                <th>Ações</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody id="conteudosTabela"></tbody>
-
-                    </table>
-
-                </section>
-
-                <footer class="admin-pagination">
-
-                    <p class="admin-pagination-info" id="conteudosPaginacaoInfo">Carregando conteúdos...</p>
-
-                    <nav class="admin-pagination-controles" id="conteudosPaginacaoControles" aria-label="Paginação"></nav>
-
-                </footer>
-
-            </section>
+            <ul class="materias-lista" id="materiasLista"></ul>
 
         </section>
+
+        <section class="admin-panel" id="conteudos">
+
+            <header class="panel-header panel-header-actions">
+
+                <hgroup>
+
+                    <h2>Gerenciamento de conteúdos</h2>
+
+                    <p>Livros e videoaulas publicados pelos professores na biblioteca. Simulados e cronogramas são gerenciados nas telas próprias de cada professor.</p>
+
+                </hgroup>
+
+            </header>
+
+            <% // Os cards abaixo sao calculados a partir de CONTEUDOS_MOCK (dados reais) em tempo %>
+            <% // de execucao, pra refletir edicoes/exclusoes/mudancas de acesso feitas na tabela. %>
+
+            <aside class="resumo-cards" id="conteudosResumo"></aside>
+
+            <form class="admin-search-bar">
+
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+
+                    <circle cx="11" cy="11" r="8"></circle>
+
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+
+                </svg>
+
+                <input type="search" id="conteudosBusca" placeholder="Buscar por título ou autor..." aria-label="Buscar conteúdos">
+
+            </form>
+
+            <nav class="admin-filtros" aria-label="Filtrar por tipo de conteúdo">
+
+                <button type="button" class="filtro-btn ativo" data-filtro-conteudos="todos">Todos</button>
+
+                <button type="button" class="filtro-btn" data-filtro-conteudos="livro">Livros</button>
+
+                <button type="button" class="filtro-btn" data-filtro-conteudos="videoaula">Videoaulas</button>
+
+            </nav>
+
+            <search class="admin-filtros-painel">
+
+                <fieldset class="admin-filtro-bloco">
+
+                    <legend class="admin-filtros-label">Matéria</legend>
+
+                    <select class="filtro-select" id="conteudosFiltroMateria" aria-label="Filtrar por matéria">
+
+                        <option value="todas">Todas as matérias</option>
+
+                    </select>
+
+                </fieldset>
+
+                <fieldset class="admin-filtro-bloco">
+
+                    <legend class="admin-filtros-label">Status</legend>
+
+                    <nav class="admin-filtros" aria-label="Filtrar por status">
+
+                        <button type="button" class="filtro-btn ativo" data-filtro-status-conteudo="todos">Todos</button>
+
+                        <button type="button" class="filtro-btn" data-filtro-status-conteudo="publicado">Publicado</button>
+
+                        <button type="button" class="filtro-btn" data-filtro-status-conteudo="rascunho">Rascunho</button>
+
+                        <button type="button" class="filtro-btn" data-filtro-status-conteudo="arquivado">Arquivado</button>
+
+                    </nav>
+
+                </fieldset>
+
+                <fieldset class="admin-filtro-bloco">
+
+                    <legend class="admin-filtros-label">Acesso</legend>
+
+                    <nav class="admin-filtros" aria-label="Filtrar por acesso">
+
+                        <button type="button" class="filtro-btn ativo" data-filtro-acesso-conteudo="todos">Todos</button>
+
+                        <button type="button" class="filtro-btn" data-filtro-acesso-conteudo="gratuito">Gratuito</button>
+
+                        <button type="button" class="filtro-btn" data-filtro-acesso-conteudo="premium">Premium</button>
+
+                    </nav>
+
+                </fieldset>
+
+            </search>
+
+            <% // A tabela abaixo e populada em tempo de execucao por conteudos.js a partir de %>
+            <% // CONTEUDOS_MOCK, que agora vem dos dados reais embutidos abaixo em vez do %>
+            <% // gerador de fake data. Busca, filtros e paginacao continuam client-side. %>
+
+            <figure class="table-scroll">
+
+                <table class="admin-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Título</th>
+
+                            <th>Tipo</th>
+
+                            <th>Matéria</th>
+
+                            <th>Status</th>
+
+                            <th>Acesso</th>
+
+                            <th>Autor</th>
+
+                            <th>Data</th>
+
+                            <th>Ações</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="conteudosTabela"></tbody>
+
+                </table>
+
+            </figure>
+
+            <footer class="admin-pagination">
+
+                <p class="admin-pagination-info" id="conteudosPaginacaoInfo">Carregando conteúdos...</p>
+
+                <nav class="admin-pagination-controles" id="conteudosPaginacaoControles" aria-label="Paginação"></nav>
+
+            </footer>
+
+        </section>
+
 
     </main>
 

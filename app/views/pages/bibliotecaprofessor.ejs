@@ -28,13 +28,11 @@
         <% } %>
 
         <% livros.forEach(function (livro) { %>
-            <section class="livro-item">
+            <article class="livro-item">
                 <a href="/livro/<%= livro.id %>" class="livro-link">
                     <article class="livro-card" data-disciplina="<%= livro.materiaSlug %>">
                         <img class="livro-cover" src="<%= livro.imagem_url || '../image/escolab.webp' %>" alt="<%= livro.titulo %>">
-                        <section class="livro-info">
-                            <p class="livro-titulo"><%= livro.titulo %></p>
-                        </section>
+                        <p class="livro-titulo"><%= livro.titulo %></p>
                     </article>
                 </a>
                 <% if (livro.podeExcluir) { %>
@@ -43,7 +41,7 @@
                         <button type="submit" class="botao-excluir-item">Excluir</button>
                     </form>
                 <% } %>
-            </section>
+            </article>
         <% }) %>
     </main>
 

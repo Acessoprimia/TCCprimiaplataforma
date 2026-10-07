@@ -18,17 +18,17 @@
         <h1 class="titulo-redacao-visualizacao"><%= redacao.tema %></h1>
         <p class="nota-total-grande"><%= redacao.nota_total %> <span>/ 1000</span></p>
 
-        <section class="competencias-grid">
+        <ul class="competencias-grid">
             <% perfil.competencias.forEach(function (titulo, indice) {
                 const chave = "c" + (indice + 1);
             %>
-                <article class="card-competencia">
+                <li><article class="card-competencia">
                     <h2><%= titulo %></h2>
                     <p class="nota-competencia"><%= redacao["nota_" + chave] %> <span>/ 200</span></p>
                     <p><%= redacao["comentario_" + chave] %></p>
-                </article>
+                </article></li>
             <% }) %>
-        </section>
+        </ul>
 
         <section class="comentario-geral">
             <h2>Comentário geral</h2>

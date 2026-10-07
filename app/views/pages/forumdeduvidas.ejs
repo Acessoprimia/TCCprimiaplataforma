@@ -21,15 +21,15 @@
 
         <button class="btn-fazer-pergunta" id="btn-abrir-modal">Faça sua pergunta</button>
 
-        <section class="duvidas-container">
+        <ul class="duvidas-container">
             <% if (!duvidas || duvidas.length === 0) { %>
-                <article class="card-duvida">
+                <li><article class="card-duvida">
                     <p class="pergunta-texto">Ainda não há dúvidas cadastradas. Seja o primeiro a perguntar.</p>
-                </article>
+                </article></li>
             <% } %>
 
             <% (duvidas || []).forEach((duvida) => { %>
-                <article class="card-duvida" id="duvida-<%= duvida.id_duvida %>" data-materia="<%= duvida.materia_slug %>">
+                <li><article class="card-duvida" id="duvida-<%= duvida.id_duvida %>" data-materia="<%= duvida.materia_slug %>">
                     <header class="card-header">
                         <figure class="avatar">
                             <img src="<%= duvida.aluno_foto_url || '../image/usuario.webp' %>" alt="Foto de <%= duvida.aluno_nome %>">
@@ -68,9 +68,9 @@
                             <p class="resposta-texto">Essa dúvida ainda não recebeu resposta.</p>
                         <% } %>
                     </section>
-                </article>
+                </article></li>
             <% }) %>
-        </section>
+        </ul>
 
         <button class="btn-add-fixo" id="btn-add-fixo" aria-label="Adicionar pergunta">+</button>
     </main>

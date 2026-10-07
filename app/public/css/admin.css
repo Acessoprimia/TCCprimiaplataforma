@@ -141,10 +141,13 @@ textarea {
     transform: translateY(-2px);
 }
 
-.admin-content {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+/* Os blocos de conteudo (paineis, hero, metricas) sao filhos diretos do
+   .admin-page, sem invólucro. O espaco entre eles e margin, e nao gap: no
+   desktop o .admin-page e um grid em que a sidebar ocupa varias linhas, e
+   um row-gap somaria espaco tambem nas linhas vazias que ela atravessa.
+   O hero fica de fora do lado esquerdo porque no mobile ele e display: none. */
+.admin-page > :is(.admin-panel, .admin-metrics, .admin-row) + :is(.admin-panel, .admin-metrics, .admin-row) {
+    margin-top: 18px;
 }
 
 .admin-hero {
@@ -198,6 +201,32 @@ textarea {
     display: grid;
     grid-template-columns: 1fr;
     gap: 16px;
+}
+
+/* Listas de cartoes/paineis: quem entra no grid e o <li>. Flex em coluna
+   (e nao grid) no item faz o cartao ocupar a altura toda sem impor a
+   largura minima do conteudo, que estouraria a coluna. */
+.admin-metrics,
+.admin-row,
+.charts-grid,
+.materias-lista,
+.chart-caption {
+    list-style: none;
+}
+
+.admin-metrics > li,
+.admin-row > li,
+.charts-grid > li,
+.materias-lista > li {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-metrics > li > *,
+.admin-row > li > *,
+.charts-grid > li > *,
+.materias-lista > li > * {
+    flex: 1 1 auto;
 }
 
 .metric-card {
@@ -380,7 +409,7 @@ textarea {
     margin-top: 14px;
 }
 
-.chart-caption span {
+.chart-caption li {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -595,13 +624,10 @@ textarea {
     text-align: right;
 }
 
-.table-menu-wrap {
-    position: relative;
-    display: inline-block;
-}
-
+/* inline-flex (e nao flex): o gatilho fica direto na <td>, entao precisa
+   ser inline pra seguir o text-align da celula. */
 .table-menu-trigger {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 34px;
@@ -622,11 +648,13 @@ textarea {
 
 /* position: fixed (e nao absolute) pra escapar do overflow-x: auto do
    .table-scroll - dentro de um container que rola, um menu absolute seria
-   recortado. As coordenadas sao calculadas na abertura, em common.js. */
+   recortado. As coordenadas sao calculadas na abertura, em common.js.
+   E um <menu> (lista de comandos), dai o list-style: none. */
 .table-menu {
     display: none;
     position: fixed;
     min-width: 190px;
+    list-style: none;
     background-color: var(--cor-fundo-cartao, #ffffff);
     border-radius: 12px;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
@@ -640,6 +668,7 @@ textarea {
 }
 
 .table-menu button {
+    width: 100%;
     border: none;
     background: none;
     text-align: left;
@@ -1177,10 +1206,20 @@ textarea {
     padding: 20px;
 }
 
+.confirm-card > .confirm-text {
+    padding: 20px 20px 0;
+}
+
+.confirm-card > .admin-modal-actions {
+    padding: 18px 20px 20px;
+}
+
 .admin-modal-fields {
     display: grid;
     grid-template-columns: 1fr;
     gap: 14px;
+    border: 0;
+    min-width: 0;
 }
 
 .admin-modal-fields label {
@@ -1200,14 +1239,15 @@ textarea {
     padding: 14px;
 }
 
-.admin-readonly-box strong {
+.admin-readonly-box dt {
     display: block;
+    font-weight: 700;
     color: var(--accent, #A398D1);
     font-size: 0.8125rem;
     margin-bottom: 6px;
 }
 
-.admin-readonly-box p {
+.admin-readonly-box dd {
     color: var(--c-555, #555);
     font-size: 0.8125rem;
     line-height: 1.5;
@@ -1396,7 +1436,7 @@ textarea {
     .admin-page {
         display: grid;
         grid-template-columns: 260px minmax(0, 1fr);
-        gap: 24px;
+        column-gap: 24px;
         padding: 118px 28px 52px;
     }
 
@@ -1404,11 +1444,19 @@ textarea {
         display: none;
     }
 
-    .admin-content {
-        gap: 22px;
+    .admin-page > :is(.admin-panel, .admin-hero, .admin-metrics, .admin-row) {
+        grid-column: 2;
     }
 
+    .admin-page > :is(.admin-panel, .admin-hero, .admin-metrics, .admin-row) + :is(.admin-panel, .admin-metrics, .admin-row) {
+        margin-top: 22px;
+    }
+
+    /* Ocupa todas as linhas dos blocos de conteudo (sem row-gap, as linhas
+       que sobram tem altura zero). */
     .admin-sidebar {
+        grid-column: 1;
+        grid-row: 1 / span 10;
         position: sticky;
         top: 100px;
         align-self: start;

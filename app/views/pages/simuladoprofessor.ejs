@@ -85,15 +85,15 @@
 
             <input type="text" name="titulo" placeholder="Título do simulado" required class="input-titulo-manual">
 
-            <section id="perguntas-manual-container"></section>
+            <fieldset id="perguntas-manual-container"></fieldset>
 
-            <section class="acoes-simulado-manual">
+            <p class="acoes-simulado-manual">
 
                 <button type="button" id="btn-add-pergunta" class="btn-add-pergunta">+ Adicionar pergunta</button>
 
                 <button type="submit" class="btn-salvar-manual">Salvar simulado</button>
 
-            </section>
+            </p>
 
         </form>
 
@@ -157,17 +157,17 @@
 
     <!-- LISTA DE SIMULADOS -->
 
-    <section class="secao-simulados" id="secao-andamento">
+    <ul class="secao-simulados" id="secao-andamento">
 
         <% if (meusFormularios.length === 0) { %>
 
-            <p class="simulados-vazio">Nenhum simulado publicado ainda. Gere um acima!</p>
+            <li><p class="simulados-vazio">Nenhum simulado publicado ainda. Gere um acima!</p></li>
 
         <% } %>
 
         <% meusFormularios.forEach(function (formulario) { %>
 
-            <article class="card-simulado" data-status="andamento" data-disciplina="<%= formulario.materia || '' %>">
+            <li><article class="card-simulado" data-status="andamento" data-disciplina="<%= formulario.materia || '' %>">
 
                 <h2 class="titulo-simulado"><%= formulario.titulo %></h2>
 
@@ -183,11 +183,11 @@
 
                 </form>
 
-            </article>
+            </article></li>
 
         <% }) %>
 
-    </section>
+    </ul>
 
 </main>
 

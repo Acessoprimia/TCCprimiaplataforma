@@ -25,11 +25,14 @@ setInterval(atualizarTemposRelativos, 30000);
 document.addEventListener("filtro:aplicar", (e) => {
     const selecionadas = e.detail.valores;
 
+    // O cartao fica dentro de um <li>: e o item da lista que some, senao o
+    // <li> vazio continuaria ocupando o espaco entre os cartoes.
     cards.forEach((card) => {
+        const item = card.closest("li") || card;
         if (!card.dataset.materia || selecionadas.length === 0 || selecionadas.includes(card.dataset.materia)) {
-            card.style.display = "block";
+            item.style.display = "";
         } else {
-            card.style.display = "none";
+            item.style.display = "none";
         }
     });
 });

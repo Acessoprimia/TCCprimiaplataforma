@@ -16,7 +16,7 @@
         <!-- CARD DE PERFIL -->
         <article class="perfil-card">
             <!-- INFORMAÇÕES DO USUÁRIO -->
-            <section class="usuario-info">
+            <header class="usuario-info">
                 <figure class="avatar-container">
                     <img src="<%= (typeof usuario !== 'undefined' && usuario.foto_url) ? usuario.foto_url : '../image/usuario.webp' %>" alt="Avatar do usuário" class="avatar">
                 </figure>
@@ -26,7 +26,7 @@
                     <span class="matricula-usuario"><%= typeof usuario !== 'undefined' && usuario.materia ? usuario.materia : 'Materia: Exemplo' %></span>
                 </article>
                 <a href="/configuracoes" class="btn-editar">Configurações</a>
-            </section>
+            </header>
 
             <!-- MENU DE NAVEGAÇÃO -->
             <nav class="menu-navegacao">

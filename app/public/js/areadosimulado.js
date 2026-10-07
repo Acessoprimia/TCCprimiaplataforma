@@ -25,9 +25,10 @@ document.addEventListener('filtro:aplicar', (e) => {
     const secaoAtivaId = document.querySelector('.aba-botao.aba-ativa').dataset.filtro;
     const secaoAtiva = document.getElementById(`secao-${secaoAtivaId}`);
 
+    // O cartao fica dentro de um <li>: e o item da lista que some.
     secaoAtiva.querySelectorAll('.card-simulado').forEach(card => {
-        card.style.display = selecionadas.length === 0 || selecionadas.includes(card.dataset.disciplina)
-            ? 'flex'
+        (card.closest('li') || card).style.display = selecionadas.length === 0 || selecionadas.includes(card.dataset.disciplina)
+            ? ''
             : 'none';
     });
 });

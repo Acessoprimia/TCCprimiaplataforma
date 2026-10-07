@@ -306,6 +306,9 @@ section {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+    border: 0;
+    min-width: 0;
+    margin-bottom: 2rem;
 }
 
 .campos-data-hora input {
@@ -322,6 +325,21 @@ section {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+/* <fieldset> dos eventos/perguntas acrescentados pelo JS: sem a borda e o
+   min-width padrao do navegador. */
+#eventos-manual-container {
+    border: 0;
+    min-width: 0;
+    margin-bottom: 2rem;
+}
+
+/* No <section> a margem do ultimo evento se fundia com os 2rem acima; o
+   <fieldset> nao deixa ela sair, entao ela some aqui pra dar o mesmo espaco. */
+#eventos-manual-container > .pergunta-manual:last-child {
+    margin-bottom: 0;
 }
 
 .btn-add-pergunta {
@@ -481,4 +499,9 @@ section {
     border-radius: 16px;
     padding: 1rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Era <section> e recebia a margem da regra "section" do inicio do arquivo. */
+.grade-scroll {
+    margin-bottom: 2rem;
 }

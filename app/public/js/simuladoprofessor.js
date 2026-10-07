@@ -50,10 +50,11 @@ formFiltro.addEventListener('submit', (event) => {
 
     cardsSimulado.forEach(card => {
         const disciplinaCard = card.dataset.disciplina;
+        const item = card.closest('li') || card; // o cartao fica dentro de um <li>
         if (disciplinasSelecionadas.length === 0 || disciplinasSelecionadas.includes(disciplinaCard)) {
-            card.style.display = 'flex'; // Mostra o card
+            item.style.display = ''; // Mostra o card
         } else {
-            card.style.display = 'none'; // Oculta o card
+            item.style.display = 'none'; // Oculta o card
         }
     });
 

@@ -137,16 +137,16 @@ function contarConteudosPorMateria(materia) {
 
 function materiaChipHtml(materia) {
     return `
-        <article class="materia-chip" data-materia-nome="${escapeHtml(materia)}">
-            <div class="materia-chip-topo">
+        <li><article class="materia-chip" data-materia-nome="${escapeHtml(materia)}">
+            <header class="materia-chip-topo">
                 <span class="materia-chip-nome">${escapeHtml(materia)}</span>
                 <span class="materia-chip-contagem">${contarConteudosPorMateria(materia)}</span>
-            </div>
-            <div class="materia-chip-acoes">
+            </header>
+            <footer class="materia-chip-acoes">
                 <button type="button" data-admin-action="trocar-icone-materia">Trocar ícone</button>
                 <button type="button" class="danger" data-admin-action="remover-materia">Remover</button>
-            </div>
-        </article>
+            </footer>
+        </article></li>
     `;
 }
 
@@ -255,16 +255,16 @@ adminModalHandlers["icone-materia"] = async function salvarIconeMateria(dados) {
 
 function linhaConteudoHtml(conteudo) {
     const acaoDestaque = conteudo.destaque
-        ? `<button type="button" data-admin-action="remover-destaque">Remover destaque</button>`
-        : `<button type="button" data-admin-action="destacar-conteudo">Destacar</button>`;
+        ? `<li><button type="button" data-admin-action="remover-destaque">Remover destaque</button></li>`
+        : `<li><button type="button" data-admin-action="destacar-conteudo">Destacar</button></li>`;
 
     const acaoPremium = conteudo.acesso === "premium"
-        ? `<button type="button" data-admin-action="tornar-gratuito">Tornar gratuito</button>`
-        : `<button type="button" data-admin-action="tornar-premium">Tornar premium</button>`;
+        ? `<li><button type="button" data-admin-action="tornar-gratuito">Tornar gratuito</button></li>`
+        : `<li><button type="button" data-admin-action="tornar-premium">Tornar premium</button></li>`;
 
     const acaoArquivar = conteudo.arquivado
-        ? `<button type="button" data-admin-action="desarquivar-conteudo">Desarquivar</button>`
-        : `<button type="button" data-admin-action="arquivar-conteudo">Arquivar</button>`;
+        ? `<li><button type="button" data-admin-action="desarquivar-conteudo">Desarquivar</button></li>`
+        : `<li><button type="button" data-admin-action="arquivar-conteudo">Arquivar</button></li>`;
 
     const tituloHtml = conteudo.destaque
         ? `<span class="conteudo-destaque-icone" title="Conteúdo em destaque">★</span>${escapeHtml(conteudo.titulo)}`
@@ -280,24 +280,22 @@ function linhaConteudoHtml(conteudo) {
             <td data-label="Autor">${escapeHtml(conteudo.autor)}</td>
             <td data-label="Data">${formatarDataConteudo(conteudo.data)}</td>
             <td data-label="Ações" class="table-actions-cell">
-                <div class="table-menu-wrap">
-                    <button type="button" class="table-menu-trigger" data-menu-toggle aria-haspopup="true" aria-expanded="false" aria-label="Acoes de ${escapeHtml(conteudo.titulo)}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="1"></circle>
-                            <circle cx="12" cy="5" r="1"></circle>
-                            <circle cx="12" cy="19" r="1"></circle>
-                        </svg>
-                    </button>
-                    <div class="table-menu" role="menu">
-                        <button type="button" data-admin-action="visualizar-conteudo">Visualizar</button>
-                        <button type="button" data-admin-action="editar-conteudo">Editar</button>
-                        ${acaoDestaque}
-                        ${acaoPremium}
-                        <button type="button" data-admin-action="duplicar-conteudo">Duplicar</button>
-                        ${acaoArquivar}
-                        <button type="button" class="danger" data-admin-action="excluir-conteudo">Excluir</button>
-                    </div>
-                </div>
+                <button type="button" class="table-menu-trigger" data-menu-toggle aria-expanded="false" aria-label="Acoes de ${escapeHtml(conteudo.titulo)}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="1"></circle>
+                        <circle cx="12" cy="5" r="1"></circle>
+                        <circle cx="12" cy="19" r="1"></circle>
+                    </svg>
+                </button>
+                <menu class="table-menu">
+                    <li><button type="button" data-admin-action="visualizar-conteudo">Visualizar</button></li>
+                    <li><button type="button" data-admin-action="editar-conteudo">Editar</button></li>
+                    ${acaoDestaque}
+                    ${acaoPremium}
+                    <li><button type="button" data-admin-action="duplicar-conteudo">Duplicar</button></li>
+                    ${acaoArquivar}
+                    <li><button type="button" class="danger" data-admin-action="excluir-conteudo">Excluir</button></li>
+                </menu>
             </td>
         </tr>
     `;

@@ -18,6 +18,8 @@
 /* ========================================
    HEADER FIXO
    ======================================== */
+/* O conteudo fica centralizado em --max-width pelo padding lateral; o
+   100% e a largura da tela, ja que o header e position: fixed. */
 .site-header {
   position: fixed;
   top: 0;
@@ -26,16 +28,10 @@
   background: var(--header-bg);
   z-index: 10001; /* Aumentado para ficar acima do menu mobile */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header-inner {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 14px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: relative;
+  padding: 14px max(20px, calc((100% - var(--max-width)) / 2 + 20px));
 }
 
 /* ========================================
@@ -272,8 +268,8 @@
    MEDIA QUERIES - TABLET (500px a 1023px)
    ======================================== */
 @media (min-width: 500px) and (max-width: 1023px) {
-  .header-inner {
-    padding: 14px 30px;
+  .site-header {
+    padding: 14px max(30px, calc((100% - var(--max-width)) / 2 + 30px));
   }
 
   .logo img {
@@ -319,8 +315,8 @@
     display: inline-block; /* Mostra botão de login no desktop */
   }
 
-  .header-inner {
-    padding: 16px 40px;
+  .site-header {
+    padding: 16px max(40px, calc((100% - var(--max-width)) / 2 + 40px));
   }
 
   .logo img {

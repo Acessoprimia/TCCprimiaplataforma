@@ -17,13 +17,13 @@
 
         <%- include('../partials/filtroPadrao.ejs', { opcoesFiltro: materias.map(function (m) { return { valor: m.slug, nome: m.nome }; }) }) %>
 
-        <section class="cards-container">
+        <ul class="cards-container">
             <% if (videos.length === 0) { %>
-                <p class="videos-vazio">Nenhuma vídeo-aula publicada ainda.</p>
+                <li><p class="videos-vazio">Nenhuma vídeo-aula publicada ainda.</p></li>
             <% } %>
 
             <% videos.forEach(function (video) { %>
-                <article data-materia="<%= video.materiaSlug %>">
+                <li><article data-materia="<%= video.materiaSlug %>">
                     <a href="/videoaula/<%= video.id %>">
                         <img src="<%= video.imagem_url || '../image/lousa.webp' %>" alt="<%= video.titulo %>" class="card-image">
                         <section class="card-content">
@@ -37,9 +37,9 @@
                             <button type="submit" class="botao-excluir-item">Excluir</button>
                         </form>
                     <% } %>
-                </article>
+                </article></li>
             <% }) %>
-        </section>
+        </ul>
     </main>
 
     <%- include("../partials/footer.ejs") %>

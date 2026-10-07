@@ -38,6 +38,8 @@
 /* ========================================
    HEADER FIXO
    ======================================== */
+/* O conteudo fica centralizado em --max-width pelo padding lateral; o
+   100% e a largura da tela, ja que o header e position: fixed. */
 .site-header {
   position: fixed;
   top: 0;
@@ -47,16 +49,10 @@
   z-index: 10001; /* Aumentado para ficar acima do menu mobile */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transition: top 0.2s ease;
-}
-
-.header-inner {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 14px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: relative;
+  padding: 14px max(20px, calc((100% - var(--max-width)) / 2 + 20px));
 }
 
 /* ========================================
@@ -165,10 +161,6 @@
 }
 
 /* centraliza o menu no header */
-.header-inner {
-    position: relative;
-}
-
 .nav-desktop {
     position: absolute;
     left: 50%;
@@ -352,7 +344,7 @@
 
     /* O sino fica no canto direito, entao um dropdown de 300px centrado
        nele vazava pra fora da tela. Tirando o position do container, o
-       dropdown passa a se ancorar no .header-inner (largura da tela) e
+       dropdown passa a se ancorar no .site-header (largura da tela) e
        ocupa a largura toda, com margem, logo abaixo do header. */
     .sino-container {
         position: static;
@@ -504,8 +496,8 @@
    MEDIA QUERIES - TABLET (500px a 1023px)
    ======================================== */
 @media (min-width: 500px) and (max-width: 1023px) {
-  .header-inner {
-    padding: 14px 30px;
+  .site-header {
+    padding: 14px max(30px, calc((100% - var(--max-width)) / 2 + 30px));
   }
 
   .logo img {
@@ -551,8 +543,8 @@
     display: inline-block; /* Mostra botão de login no desktop */
   }
 
-  .header-inner {
-    padding: 16px 40px;
+  .site-header {
+    padding: 16px max(40px, calc((100% - var(--max-width)) / 2 + 40px));
   }
 
   .logo img {

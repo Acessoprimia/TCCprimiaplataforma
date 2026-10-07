@@ -12,7 +12,7 @@
 
 <body>
     <h1 class="sr-only">Cadastro de aluno</h1>
-    <section class="secao-roxa">
+    <main class="secao-roxa">
         <article class="card-cadastro">
             <form class="form-cadastro" action="/cadastro" method="POST">
                 <% if (typeof msgErro !== 'undefined' && msgErro && msgErro.geral) { %>
@@ -105,7 +105,7 @@
                 <button type="submit" class="botao-submit">Cadastre-se</button>
             </form>
         </article>
-    </section>
+    </main>
 
     <%- include('../partials/cookiebanner.ejs') %>
 

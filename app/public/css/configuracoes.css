@@ -21,13 +21,23 @@ main {
     padding: 40px 20px 60px;
 }
 
+/* O titulo ocupa uma linha so e, embaixo, ficam as abas e o painel lado a
+   lado (antes dentro de um invólucro .config-layout). */
 .pagina-container {
     width: 100%;
     max-width: 880px;
     margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    /* sem isso, a sobra da altura minima do main (abas curtas) seria
+       distribuida entre as linhas e empurraria as abas pra baixo */
+    align-content: flex-start;
+    column-gap: 24px;
 }
 
 .titulo-pagina {
+    flex: 0 0 100%;
     font-size: 1.375rem;
     font-weight: 700;
     color: var(--accent);
@@ -45,12 +55,6 @@ main {
 /* ========================================
    LAYOUT: MENU DE ABAS + CONTEUDO
    ======================================== */
-.config-layout {
-    display: flex;
-    align-items: flex-start;
-    gap: 24px;
-}
-
 .config-abas {
     flex: 0 0 200px;
     display: flex;
@@ -104,12 +108,9 @@ main {
 }
 
 /* CARD DE CONTEUDO */
-.config-conteudo {
+.config-painel {
     flex: 1;
     min-width: 0;
-}
-
-.config-painel {
     background-color: var(--cor-fundo-cartao);
     border-radius: 20px;
     padding: 28px 26px;
@@ -479,11 +480,6 @@ main {
    ASSINATURA
    ======================================== */
 .cartao-assinatura {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 14px;
     background-color: var(--cor-fundo-sutil);
     border-radius: 14px;
     padding: 18px 20px;
@@ -743,11 +739,17 @@ main {
    RESPONSIVO
    ======================================== */
 @media (max-width: 720px) {
-    .config-layout {
+    .pagina-container {
         flex-direction: column;
         /* o base usa flex-start (pro layout lado a lado); em coluna isso
            encolhe o painel ao conteudo e deixa ele colado na esquerda. */
         align-items: stretch;
+        row-gap: 24px;
+    }
+
+    /* em coluna o espaco abaixo do titulo vem do row-gap */
+    .titulo-pagina {
+        margin-bottom: 0;
     }
 
     /* As abas quebram em varias linhas em vez de rolarem de lado: com
@@ -786,8 +788,4 @@ main {
         height: 65px;
     }
 
-    .cartao-assinatura {
-        flex-direction: column;
-        align-items: flex-start;
-    }
 }

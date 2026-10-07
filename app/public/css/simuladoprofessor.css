@@ -213,6 +213,17 @@ body {
     gap: 20px;
     margin-bottom: 40px;
     transition: opacity 0.3s ease;
+    list-style: none;
+}
+
+/* Lista de simulados: o <li> e o item do grid e o cartao ocupa a altura toda dele. */
+.secao-simulados > li {
+    display: flex;
+    flex-direction: column;
+}
+
+.secao-simulados > li > * {
+    flex: 1 1 auto;
 }
 
 .secao-simulados.oculta {
@@ -557,6 +568,13 @@ body {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+}
+
+/* <fieldset> dos eventos/perguntas acrescentados pelo JS: sem a borda e o
+   min-width padrao do navegador. */
+#perguntas-manual-container {
+    border: 0;
+    min-width: 0;
 }
 
 .btn-add-pergunta {

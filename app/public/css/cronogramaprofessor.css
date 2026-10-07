@@ -330,6 +330,8 @@ p {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+    border: 0;
+    min-width: 0;
 }
 
 .campos-data-hora input {
@@ -346,6 +348,13 @@ p {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+}
+
+/* <fieldset> dos eventos/perguntas acrescentados pelo JS: sem a borda e o
+   min-width padrao do navegador. */
+#eventos-manual-container {
+    border: 0;
+    min-width: 0;
 }
 
 .btn-add-pergunta {

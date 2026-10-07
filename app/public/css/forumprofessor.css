@@ -29,6 +29,14 @@ main {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    list-style: none;
+}
+
+/* O <li> e o item da coluna; flex nele mantem o cartao como item flex, que
+   contem os floats de dentro (como quando o cartao era filho direto). */
+.duvidas-container > li {
+    display: flex;
+    flex-direction: column;
 }
 
 .card-duvida {
@@ -113,6 +121,7 @@ main {
     padding-top: 1.5rem;
     border-top: 1px solid var(--c-e0e0e0, #e0e0e0);
     clear: both;
+    list-style: none;
 }
 
 /* Quem respondeu - mesmo visual do fórum do aluno (forumdeduvidas.css). */

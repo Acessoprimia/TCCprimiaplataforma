@@ -70,6 +70,17 @@ body {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 20px;
     align-items: stretch;
+    list-style: none;
+}
+
+/* Lista de planos: o <li> e o item do grid e o cartao ocupa a altura toda dele. */
+.grade-planos > li {
+    display: flex;
+    flex-direction: column;
+}
+
+.grade-planos > li > * {
+    flex: 1 1 auto;
 }
 
 .titulo-planos {

@@ -8,7 +8,7 @@
         <% // Futuramente os formularios devem enviar dados para rotas POST/PUT protegidas por permissao admin. %>
         <% // Exemplo: POST /api/admin/usuarios, PUT /api/admin/conteudos/:id, PUT /api/admin/configuracoes. %>
         <form class="admin-modal-form" id="adminModalForm">
-            <section class="admin-modal-fields" id="adminModalCampos"></section>
+            <fieldset class="admin-modal-fields" id="adminModalCampos"></fieldset>
             <footer class="admin-modal-actions">
                 <button type="button" class="admin-button" id="adminModalCancelar">Cancelar</button>
                 <button type="submit" class="admin-button primary">Salvar</button>
@@ -23,15 +23,13 @@
             <h2 id="confirmTitulo">Confirmar ação</h2>
             <button type="button" class="admin-modal-close" id="confirmFechar" aria-label="Fechar">x</button>
         </header>
-        <section class="admin-modal-form">
-            <p class="confirm-text" id="confirmTexto">Tem certeza que deseja continuar?</p>
-            <% // Futuramente a confirmacao deve chamar uma rota protegida e registrar a acao em logs_admin. %>
-            <footer class="admin-modal-actions">
-                <button type="button" class="admin-button" id="confirmCancelar">Cancelar</button>
-                <button type="button" class="admin-button primary" id="confirmExecutar">Confirmar</button>
-            </footer>
-        </section>
+        <p class="confirm-text" id="confirmTexto">Tem certeza que deseja continuar?</p>
+        <% // Futuramente a confirmacao deve chamar uma rota protegida e registrar a acao em logs_admin. %>
+        <footer class="admin-modal-actions">
+            <button type="button" class="admin-button" id="confirmCancelar">Cancelar</button>
+            <button type="button" class="admin-button primary" id="confirmExecutar">Confirmar</button>
+        </footer>
     </section>
 </aside>
 
-<section class="admin-toast" id="adminToast" aria-live="polite"></section>
+<output class="admin-toast" id="adminToast" aria-live="polite"></output>

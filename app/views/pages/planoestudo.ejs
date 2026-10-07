@@ -115,15 +115,15 @@
 
                 </select>
 
-                <section id="eventos-manual-container"></section>
+                <fieldset id="eventos-manual-container"></fieldset>
 
-                <section class="acoes-simulado-manual">
+                <p class="acoes-simulado-manual">
 
                     <button type="button" id="btn-add-evento" class="btn-add-pergunta">+ Adicionar evento</button>
 
                     <button type="submit" class="btn-salvar-manual">Salvar cronograma</button>
 
-                </section>
+                </p>
 
             </form>
 
@@ -145,7 +145,7 @@
 
                 <input type="text" class="campo-descricao-evento" placeholder="Descrição (opcional)">
 
-                <section class="campos-data-hora">
+                <fieldset class="campos-data-hora">
 
                     <input type="date" class="campo-data-evento" required>
 
@@ -153,7 +153,7 @@
 
                     <input type="time" class="campo-hora-fim-evento" required>
 
-                </section>
+                </fieldset>
 
             </article>
 
@@ -205,13 +205,13 @@
 
     <% } else { %>
 
-        <section class="upsell-premium-cronograma">
+        <aside class="upsell-premium-cronograma">
 
             <p>✨ Assinantes premium podem gerar o próprio cronograma com IA (ou montar na mão) e recebem cronogramas exclusivos dos professores.</p>
 
             <a href="/partepremium">Conhecer o premium</a>
 
-        </section>
+        </aside>
 
     <% } %>
 

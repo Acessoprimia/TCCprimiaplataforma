@@ -364,7 +364,7 @@ function renderizarGraficoLinhas({ frameEl, legendaEl, labels, series, idGradien
     `;
 
     if (legendaEl) {
-        legendaEl.innerHTML = series.map((serie) => `<span><i class="chart-caption-dot" style="background-color: ${serie.cor}"></i>${escapeHtmlRelatorios(serie.nome)}</span>`).join("");
+        legendaEl.innerHTML = series.map((serie) => `<li><i class="chart-caption-dot" style="background-color: ${serie.cor}"></i>${escapeHtmlRelatorios(serie.nome)}</li>`).join("");
     }
 }
 

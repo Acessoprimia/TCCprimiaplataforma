@@ -15,13 +15,13 @@
 
         <%- include('../partials/filtroPadrao.ejs', { opcoesFiltro: materias.map(function (m) { return { valor: m.slug, nome: m.nome }; }) }) %>
 
-        <section class="cards-container">
+        <ul class="cards-container">
             <% if (videos.length === 0) { %>
-                <p class="videos-vazio">Nenhuma vídeo-aula publicada ainda.</p>
+                <li><p class="videos-vazio">Nenhuma vídeo-aula publicada ainda.</p></li>
             <% } %>
 
             <% videos.forEach(function (video) { %>
-                <article data-materia="<%= video.materiaSlug %>">
+                <li><article data-materia="<%= video.materiaSlug %>">
                     <% if (video.is_premium) { %>
                         <span class="badge-premium">Premium</span>
                     <% } %>
@@ -32,9 +32,9 @@
                             <p><%= video.descricao || 'Sinopse ainda não cadastrada.' %></p>
                         </section>
                     </a>
-                </article>
+                </article></li>
             <% }) %>
-        </section>
+        </ul>
     </main>
 
     <%- include("../partials/footer.ejs") %>

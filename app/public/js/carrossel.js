@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const carrossel = document.getElementById('carrossel');
+  // A propria lista e a area que rola (antes havia um invólucro so pra isso).
   const lista = document.getElementById('lista');
+  const carrossel = lista;
   const prevBtn = document.getElementById('prev');
   const nextBtn = document.getElementById('next');
   const pontosContainer = document.getElementById('materias-dots');

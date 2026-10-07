@@ -142,10 +142,10 @@ function campoTextarea(nome, label, valor = "") {
 
 function campoLeitura(label, valor = "") {
     return `
-        <section class="admin-readonly-box">
-            <strong>${label}</strong>
-            <p>${valor}</p>
-        </section>
+        <dl class="admin-readonly-box">
+            <dt>${label}</dt>
+            <dd>${valor}</dd>
+        </dl>
     `;
 }
 

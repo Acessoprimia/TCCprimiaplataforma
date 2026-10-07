@@ -35,49 +35,49 @@
 
         <h2>Seus números</h2>
 
-        <section class="grade-stats-resultados">
+        <ul class="grade-stats-resultados">
 
-            <article class="card-stat">
+            <li><article class="card-stat">
 
                 <span class="stat-valor"><%= numeros.totalFormularios %></span>
 
                 <span class="stat-label">Simulados gerados</span>
 
-            </article>
+            </article></li>
 
-            <article class="card-stat">
+            <li><article class="card-stat">
 
                 <span class="stat-valor"><%= numeros.totalSimuladosRespondidos %></span>
 
                 <span class="stat-label">Simulados respondidos</span>
 
-            </article>
+            </article></li>
 
-            <article class="card-stat">
+            <li><article class="card-stat">
 
                 <span class="stat-valor"><%= numeros.totalPerguntasRespondidas %></span>
 
                 <span class="stat-label">Perguntas respondidas</span>
 
-            </article>
+            </article></li>
 
-            <article class="card-stat">
+            <li><article class="card-stat">
 
                 <span class="stat-valor"><%= numeros.taxaAcertoGeral !== null ? numeros.taxaAcertoGeral + '%' : '—' %></span>
 
                 <span class="stat-label">Taxa de acerto geral</span>
 
-            </article>
+            </article></li>
 
-            <article class="card-stat">
+            <li><article class="card-stat">
 
                 <span class="stat-valor"><%= numeros.totalRedacoes %></span>
 
                 <span class="stat-label">Redações enviadas</span>
 
-            </article>
+            </article></li>
 
-        </section>
+        </ul>
 
         <% if (numeros.porMateria.length > 0) { %>
 

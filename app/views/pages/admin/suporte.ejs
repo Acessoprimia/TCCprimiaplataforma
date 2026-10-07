@@ -33,228 +33,226 @@
 
         <%- include('../../partials/adminSidebar.ejs', { activeAdminPage: 'suporte' }) %>
 
-        <section class="admin-content">
 
-            <section class="admin-panel" id="suporte">
+        <section class="admin-panel" id="suporte">
 
-                <header class="panel-header">
+            <header class="panel-header">
 
-                    <article>
+                <hgroup>
 
-                        <h2>Central de suporte</h2>
+                    <h2>Central de suporte</h2>
 
-                        <p>Acompanhe denúncias do fórum e mensagens de contato em um único lugar.</p>
+                    <p>Acompanhe denúncias do fórum e mensagens de contato em um único lugar.</p>
 
-                    </article>
+                </hgroup>
 
-                </header>
+            </header>
 
-                <% // Os cards abaixo sao calculados a partir de DENUNCIAS_MOCK e CONTATOS_MOCK (dados %>
-                <% // reais embutidos pelo servidor abaixo) em tempo de execucao, para refletir %>
-                <% // mudancas de status feitas nas tabelas abaixo. %>
+            <% // Os cards abaixo sao calculados a partir de DENUNCIAS_MOCK e CONTATOS_MOCK (dados %>
+            <% // reais embutidos pelo servidor abaixo) em tempo de execucao, para refletir %>
+            <% // mudancas de status feitas nas tabelas abaixo. %>
 
-                <aside class="resumo-cards" id="suporteResumo"></aside>
+            <aside class="resumo-cards" id="suporteResumo"></aside>
 
-                <nav class="admin-abas" aria-label="Tipo de ticket" role="tablist">
+            <nav class="admin-abas" aria-label="Tipo de ticket" role="tablist">
 
-                    <button type="button" class="aba-botao aba-ativa" id="abaDenunciasBotao" role="tab" aria-selected="true" aria-controls="painelDenuncias" data-aba-alvo="denuncias">
-                        Denúncias
-                    </button>
+                <button type="button" class="aba-botao aba-ativa" id="abaDenunciasBotao" role="tab" aria-selected="true" aria-controls="painelDenuncias" data-aba-alvo="denuncias">
+                    Denúncias
+                </button>
 
-                    <button type="button" class="aba-botao" id="abaContatoBotao" role="tab" aria-selected="false" aria-controls="painelContato" data-aba-alvo="contato">
-                        Contato
-                    </button>
+                <button type="button" class="aba-botao" id="abaContatoBotao" role="tab" aria-selected="false" aria-controls="painelContato" data-aba-alvo="contato">
+                    Contato
+                </button>
 
-                </nav>
+            </nav>
 
-                <% // As tabelas abaixo sao populadas em tempo de execucao por suporte.js a partir de %>
-                <% // DENUNCIAS_MOCK e CONTATOS_MOCK, que agora vem dos dados reais embutidos pelo %>
-                <% // servidor logo abaixo (nomes mantidos, conteudo real). Busca, filtros, paginacao %>
-                <% // e o menu de acoes operam sobre esses arrays. %>
+            <% // As tabelas abaixo sao populadas em tempo de execucao por suporte.js a partir de %>
+            <% // DENUNCIAS_MOCK e CONTATOS_MOCK, que agora vem dos dados reais embutidos pelo %>
+            <% // servidor logo abaixo (nomes mantidos, conteudo real). Busca, filtros, paginacao %>
+            <% // e o menu de acoes operam sobre esses arrays. %>
 
-                <section class="aba-conteudo" id="painelDenuncias" role="tabpanel" aria-labelledby="abaDenunciasBotao" data-aba-painel="denuncias">
+            <section class="aba-conteudo" id="painelDenuncias" role="tabpanel" aria-labelledby="abaDenunciasBotao" data-aba-painel="denuncias">
 
-                    <form class="admin-search-bar">
+                <form class="admin-search-bar">
 
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 
-                            <circle cx="11" cy="11" r="8"></circle>
+                        <circle cx="11" cy="11" r="8"></circle>
 
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
 
-                        </svg>
+                    </svg>
 
-                        <input type="search" id="denunciasBusca" placeholder="Buscar por código, usuário ou motivo..." aria-label="Buscar denúncias">
+                    <input type="search" id="denunciasBusca" placeholder="Buscar por código, usuário ou motivo..." aria-label="Buscar denúncias">
 
-                    </form>
+                </form>
 
-                    <section class="admin-filtros-painel">
+                <search class="admin-filtros-painel">
 
-                        <fieldset class="admin-filtro-bloco">
+                    <fieldset class="admin-filtro-bloco">
 
-                            <legend class="admin-filtros-label">Status</legend>
+                        <legend class="admin-filtros-label">Status</legend>
 
-                            <nav class="admin-filtros" aria-label="Filtrar denúncias por status">
+                        <nav class="admin-filtros" aria-label="Filtrar denúncias por status">
 
-                                <button type="button" class="filtro-btn ativo" data-filtro-status-denuncia="todos">Todos</button>
+                            <button type="button" class="filtro-btn ativo" data-filtro-status-denuncia="todos">Todos</button>
 
-                                <button type="button" class="filtro-btn" data-filtro-status-denuncia="aberto">Aberto</button>
+                            <button type="button" class="filtro-btn" data-filtro-status-denuncia="aberto">Aberto</button>
 
-                                <button type="button" class="filtro-btn" data-filtro-status-denuncia="em_analise">Em análise</button>
+                            <button type="button" class="filtro-btn" data-filtro-status-denuncia="em_analise">Em análise</button>
 
-                                <button type="button" class="filtro-btn" data-filtro-status-denuncia="resolvido">Resolvido</button>
+                            <button type="button" class="filtro-btn" data-filtro-status-denuncia="resolvido">Resolvido</button>
 
-                            </nav>
+                        </nav>
 
-                        </fieldset>
+                    </fieldset>
 
-                        <fieldset class="admin-filtro-bloco">
+                    <fieldset class="admin-filtro-bloco">
 
-                            <legend class="admin-filtros-label">Prioridade</legend>
+                        <legend class="admin-filtros-label">Prioridade</legend>
 
-                            <nav class="admin-filtros" aria-label="Filtrar denúncias por prioridade">
+                        <nav class="admin-filtros" aria-label="Filtrar denúncias por prioridade">
 
-                                <button type="button" class="filtro-btn ativo" data-filtro-prioridade-denuncia="todos">Todas</button>
+                            <button type="button" class="filtro-btn ativo" data-filtro-prioridade-denuncia="todos">Todas</button>
 
-                                <button type="button" class="filtro-btn" data-filtro-prioridade-denuncia="alta">Alta</button>
+                            <button type="button" class="filtro-btn" data-filtro-prioridade-denuncia="alta">Alta</button>
 
-                                <button type="button" class="filtro-btn" data-filtro-prioridade-denuncia="media">Média</button>
+                            <button type="button" class="filtro-btn" data-filtro-prioridade-denuncia="media">Média</button>
 
-                                <button type="button" class="filtro-btn" data-filtro-prioridade-denuncia="baixa">Baixa</button>
+                            <button type="button" class="filtro-btn" data-filtro-prioridade-denuncia="baixa">Baixa</button>
 
-                            </nav>
+                        </nav>
 
-                        </fieldset>
+                    </fieldset>
 
-                        <fieldset class="admin-filtro-bloco">
+                    <fieldset class="admin-filtro-bloco">
 
-                            <legend class="admin-filtros-label">Tipo</legend>
+                        <legend class="admin-filtros-label">Tipo</legend>
 
-                            <nav class="admin-filtros" aria-label="Filtrar denúncias por tipo de conteúdo">
+                        <nav class="admin-filtros" aria-label="Filtrar denúncias por tipo de conteúdo">
 
-                                <button type="button" class="filtro-btn ativo" data-filtro-tipo-denuncia="todos">Todos</button>
+                            <button type="button" class="filtro-btn ativo" data-filtro-tipo-denuncia="todos">Todos</button>
 
-                                <button type="button" class="filtro-btn" data-filtro-tipo-denuncia="forum">Fórum</button>
+                            <button type="button" class="filtro-btn" data-filtro-tipo-denuncia="forum">Fórum</button>
 
-                                <button type="button" class="filtro-btn" data-filtro-tipo-denuncia="videoaula">Videoaula</button>
+                            <button type="button" class="filtro-btn" data-filtro-tipo-denuncia="videoaula">Videoaula</button>
 
-                                <button type="button" class="filtro-btn" data-filtro-tipo-denuncia="livro">Livro</button>
+                            <button type="button" class="filtro-btn" data-filtro-tipo-denuncia="livro">Livro</button>
 
-                                <button type="button" class="filtro-btn" data-filtro-tipo-denuncia="simulado">Simulado</button>
+                            <button type="button" class="filtro-btn" data-filtro-tipo-denuncia="simulado">Simulado</button>
 
-                                <button type="button" class="filtro-btn" data-filtro-tipo-denuncia="outros">Outros</button>
+                            <button type="button" class="filtro-btn" data-filtro-tipo-denuncia="outros">Outros</button>
 
-                            </nav>
+                        </nav>
 
-                        </fieldset>
+                    </fieldset>
 
-                    </section>
+                </search>
 
-                    <section class="table-scroll">
+                <figure class="table-scroll">
 
-                        <table class="admin-table">
+                    <table class="admin-table">
 
-                            <thead>
+                        <thead>
 
-                                <tr>
+                            <tr>
 
-                                    <th>ID</th>
+                                <th>ID</th>
 
-                                    <th>Usuário</th>
+                                <th>Usuário</th>
 
-                                    <th>Tipo</th>
+                                <th>Tipo</th>
 
-                                    <th>Motivo</th>
+                                <th>Motivo</th>
 
-                                    <th>Prioridade</th>
+                                <th>Prioridade</th>
 
-                                    <th>Status</th>
+                                <th>Status</th>
 
-                                    <th>Data</th>
+                                <th>Data</th>
 
-                                    <th>Ações</th>
+                                <th>Ações</th>
 
-                                </tr>
+                            </tr>
 
-                            </thead>
+                        </thead>
 
-                            <tbody id="denunciasTabela"></tbody>
+                        <tbody id="denunciasTabela"></tbody>
 
-                        </table>
+                    </table>
 
-                    </section>
+                </figure>
 
-                    <footer class="admin-pagination">
+                <footer class="admin-pagination">
 
-                        <p class="admin-pagination-info" id="denunciasPaginacaoInfo">Carregando denúncias...</p>
+                    <p class="admin-pagination-info" id="denunciasPaginacaoInfo">Carregando denúncias...</p>
 
-                        <nav class="admin-pagination-controles" id="denunciasPaginacaoControles" aria-label="Paginação das denúncias"></nav>
+                    <nav class="admin-pagination-controles" id="denunciasPaginacaoControles" aria-label="Paginação das denúncias"></nav>
 
-                    </footer>
+                </footer>
 
-                </section>
+            </section>
 
-                <section class="aba-conteudo oculto" id="painelContato" role="tabpanel" aria-labelledby="abaContatoBotao" data-aba-painel="contato">
+            <section class="aba-conteudo oculto" id="painelContato" role="tabpanel" aria-labelledby="abaContatoBotao" data-aba-painel="contato">
 
-                    <form class="admin-search-bar">
+                <form class="admin-search-bar">
 
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 
-                            <circle cx="11" cy="11" r="8"></circle>
+                        <circle cx="11" cy="11" r="8"></circle>
 
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
 
-                        </svg>
+                    </svg>
 
-                        <input type="search" id="contatoBusca" placeholder="Buscar por nome, email ou assunto..." aria-label="Buscar mensagens de contato">
+                    <input type="search" id="contatoBusca" placeholder="Buscar por nome, email ou assunto..." aria-label="Buscar mensagens de contato">
 
-                    </form>
+                </form>
 
-                    <section class="table-scroll">
+                <figure class="table-scroll">
 
-                        <table class="admin-table">
+                    <table class="admin-table">
 
-                            <thead>
+                        <thead>
 
-                                <tr>
+                            <tr>
 
-                                    <th>ID</th>
+                                <th>ID</th>
 
-                                    <th>Nome</th>
+                                <th>Nome</th>
 
-                                    <th>Email</th>
+                                <th>Email</th>
 
-                                    <th>Assunto</th>
+                                <th>Assunto</th>
 
-                                    <th>Status</th>
+                                <th>Status</th>
 
-                                    <th>Data</th>
+                                <th>Data</th>
 
-                                    <th>Ações</th>
+                                <th>Ações</th>
 
-                                </tr>
+                            </tr>
 
-                            </thead>
+                        </thead>
 
-                            <tbody id="contatoTabela"></tbody>
+                        <tbody id="contatoTabela"></tbody>
 
-                        </table>
+                    </table>
 
-                    </section>
+                </figure>
 
-                    <footer class="admin-pagination">
+                <footer class="admin-pagination">
 
-                        <p class="admin-pagination-info" id="contatoPaginacaoInfo">Carregando mensagens...</p>
+                    <p class="admin-pagination-info" id="contatoPaginacaoInfo">Carregando mensagens...</p>
 
-                        <nav class="admin-pagination-controles" id="contatoPaginacaoControles" aria-label="Paginação das mensagens"></nav>
+                    <nav class="admin-pagination-controles" id="contatoPaginacaoControles" aria-label="Paginação das mensagens"></nav>
 
-                    </footer>
-
-                </section>
+                </footer>
 
             </section>
 
         </section>
+
 
     </main>
 
